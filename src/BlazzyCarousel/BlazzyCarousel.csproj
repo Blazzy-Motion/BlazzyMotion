@@ -1,0 +1,50 @@
+﻿<Project Sdk="Microsoft.NET.Sdk.Razor">
+
+  <PropertyGroup>
+    <TargetFramework>net8.0</TargetFramework>
+    <Nullable>enable</Nullable>
+    <ImplicitUsings>enable</ImplicitUsings>
+
+    <!-- NuGet Package Metadata -->
+    <PackageId>BlazzyCarousel</PackageId>
+    <Version>1.0.0</Version>
+    <Authors>Nenad Ristic</Authors>
+    <Company>Nenad Ristic</Company>
+    <Description>A beautiful 3D carousel component for Blazor with glass morphism design and coverflow effect. Zero-configuration setup with automatic dependency loading.</Description>
+    <PackageTags>blazor;carousel;coverflow;component;swiper;glassmorphism;3d</PackageTags>
+    <PackageProjectUrl>https://github.com/nenad0707/BlazzyCarousel</PackageProjectUrl>
+    <RepositoryUrl>https://github.com/nenad0707/BlazzyCarousel</RepositoryUrl>
+    <RepositoryType>git</RepositoryType>
+    <PackageLicenseExpression>MIT</PackageLicenseExpression>
+    <!--<PackageIcon>icon.png</PackageIcon>-->
+    <!--<PackageReadmeFile>README.md</PackageReadmeFile>-->
+
+    <AddRazorSupportForMvc>true</AddRazorSupportForMvc>
+
+    <!-- Generate package on build -->
+    <GeneratePackageOnBuild>true</GeneratePackageOnBuild>
+
+    <!-- Output to local folder -->
+    <PackageOutputPath>C:\LocalNuGet\</PackageOutputPath>
+
+    <!-- Include symbols -->
+    <IncludeSymbols>true</IncludeSymbols>
+    <SymbolPackageFormat>snupkg</SymbolPackageFormat>
+  </PropertyGroup>
+
+  <ItemGroup>
+    <Content Include="icon.png">
+      <ExcludeFromSingleFile>true</ExcludeFromSingleFile>
+      <CopyToPublishDirectory>PreserveNewest</CopyToPublishDirectory>
+    </Content>
+  </ItemGroup>
+
+  <ItemGroup>
+    <SupportedPlatform Include="browser" />
+  </ItemGroup>
+
+  <ItemGroup>
+    <PackageReference Include="Microsoft.AspNetCore.Components.Web" Version="8.0.0" />
+  </ItemGroup>
+
+</Project>
