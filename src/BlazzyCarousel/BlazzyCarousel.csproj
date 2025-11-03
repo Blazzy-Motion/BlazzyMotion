@@ -22,10 +22,10 @@
     <AddRazorSupportForMvc>true</AddRazorSupportForMvc>
 
     <!-- Generate package on build -->
-    <GeneratePackageOnBuild>true</GeneratePackageOnBuild>
+    <GeneratePackageOnBuild>false</GeneratePackageOnBuild>
 
     <!-- Output to local folder -->
-    <PackageOutputPath>C:\LocalNuGet\</PackageOutputPath>
+    <!-- <PackageOutputPath>C:\LocalNuGet\</PackageOutputPath> -->
 
     <!-- Include symbols -->
     <IncludeSymbols>true</IncludeSymbols>
