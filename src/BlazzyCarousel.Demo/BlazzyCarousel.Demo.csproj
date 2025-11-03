@@ -14,5 +14,8 @@
   <ItemGroup>
    <ProjectReference Include="..\BlazzyCarousel\BlazzyCarousel.csproj" />
   </ItemGroup>
-
+  <PropertyGroup>
+      <GenerateTargetFrameworkAttribute>false</GenerateTargetFrameworkAttribute>
+      <GenerateAssemblyInfo>false</GenerateAssemblyInfo>
+  </PropertyGroup>
 </Project>
