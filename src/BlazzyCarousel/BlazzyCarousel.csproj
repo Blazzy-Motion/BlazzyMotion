@@ -4,46 +4,8 @@
     <TargetFramework>net8.0</TargetFramework>
     <Nullable>enable</Nullable>
     <ImplicitUsings>enable</ImplicitUsings>
-
-    <!-- NuGet Package Metadata -->
-    <PackageId>BlazzyCarousel</PackageId>
-    <Version>1.0.0</Version>
-    <Authors>Nenad Ristic</Authors>
-    <Company>Nenad Ristic</Company>
-    <Description>A beautiful 3D carousel component for Blazor with glass morphism design and coverflow effect. Zero-configuration setup with automatic dependency loading.</Description>
-    <PackageTags>blazor;carousel;coverflow;component;swiper;glassmorphism;3d</PackageTags>
-    <PackageProjectUrl>https://github.com/nenad0707/BlazzyCarousel</PackageProjectUrl>
-    <RepositoryUrl>https://github.com/nenad0707/BlazzyCarousel</RepositoryUrl>
-    <RepositoryType>git</RepositoryType>
-    <PackageLicenseExpression>MIT</PackageLicenseExpression>
-    <!--<PackageIcon>icon.png</PackageIcon>-->
-    <!--<PackageReadmeFile>README.md</PackageReadmeFile>-->
-
-    <AddRazorSupportForMvc>true</AddRazorSupportForMvc>
-
-    <!-- Generate package on build -->
-    <GeneratePackageOnBuild>false</GeneratePackageOnBuild>
-
-    <!-- Output to local folder -->
-    <!-- <PackageOutputPath>C:\LocalNuGet\</PackageOutputPath> -->
-
-    <!-- Include symbols -->
-    <IncludeSymbols>true</IncludeSymbols>
-    <SymbolPackageFormat>snupkg</SymbolPackageFormat>
-   
-    <!-- Source Generator Configuration -->
     <EnforceExtendedAnalyzerRules>true</EnforceExtendedAnalyzerRules>
-    <IsRoslynComponent>true</IsRoslynComponent>
   </PropertyGroup>
-
-  <ItemGroup>
-    <Content Include="icon.png">
-      <ExcludeFromSingleFile>true</ExcludeFromSingleFile>
-      <CopyToPublishDirectory>PreserveNewest</CopyToPublishDirectory>
-    </Content>
-    <!-- Include Source Generator in package -->
-    <None Include="$(OutputPath)\$(AssemblyName).dll" Pack="true" PackagePath="analyzers/dotnet/cs" Visible="false" />
-  </ItemGroup>
 
   <ItemGroup>
     <SupportedPlatform Include="browser" />
@@ -51,10 +13,19 @@
 
   <ItemGroup>
     <PackageReference Include="Microsoft.AspNetCore.Components.Web" Version="8.0.0" />
-   
-    <!-- Source Generator dependencies (compile-time only) -->
     <PackageReference Include="Microsoft.CodeAnalysis.CSharp" Version="4.8.0" PrivateAssets="all" />
     <PackageReference Include="Microsoft.CodeAnalysis.Analyzers" Version="3.3.4" PrivateAssets="all" />
+  </ItemGroup>
+
+  <ItemGroup>
+    <None Include="$(OutputPath)\$(AssemblyName).dll" Pack="true" PackagePath="analyzers/dotnet/cs" Visible="false" />
+  </ItemGroup>
+
+  
+  <ItemGroup>
+    <ProjectReference Include="..\BlazzyCarousel.SourceGen\BlazzyCarousel.SourceGen.csproj"
+                      OutputItemType="Analyzer"
+                      ReferenceOutputAssembly="false" />
   </ItemGroup>
 
 </Project>

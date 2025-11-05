@@ -4,7 +4,7 @@ using Microsoft.CodeAnalysis.Text;
 using System.Collections.Immutable;
 using System.Text;
 
-namespace BlazzyCarousel.SourceGen;
+namespace BlazzyCarousel.SourceGen.SourceGen;
 
 /// <summary>
 /// Incremental Source Generator that creates default carousel templates 

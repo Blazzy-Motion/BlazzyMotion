@@ -4,6 +4,7 @@ namespace BlazzyCarousel.Model;
 
 public class Movie
 {
+    [BzTitle]
     public string? Title { get; set; }
 
     [BzImage]

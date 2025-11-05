@@ -2,6 +2,7 @@
 @using BlazzyCarousel.Model
 @using BlazzyCarousel.Models
 @using BlazzyCarousel.Components
+@inject IJSRuntime JS
 
 <PageTitle>BlazzyCarousel Demo</PageTitle>
 
@@ -21,7 +22,9 @@
     <BzCarousel TItem="Movie"
                 Items="items"
                 Theme="BzTheme.Glass"
-                OnItemSelected="@OnItemSelected">
+                 OnItemSelected="@OnItemSelected">
+                @* Theme="BzTheme.Glass"
+                OnItemSelected="@OnItemSelected"> *@
         <ItemTemplate Context="item">
             <img src="@item.ImageUrl" alt="@item.Title" />
         </ItemTemplate>
@@ -51,10 +54,10 @@
         }
     };
 
-    private Task OnItemSelected(Movie selectedItem)
+     private async Task OnItemSelected(Movie selectedItem)
     {
         selectedMovie = selectedItem;
+        await JS.InvokeVoidAsync("console.log", $"Selected (JS): {selectedItem.Title}");
         Console.WriteLine($"Selected: {selectedItem.Title}");
-        return Task.CompletedTask;
     }
 }

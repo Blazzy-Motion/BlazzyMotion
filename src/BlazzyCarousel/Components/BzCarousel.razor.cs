@@ -310,12 +310,16 @@ public partial class BzCarousel<TItem> : ComponentBase, IAsyncDisposable
     {
         var itemType = typeof(TItem);
 
+        Console.WriteLine($"[DEBUG] Looking for: {itemType.Namespace}.{itemType.Name}BzCarouselExtensions"); 
+
         // Check static cache (shared across all instances)
         if (_generatedTemplateCache.TryGetValue(itemType, out var cached))
         {
+            Console.WriteLine($"[DEBUG] Cache HIT!"); 
             return cached as RenderFragment<TItem>;
         }
 
+        Console.WriteLine($"[DEBUG] Cache MISS - using reflection"); 
         // Cache miss - use reflection (only happens once per type)
         RenderFragment<TItem>? result = null;
 
