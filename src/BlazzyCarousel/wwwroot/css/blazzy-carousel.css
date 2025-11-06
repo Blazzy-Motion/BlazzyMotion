@@ -184,6 +184,14 @@
     height: 400px;
     perspective: 1500px;
     overflow: visible !important;
+    opacity: 0;
+    visibility: hidden;
+}
+
+.swiper-container.swiper-initialized {
+    opacity: 1;
+    visibility: visible;
+    transition: opacity 0.4s ease-in;
 }
 
 .swiper-wrapper {
