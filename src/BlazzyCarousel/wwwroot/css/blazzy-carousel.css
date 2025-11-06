@@ -77,7 +77,7 @@
     max-width: 800px;
     margin: 0 auto;
     position: relative;
-    transition: all var(--bzc-transition-speed) ease;
+    /* transition: all var(--bzc-transition-speed) ease; */
 }
 
 /* ═══════════════════════════════════════════════════════════
