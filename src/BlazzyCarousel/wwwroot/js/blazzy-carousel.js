@@ -87,14 +87,10 @@ export async function initializeCarousel(element, optionsJson) {
     try {
         const container = element.querySelector(".swiper-container");
         if (!container) {
-            console.error("[BlazzyCarousel] .swiper-container NOT FOUND");
             return;
         }
 
-        // ✅ Čekaj da se DOM stabiliše
-        await new Promise(r => requestAnimationFrame(() => requestAnimationFrame(r)));
 
-        // ✅ Uništi stari instance ako postoji
         if (swiperInstance) {
             swiperInstance.destroy(true, true);
             swiperInstance = null;
@@ -102,30 +98,29 @@ export async function initializeCarousel(element, optionsJson) {
 
         const options = optionsJson ? JSON.parse(optionsJson) : {};
 
-        // ✅ Inicijalizuj Swiper
         swiperInstance = new Swiper(container, {
-            effect: "coverflow",
-            grabCursor: true,
-            centeredSlides: true,
-            slidesPerView: "auto",
+            effect: options.effect || "coverflow",
+            grabCursor: options.grabCursor ?? true,
+            centeredSlides: options.centeredSlides ?? true,
+            slidesPerView: options.slidesPerView || "auto",
             initialSlide: options.initialSlide || 0,
             loop: options.loop ?? true,
-            speed: 300,
+            speed: options.speed || 300,
             slideToClickedSlide: true,
             watchSlidesProgress: true,
             watchSlidesVisibility: true,
             observer: true,
             observeParents: true,
             coverflowEffect: {
-                rotate: 50,
-                stretch: 0,
-                depth: 150,
-                modifier: 1.2,
-                slideShadows: true,
+                rotate: options.rotateDegree || 50,
+                stretch: options.stretch || 0,
+                depth: options.depth || 150,
+                modifier: options.modifier || 1.2,
+                slideShadows: options.slideShadows ?? true,
             },
             on: {
-                init: () => console.log("[BlazzyCarousel] Carousel initialized ✅"),
                 setTranslate: function () {
+                    // Fix negative z-index slides
                     this.slides.forEach(slide => {
                         if (parseInt(slide.style.zIndex) < 0) {
                             slide.style.zIndex = 1;
@@ -134,19 +129,13 @@ export async function initializeCarousel(element, optionsJson) {
                 }
             }
         });
-
     } catch (err) {
         console.error("[BlazzyCarousel] Initialization error:", err);
     }
 }
-
-/* ═══════════════════════════════════════════════════════════
-   Destroy carousel
-   ═══════════════════════════════════════════════════════════ */
 export function destroyCarousel() {
     if (swiperInstance) {
         swiperInstance.destroy(true, true);
         swiperInstance = null;
-        console.log("[BlazzyCarousel] Destroyed ✅");
     }
 }

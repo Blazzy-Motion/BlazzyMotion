@@ -56,6 +56,11 @@ public class BzCarouselOptions
     public int Depth { get; set; } = 150;
 
     /// <summary>
+    /// Stretch space between slides in coverflow (pixels).
+    /// </summary>
+    public int Stretch { get; set; } = 0;
+
+    /// <summary>
     /// Coverflow modifier value.
     /// </summary>
     public double Modifier { get; set; } = 1.5;
