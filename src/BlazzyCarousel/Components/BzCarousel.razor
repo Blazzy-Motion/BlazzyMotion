@@ -34,7 +34,7 @@ else
     <div class="bzc-carousel-box @ThemeClass @CssClass"
          @ref="carouselRef"
          data-item-count="@ItemCount">
-        <div class="swiper-container">
+        <div class="swiper-container" style="opacity: 0; visibility: hidden;">
             <div class="swiper-wrapper">
                 @foreach (var item in Items!)
                 {

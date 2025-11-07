@@ -95,19 +95,7 @@ export async function initializeCarousel(element, optionsJson) {
             swiperInstance = null;
         }
 
-        const images = Array.from(container.querySelectorAll("img"));
 
-        await Promise.all(images.map(img => {
-
-            if (img.complete) {
-                return Promise.resolve();
-            }
-
-            return new Promise(resolve => {
-                img.onload = resolve;
-                img.onerror = resolve;
-            });
-        }));
 
         const options = optionsJson ? JSON.parse(optionsJson) : {};
 
@@ -120,7 +108,7 @@ export async function initializeCarousel(element, optionsJson) {
             initialSlide: options.initialSlide || 0,
             loop: options.loop ?? true,
             loopAdditionalSlides: 2,
-            speed: options.speed || 300,
+            speed: 0,
             runCallbacksOnInit: false,
             slideToClickedSlide: true,
             watchSlidesProgress: true,
@@ -137,10 +125,6 @@ export async function initializeCarousel(element, optionsJson) {
                 slideShadows: options.slideShadows ?? true,
             },
             on: {
-                init: function () {
-                    this.params.speed = 300;
-                    this.params.runCallbacksOnInit = true;
-                },
                 setTranslate: function () {
                     this.slides.forEach(slide => {
                         const currentZ = parseInt(slide.style.zIndex);
@@ -149,6 +133,18 @@ export async function initializeCarousel(element, optionsJson) {
                         }
                         slide.style.pointerEvents = 'auto';
                     });
+                    if (this.params.speed === 0) {
+                        // Enable smooth animations for future interactions
+                        this.params.speed = 300;
+                        this.params.runCallbacksOnInit = true;
+
+                        // Reveal carousel with smooth fade-in (slides already transformed!)
+                        requestAnimationFrame(() => {
+                            this.el.style.opacity = '1';
+                            this.el.style.visibility = 'visible';
+                            this.el.style.transition = 'opacity 0.4s ease-in';
+                        });
+                    }
                 }
 
             }
