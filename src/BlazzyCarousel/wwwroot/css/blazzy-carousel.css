@@ -1,13 +1,36 @@
-﻿/* ═══════════════════════════════════════════════════════════
-   BlazzyCarousel - Global Styles (PREMIUM VERSION)
-   ═══════════════════════════════════════════════════════════ */
-
-:root {
+﻿:root {
     /* Base values */
     --bzc-border-radius: 12px;
     --bzc-padding: 24px;
+    --bzc-padding-tablet: 20px;
+    --bzc-padding-mobile: 15px;
     --bzc-min-height: 400px;
     --bzc-transition-speed: 0.3s;
+
+    /* Container dimensions */
+    --bzc-container-max-width: 800px;
+    --bzc-container-max-width-tablet: 750px;
+    --bzc-container-max-width-mobile: 350px;
+
+    /* Swiper heights */
+    --bzc-swiper-height: 400px;
+    --bzc-swiper-height-tablet: 300px;
+    --bzc-swiper-height-mobile: 250px;
+
+    /* ─── SLIDE DIMENSIONS */
+    --bzc-slide-width: 180px;
+    --bzc-slide-width-tablet: 150px;
+    --bzc-slide-width-mobile: 100px;
+
+    /* ─── IMAGE DIMENSIONS */
+    --bzc-image-max-width: 160px;
+    --bzc-image-max-width-tablet: 140px;
+    --bzc-image-max-width-mobile: 90px;
+
+    /* ─── EFFECTS  */
+    --bzc-hover-scale: 1.05;
+    --bzc-active-scale: 1.1;
+    --bzc-transition-duration: 0.3s;
 
     /* Glass Theme */
     --bzc-glass-bg: rgba(15, 15, 15, 0.6);
@@ -44,7 +67,7 @@
     text-align: center;
     padding: 40px;
     margin: 0 auto;
-    max-width: 800px;
+    max-width: var(--bzc-container-max-width);
 }
 
 .bzc-spinner {
@@ -63,7 +86,7 @@
 }
 
 /* ═══════════════════════════════════════════════════════════
-   CAROUSEL BOX - Base styles
+   CAROUSEL BOX
    ═══════════════════════════════════════════════════════════ */
 
 .bzc-carousel-box {
@@ -74,14 +97,13 @@
     padding: var(--bzc-padding);
     overflow: hidden;
     width: 100%;
-    max-width: 800px;
+    max-width: var(--bzc-container-max-width);
     margin: 0 auto;
     position: relative;
-    /* transition: all var(--bzc-transition-speed) ease; */
 }
 
 /* ═══════════════════════════════════════════════════════════
-   GLASS THEME 
+   GLASS THEME
    ═══════════════════════════════════════════════════════════ */
 
 .bzc-carousel-box.bzc-theme-glass {
@@ -107,7 +129,7 @@
 }
 
 /* ═══════════════════════════════════════════════════════════
-   DARK THEME 
+   DARK THEME
    ═══════════════════════════════════════════════════════════ */
 
 .bzc-carousel-box.bzc-theme-dark {
@@ -136,7 +158,7 @@
 }
 
 /* ═══════════════════════════════════════════════════════════
-   LIGHT THEME 
+   LIGHT THEME
    ═══════════════════════════════════════════════════════════ */
 
 .bzc-carousel-box.bzc-theme-light {
@@ -159,14 +181,13 @@
     border-radius: 10px;
 }
 
-/* Light theme - dark text for loading/empty states */
 .bzc-carousel-box.bzc-theme-light~.bzc-loading,
 .bzc-carousel-box.bzc-theme-light~.bzc-empty {
     color: rgba(0, 0, 0, 0.7);
 }
 
 /* ═══════════════════════════════════════════════════════════
-   MINIMAL THEME 
+   MINIMAL THEME
    ═══════════════════════════════════════════════════════════ */
 
 .bzc-carousel-box.bzc-theme-minimal {
@@ -177,21 +198,16 @@
 
 /* ═══════════════════════════════════════════════════════════
    SWIPER CONTAINER
-   ═══════════════════════════════════════════════════════════ */
+   ═══════════════════════════════════════════════════════════*/
 
 .swiper-container {
     width: 100%;
-    height: 400px;
+    height: var(--bzc-swiper-height);
     perspective: 1500px;
     overflow: visible !important;
     opacity: 0;
     visibility: hidden;
-}
 
-.swiper-container.swiper-initialized {
-    opacity: 1;
-    visibility: visible;
-    transition: opacity 0.4s ease-in;
 }
 
 .swiper-wrapper {
@@ -199,27 +215,27 @@
 }
 
 /* ═══════════════════════════════════════════════════════════
-   RESPONSIVE
+   RESPONSIVE 
    ═══════════════════════════════════════════════════════════ */
 
 @media (max-width: 991px) {
-    .bzc-carousel-box {
-        max-width: 750px;
-        padding: 20px;
-    }
+    :root {
+        --bzc-container-max-width: var(--bzc-container-max-width-tablet);
+        --bzc-padding: var(--bzc-padding-tablet);
+        --bzc-swiper-height: var(--bzc-swiper-height-tablet);
 
-    .swiper-container {
-        height: 300px;
+        --bzc-slide-width: var(--bzc-slide-width-tablet);
+        --bzc-image-max-width: var(--bzc-image-max-width-tablet);
     }
 }
 
 @media (max-width: 600px) {
-    .bzc-carousel-box {
-        max-width: 350px;
-        padding: 15px;
-    }
+    :root {
+        --bzc-container-max-width: var(--bzc-container-max-width-mobile);
+        --bzc-padding: var(--bzc-padding-mobile);
+        --bzc-swiper-height: var(--bzc-swiper-height-mobile);
 
-    .swiper-container {
-        height: 250px;
+        --bzc-slide-width: var(--bzc-slide-width-mobile);
+        --bzc-image-max-width: var(--bzc-image-max-width-mobile);
     }
 }

@@ -1,9 +1,6 @@
 ﻿let swiperLoaded = false;
 let swiperInstance = null;
 
-/* ═══════════════════════════════════════════════════════════
-   Utility: Dynamic script loader
-   ═══════════════════════════════════════════════════════════ */
 function loadScript(src) {
     return new Promise((resolve, reject) => {
         const existing = document.querySelector(`script[src="${src}"]`);
@@ -42,9 +39,6 @@ function loadScript(src) {
     });
 }
 
-/* ═══════════════════════════════════════════════════════════
-   Utility: Dynamic stylesheet loader
-   ═══════════════════════════════════════════════════════════ */
 function loadStylesheet(href) {
     return new Promise((resolve, reject) => {
         if (document.querySelector(`link[href="${href}"]`)) {
@@ -60,9 +54,6 @@ function loadStylesheet(href) {
     });
 }
 
-/* ═══════════════════════════════════════════════════════════
-   Ensure Swiper is available
-   ═══════════════════════════════════════════════════════════ */
 export async function ensureSwiperLoaded() {
     if (swiperLoaded) return;
 
@@ -79,9 +70,6 @@ export async function ensureSwiperLoaded() {
     swiperLoaded = true;
 }
 
-/* ═══════════════════════════════════════════════════════════
-   Initialize carousel
-   ═══════════════════════════════════════════════════════════ */
 export async function initializeCarousel(element, optionsJson) {
     try {
         const container = element.querySelector(".swiper-container");
@@ -89,16 +77,12 @@ export async function initializeCarousel(element, optionsJson) {
             return;
         }
 
-
         if (swiperInstance) {
             swiperInstance.destroy(true, true);
             swiperInstance = null;
         }
 
-
-
         const options = optionsJson ? JSON.parse(optionsJson) : {};
-
 
         swiperInstance = new Swiper(container, {
             effect: options.effect || "coverflow",
@@ -133,26 +117,26 @@ export async function initializeCarousel(element, optionsJson) {
                         }
                         slide.style.pointerEvents = 'auto';
                     });
+
                     if (this.params.speed === 0) {
-                        // Enable smooth animations for future interactions
                         this.params.speed = 300;
                         this.params.runCallbacksOnInit = true;
 
-                        // Reveal carousel with smooth fade-in (slides already transformed!)
-                        requestAnimationFrame(() => {
+
+                        setTimeout(() => {
                             this.el.style.opacity = '1';
                             this.el.style.visibility = 'visible';
                             this.el.style.transition = 'opacity 0.4s ease-in';
-                        });
+                        }, 100);
                     }
                 }
-
             }
         });
     } catch (err) {
         console.error("[BlazzyCarousel] Initialization error:", err);
     }
 }
+
 export function destroyCarousel() {
     if (swiperInstance) {
         swiperInstance.destroy(true, true);

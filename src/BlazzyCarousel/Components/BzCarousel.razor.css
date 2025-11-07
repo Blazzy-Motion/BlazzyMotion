@@ -1,13 +1,9 @@
-﻿/* ═══════════════════════════════════════════════════════════
-   BzCarousel - Scoped Styles (Swiper Overrides)
-   ═══════════════════════════════════════════════════════════ */
-
-/* ───────────────────────────────────────────────────────────
-   SWIPER SLIDES 
+﻿/* ───────────────────────────────────────────────────────────
+   SWIPER SLIDES
    ─────────────────────────────────────────────────────────── */
 
 ::deep .swiper-slide {
-    width: 180px !important;
+    width: var(--bzc-slide-width) !important;
     cursor: pointer;
     display: flex;
     justify-content: center;
@@ -28,23 +24,28 @@
    ─────────────────────────────────────────────────────────── */
 
 ::deep .swiper-slide img {
-    max-width: 160px;
+    max-width: var(--bzc-image-max-width) !important;
+    width: 100% !important;
+    height: auto !important;
     border-radius: 10px;
     object-fit: cover;
     object-position: center;
     display: block;
+    transition: transform var(--bzc-transition-duration) ease;
 }
 
 ::deep .swiper-slide img:hover {
-    transform: scale(1.05);
-    transition: transform 0.3s ease;
+    transform: scale(var(--bzc-hover-scale));
 }
 
 ::deep .swiper-slide-active img {
     box-shadow: 0px 0px 15px rgba(255, 255, 255, 0.9);
-    transform: scale(1.1);
+    transform: scale(var(--bzc-active-scale));
 }
 
+/* ───────────────────────────────────────────────────────────
+   OVERLAY
+   ─────────────────────────────────────────────────────────── */
 
 .bzc-overlay {
     position: absolute;
@@ -55,28 +56,4 @@
     background: linear-gradient(to bottom, rgba(0, 0, 0, 0) 0%, rgba(0, 0, 0, 0.3) 100%);
     pointer-events: none;
     border-radius: 10px;
-}
-
-/* ───────────────────────────────────────────────────────────
-   RESPONSIVE
-   ─────────────────────────────────────────────────────────── */
-
-@media (max-width: 991px) {
-    ::deep .swiper-slide {
-        width: 150px !important;
-    }
-
-    ::deep .swiper-slide img {
-        max-width: 140px;
-    }
-}
-
-@media (max-width: 600px) {
-    ::deep .swiper-slide {
-        width: 100px !important;
-    }
-
-    ::deep .swiper-slide img {
-        max-width: 90px;
-    }
 }
