@@ -204,10 +204,7 @@
     width: 100%;
     height: var(--bzc-swiper-height);
     perspective: 1500px;
-    overflow: visible !important;
-    opacity: 0;
-    visibility: hidden;
-
+    overflow: visible;
 }
 
 .swiper-wrapper {

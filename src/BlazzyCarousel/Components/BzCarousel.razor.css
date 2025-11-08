@@ -1,9 +1,26 @@
 ﻿/* ───────────────────────────────────────────────────────────
+   SWIPER CONTAINER - Initial Hidden State (Scoped)
+   ─────────────────────────────────────────────────────────── */
+
+::deep .swiper-container.bzc-hidden {
+    opacity: 0 !important;
+    visibility: hidden !important;
+    transition: opacity 0.4s ease-in, visibility 0.4s;
+}
+
+::deep .swiper-container.bzc-visible {
+    opacity: 1;
+    visibility: visible;
+    transition: opacity 0.4s ease-in,
+visibility 0.4s;
+}
+
+/* ───────────────────────────────────────────────────────────
    SWIPER SLIDES
    ─────────────────────────────────────────────────────────── */
 
 ::deep .swiper-slide {
-    width: var(--bzc-slide-width) !important;
+    width: var(--bzc-slide-width);
     cursor: pointer;
     display: flex;
     justify-content: center;
@@ -24,9 +41,9 @@
    ─────────────────────────────────────────────────────────── */
 
 ::deep .swiper-slide img {
-    max-width: var(--bzc-image-max-width) !important;
-    width: 100% !important;
-    height: auto !important;
+    max-width: var(--bzc-image-max-width);
+    width: 100% ;
+    height: auto;
     border-radius: 10px;
     object-fit: cover;
     object-position: center;
