@@ -24,15 +24,22 @@
 }
 
 .logo-icon {
-    font-size: 28px;
-    color: #fff;
+    width: 32px;
+    height: 32px;
+    object-fit: contain;
+    display: block;
 }
 
 .logo-text {
-    font-size: 22px;
     font-weight: 700;
-    color: white;
+    font-size: 20px;
     letter-spacing: -0.5px;
+    color: white;
+}
+
+.header-left:hover .logo-text {
+    opacity: 0.9;
+    transition: opacity 0.2s ease;
 }
 
 .header-right {
