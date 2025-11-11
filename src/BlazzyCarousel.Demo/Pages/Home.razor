@@ -61,10 +61,7 @@
 
         <!-- Carousel Demo -->
         <div class="carousel-wrapper">
-            <BzCarousel TItem="Movie"
-                        Items="movies"
-                        Theme="@currentTheme"
-                        OnItemSelected="@OnItemSelected" />
+            <BzCarousel TItem="Movie" Items="movies" Theme="@currentTheme" OnItemSelected="@OnItemSelected" />
         </div>
 
         <!-- Selected Item Display -->
@@ -107,11 +104,11 @@
                     <code>
                         public class Movie
                         {
-                            [BzImage]
-                            public string Poster { get; set; }
+                        [BzImage]
+                        public string Poster { get; set; }
 
-                            [BzTitle]
-                            public string Title { get; set; }
+                        [BzTitle]
+                        public string Title { get; set; }
                         }
                     </code>
                 </div>
@@ -125,6 +122,10 @@
                 </div>
                 <div class="code-block">
                     <code>&lt;BzCarousel Items="@@movies" /&gt;</code>
+                </div>
+                <div class="code-hint">
+                    <i class="bi bi-info-circle"></i>
+                    <span>Click carousel items to see selection in action!</span>
                 </div>
             </div>
 
@@ -158,7 +159,7 @@
         BzTheme.Glass => "background: linear-gradient(135deg, #0f0c29, #302b63, #24243e);",
         BzTheme.Dark => "background: linear-gradient(135deg, #1a1a1a, #0d0d0d);",
         BzTheme.Light => "background: linear-gradient(135deg, #ffffff, #f5f5f5, #e8e8e8);",
-        BzTheme.Minimal => "background: #2a2a2a;",
+        BzTheme.Minimal => "background: linear-gradient(135deg, #2a2a2a, #1f1f1f);",
         _ => "background: linear-gradient(135deg, #0f0c29, #302b63, #24243e);"
     };
 
@@ -167,7 +168,7 @@
         BzTheme.Glass => "background: linear-gradient(135deg, #0f0c29, #302b63, #24243e);",
         BzTheme.Dark => "background: linear-gradient(135deg, #1a1a1a, #0d0d0d);",
         BzTheme.Light => "background: linear-gradient(135deg, #f8f8f8, #e5e5e5);",
-        BzTheme.Minimal => "background: #e0e0e0;",
+        BzTheme.Minimal => "background: linear-gradient(135deg, #e0e0e0, #d0d0d0);",
         _ => "background: linear-gradient(135deg, #0f0c29, #302b63, #24243e);"
     };
 

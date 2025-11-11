@@ -1,47 +1,55 @@
-﻿/* GLOBAL RESET & BASE STYLES */
-@import url('https://fonts.googleapis.com/css2?family=Inter:wght@300;400;500;600;700&display=swap');
-* {
-    box-sizing: border-box;
-}
+﻿    /* GLOBAL RESET & BASE STYLES */
+    @import url('https://fonts.googleapis.com/css2?family=Inter:wght@300;400;500;600;700&display=swap');
 
-html, body {
-    margin: 0;
-    padding: 0;
-    font-family: 'Inter', -apple-system, BlinkMacSystemFont, 'Segoe UI', Roboto, sans-serif;
-    -webkit-font-smoothing: antialiased;
-    -moz-osx-font-smoothing: grayscale;
-}
+    * {
+        box-sizing: border-box;
+    }
 
-body {
-    background: #0f0c29;
-    transition: background-color 0.4s ease-in-out, color 0.4s ease-in-out;
-}
+    html,
+    body {
+        margin: 0;
+        padding: 0;
+        font-family: 'Inter', -apple-system, BlinkMacSystemFont, 'Segoe UI', Roboto, sans-serif;
+        -webkit-font-smoothing: antialiased;
+        -moz-osx-font-smoothing: grayscale;
+    }
 
-h1, h2, h3, h4, h5, h6, p {
-    margin: 0;
-}
+    body {
+        background: #0f0c29;
+        transition: background-color 0.4s ease-in-out, color 0.4s ease-in-out;
+    }
 
-a {
-    text-decoration: none;
-}
+    h1,
+    h2,
+    h3,
+    h4,
+    h5,
+    h6,
+    p {
+        margin: 0;
+    }
 
-button {
-    font-family: inherit;
-}
+    a {
+        text-decoration: none;
+    }
 
-/*  BLAZOR ERROR UI (Keep default, hide by default) */
+    button {
+        font-family: inherit;
+    }
 
-#blazor-error-ui {
-    background: lightyellow;
-    bottom: 0;
-    box-shadow: 0 -1px 2px rgba(0, 0, 0, 0.2);
-    display: none;
-    left: 0;
-    padding: 0.6rem 1.25rem 0.7rem 1.25rem;
-    position: fixed;
-    width: 100%;
-    z-index: 1000;
-}
+    /*  BLAZOR ERROR UI */
+
+    #blazor-error-ui {
+        background: lightyellow;
+        bottom: 0;
+        box-shadow: 0 -1px 2px rgba(0, 0, 0, 0.2);
+        display: none;
+        left: 0;
+        padding: 0.6rem 1.25rem 0.7rem 1.25rem;
+        position: fixed;
+        width: 100%;
+        z-index: 1000;
+    }
 
     #blazor-error-ui .dismiss {
         cursor: pointer;
@@ -50,15 +58,15 @@ button {
         top: 0.5rem;
     }
 
-/*  LOADING PROGRESS (Keep default Blazor styles) */
+    /*  LOADING PROGRESS */
 
-.loading-progress {
-    position: relative;
-    display: block;
-    width: 8rem;
-    height: 8rem;
-    margin: 20vh auto 1rem auto;
-}
+    .loading-progress {
+        position: relative;
+        display: block;
+        width: 8rem;
+        height: 8rem;
+        margin: 20vh auto 1rem auto;
+    }
 
     .loading-progress circle {
         fill: none;
@@ -68,18 +76,18 @@ button {
         transform: rotate(-90deg);
     }
 
-        .loading-progress circle:last-child {
-            stroke: #1b6ec2;
-            stroke-dasharray: calc(3.141 * var(--blazor-load-percentage, 0%) * 0.8), 500%;
-            transition: stroke-dasharray 0.05s ease-in-out;
-        }
+    .loading-progress circle:last-child {
+        stroke: #1b6ec2;
+        stroke-dasharray: calc(3.141 * var(--blazor-load-percentage, 0%) * 0.8), 500%;
+        transition: stroke-dasharray 0.05s ease-in-out;
+    }
 
-.loading-progress-text {
-    position: absolute;
-    text-align: center;
-    font-weight: bold;
-    inset: calc(20vh + 3.25rem) 0 auto 0.2rem;
-}
+    .loading-progress-text {
+        position: absolute;
+        text-align: center;
+        font-weight: bold;
+        inset: calc(20vh + 3.25rem) 0 auto 0.2rem;
+    }
 
     .loading-progress-text:after {
         content: var(--blazor-load-percentage-text, "Loading");
