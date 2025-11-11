@@ -41,19 +41,19 @@
             <span class="theme-label">Choose Theme:</span>
             <div class="theme-buttons">
                 <button class="theme-btn @(currentTheme == BzTheme.Glass ? "active" : "")"
-                        @onclick="() => ChangeTheme(BzTheme.Glass)">
+                    @onclick="() => ChangeTheme(BzTheme.Glass)">
                     Glass
                 </button>
                 <button class="theme-btn @(currentTheme == BzTheme.Dark ? "active" : "")"
-                        @onclick="() => ChangeTheme(BzTheme.Dark)">
+                    @onclick="() => ChangeTheme(BzTheme.Dark)">
                     Dark
                 </button>
                 <button class="theme-btn @(currentTheme == BzTheme.Light ? "active" : "")"
-                        @onclick="() => ChangeTheme(BzTheme.Light)">
+                    @onclick="() => ChangeTheme(BzTheme.Light)">
                     Light
                 </button>
                 <button class="theme-btn @(currentTheme == BzTheme.Minimal ? "active" : "")"
-                        @onclick="() => ChangeTheme(BzTheme.Minimal)">
+                    @onclick="() => ChangeTheme(BzTheme.Minimal)">
                     Minimal
                 </button>
             </div>
@@ -101,17 +101,18 @@
                     <h3>Define Your Model</h3>
                 </div>
                 <div class="code-block">
-                    <code>
+                    <pre><code>
                         public class Movie
                         {
-                        [BzImage]
-                        public string Poster { get; set; }
+                            [BzImage]
+                            public string Poster { get; set; }
 
-                        [BzTitle]
-                        public string Title { get; set; }
+                            [BzTitle]
+                            public string Title { get; set; }
                         }
-                    </code>
+                    </code></pre>
                 </div>
+
             </div>
 
             <!-- Step 3: Use -->
@@ -121,7 +122,7 @@
                     <h3>Use Component</h3>
                 </div>
                 <div class="code-block">
-                    <code>&lt;BzCarousel Items="@@movies" /&gt;</code>
+                    <code>&lt;BzCarousel Items="@@movies"/&gt;</code>
                 </div>
                 <div class="code-hint">
                     <i class="bi bi-info-circle"></i>
