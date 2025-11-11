@@ -21,9 +21,9 @@
     margin: 0 0 20px 0;
     letter-spacing: -2px;
     background: linear-gradient(135deg, #fff, #a8a8a8);
-    -webkit-background-clip: text;
+   -webkit-background-clip: text;
     -webkit-text-fill-color: transparent;
-    background-clip: text;
+    background-clip: text; 
 }
 
 .hero-section[style*="ffffff"] .hero-title,
@@ -129,6 +129,11 @@
     justify-content: center;
     padding: 80px 20px;
     transition: background 0.6s ease-in-out;
+}
+
+.hero-section,
+.demo-section {
+    transition: background 0.5s ease-in-out, color 0.4s ease-in-out;
 }
 
 .demo-content {
