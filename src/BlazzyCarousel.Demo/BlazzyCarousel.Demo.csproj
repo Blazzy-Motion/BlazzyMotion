@@ -6,12 +6,10 @@
     <ImplicitUsings>enable</ImplicitUsings>
   </PropertyGroup>
 
-
   <PropertyGroup>
     <EmitCompilerGeneratedFiles>true</EmitCompilerGeneratedFiles>
     <CompilerGeneratedFilesOutputPath>$(BaseIntermediateOutputPath)Generated</CompilerGeneratedFilesOutputPath>
   </PropertyGroup>
-
 
   <ItemGroup>
     <ProjectReference Include="..\BlazzyCarousel\BlazzyCarousel.csproj" />
@@ -29,10 +27,5 @@
     <GenerateTargetFrameworkAttribute>false</GenerateTargetFrameworkAttribute>
     <GenerateAssemblyInfo>false</GenerateAssemblyInfo>
   </PropertyGroup>
-
-  
-  <ItemGroup>
-    <Content Include="wwwroot\**\*.*" CopyToOutputDirectory="Always" />
-  </ItemGroup>
 
 </Project>
