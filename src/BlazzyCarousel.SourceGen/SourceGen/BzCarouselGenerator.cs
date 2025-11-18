@@ -606,7 +606,7 @@ namespace BlazzyCarousel.SourceGen
             sb.AppendLine("                builder.OpenElement(0, \"img\");");
             sb.AppendLine("                builder.AddAttribute(1, \"src\", imageUrl);");
 
-            // ADD ALT/TITLE ATTRIBUTES
+            // ADD ALT/TITLE ATTRIBUTES AND LAZY LOADING
             if (classInfo.TitleProperty != null)
             {
                 sb.AppendLine();
@@ -615,11 +615,13 @@ namespace BlazzyCarousel.SourceGen
                 sb.AppendLine("                {");
                 sb.AppendLine("                    builder.AddAttribute(2, \"alt\", title);");
                 sb.AppendLine("                    builder.AddAttribute(3, \"title\", title);");
+                sb.AppendLine("                    builder.AddAttribute(4, \"loading\", \"lazy\");");
                 sb.AppendLine("                }");
                 sb.AppendLine("                else");
                 sb.AppendLine("                {");
                 sb.AppendLine("                    // Fallback: Use class name as alt text");
                 sb.AppendLine($"                    builder.AddAttribute(2, \"alt\", \"{classInfo.ClassName}\");");
+                sb.AppendLine("                    builder.AddAttribute(3, \"loading\", \"lazy\");");
                 sb.AppendLine("                }");
             }
             else
@@ -627,6 +629,7 @@ namespace BlazzyCarousel.SourceGen
                 sb.AppendLine();
                 sb.AppendLine("                // Add generic alt text (no Title property found)");
                 sb.AppendLine($"                builder.AddAttribute(2, \"alt\", \"{classInfo.ClassName}\");");
+                sb.AppendLine("                builder.AddAttribute(3, \"loading\", \"lazy\");");
             }
 
             sb.AppendLine();
