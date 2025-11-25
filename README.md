@@ -46,7 +46,7 @@ A modern, high-performance 3D carousel component for Blazor with zero-configurat
 
 ## Live Demo
 
-Experience BlazzyCarousel in action: **[View Live Demo](https://nenad0707.github.io/BlazzyCarousel)**
+Experience BlazzyCarousel in action: **[View Live Demo](https://blazzy-motion.github.io/BlazzyMotion/)**
 
 ![BlazzyCarousel Demo](docs/images/demo.gif)
 
