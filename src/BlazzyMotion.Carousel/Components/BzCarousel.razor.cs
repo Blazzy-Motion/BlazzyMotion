@@ -1,12 +1,10 @@
-﻿using System;
-using System.Threading.Tasks;
+﻿using BlazzyMotion.Carousel.Models;
+using BlazzyMotion.Carousel.Services;
 using Microsoft.AspNetCore.Components;
-using Microsoft.AspNetCore.Components.Web;
 using Microsoft.JSInterop;
 using System.Collections.Concurrent;
 using System.Reflection;
-using BlazzyMotion.Carousel.Models;
-using BlazzyMotion.Carousel.Services;
+using System.Text.Json;
 
 namespace BlazzyMotion.Carousel.Components;
 
@@ -129,6 +127,11 @@ public partial class BzCarousel<TItem> : ComponentBase, IAsyncDisposable
     private ElementReference carouselRef;
     private BzCarouselJsInterop? jsInterop;
     private bool initialized = false;
+    private bool needsReinit = false;
+    private int? lastItemCount;
+    private string? lastOptionsSnapshot;
+    private int? lastKeyParamsHash;
+    private int _itemCount;
 
     /// <summary>
     /// Static cache for generated templates (shared across all instances).
@@ -146,7 +149,7 @@ public partial class BzCarousel<TItem> : ComponentBase, IAsyncDisposable
 
     #region Properties
 
-    private int ItemCount => Items?.Count() ?? 0;
+    private int ItemCount => _itemCount;
     private bool IsLoading => Items == null;
     private bool IsEmpty => Items != null && !Items.Any();
 
@@ -196,25 +199,35 @@ public partial class BzCarousel<TItem> : ComponentBase, IAsyncDisposable
     #region Lifecycle Methods
 
     /// <summary>
-    /// Invalidate cache when ItemTemplate changes.
+    /// Invalidate cache when ItemTemplate changes and detect parameter changes to reinitialize Swiper.
     /// </summary>
-    protected override void OnParametersSet()
+    protected override async Task OnParametersSetAsync()
     {
+        // Cache item count for performance
+        _itemCount = Items?.Count() ?? 0;
+
+        // Validate parameters
+        ValidateParameters();
+
         if (ItemTemplate != null)
         {
             _cachedEffectiveTemplate = null;
         }
 
-        base.OnParametersSet();
+        await DetectChangesAsync();
+
+        await base.OnParametersSetAsync();
     }
 
     protected override async Task OnAfterRenderAsync(bool firstRender)
     {
-        if (firstRender && !IsEmpty && !initialized)
+        _ = firstRender;
+
+        if (!IsEmpty && !initialized)
         {
             try
             {
-                jsInterop = new BzCarouselJsInterop(JS);
+                jsInterop ??= new BzCarouselJsInterop(JS);
 
                 var options = BuildOptions();
 
@@ -225,6 +238,21 @@ public partial class BzCarousel<TItem> : ComponentBase, IAsyncDisposable
             catch (Exception ex)
             {
                 Console.Error.WriteLine($"[BzCarousel] Error: {ex.Message}");
+            }
+        }
+        else if (initialized && needsReinit)
+        {
+            try
+            {
+                // Recreate Swiper when the data or critical options change.
+                await jsInterop!.DestroyAsync();
+                await jsInterop.InitializeAsync(carouselRef, BuildOptions());
+
+                needsReinit = false;
+            }
+            catch (Exception ex)
+            {
+                Console.Error.WriteLine($"[BzCarousel] Re-init error: {ex.Message}");
             }
         }
     }
@@ -372,6 +400,97 @@ public partial class BzCarousel<TItem> : ComponentBase, IAsyncDisposable
         if (jsInterop != null)
         {
             await jsInterop.DisposeAsync();
+        }
+    }
+
+    #endregion
+
+    #region Helpers
+
+    private async Task DetectChangesAsync()
+    {
+        var currentItemCount = ItemCount;
+        var optionsSnapshot = Options != null ? JsonSerializer.Serialize(Options) : null;
+        var keyParamsHash = HashCode.Combine(Loop, RotateDegree, Depth, MinItemsForLoop, MinItemsForCoverflow);
+
+        if (currentItemCount == 0)
+        {
+            // Tear down Swiper when no data is available so empty/loading templates can render cleanly.
+            await DestroyAsync();
+        }
+
+        if (lastItemCount.HasValue || lastOptionsSnapshot != null || lastKeyParamsHash.HasValue)
+        {
+            var itemCountChanged = lastItemCount != currentItemCount;
+            var optionsChanged = lastOptionsSnapshot != optionsSnapshot;
+            var keyParamsChanged = lastKeyParamsHash != keyParamsHash;
+
+            if ((itemCountChanged || optionsChanged || keyParamsChanged) && initialized)
+            {
+                // Flag re-init when data or critical options change after the first render.
+                needsReinit = true;
+            }
+        }
+
+        lastItemCount = currentItemCount;
+        lastOptionsSnapshot = optionsSnapshot;
+        lastKeyParamsHash = keyParamsHash;
+    }
+
+    private async Task DestroyAsync()
+    {
+        if (jsInterop != null)
+        {
+            await jsInterop.DestroyAsync();
+        }
+
+        initialized = false;
+        needsReinit = false;
+    }
+
+    /// <summary>
+    /// Validates component parameters to ensure they are within acceptable ranges.
+    /// </summary>
+    private void ValidateParameters()
+    {
+        if (RotateDegree < 0 || RotateDegree > 360)
+        {
+            throw new ArgumentOutOfRangeException(
+                nameof(RotateDegree),
+                RotateDegree,
+                "RotateDegree must be between 0 and 360 degrees.");
+        }
+
+        if (Depth < 0)
+        {
+            throw new ArgumentOutOfRangeException(
+                nameof(Depth),
+                Depth,
+                "Depth must be a non-negative value.");
+        }
+
+        if (MinItemsForLoop < 1)
+        {
+            throw new ArgumentOutOfRangeException(
+                nameof(MinItemsForLoop),
+                MinItemsForLoop,
+                "MinItemsForLoop must be at least 1.");
+        }
+
+        if (MinItemsForCoverflow < 1)
+        {
+            throw new ArgumentOutOfRangeException(
+                nameof(MinItemsForCoverflow),
+                MinItemsForCoverflow,
+                "MinItemsForCoverflow must be at least 1.");
+        }
+
+        if (InitialSlide < 0)
+        {
+            throw new ArgumentOutOfRangeException(
+                nameof(InitialSlide),
+                InitialSlide,
+                "InitialSlide must be a non-negative value.");
         }
     }
 
