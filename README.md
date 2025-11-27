@@ -1,10 +1,10 @@
-# BlazzyCarousel
+# BlazzyMotion.Carousel
 
 A modern, high-performance 3D carousel component for Blazor with zero-configuration support through Source Generators.
 
-[![NuGet](https://img.shields.io/nuget/v/BlazzyCarousel.svg)](https://www.nuget.org/packages/BlazzyCarousel/)
-[![NuGet Downloads](https://img.shields.io/nuget/dt/BlazzyCarousel.svg)](https://www.nuget.org/packages/BlazzyCarousel/)
-[![License: MIT](https://img.shields.io/badge/License-MIT-blue.svg)](LICENSE)
+[![NuGet](https://img.shields.io/nuget/v/BlazzyMotion.Carousel.svg)](https://www.nuget.org/packages/BlazzyMotion.Carousel/)
+[![NuGet Downloads](https://img.shields.io/nuget/dt/BlazzyMotion.Carousel.svg)](https://www.nuget.org/packages/BlazzyMotion.Carousel/)
+[![License: MIT](https://img.shields.io/badge/License-MIT-blue.svg)](LICENSE.txt)
 
 ## Table of Contents
 
@@ -46,9 +46,9 @@ A modern, high-performance 3D carousel component for Blazor with zero-configurat
 
 ## Live Demo
 
-Experience BlazzyCarousel in action: **[View Live Demo](https://blazzy-motion.github.io/BlazzyMotion/)**
+Experience BlazzyMotion.Carousel in action: **[View Live Demo](https://blazzy-motion.github.io/BlazzyMotion/)**
 
-![BlazzyCarousel Demo](docs/images/demo.gif)
+![BlazzyMotion.Carousel Demo](docs/images/demo.gif)
 
 ## Quick Start
 
@@ -57,13 +57,13 @@ Experience BlazzyCarousel in action: **[View Live Demo](https://blazzy-motion.gi
 Install the package via NuGet:
 
 ```bash
-dotnet add package BlazzyCarousel
+dotnet add package BlazzyMotion.Carousel
 ```
 
 Or via the Package Manager Console:
 
 ```powershell
-Install-Package BlazzyCarousel
+Install-Package BlazzyMotion.Carousel
 ```
 
 ### Basic Usage
@@ -73,7 +73,7 @@ Install-Package BlazzyCarousel
 Mark your data model with the `[BzImage]` attribute to specify which property contains the image URL:
 
 ```csharp
-using BlazzyCarousel.Attributes;
+using BlazzyMotion.Carousel.Attributes;
 
 public class Movie
 {
@@ -91,7 +91,7 @@ That's it! No need to define an `ItemTemplate`:
 
 ```razor
 @page "/movies"
-@using BlazzyCarousel.Components
+@using BlazzyMotion.Carousel.Components
 
 <BzCarousel Items="movies" />
 
@@ -111,7 +111,7 @@ The Source Generator automatically creates the template for you at compile-time.
 
 ### Source Generator Magic
 
-When you mark a property with `[BzImage]`, the BlazzyCarousel Source Generator automatically creates an extension method during compilation:
+When you mark a property with `[BzImage]`, the BlazzyMotion.Carousel Source Generator automatically creates an extension method during compilation:
 
 ```csharp
 // Auto-generated at compile-time
@@ -134,7 +134,7 @@ public static class MovieBzCarouselExtensions
 }
 ```
 
-BlazzyCarousel discovers this method via reflection and uses it automatically. This happens only once per type and is cached for optimal performance.
+BlazzyMotion.Carousel discovers this method via reflection and uses it automatically. This happens only once per type and is cached for optimal performance.
 
 ### Template Priority
 
@@ -226,7 +226,7 @@ public string Description { get; set; }
 
 ## Themes
 
-BlazzyCarousel includes four professionally designed themes:
+BlazzyMotion.Carousel includes four professionally designed themes:
 
 ### Glass Theme (Default)
 
@@ -348,7 +348,7 @@ Handle empty data gracefully:
 
 ### CSS Variables
 
-BlazzyCarousel uses CSS custom properties for easy customization:
+BlazzyMotion.Carousel uses CSS custom properties for easy customization:
 
 ```css
 :root {
@@ -385,7 +385,7 @@ Override these in your app's CSS:
 
 ## Responsive Design
 
-BlazzyCarousel automatically adapts to different screen sizes:
+BlazzyMotion.Carousel automatically adapts to different screen sizes:
 
 - **Desktop** (> 991px): Full-size slides with maximum effects
 - **Tablet** (600-991px): Medium-sized slides
@@ -403,7 +403,7 @@ You can override responsive behavior via CSS variables in media queries.
 
 ### Caching Strategy
 
-BlazzyCarousel implements a two-tier caching system:
+BlazzyMotion.Carousel implements a two-tier caching system:
 
 1. **Static Cache**: Generated templates are cached globally per type
 2. **Instance Cache**: Effective template is cached per component instance
@@ -412,7 +412,7 @@ This ensures minimal reflection overhead and optimal rendering performance.
 
 ## Browser Support
 
-BlazzyCarousel supports all modern browsers:
+BlazzyMotion.Carousel supports all modern browsers:
 
 - Chrome/Edge (90+)
 - Firefox (88+)
@@ -547,8 +547,8 @@ Contributions are welcome! Please feel free to submit issues or pull requests.
 ### Building from Source
 
 ```bash
-git clone https://github.com/nenad0707/BlazzyCarousel.git
-cd BlazzyCarousel
+git clone https://github.com/Blazzy-Motion/BlazzyMotion.git
+cd BlazzyMotion
 dotnet build
 ```
 
@@ -575,7 +575,7 @@ This project is licensed under the MIT License - see the [LICENSE](LICENSE.txt) 
 
 ## Support
 
-If you find BlazzyCarousel useful, please consider:
+If you find BlazzyMotion.Carousel useful, please consider:
 
 - Giving it a star on GitHub
 - Sharing it with other Blazor developers
