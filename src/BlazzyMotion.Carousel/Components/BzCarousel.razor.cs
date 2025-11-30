@@ -254,7 +254,7 @@ public partial class BzCarousel<TItem> : ComponentBase, IAsyncDisposable
             }
             catch (Exception ex)
             {
-                Console.Error.WriteLine($"[BzCarousel] Re-init error: {ex.Message}");
+                await Console.Error.WriteLineAsync($"[BzCarousel] Re-init error: {ex.Message}");
             }
             finally
             {
