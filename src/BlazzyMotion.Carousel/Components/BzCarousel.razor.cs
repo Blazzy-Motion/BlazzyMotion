@@ -238,7 +238,7 @@ public partial class BzCarousel<TItem> : ComponentBase, IAsyncDisposable
             }
             catch (Exception ex)
             {
-                await Console.Error.WriteLineAsync($"[BzCarousel] Error: {ex.Message}");
+                Console.Error.WriteLine($"[BzCarousel] Error: {ex.Message}");
             }
         }
         else if (initialized && needsReinit && !_isReinitializing)
@@ -254,7 +254,7 @@ public partial class BzCarousel<TItem> : ComponentBase, IAsyncDisposable
             }
             catch (Exception ex)
             {
-                await Console.Error.WriteLineAsync($"[BzCarousel] Re-init error: {ex.Message}");
+                Console.Error.WriteLine($"[BzCarousel] Re-init error: {ex.Message}");
             }
             finally
             {
