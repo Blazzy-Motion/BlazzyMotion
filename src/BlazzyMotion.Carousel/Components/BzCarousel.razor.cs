@@ -464,7 +464,7 @@ public partial class BzCarousel<TItem> : ComponentBase, IAsyncDisposable
             throw new ArgumentOutOfRangeException(
                 nameof(RotateDegree),
                 RotateDegree,
-                "RotateDegree must be between 0 and 360 degrees.");
+                "Error: RotateDegree must be between 0 and 360 degrees.");
         }
 
         if (Depth < 0)
