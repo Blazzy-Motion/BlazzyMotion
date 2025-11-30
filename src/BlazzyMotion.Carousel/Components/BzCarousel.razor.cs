@@ -5,6 +5,7 @@ using Microsoft.JSInterop;
 using System.Collections.Concurrent;
 using System.Reflection;
 using System.Text.Json;
+using System.Diagnostics.CodeAnalysis;
 
 namespace BlazzyMotion.Carousel.Components;
 
@@ -238,7 +239,7 @@ public partial class BzCarousel<TItem> : ComponentBase, IAsyncDisposable
             }
             catch (Exception ex)
             {
-                Console.Error.WriteLine($"[BzCarousel] Error: {ex.Message}");
+                LogError(ex.Message);
             }
         }
         else if (initialized && needsReinit && !_isReinitializing)
@@ -254,7 +255,7 @@ public partial class BzCarousel<TItem> : ComponentBase, IAsyncDisposable
             }
             catch (Exception ex)
             {
-                Console.Error.WriteLine($"[BzCarousel] Re-init error: {ex.Message}");
+                LogError(ex.Message);
             }
             finally
             {
@@ -511,4 +512,14 @@ public partial class BzCarousel<TItem> : ComponentBase, IAsyncDisposable
     }
 
     #endregion
+
+    /// <summary>
+    /// Logs error messages to standard error output.
+    /// </summary>
+    /// <param name="message"></param>
+    [ExcludeFromCodeCoverage]
+    private void LogError(string message)
+    {
+        Console.Error.WriteLine($"[BzCarousel] Error: {message}");
+    }
 }
