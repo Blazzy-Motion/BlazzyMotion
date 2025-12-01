@@ -1,0 +1,28 @@
+@page "/gallery"
+@rendermode InteractiveServer
+@using BlazzyMotion.Carousel.Models
+
+<PageTitle>Photo Gallery</PageTitle>
+
+<h1>Photo Gallery</h1>
+<p>Simple gallery using <code>[BzImage]</code> attribute and Glass theme.</p>
+
+<div style="height: 500px; margin-top: 2rem;">
+    <BzCarousel Items="photos" Theme="BzTheme.Glass" />
+</div>
+
+@code {
+    private List<Photo> photos = new();
+
+    protected override void OnInitialized()
+    {
+        for (int i = 1; i <= 10; i++)
+        {
+            photos.Add(new Photo 
+            { 
+                Url = $"images/gallery-{i}.jpg", 
+                Title = $"Photo {i}" 
+            });
+        }
+    }
+}

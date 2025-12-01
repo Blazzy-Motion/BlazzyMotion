@@ -1,0 +1,78 @@
+@page "/lab"
+@rendermode InteractiveServer
+@using BlazzyMotion.Carousel.Models
+
+<PageTitle>Carousel Lab</PageTitle>
+
+<div class="container-fluid">
+    <div class="row">
+        <div class="col-md-3">
+            <div class="card">
+                <div class="card-header">Controls</div>
+                <div class="card-body">
+                    <div class="mb-3">
+                        <label>Theme</label>
+                        <select class="form-select" @bind="theme">
+                            <option value="@BzTheme.Glass">Glass</option>
+                            <option value="@BzTheme.Dark">Dark</option>
+                            <option value="@BzTheme.Light">Light</option>
+                            <option value="@BzTheme.Minimal">Minimal</option>
+                        </select>
+                    </div>
+                    
+                    <div class="mb-3">
+                        <label>Rotate Degree (@rotate)</label>
+                        <input type="range" class="form-range" min="0" max="180" @bind="rotate" @bind:event="oninput" />
+                    </div>
+
+                    <div class="mb-3">
+                        <label>Depth (@depth)</label>
+                        <input type="range" class="form-range" min="0" max="500" @bind="depth" @bind:event="oninput" />
+                    </div>
+
+                    <div class="form-check mb-3">
+                        <input class="form-check-input" type="checkbox" @bind="showOverlay" id="overlayCheck">
+                        <label class="form-check-label" for="overlayCheck">Show Overlay</label>
+                    </div>
+
+                    <div class="form-check mb-3">
+                        <input class="form-check-input" type="checkbox" @bind="loop" id="loopCheck">
+                        <label class="form-check-label" for="loopCheck">Loop</label>
+                    </div>
+                </div>
+            </div>
+        </div>
+        
+        <div class="col-md-9">
+            <div style="height: 600px;">
+                <BzCarousel Items="photos" 
+                            Theme="@theme" 
+                            RotateDegree="@rotate" 
+                            Depth="@depth"
+                            ShowOverlay="@showOverlay"
+                            Loop="@loop" />
+            </div>
+        </div>
+    </div>
+</div>
+
+@code {
+    private List<Photo> photos = new();
+    private BzTheme theme = BzTheme.Glass;
+    private int rotate = 50;
+    private int depth = 150;
+    private bool showOverlay = true;
+    private bool loop = true;
+
+    protected override void OnInitialized()
+    {
+        for (int i = 1; i <= 10; i++)
+        {
+            photos.Add(new Photo 
+            { 
+                Url = $"images/gallery-{i}.jpg", 
+                Title = $"Lab Photo {i}" 
+            });
+        }
+    }
+}

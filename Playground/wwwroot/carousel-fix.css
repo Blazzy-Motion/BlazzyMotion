@@ -1,0 +1,11 @@
+/* Fix for carousel visibility */
+.swiper-container.bzc-hidden {
+    opacity: 0;
+    visibility: hidden;
+}
+
+.swiper-container.bzc-visible {
+    opacity: 1;
+    visibility: visible;
+    transition: opacity 0.3s ease-in-out, visibility 0.3s ease-in-out;
+}
