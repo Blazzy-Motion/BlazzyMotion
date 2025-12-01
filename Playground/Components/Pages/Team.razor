@@ -17,13 +17,13 @@
     protected override void OnInitialized()
     {
         var roles = new[] { "CEO", "CTO", "Lead Dev", "Designer", "Product Owner" };
-        
+
         for (int i = 0; i < 5; i++)
         {
-            members.Add(new TeamMember 
-            { 
-                Avatar = $"images/team-{i+1}.jpg", 
-                Name = $"Member {i+1}",
+            members.Add(new TeamMember
+            {
+                Avatar = $"images/team-{i + 1}.jpg",
+                Name = $"Member {i + 1}",
                 Role = roles[i]
             });
         }
