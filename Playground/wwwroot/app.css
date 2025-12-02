@@ -1,5 +1,17 @@
 html, body {
     font-family: 'Helvetica Neue', Helvetica, Arial, sans-serif;
+    background: linear-gradient(135deg, #2d3561 0%, #c05c7e 100%);
+    min-height: 100vh;
+    color: #ffffff;
+}
+
+.card {
+    color: #212529;
+}
+
+.card label {
+    color: #212529;
+    font-weight: 500;
 }
 
 a, .btn-link {

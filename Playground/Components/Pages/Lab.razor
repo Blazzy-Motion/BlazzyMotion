@@ -22,12 +22,12 @@
                     
                     <div class="mb-3">
                         <label>Rotate Degree (@rotate)</label>
-                        <input type="range" class="form-range" min="0" max="180" @bind="rotate"  />
+                        <input type="range" class="form-range" min="0" max="180" @bind="rotate" @bind:event="oninput" />
                     </div>
 
                     <div class="mb-3">
                         <label>Depth (@depth)</label>
-                        <input type="range" class="form-range" min="0" max="500" @bind="depth"  />
+                        <input type="range" class="form-range" min="0" max="500" @bind="depth" @bind:event="oninput" />
                     </div>
 
                     <div class="form-check mb-3">
@@ -38,6 +38,18 @@
                     <div class="form-check mb-3">
                         <input class="form-check-input" type="checkbox" @bind="loop" id="loopCheck">
                         <label class="form-check-label" for="loopCheck">Loop</label>
+                    </div>
+
+                    <hr />
+
+                    <div class="mb-3">
+                        <label>Add Image URL</label>
+                        <input type="text" class="form-control" @bind="newImageUrl" placeholder="Enter image URL" />
+                        <button class="btn btn-primary btn-sm mt-2" @onclick="AddImage">Add Image</button>
+                    </div>
+
+                    <div class="mb-3">
+                        <label>Total Images: @photos.Count</label>
                     </div>
                 </div>
             </div>
@@ -63,6 +75,7 @@
     private int depth = 150;
     private bool showOverlay = true;
     private bool loop = true;
+    private string newImageUrl = "";
 
     protected override void OnInitialized()
     {
@@ -73,6 +86,19 @@
                 Url = $"images/gallery-{i}.jpg", 
                 Title = $"Lab Photo {i}" 
             });
+        }
+    }
+
+    private void AddImage()
+    {
+        if (!string.IsNullOrWhiteSpace(newImageUrl))
+        {
+            photos.Add(new Photo
+            {
+                Url = newImageUrl,
+                Title = $"Custom Image {photos.Count + 1}"
+            });
+            newImageUrl = "";
         }
     }
 }
