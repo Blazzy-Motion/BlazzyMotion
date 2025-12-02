@@ -9,10 +9,7 @@
   </PropertyGroup>
 
   <ItemGroup>
-    <ProjectReference Include="..\src\BlazzyMotion.Carousel\BlazzyMotion.Carousel.csproj" />
-    <ProjectReference Include="..\src\BlazzyMotion.SourceGen\BlazzyMotion.SourceGen.csproj" 
-                      OutputItemType="Analyzer" 
-                      ReferenceOutputAssembly="false" />
+    <PackageReference Include="BlazzyMotion.Carousel" Version="1.0.0-preview2" />
   </ItemGroup>
 
 </Project>
