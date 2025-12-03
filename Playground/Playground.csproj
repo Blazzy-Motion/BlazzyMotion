@@ -9,7 +9,7 @@
   </PropertyGroup>
 
   <ItemGroup>
-    <PackageReference Include="BlazzyMotion.Carousel" Version="1.0.0-preview2" />
+    <PackageReference Include="BlazzyMotion.Carousel" Version="1.0.0" />
   </ItemGroup>
 
 </Project>
