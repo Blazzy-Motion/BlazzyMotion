@@ -8,7 +8,7 @@
     <!-- NuGet Package Metadata -->
     <PackageId>BlazzyMotion.Carousel</PackageId>
     <Title>BlazzyMotion 3D Carousel</Title>
-    <Version>1.0.0-preview1</Version>
+    <Version>1.0.0</Version>
     <Authors>Nenad Ristić</Authors>
     <Company>BlazzyMotion</Company>
     <Description>A beautiful 3D carousel component for Blazor with Glassmorphism design and Coverflow effect. Includes source generator for automatic template generation. Live demo: https://blazzy-motion.github.io/BlazzyMotion/</Description>
