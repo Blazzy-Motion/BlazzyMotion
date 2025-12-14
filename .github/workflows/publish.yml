@@ -36,6 +36,12 @@ jobs:
     permissions:
       contents: write
 
+    env:
+      CORE_VERSION: ${{ inputs.core_version }}
+      CAROUSEL_VERSION: ${{ inputs.carousel_version }}
+      PUBLISH_CORE: ${{ inputs.publish_core }}
+      PUBLISH_CAROUSEL: ${{ inputs.publish_carousel }}
+
     steps:
       - name: Checkout Repository
         uses: actions/checkout@v4
@@ -61,7 +67,7 @@ jobs:
             --configuration Release \
             --no-build \
             --output ./nupkgs \
-            /p:PackageVersion=${{ inputs.core_version }}
+            /p:PackageVersion="$CORE_VERSION"
 
       - name: Pack BlazzyMotion.Carousel
         if: ${{ inputs.publish_carousel }}
@@ -70,7 +76,7 @@ jobs:
             --configuration Release \
             --no-build \
             --output ./nupkgs \
-            /p:PackageVersion=${{ inputs.carousel_version }}
+            /p:PackageVersion="$CAROUSEL_VERSION"
 
       - name: List Packages
         run: ls -lah ./nupkgs
@@ -92,16 +98,16 @@ jobs:
           git config user.name "github-actions[bot]"
           git config user.email "github-actions[bot]@users.noreply.github.com"
 
-          if [ "${{ inputs.publish_core }}" = "true" ]; then
-            git tag -a "core-v${{ inputs.core_version }}" -m "Release BlazzyMotion.Core v${{ inputs.core_version }}"
-            git push origin "core-v${{ inputs.core_version }}"
-            echo "Created tag: core-v${{ inputs.core_version }}"
+          if [ "$PUBLISH_CORE" = "true" ]; then
+            git tag -a "core-v$CORE_VERSION" -m "Release BlazzyMotion.Core v$CORE_VERSION"
+            git push origin "core-v$CORE_VERSION"
+            echo "Created tag: core-v$CORE_VERSION"
           fi
 
-          if [ "${{ inputs.publish_carousel }}" = "true" ]; then
-            git tag -a "carousel-v${{ inputs.carousel_version }}" -m "Release BlazzyMotion.Carousel v${{ inputs.carousel_version }}"
-            git push origin "carousel-v${{ inputs.carousel_version }}"
-            echo "Created tag: carousel-v${{ inputs.carousel_version }}"
+          if [ "$PUBLISH_CAROUSEL" = "true" ]; then
+            git tag -a "carousel-v$CAROUSEL_VERSION" -m "Release BlazzyMotion.Carousel v$CAROUSEL_VERSION"
+            git push origin "carousel-v$CAROUSEL_VERSION"
+            echo "Created tag: carousel-v$CAROUSEL_VERSION"
           fi
 
       - name: Publication Summary
@@ -109,19 +115,19 @@ jobs:
           echo "### 🎉 NuGet Packages Published!" >> $GITHUB_STEP_SUMMARY
           echo "" >> $GITHUB_STEP_SUMMARY
 
-          if [ "${{ inputs.publish_core }}" = "true" ]; then
-            echo "####  BlazzyMotion.Core" >> $GITHUB_STEP_SUMMARY
-            echo "- **Version:** ${{ inputs.core_version }}" >> $GITHUB_STEP_SUMMARY
-            echo "- **NuGet:** https://www.nuget.org/packages/BlazzyMotion.Core/${{ inputs.core_version }}" >> $GITHUB_STEP_SUMMARY
-            echo "- **Tag:** \`core-v${{ inputs.core_version }}\`" >> $GITHUB_STEP_SUMMARY
+          if [ "$PUBLISH_CORE" = "true" ]; then
+            echo "#### BlazzyMotion.Core" >> $GITHUB_STEP_SUMMARY
+            echo "- **Version:** $CORE_VERSION" >> $GITHUB_STEP_SUMMARY
+            echo "- **NuGet:** https://www.nuget.org/packages/BlazzyMotion.Core/$CORE_VERSION" >> $GITHUB_STEP_SUMMARY
+            echo "- **Tag:** \`core-v$CORE_VERSION\`" >> $GITHUB_STEP_SUMMARY
             echo "" >> $GITHUB_STEP_SUMMARY
           fi
 
-          if [ "${{ inputs.publish_carousel }}" = "true" ]; then
+          if [ "$PUBLISH_CAROUSEL" = "true" ]; then
             echo "#### BlazzyMotion.Carousel" >> $GITHUB_STEP_SUMMARY
-            echo "- **Version:** ${{ inputs.carousel_version }}" >> $GITHUB_STEP_SUMMARY
-            echo "- **NuGet:** https://www.nuget.org/packages/BlazzyMotion.Carousel/${{ inputs.carousel_version }}" >> $GITHUB_STEP_SUMMARY
-            echo "- **Tag:** \`carousel-v${{ inputs.carousel_version }}\`" >> $GITHUB_STEP_SUMMARY
+            echo "- **Version:** $CAROUSEL_VERSION" >> $GITHUB_STEP_SUMMARY
+            echo "- **NuGet:** https://www.nuget.org/packages/BlazzyMotion.Carousel/$CAROUSEL_VERSION" >> $GITHUB_STEP_SUMMARY
+            echo "- **Tag:** \`carousel-v$CAROUSEL_VERSION\`" >> $GITHUB_STEP_SUMMARY
             echo "" >> $GITHUB_STEP_SUMMARY
           fi
 
@@ -129,18 +135,18 @@ jobs:
           echo "" >> $GITHUB_STEP_SUMMARY
           echo "### 📥 Installation" >> $GITHUB_STEP_SUMMARY
           echo '```bash' >> $GITHUB_STEP_SUMMARY
-          if [ "${{ inputs.publish_carousel }}" = "true" ]; then
+          if [ "$PUBLISH_CAROUSEL" = "true" ]; then
             echo "# Install Carousel (automatically installs Core)" >> $GITHUB_STEP_SUMMARY
-            echo "dotnet add package BlazzyMotion.Carousel --version ${{ inputs.carousel_version }}" >> $GITHUB_STEP_SUMMARY
-          elif [ "${{ inputs.publish_core }}" = "true" ]; then
+            echo "dotnet add package BlazzyMotion.Carousel --version $CAROUSEL_VERSION" >> $GITHUB_STEP_SUMMARY
+          elif [ "$PUBLISH_CORE" = "true" ]; then
             echo "# Install Core only" >> $GITHUB_STEP_SUMMARY
-            echo "dotnet add package BlazzyMotion.Core --version ${{ inputs.core_version }}" >> $GITHUB_STEP_SUMMARY
+            echo "dotnet add package BlazzyMotion.Core --version $CORE_VERSION" >> $GITHUB_STEP_SUMMARY
           fi
           echo '```' >> $GITHUB_STEP_SUMMARY
           echo "" >> $GITHUB_STEP_SUMMARY
 
           echo "### 📦 Package Contents" >> $GITHUB_STEP_SUMMARY
-          if [ "${{ inputs.publish_core }}" = "true" ]; then
+          if [ "$PUBLISH_CORE" = "true" ]; then
             echo "**BlazzyMotion.Core:**" >> $GITHUB_STEP_SUMMARY
             echo "- ✅ BzComponentBase (abstract base class)" >> $GITHUB_STEP_SUMMARY
             echo "- ✅ BzImage, BzTitle, BzDescription attributes" >> $GITHUB_STEP_SUMMARY
@@ -149,7 +155,7 @@ jobs:
             echo "- ✅ BzTemplateFactory" >> $GITHUB_STEP_SUMMARY
             echo "" >> $GITHUB_STEP_SUMMARY
           fi
-          if [ "${{ inputs.publish_carousel }}" = "true" ]; then
+          if [ "$PUBLISH_CAROUSEL" = "true" ]; then
             echo "**BlazzyMotion.Carousel:**" >> $GITHUB_STEP_SUMMARY
             echo "- ✅ BzCarousel<T> component" >> $GITHUB_STEP_SUMMARY
             echo "- ✅ Source Generator (bundled)" >> $GITHUB_STEP_SUMMARY
