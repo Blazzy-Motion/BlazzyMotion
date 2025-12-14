@@ -1,4 +1,4 @@
-﻿<Project Sdk="Microsoft.NET.Sdk.Razor">
+<Project Sdk="Microsoft.NET.Sdk.Razor">
 
   <PropertyGroup>
     <TargetFramework>net8.0</TargetFramework>
@@ -6,21 +6,22 @@
     <ImplicitUsings>enable</ImplicitUsings>
 
     <!-- NuGet Package Metadata -->
-    <PackageId>BlazzyMotion.Carousel</PackageId>
-    <Title>BlazzyMotion 3D Carousel</Title>
-    <Version>1.1.0</Version>
+    <PackageId>BlazzyMotion.Core</PackageId>
+    <Title>BlazzyMotion Core</Title>
+    <Version>1.0.0</Version>
     <Authors>Nenad Ristić</Authors>
     <Company>BlazzyMotion</Company>
-    <Description>A beautiful 3D carousel component for Blazor with Glassmorphism design and Coverflow effect. Features zero-config setup with [BzImage] attribute and automatic template generation via Source Generator. Live demo: https://blazzy-motion.github.io/BlazzyMotion/</Description>
+    <Description>Core infrastructure for BlazzyMotion UI components. Contains shared abstractions, services, and theming system used by all BlazzyMotion components (Carousel, Gallery, Masonry, etc.).</Description>
     <Copyright>Copyright © 2025 BlazzyMotion</Copyright>
     <PackageProjectUrl>https://blazzy-motion.github.io/BlazzyMotion/</PackageProjectUrl>
     <RepositoryUrl>https://github.com/Blazzy-Motion/BlazzyMotion</RepositoryUrl>
     <RepositoryType>git</RepositoryType>
-    <PackageTags>blazor;carousel;3d;swiper;coverflow;ui;component;glassmorphism;source-generator</PackageTags>
+    <PackageTags>blazor;ui;components;core;infrastructure;theming</PackageTags>
     <PackageLicenseExpression>MIT</PackageLicenseExpression>
     <PackageIcon>icon.png</PackageIcon>
     <PackageReadmeFile>README.md</PackageReadmeFile>
 
+    <!-- Source Generator Support -->
     <EmitCompilerGeneratedFiles>true</EmitCompilerGeneratedFiles>
     <CompilerGeneratedFilesOutputPath>$(BaseIntermediateOutputPath)Generated</CompilerGeneratedFilesOutputPath>
   </PropertyGroup>
@@ -29,24 +30,15 @@
     <SupportedPlatform Include="browser" />
   </ItemGroup>
 
+  <!-- Blazor Dependencies -->
   <ItemGroup>
     <PackageReference Include="Microsoft.AspNetCore.Components.Web" Version="8.0.0" />
   </ItemGroup>
 
-  <ItemGroup>
-    <ProjectReference Include="..\BlazzyMotion.Core\BlazzyMotion.Core.csproj" />
-    <ProjectReference Include="..\BlazzyMotion.SourceGen\BlazzyMotion.SourceGen.csproj" OutputItemType="Analyzer" ReferenceOutputAssembly="false" />
-  </ItemGroup>
-
-
-  <ItemGroup>
-    <None Include="..\BlazzyMotion.SourceGen\bin\$(Configuration)\netstandard2.0\BlazzyMotion.SourceGen.dll" Pack="true" PackagePath="analyzers/dotnet/cs" Visible="false" />
-  </ItemGroup>
-
-
+  <!-- Package Assets -->
   <ItemGroup>
     <None Include="icon.png" Pack="true" PackagePath="\" Condition="Exists('icon.png')" />
-    <None Include="..\..\README.md" Pack="true" PackagePath="\" />
+    <None Include="README.md" Pack="true" PackagePath="\" />
   </ItemGroup>
 
 </Project>

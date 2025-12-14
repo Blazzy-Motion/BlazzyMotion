@@ -13,30 +13,64 @@ A modern, high-performance 3D carousel component for Blazor with zero-configurat
 
 ## Table of Contents
 
-- [Features](#features)
-- [Live Demo](#live-demo)
-- [Quick Start](#quick-start)
-  - [Installation](#installation)
-  - [Basic Usage](#basic-usage)
-- [How It Works](#how-it-works)
-- [API Reference](#api-reference)
-  - [Component Parameters](#component-parameters)
-- [Attributes](#attributes)
-- [Themes](#themes)
-- [Advanced Usage](#advanced-usage)
-- [Customization](#customization)
-- [Responsive Design](#responsive-design)
-- [Performance](#performance)
-- [Browser Support](#browser-support)
-- [Examples](#examples)
-- [Validation and Diagnostics](#validation-and-diagnostics)
-- [Troubleshooting](#troubleshooting)
-- [Roadmap](#roadmap)
-- [Contributing](#contributing)
-- [License](#license)
-- [Author](#author)
-- [Acknowledgments](#acknowledgments)
-- [Support](#support)
+- [BlazzyMotion.Carousel](#blazzymotioncarousel)
+  - [Table of Contents](#table-of-contents)
+  - [Features](#features)
+  - [Live Demo](#live-demo)
+  - [Quick Start](#quick-start)
+    - [Installation](#installation)
+    - [Basic Usage](#basic-usage)
+      - [1. Define Your Model](#1-define-your-model)
+      - [2. Use the Component](#2-use-the-component)
+  - [How It Works](#how-it-works)
+    - [Source Generator Magic](#source-generator-magic)
+    - [Template Priority](#template-priority)
+  - [API Reference](#api-reference)
+    - [Component Parameters](#component-parameters)
+      - [Data Parameters](#data-parameters)
+      - [Appearance Parameters](#appearance-parameters)
+      - [Behavior Parameters](#behavior-parameters)
+      - [Effect Parameters](#effect-parameters)
+      - [Advanced Parameters](#advanced-parameters)
+  - [Attributes](#attributes)
+    - [BzImageAttribute](#bzimageattribute)
+    - [BzTitleAttribute](#bztitleattribute)
+    - [BzDescriptionAttribute](#bzdescriptionattribute)
+  - [Themes](#themes)
+    - [Glass Theme (Default)](#glass-theme-default)
+    - [Dark Theme](#dark-theme)
+    - [Light Theme](#light-theme)
+    - [Minimal Theme](#minimal-theme)
+  - [Advanced Usage](#advanced-usage)
+    - [Custom Item Template](#custom-item-template)
+    - [Handling Item Selection](#handling-item-selection)
+    - [Advanced Configuration](#advanced-configuration)
+    - [Custom Loading State](#custom-loading-state)
+    - [Custom Empty State](#custom-empty-state)
+  - [Customization](#customization)
+    - [CSS Variables](#css-variables)
+  - [Responsive Design](#responsive-design)
+  - [Performance](#performance)
+    - [Performance Characteristics](#performance-characteristics)
+  - [Browser Support](#browser-support)
+  - [Examples](#examples)
+    - [Movie Gallery](#movie-gallery)
+    - [Product Showcase](#product-showcase)
+    - [Team Members](#team-members)
+  - [Validation and Diagnostics](#validation-and-diagnostics)
+    - [BZC001: Non-Public Property](#bzc001-non-public-property)
+    - [BZC002: Non-String Property](#bzc002-non-string-property)
+  - [Troubleshooting](#troubleshooting)
+    - [Template Not Generated](#template-not-generated)
+    - [Carousel Not Visible](#carousel-not-visible)
+  - [Roadmap](#roadmap)
+  - [Contributing](#contributing)
+    - [Building from Source](#building-from-source)
+    - [Running Tests](#running-tests)
+  - [License](#license)
+  - [Author](#author)
+  - [Acknowledgments](#acknowledgments)
+  - [Support](#support)
 
 ## Features
 
@@ -116,30 +150,26 @@ The Source Generator automatically creates the template for you at compile-time.
 
 ### Source Generator Magic
 
-When you mark a property with `[BzImage]`, the BlazzyMotion.Carousel Source Generator automatically creates an extension method during compilation:
+When you mark a property with `[BzImage]`, the BlazzyMotion Source Generator automatically creates a registration function during compilation:
 
 ```csharp
 // Auto-generated at compile-time
-public static class MovieBzCarouselExtensions
+internal static class BzMappingRegistration_Movie
 {
-    public static RenderFragment<Movie> GetDefaultBzCarouselTemplate()
+    [ModuleInitializer]
+    internal static void Register()
     {
-        return item => builder =>
+        BzRegistry.Register<Movie>(item => new BzItem
         {
-            if (item is null || string.IsNullOrWhiteSpace(item.Poster))
-                return;
-
-            builder.OpenElement(0, "img");
-            builder.AddAttribute(1, "src", item.Poster);
-            builder.AddAttribute(2, "alt", item.Title);
-            builder.AddAttribute(3, "title", item.Title);
-            builder.CloseElement();
-        };
+            ImageUrl = item.Poster,
+            Title = item.Title,
+            OriginalItem = item
+        });
     }
 }
 ```
 
-BlazzyMotion.Carousel discovers this method via reflection and uses it automatically. This happens only once per type and is cached for optimal performance.
+The `[ModuleInitializer]` attribute ensures this registration runs automatically at application startup, before any of your code executes. BlazzyMotion.Carousel then uses the registered mapper from `BzRegistry` to render your items - with zero reflection and zero configuration.
 
 ### Template Priority
 
@@ -400,20 +430,15 @@ You can override responsive behavior via CSS variables in media queries.
 
 ## Performance
 
-### Source Generator Benefits
+### Performance Characteristics
 
-- **Zero Runtime Overhead**: Templates are generated at compile-time
+- **Zero Runtime Overhead**: Mapping functions are generated at compile-time
+- **Zero Reflection**: Uses `[ModuleInitializer]` for automatic registration at app startup
 - **Type Safety**: Full compile-time checking of property names and types
-- **IntelliSense Support**: Auto-completion for all generated code
+- **O(1) Lookup**: Dictionary-based mapper lookup per type
+- **Compiled Delegates**: Mapping functions are compiled, not interpreted
 
-### Caching Strategy
-
-BlazzyMotion.Carousel implements a two-tier caching system:
-
-1. **Static Cache**: Generated templates are cached globally per type
-2. **Instance Cache**: Effective template is cached per component instance
-
-This ensures minimal reflection overhead and optimal rendering performance.
+The entire system is designed for maximum performance with no runtime code generation or reflection.
 
 ## Browser Support
 

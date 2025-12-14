@@ -1,30 +1,48 @@
-﻿namespace BlazzyMotion.Carousel.Attributes;
+﻿// ═══════════════════════════════════════════════════════════════════════════════
+// BACKWARD COMPATIBILITY - LEGACY NAMESPACE
+// ═══════════════════════════════════════════════════════════════════════════════
+// This file provides backward compatibility for code that references
+// BlazzyMotion.Carousel.Attributes.BzImageAttribute
+// 
+// The recommended namespace is now BlazzyMotion.Core.Attributes
+// Both namespaces work identically with the Source Generator.
+// ═══════════════════════════════════════════════════════════════════════════════
 
-/// <summary>
-/// Marks a property as the image source for carousel items.
-/// The Source Generator will automatically create a default ItemTemplate using this property.
-/// </summary>
-/// <remarks>
-/// Apply this attribute to a string property that contains the image URL/path.
-/// Only one property per class should have this attribute.
-/// </remarks>
-/// <example>
-/// <code>
-/// public class Movie
-/// {
-///     [BzImage]
-///     public string Poster { get; set; } = "";
-///     
-///     public string Title { get; set; } = "";
-/// }
-/// 
-/// // Usage in component:
-/// &lt;BzCarousel Items="movies" /&gt;  // No ItemTemplate needed!
-/// </code>
-/// </example>
-[AttributeUsage(AttributeTargets.Property, AllowMultiple = false, Inherited = true)]
-public sealed class BzImageAttribute : Attribute
+namespace BlazzyMotion.Carousel.Attributes
 {
-    // Empty - marker attribute only
-    // Source Generator will scan for this at compile-time
+    /// <summary>
+    /// Marks a property as the image source for carousel items.
+    /// </summary>
+    /// <remarks>
+    /// <para>
+    /// <strong>Migration Notice:</strong> This attribute has been moved to
+    /// <c>BlazzyMotion.Core.Attributes.BzImageAttribute</c>.
+    /// This version is provided for backward compatibility and works identically.
+    /// </para>
+    /// <para>
+    /// <strong>Recommended:</strong> Update your using statements to:
+    /// <code>
+    /// using BlazzyMotion.Core.Attributes;
+    /// </code>
+    /// </para>
+    /// </remarks>
+    /// <example>
+    /// <code>
+    /// // Legacy usage (still works)
+    /// using BlazzyMotion.Carousel.Attributes;
+    /// 
+    /// public class Movie
+    /// {
+    ///     [BzImage]
+    ///     public string PosterUrl { get; set; } = "";
+    /// }
+    /// </code>
+    /// </example>
+    [AttributeUsage(AttributeTargets.Property, AllowMultiple = false, Inherited = true)]
+    public sealed class BzImageAttribute : Attribute
+    {
+        // MARKER ATTRIBUTE - BACKWARD COMPATIBLE
+        // The Source Generator recognizes both this attribute and the Core version.
+        // No functional difference between the two.
+    }
 }

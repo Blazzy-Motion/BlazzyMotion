@@ -1,18 +1,59 @@
 ﻿using BlazzyMotion.Carousel.Models;
 using BlazzyMotion.Carousel.Services;
+using BlazzyMotion.Core.Abstractions;
+using BlazzyMotion.Core.Models;
+using BlazzyMotion.Core.Services;
+using BlazzyMotion.Core.Templates;
 using Microsoft.AspNetCore.Components;
 using Microsoft.JSInterop;
-using System.Collections.Concurrent;
-using System.Reflection;
+using Microsoft.Win32;
 using System.Text.Json;
 
 namespace BlazzyMotion.Carousel.Components;
 
 /// <summary>
-/// A 3D carousel component with glass morphism design and coverflow effect.
+/// A 3D carousel component with glassmorphism design and coverflow effect.
 /// </summary>
 /// <typeparam name="TItem">The type of items to display in the carousel</typeparam>
-public partial class BzCarousel<TItem> : ComponentBase, IAsyncDisposable
+/// <remarks>
+/// <para>
+/// BzCarousel provides a beautiful 3D carousel experience with:
+/// <list type="bullet">
+/// <item>Coverflow 3D effect powered by Swiper.js</item>
+/// <item>Glassmorphism visual themes</item>
+/// <item>Zero-config setup with [BzImage] attribute</item>
+/// <item>Full customization via ItemTemplate</item>
+/// </list>
+/// </para>
+/// <para>
+/// <strong>Usage Options:</strong>
+/// <list type="number">
+/// <item>
+/// <strong>Zero Config (recommended):</strong> Decorate your model with [BzImage]
+/// <code>
+/// public class Movie
+/// {
+///     [BzImage] public string PosterUrl { get; set; }
+///     [BzTitle] public string Title { get; set; }
+/// }
+/// 
+/// &lt;BzCarousel Items="movies" /&gt;
+/// </code>
+/// </item>
+/// <item>
+/// <strong>Custom Template:</strong> Provide your own ItemTemplate
+/// <code>
+/// &lt;BzCarousel Items="movies"&gt;
+///     &lt;ItemTemplate&gt;
+///         &lt;img src="@context.PosterUrl" alt="@context.Title" /&gt;
+///     &lt;/ItemTemplate&gt;
+/// &lt;/BzCarousel&gt;
+/// </code>
+/// </item>
+/// </list>
+/// </para>
+/// </remarks>
+public partial class BzCarousel<TItem> : BzComponentBase where TItem : class
 {
     #region Parameters
 
@@ -24,7 +65,7 @@ public partial class BzCarousel<TItem> : ComponentBase, IAsyncDisposable
 
     /// <summary>
     /// Template for rendering each carousel item.
-    /// If not provided, will attempt to use auto-generated template from [BzImage] attribute.
+    /// If not provided, will use auto-generated template from [BzImage] attribute.
     /// </summary>
     [Parameter]
     public RenderFragment<TItem>? ItemTemplate { get; set; }
@@ -54,18 +95,6 @@ public partial class BzCarousel<TItem> : ComponentBase, IAsyncDisposable
     public bool ShowOverlay { get; set; } = true;
 
     /// <summary>
-    /// Visual theme for the carousel.
-    /// </summary>
-    [Parameter]
-    public BzTheme Theme { get; set; } = BzTheme.Glass;
-
-    /// <summary>
-    /// Additional CSS class for customization.
-    /// </summary>
-    [Parameter]
-    public string? CssClass { get; set; }
-
-    /// <summary>
     /// Index of the initially active slide.
     /// </summary>
     [Parameter]
@@ -79,7 +108,6 @@ public partial class BzCarousel<TItem> : ComponentBase, IAsyncDisposable
 
     /// <summary>
     /// Minimum number of items required to enable loop mode.
-    /// With coverflow effect, at least 4 slides are needed for loop.
     /// </summary>
     [Parameter]
     public int MinItemsForLoop { get; set; } = 4;
@@ -125,51 +153,37 @@ public partial class BzCarousel<TItem> : ComponentBase, IAsyncDisposable
 
     #region Private Fields
 
-    private ElementReference carouselRef;
-    private BzCarouselJsInterop? jsInterop;
-    private bool initialized = false;
-    private bool needsReinit = false;
-    private bool _isReinitializing = false;
-    private int? lastItemCount;
-    private string? lastOptionsSnapshot;
-    private int? lastKeyParamsHash;
-    private int _itemCount;
+    private ElementReference _carouselRef;
+    private BzCarouselJsInterop? _jsInterop;
+    private bool _initialized;
+    private bool _needsReinit;
+    private bool _isReinitializing;
+    private int? _lastItemCount;
+    private string? _lastOptionsSnapshot;
+    private int? _lastKeyParamsHash;
 
     /// <summary>
-    /// Static cache for generated templates (shared across all instances).
-    /// Thread-safe via ConcurrentDictionary.
-    /// Stores as Delegate to avoid generic type casting issues.
+    /// Cached mapped items from BzRegistry.
     /// </summary>
-    private static readonly ConcurrentDictionary<Type, Delegate?>
-        _generatedTemplateCache = new();
+    private IReadOnlyList<BzItem> _mappedItems = Array.Empty<BzItem>();
 
     /// <summary>
-    /// Instance-level cache for effective template.
+    /// Indicates whether we're using BzRegistry mapping or custom template.
     /// </summary>
-    private RenderFragment<TItem>? _cachedEffectiveTemplate;
+    private bool _useRegistryMapping;
 
     #endregion
 
-    #region Properties
+    #region Computed Properties
 
-    private int ItemCount => _itemCount;
+    private int ItemCount => Items?.Count() ?? 0;
     private bool IsLoading => Items == null;
     private bool IsEmpty => Items != null && !Items.Any();
-
     private bool ShouldEnableLoop => Loop && ItemCount >= MinItemsForLoop;
 
     private CarouselMode CurrentMode => AutoDetectMode
         ? (ItemCount < MinItemsForCoverflow ? CarouselMode.Simple : CarouselMode.Coverflow)
         : CarouselMode.Coverflow;
-
-    private string ThemeClass => Theme switch
-    {
-        BzTheme.Glass => "bzc-theme-glass",
-        BzTheme.Dark => "bzc-theme-dark",
-        BzTheme.Light => "bzc-theme-light",
-        BzTheme.Minimal => "bzc-theme-minimal",
-        _ => "bzc-theme-glass"
-    };
 
     private int SafeInitialSlide
     {
@@ -181,84 +195,75 @@ public partial class BzCarousel<TItem> : ComponentBase, IAsyncDisposable
         }
     }
 
-    /// <summary>
-    /// Gets the effective template with caching.
-    /// Priority: Manual > Generated > Fallback
-    /// </summary>
-    private RenderFragment<TItem> EffectiveTemplate
-    {
-        get
-        {
-            if (_cachedEffectiveTemplate != null)
-                return _cachedEffectiveTemplate;
-
-            _cachedEffectiveTemplate = ComputeEffectiveTemplate();
-            return _cachedEffectiveTemplate;
-        }
-    }
-
     #endregion
 
     #region Lifecycle Methods
 
     /// <summary>
-    /// Invalidate cache when ItemTemplate changes and detect parameter changes to reinitialize Swiper.
+    /// Called when parameters are set. Maps items and detects changes.
     /// </summary>
     protected override async Task OnParametersSetAsync()
     {
-        // Cache item count for performance
-        _itemCount = Items?.Count() ?? 0;
-
-        // Validate parameters
         ValidateParameters();
 
+        // ─────────────────────────────────────────────────────────────────
+        // DETERMINE RENDERING STRATEGY
+        // ─────────────────────────────────────────────────────────────────
         if (ItemTemplate != null)
         {
-            _cachedEffectiveTemplate = null;
+            // User provided custom template - use it directly
+            _useRegistryMapping = false;
+            _mappedItems = Array.Empty<BzItem>();
+        }
+        else if (Items != null && BzRegistry.HasMapper<TItem>())
+        {
+            // No custom template, but we have a registered mapper
+            _useRegistryMapping = true;
+            _mappedItems = BzRegistry.ToBzItems(Items);
+        }
+        else
+        {
+            // No template, no mapper - will use fallback
+            _useRegistryMapping = false;
+            _mappedItems = Array.Empty<BzItem>();
         }
 
         await DetectChangesAsync();
-
         await base.OnParametersSetAsync();
     }
 
+    /// <summary>
+    /// Called after render. Initializes or reinitializes Swiper.
+    /// </summary>
     protected override async Task OnAfterRenderAsync(bool firstRender)
     {
-        _ = firstRender;
+        if (IsDisposed) return;
 
-        if (!IsEmpty && !initialized)
+        if (!IsEmpty && !_initialized)
         {
             try
             {
-                jsInterop ??= new BzCarouselJsInterop(JS);
-
-                var options = BuildOptions();
-
-                await jsInterop.InitializeAsync(carouselRef, options);
-
-                initialized = true;
+                _jsInterop ??= new BzCarouselJsInterop(JS);
+                await _jsInterop.InitializeAsync(_carouselRef, BuildOptions());
+                _initialized = true;
             }
             catch (Exception ex)
             {
-                // Logging excluded from coverage - not testable without real JS runtime
-                Console.Error.WriteLine($"[BzCarousel] Error: {ex.Message}");
+                Console.Error.WriteLine($"[BzCarousel] Initialization error: {ex.Message}");
             }
         }
-        else if (initialized && needsReinit && !_isReinitializing)
+        else if (_initialized && _needsReinit && !_isReinitializing)
         {
             _isReinitializing = true;
             try
             {
-                // Recreate Swiper when the data or critical options change.
-                await jsInterop!.DestroyAsync();
-                await jsInterop.InitializeAsync(carouselRef, BuildOptions());
-
-                needsReinit = false;
+                await _jsInterop!.DestroyAsync();
+                await _jsInterop.InitializeAsync(_carouselRef, BuildOptions());
+                _needsReinit = false;
             }
             catch (Exception ex)
             {
-                // Logging excluded from coverage - not testable without real JS runtime
-                Console.Error.WriteLine($"[BzCarousel] Error: {ex.Message}");
+                Console.Error.WriteLine($"[BzCarousel] Reinitialization error: {ex.Message}");
             }
             finally
             {
@@ -269,12 +274,40 @@ public partial class BzCarousel<TItem> : ComponentBase, IAsyncDisposable
 
     #endregion
 
+    #region Rendering Methods
+
+    /// <summary>
+    /// Gets the RenderFragment for a specific item.
+    /// </summary>
+    /// <param name="item">The original item</param>
+    /// <param name="index">Index in the collection</param>
+    /// <returns>RenderFragment to render the item</returns>
+    private RenderFragment GetItemContent(TItem item, int index)
+    {
+        // Priority 1: User-provided template
+        if (ItemTemplate != null)
+        {
+            return ItemTemplate(item);
+        }
+
+        // Priority 2: BzRegistry mapped item
+        if (_useRegistryMapping && index < _mappedItems.Count)
+        {
+            var bzItem = _mappedItems[index];
+            return BzTemplateFactory.CreateImage()(bzItem);
+        }
+
+        // Priority 3: Fallback
+        return BzTemplateFactory.CreateGenericFallback<TItem>()(item);
+    }
+
+    #endregion
+
     #region Private Methods
 
     /// <summary>
-    /// Builds Swiper configuration options based on component parameters.
+    /// Builds Swiper configuration options.
     /// </summary>
-    /// <returns>Configured BzCarouselOptions instance</returns>
     private BzCarouselOptions BuildOptions()
     {
         if (Options != null) return Options;
@@ -312,10 +345,8 @@ public partial class BzCarousel<TItem> : ComponentBase, IAsyncDisposable
     }
 
     /// <summary>
-    /// Handles item click events and invokes the OnItemSelected callback.
-    /// Swiper's slideToClickedSlide handles navigation automatically.
+    /// Handles item click events.
     /// </summary>
-    /// <param name="item">The clicked item</param>
     private async Task HandleItemClick(TItem item)
     {
         if (OnItemSelected.HasDelegate)
@@ -325,99 +356,8 @@ public partial class BzCarousel<TItem> : ComponentBase, IAsyncDisposable
     }
 
     /// <summary>
-    /// Computes effective template using priority system.
-    /// Priority: Manual > Generated > Fallback
+    /// Detects changes that require Swiper reinitialization.
     /// </summary>
-    private RenderFragment<TItem> ComputeEffectiveTemplate()
-    {
-        // Priority 1: User-provided manual template
-        if (ItemTemplate != null)
-            return ItemTemplate;
-
-        // Priority 2: Source-generated template
-        var generated = TryGetGeneratedTemplateWithCache();
-        if (generated != null)
-            return generated;
-
-        // Priority 3: Fallback template
-        return FallbackTemplate;
-    }
-
-    /// <summary>
-    /// Attempts to get source-generated template with caching.
-    /// Uses reflection to find generated extension method.
-    /// </summary>
-    private RenderFragment<TItem>? TryGetGeneratedTemplateWithCache()
-    {
-        var itemType = typeof(TItem);
-
-        if (_generatedTemplateCache.TryGetValue(itemType, out var cached))
-        {
-            return cached as RenderFragment<TItem>;
-        }
-
-        RenderFragment<TItem>? result = null;
-
-        try
-        {
-            // Build extension class name: MovieBzCarouselExtensions
-            var extensionsTypeName = $"{itemType.Namespace}.{itemType.Name}BzCarouselExtensions";
-
-            // Try to find the type in same assembly as TItem
-            var extensionsType = itemType.Assembly.GetType(extensionsTypeName);
-
-            if (extensionsType != null)
-            {
-                // Find the static method
-                var method = extensionsType.GetMethod(
-                    "GetDefaultBzCarouselTemplate",
-                    BindingFlags.Public | BindingFlags.Static);
-
-                if (method != null)
-                {
-                    // Invoke static method to get RenderFragment
-                    result = method.Invoke(null, null) as RenderFragment<TItem>;
-                }
-            }
-        }
-        catch (Exception ex)
-        {
-            Console.WriteLine($"[BzCarousel] Source Generator template not found for {itemType.Name}: {ex.Message}");
-        }
-
-        // Store as Delegate to preserve the actual type
-        _generatedTemplateCache.TryAdd(itemType, result);
-
-        return result;
-    }
-
-    /// <summary>
-    /// Fallback template when no manual template and no [BzImage] attribute.
-    /// </summary>
-    private RenderFragment<TItem> FallbackTemplate => item => builder =>
-    {
-        builder.OpenElement(0, "div");
-        builder.AddAttribute(1, "class", "bzc-fallback-item");
-        builder.AddContent(2, item?.ToString() ?? "[null]");
-        builder.CloseElement();
-    };
-
-    #endregion
-
-    #region IAsyncDisposable
-
-    public async ValueTask DisposeAsync()
-    {
-        if (jsInterop != null)
-        {
-            await jsInterop.DisposeAsync();
-        }
-    }
-
-    #endregion
-
-    #region Helpers
-
     private async Task DetectChangesAsync()
     {
         var currentItemCount = ItemCount;
@@ -426,82 +366,72 @@ public partial class BzCarousel<TItem> : ComponentBase, IAsyncDisposable
 
         if (currentItemCount == 0)
         {
-            // Tear down Swiper when no data is available so empty/loading templates can render cleanly.
-            await DestroyAsync();
+            await DestroyInternalAsync();
         }
 
-        if (lastItemCount.HasValue || lastOptionsSnapshot != null || lastKeyParamsHash.HasValue)
+        if (_lastItemCount.HasValue || _lastOptionsSnapshot != null || _lastKeyParamsHash.HasValue)
         {
-            var itemCountChanged = lastItemCount != currentItemCount;
-            var optionsChanged = lastOptionsSnapshot != optionsSnapshot;
-            var keyParamsChanged = lastKeyParamsHash != keyParamsHash;
+            var itemCountChanged = _lastItemCount != currentItemCount;
+            var optionsChanged = _lastOptionsSnapshot != optionsSnapshot;
+            var keyParamsChanged = _lastKeyParamsHash != keyParamsHash;
 
-            if ((itemCountChanged || optionsChanged || keyParamsChanged) && initialized)
+            if ((itemCountChanged || optionsChanged || keyParamsChanged) && _initialized)
             {
-                // Flag re-init when data or critical options change after the first render.
-                needsReinit = true;
+                _needsReinit = true;
             }
         }
 
-        lastItemCount = currentItemCount;
-        lastOptionsSnapshot = optionsSnapshot;
-        lastKeyParamsHash = keyParamsHash;
-    }
-
-    private async Task DestroyAsync()
-    {
-        if (jsInterop != null)
-        {
-            await jsInterop.DestroyAsync();
-        }
-
-        initialized = false;
-        needsReinit = false;
+        _lastItemCount = currentItemCount;
+        _lastOptionsSnapshot = optionsSnapshot;
+        _lastKeyParamsHash = keyParamsHash;
     }
 
     /// <summary>
-    /// Validates component parameters to ensure they are within acceptable ranges.
+    /// Destroys the Swiper instance.
+    /// </summary>
+    private async Task DestroyInternalAsync()
+    {
+        if (_jsInterop != null)
+        {
+            await _jsInterop.DestroyAsync();
+        }
+        _initialized = false;
+        _needsReinit = false;
+    }
+
+    /// <summary>
+    /// Validates component parameters.
     /// </summary>
     private void ValidateParameters()
     {
         if (RotateDegree < 0 || RotateDegree > 360)
-        {
-            throw new ArgumentOutOfRangeException(
-                nameof(RotateDegree),
-                RotateDegree,
-                "Error: RotateDegree must be between 0 and 360 degrees.");
-        }
+            throw new ArgumentOutOfRangeException(nameof(RotateDegree), "Must be between 0 and 360.");
 
         if (Depth < 0)
-        {
-            throw new ArgumentOutOfRangeException(
-                nameof(Depth),
-                Depth,
-                "Depth must be a non-negative value.");
-        }
+            throw new ArgumentOutOfRangeException(nameof(Depth), "Must be non-negative.");
 
         if (MinItemsForLoop < 1)
-        {
-            throw new ArgumentOutOfRangeException(
-                nameof(MinItemsForLoop),
-                MinItemsForLoop,
-                "MinItemsForLoop must be at least 1.");
-        }
+            throw new ArgumentOutOfRangeException(nameof(MinItemsForLoop), "Must be at least 1.");
 
         if (MinItemsForCoverflow < 1)
-        {
-            throw new ArgumentOutOfRangeException(
-                nameof(MinItemsForCoverflow),
-                MinItemsForCoverflow,
-                "MinItemsForCoverflow must be at least 1.");
-        }
+            throw new ArgumentOutOfRangeException(nameof(MinItemsForCoverflow), "Must be at least 1.");
 
         if (InitialSlide < 0)
+            throw new ArgumentOutOfRangeException(nameof(InitialSlide), "Must be non-negative.");
+    }
+
+    #endregion
+
+    #region Disposal
+
+    /// <summary>
+    /// Disposes component resources.
+    /// </summary>
+    protected override async ValueTask DisposeAsyncCore()
+    {
+        if (_jsInterop != null)
         {
-            throw new ArgumentOutOfRangeException(
-                nameof(InitialSlide),
-                InitialSlide,
-                "InitialSlide must be a non-negative value.");
+            await _jsInterop.DisposeAsync();
         }
     }
 
@@ -516,5 +446,4 @@ public partial class BzCarousel<TItem> : ComponentBase, IAsyncDisposable
     }
 
     #endregion
-
 }

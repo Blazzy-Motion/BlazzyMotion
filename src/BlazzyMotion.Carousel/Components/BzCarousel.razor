@@ -1,6 +1,6 @@
 ﻿@namespace BlazzyMotion.Carousel.Components
-@typeparam TItem
-@implements IAsyncDisposable
+@typeparam TItem where TItem : class
+@inherits BlazzyMotion.Core.Abstractions.BzComponentBase
 
 @if (IsLoading)
 {
@@ -31,18 +31,23 @@ else if (IsEmpty)
 }
 else
 {
-    <div class="bzc-carousel-box @ThemeClass @CssClass" @ref="carouselRef" data-item-count="@ItemCount">
+    <div class="@GetCombinedClass("bzc-carousel-box")" @ref="_carouselRef" data-item-count="@ItemCount">
         <div class="swiper-container bzc-hidden">
             <div class="swiper-wrapper">
-                @foreach (var item in Items!)
-                {
-                    <div class="swiper-slide" @onclick="() => HandleItemClick(item)">
-                        @EffectiveTemplate(item)
-                        @if (ShowOverlay)
-                        {
-                            <div class="bzc-overlay"></div>
-                        }
-                    </div>
+                @{
+                    var index = 0;
+                    foreach (var item in Items!)
+                    {
+                        var currentIndex = index;
+                        <div class="swiper-slide" @onclick="() => HandleItemClick(item)">
+                            @GetItemContent(item, currentIndex)
+                            @if (ShowOverlay)
+                            {
+                                <div class="bzc-overlay"></div>
+                            }
+                        </div>
+                        index++;
+                    }
                 }
             </div>
         </div>

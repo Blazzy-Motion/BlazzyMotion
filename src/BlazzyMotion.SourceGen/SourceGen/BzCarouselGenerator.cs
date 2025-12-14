@@ -3,6 +3,7 @@ using Microsoft.CodeAnalysis.CSharp.Syntax;
 using Microsoft.CodeAnalysis.Text;
 using System.Collections.Generic;
 using System.Collections.Immutable;
+using System.Diagnostics.CodeAnalysis;
 using System.Linq;
 using System.Text;
 
@@ -50,6 +51,7 @@ namespace BlazzyMotion.SourceGen.SourceGen
     /// - [BzDescription] (optional): Reserved for future use
     /// </para>
     /// </remarks>
+    [ExcludeFromCodeCoverage]
     [Generator]
     public class BzCarouselGenerator : IIncrementalGenerator
     {
