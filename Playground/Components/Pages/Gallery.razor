@@ -1,5 +1,4 @@
 @page "/gallery"
-@rendermode InteractiveServer
 @using BlazzyMotion.Carousel.Models
 
 <PageTitle>Photo Gallery</PageTitle>
@@ -18,10 +17,10 @@
     {
         for (int i = 1; i <= 10; i++)
         {
-            photos.Add(new Photo 
-            { 
-                Url = $"images/gallery-{i}.jpg", 
-                Title = $"Photo {i}" 
+            photos.Add(new Photo
+            {
+                Url = $"images/gallery-{i}.jpg",
+                Title = $"Photo {i}"
             });
         }
     }

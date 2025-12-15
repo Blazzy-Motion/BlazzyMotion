@@ -1,5 +1,4 @@
 @page "/lab"
-@rendermode InteractiveServer
 @using BlazzyMotion.Carousel.Models
 
 <PageTitle>Carousel Lab</PageTitle>
@@ -19,7 +18,7 @@
                             <option value="@BzTheme.Minimal">Minimal</option>
                         </select>
                     </div>
-                    
+
                     <div class="mb-3">
                         <label>Rotate Degree (@rotate)</label>
                         <input type="range" class="form-range" min="0" max="180" @bind="rotate" />
@@ -54,15 +53,11 @@
                 </div>
             </div>
         </div>
-        
+
         <div class="col-md-9">
             <div style="height: 600px;">
-                <BzCarousel Items="photos" 
-                            Theme="@theme" 
-                            RotateDegree="@rotate" 
-                            Depth="@depth"
-                            ShowOverlay="@showOverlay"
-                            Loop="@loop" />
+                <BzCarousel Items="photos" Theme="@theme" RotateDegree="@rotate" Depth="@depth"
+                    ShowOverlay="@showOverlay" Loop="@loop" />
             </div>
         </div>
     </div>
@@ -81,10 +76,10 @@
     {
         for (int i = 1; i <= 10; i++)
         {
-            photos.Add(new Photo 
-            { 
-                Url = $"images/gallery-{i}.jpg", 
-                Title = $"Lab Photo {i}" 
+            photos.Add(new Photo
+            {
+                Url = $"images/gallery-{i}.jpg",
+                Title = $"Lab Photo {i}"
             });
         }
     }
