@@ -11,9 +11,61 @@ A modern, high-performance 3D carousel component for Blazor with zero-configurat
 [![Maintainability Rating](https://sonarcloud.io/api/project_badges/measure?project=Blazzy-Motion_BlazzyMotion&metric=sqale_rating)](https://sonarcloud.io/summary/new_code?id=Blazzy-Motion_BlazzyMotion)
 [![Security Rating](https://sonarcloud.io/api/project_badges/measure?project=Blazzy-Motion_BlazzyMotion&metric=security_rating)](https://sonarcloud.io/summary/new_code?id=Blazzy-Motion_BlazzyMotion)
 
+## ⚠️ Migration Guide
+
+### Upgrading from v1.0.x to v1.1.x
+
+Version 1.1.0 introduces a modular architecture with `BlazzyMotion.Core` as shared infrastructure. This brings one breaking change:
+
+#### BzTheme Namespace Change
+
+**Before (v1.0.x):**
+
+```csharp
+@using BlazzyMotion.Carousel.Models
+
+<BzCarousel Items="movies" Theme="BzTheme.Glass" />
+```
+
+**After (v1.1.x):**
+
+```csharp
+@using BlazzyMotion.Core.Models
+
+<BzCarousel Items="movies" Theme="BzTheme.Glass" />
+```
+
+#### Attributes (No Change Required)
+
+Both namespaces work for backward compatibility:
+
+```csharp
+// ✅ Old namespace (still works)
+using BlazzyMotion.Carousel.Attributes;
+
+// ✅ New namespace (recommended)
+using BlazzyMotion.Core.Attributes;
+```
+
+#### Quick Fix
+
+If you see compiler errors after upgrading, simply update your `_Imports.razor`:
+
+```diff
++ @using BlazzyMotion.Core.Models
+  @using BlazzyMotion.Carousel.Components
+```
+
+---
+
 ## Table of Contents
 
 - [BlazzyMotion.Carousel](#blazzymotioncarousel)
+  - [⚠️ Migration Guide](#️-migration-guide)
+    - [Upgrading from v1.0.x to v1.1.x](#upgrading-from-v10x-to-v11x)
+      - [BzTheme Namespace Change](#bztheme-namespace-change)
+      - [Attributes (No Change Required)](#attributes-no-change-required)
+      - [Quick Fix](#quick-fix)
   - [Table of Contents](#table-of-contents)
   - [Features](#features)
   - [Live Demo](#live-demo)
