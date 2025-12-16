@@ -6,29 +6,10 @@ namespace BlazzyMotion.Core.Abstractions;
 /// <summary>
 /// Base class for all BlazzyMotion components.
 /// </summary>
-/// <remarks>
-/// <para>
-/// Provides shared functionality for all visual components in the BlazzyMotion library:
-/// <list type="bullet">
-/// <item>Theme management and CSS class generation</item>
-/// <item>Common parameters (CssClass, Theme)</item>
-/// <item>Lifecycle management</item>
-/// <item>Shared utility methods</item>
-/// </list>
-/// </para>
-/// <para>
-/// <strong>Inheritance:</strong>
-/// <code>
-/// ComponentBase (Blazor)
-///     └── BzComponentBase (BlazzyMotion)
-///             ├── BzCarousel&lt;TItem&gt;
-///             ├── BzGallery&lt;TItem&gt;
-///             └── BzMasonry&lt;TItem&gt;
-/// </code>
-/// </para>
-/// </remarks>
 public abstract class BzComponentBase : ComponentBase, IAsyncDisposable
 {
+    #region Parameters
+
     /// <summary>
     /// Visual theme for the component.
     /// </summary>
@@ -55,6 +36,39 @@ public abstract class BzComponentBase : ComponentBase, IAsyncDisposable
     public string? CssClass { get; set; }
 
     /// <summary>
+    /// Captures any additional attributes that are not explicitly defined as parameters.
+    /// </summary>
+    /// <remarks>
+    /// <para>
+    /// This allows passing standard HTML attributes like id, data-*, aria-*, etc.
+    /// All unmatched attributes are captured and can be splatted onto the root element.
+    /// </para>
+    /// <para>
+    /// <strong>Common use cases:</strong>
+    /// <list type="bullet">
+    /// <item>Adding id for JavaScript targeting</item>
+    /// <item>Adding data-testid for testing</item>
+    /// <item>Adding aria-* for accessibility</item>
+    /// <item>Adding custom event handlers</item>
+    /// </list>
+    /// </para>
+    /// </remarks>
+    /// <example>
+    /// <code>
+    /// &lt;BzCarousel Items="movies" 
+    ///              id="main-carousel" 
+    ///              data-testid="movie-carousel"
+    ///              aria-label="Movie gallery" /&gt;
+    /// </code>
+    /// </example>
+    [Parameter(CaptureUnmatchedValues = true)]
+    public Dictionary<string, object>? AdditionalAttributes { get; set; }
+
+    #endregion
+
+    #region Protected Properties
+
+    /// <summary>
     /// Gets the CSS class for the current theme.
     /// </summary>
     /// <remarks>
@@ -69,6 +83,15 @@ public abstract class BzComponentBase : ComponentBase, IAsyncDisposable
         BzTheme.Minimal => "bzc-theme-minimal",
         _ => "bzc-theme-glass"
     };
+
+    /// <summary>
+    /// Tracks whether the component has been disposed.
+    /// </summary>
+    protected bool IsDisposed { get; private set; }
+
+    #endregion
+
+    #region Protected Methods
 
     /// <summary>
     /// Combines theme class with custom CssClass.
@@ -95,9 +118,22 @@ public abstract class BzComponentBase : ComponentBase, IAsyncDisposable
     }
 
     /// <summary>
-    /// Tracks whether the component has been disposed.
+    /// Safely invokes StateHasChanged on the UI thread.
     /// </summary>
-    protected bool IsDisposed { get; private set; }
+    /// <remarks>
+    /// Use when updating state from async callbacks or event handlers.
+    /// </remarks>
+    protected async Task InvokeStateHasChangedAsync()
+    {
+        if (IsDisposed)
+            return;
+
+        await InvokeAsync(StateHasChanged);
+    }
+
+    #endregion
+
+    #region Disposal
 
     /// <summary>
     /// Disposes component resources asynchronously.
@@ -133,17 +169,5 @@ public abstract class BzComponentBase : ComponentBase, IAsyncDisposable
         return ValueTask.CompletedTask;
     }
 
-    /// <summary>
-    /// Safely invokes StateHasChanged on the UI thread.
-    /// </summary>
-    /// <remarks>
-    /// Use when updating state from async callbacks or event handlers.
-    /// </remarks>
-    protected async Task InvokeStateHasChangedAsync()
-    {
-        if (IsDisposed)
-            return;
-
-        await InvokeAsync(StateHasChanged);
-    }
+    #endregion
 }

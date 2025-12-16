@@ -1,14 +1,19 @@
-namespace BlazzyMotion.Tests.Carousel.Models;
+namespace BlazzyMotion.Tests.Models;
 
+/// <summary>
+/// Tests for BzCarouselOptions configuration class.
+/// </summary>
 public class BzCarouselOptionsTests
 {
+    #region Default Values Tests
+
     [Fact]
     public void Constructor_ShouldSetDefaultValues()
     {
         // Arrange & Act
         var options = new BzCarouselOptions();
 
-        // Assert
+        // Assert - Effect Options
         options.Effect.Should().Be("coverflow");
         options.SlidesPerView.Should().Be("auto");
         options.InitialSlide.Should().Be(0);
@@ -17,12 +22,27 @@ public class BzCarouselOptionsTests
         options.SpaceBetween.Should().Be(0);
         options.Speed.Should().Be(300);
         options.GrabCursor.Should().BeTrue();
+
+        // Assert - Coverflow Options
         options.RotateDegree.Should().Be(50);
         options.Depth.Should().Be(150);
         options.Stretch.Should().Be(0);
         options.Modifier.Should().Be(1.5);
         options.SlideShadows.Should().BeTrue();
+
+        // Assert - Touch Options (NEW)
+        options.TouchRatio.Should().Be(0.8);
+        options.Threshold.Should().Be(10);
+        options.ShortSwipes.Should().BeFalse();
+        options.ResistanceRatio.Should().Be(0.85);
+        options.LongSwipesRatio.Should().Be(0.5);
+        options.AllowTouchMove.Should().BeTrue();
+        options.FollowFinger.Should().BeTrue();
     }
+
+    #endregion
+
+    #region Effect Options Tests
 
     [Fact]
     public void Effect_CanBeSet()
@@ -153,6 +173,10 @@ public class BzCarouselOptionsTests
         options.GrabCursor.Should().BeFalse();
     }
 
+    #endregion
+
+    #region Coverflow Options Tests
+
     [Theory]
     [InlineData(0)]
     [InlineData(25)]
@@ -236,12 +260,198 @@ public class BzCarouselOptionsTests
         options.SlideShadows.Should().BeFalse();
     }
 
+    #endregion
+
+    #region Touch Sensitivity Options Tests
+
+    [Theory]
+    [InlineData(0.5)]
+    [InlineData(0.8)]
+    [InlineData(1.0)]
+    [InlineData(1.5)]
+    public void TouchRatio_CanBeSet(double touchRatio)
+    {
+        // Arrange
+        var options = new BzCarouselOptions();
+
+        // Act
+        options.TouchRatio = touchRatio;
+
+        // Assert
+        options.TouchRatio.Should().Be(touchRatio);
+    }
+
+    [Fact]
+    public void TouchRatio_DefaultValue_ShouldBe0Point8()
+    {
+        // Arrange & Act
+        var options = new BzCarouselOptions();
+
+        // Assert
+        options.TouchRatio.Should().Be(0.8);
+    }
+
+    [Theory]
+    [InlineData(0)]
+    [InlineData(5)]
+    [InlineData(10)]
+    [InlineData(20)]
+    [InlineData(50)]
+    public void Threshold_CanBeSet(int threshold)
+    {
+        // Arrange
+        var options = new BzCarouselOptions();
+
+        // Act
+        options.Threshold = threshold;
+
+        // Assert
+        options.Threshold.Should().Be(threshold);
+    }
+
+    [Fact]
+    public void Threshold_DefaultValue_ShouldBe10()
+    {
+        // Arrange & Act
+        var options = new BzCarouselOptions();
+
+        // Assert
+        options.Threshold.Should().Be(10);
+    }
+
+    [Fact]
+    public void ShortSwipes_CanBeToggled()
+    {
+        // Arrange
+        var options = new BzCarouselOptions();
+
+        // Act
+        options.ShortSwipes = true;
+
+        // Assert
+        options.ShortSwipes.Should().BeTrue();
+    }
+
+    [Fact]
+    public void ShortSwipes_DefaultValue_ShouldBeFalse()
+    {
+        // Arrange & Act
+        var options = new BzCarouselOptions();
+
+        // Assert
+        options.ShortSwipes.Should().BeFalse();
+    }
+
+    [Theory]
+    [InlineData(0.0)]
+    [InlineData(0.5)]
+    [InlineData(0.85)]
+    [InlineData(1.0)]
+    public void ResistanceRatio_CanBeSet(double ratio)
+    {
+        // Arrange
+        var options = new BzCarouselOptions();
+
+        // Act
+        options.ResistanceRatio = ratio;
+
+        // Assert
+        options.ResistanceRatio.Should().Be(ratio);
+    }
+
+    [Fact]
+    public void ResistanceRatio_DefaultValue_ShouldBe0Point85()
+    {
+        // Arrange & Act
+        var options = new BzCarouselOptions();
+
+        // Assert
+        options.ResistanceRatio.Should().Be(0.85);
+    }
+
+    [Theory]
+    [InlineData(0.3)]
+    [InlineData(0.5)]
+    [InlineData(0.7)]
+    public void LongSwipesRatio_CanBeSet(double ratio)
+    {
+        // Arrange
+        var options = new BzCarouselOptions();
+
+        // Act
+        options.LongSwipesRatio = ratio;
+
+        // Assert
+        options.LongSwipesRatio.Should().Be(ratio);
+    }
+
+    [Fact]
+    public void LongSwipesRatio_DefaultValue_ShouldBe0Point5()
+    {
+        // Arrange & Act
+        var options = new BzCarouselOptions();
+
+        // Assert
+        options.LongSwipesRatio.Should().Be(0.5);
+    }
+
+    [Fact]
+    public void AllowTouchMove_CanBeToggled()
+    {
+        // Arrange
+        var options = new BzCarouselOptions();
+
+        // Act
+        options.AllowTouchMove = false;
+
+        // Assert
+        options.AllowTouchMove.Should().BeFalse();
+    }
+
+    [Fact]
+    public void AllowTouchMove_DefaultValue_ShouldBeTrue()
+    {
+        // Arrange & Act
+        var options = new BzCarouselOptions();
+
+        // Assert
+        options.AllowTouchMove.Should().BeTrue();
+    }
+
+    [Fact]
+    public void FollowFinger_CanBeToggled()
+    {
+        // Arrange
+        var options = new BzCarouselOptions();
+
+        // Act
+        options.FollowFinger = false;
+
+        // Assert
+        options.FollowFinger.Should().BeFalse();
+    }
+
+    [Fact]
+    public void FollowFinger_DefaultValue_ShouldBeTrue()
+    {
+        // Arrange & Act
+        var options = new BzCarouselOptions();
+
+        // Assert
+        options.FollowFinger.Should().BeTrue();
+    }
+
+    #endregion
+
+    #region All Properties Together Test
+
     [Fact]
     public void AllProperties_CanBeSetTogether()
     {
         // Arrange & Act
         var options = new BzCarouselOptions
         {
+            // Effect Options
             Effect = "slide",
             SlidesPerView = "3",
             InitialSlide = 2,
@@ -250,14 +460,25 @@ public class BzCarouselOptionsTests
             SpaceBetween = 30,
             Speed = 500,
             GrabCursor = false,
+
+            // Coverflow Options
             RotateDegree = 45,
             Depth = 200,
             Stretch = 10,
             Modifier = 2.0,
-            SlideShadows = false
+            SlideShadows = false,
+
+            // Touch Options
+            TouchRatio = 0.6,
+            Threshold = 15,
+            ShortSwipes = true,
+            ResistanceRatio = 0.7,
+            LongSwipesRatio = 0.4,
+            AllowTouchMove = false,
+            FollowFinger = false
         };
 
-        // Assert
+        // Assert - Effect Options
         options.Effect.Should().Be("slide");
         options.SlidesPerView.Should().Be("3");
         options.InitialSlide.Should().Be(2);
@@ -266,10 +487,39 @@ public class BzCarouselOptionsTests
         options.SpaceBetween.Should().Be(30);
         options.Speed.Should().Be(500);
         options.GrabCursor.Should().BeFalse();
+
+        // Assert - Coverflow Options
         options.RotateDegree.Should().Be(45);
         options.Depth.Should().Be(200);
         options.Stretch.Should().Be(10);
         options.Modifier.Should().Be(2.0);
         options.SlideShadows.Should().BeFalse();
+
+        // Assert - Touch Options
+        options.TouchRatio.Should().Be(0.6);
+        options.Threshold.Should().Be(15);
+        options.ShortSwipes.Should().BeTrue();
+        options.ResistanceRatio.Should().Be(0.7);
+        options.LongSwipesRatio.Should().Be(0.4);
+        options.AllowTouchMove.Should().BeFalse();
+        options.FollowFinger.Should().BeFalse();
     }
+
+    #endregion
+
+    #region Mobile-Optimized Preset Test
+
+    [Fact]
+    public void DefaultValues_ShouldBeMobileOptimized()
+    {
+        // Arrange & Act
+        var options = new BzCarouselOptions();
+
+        // Assert - These defaults should provide smooth mobile experience
+        options.TouchRatio.Should().BeLessThan(1.0, "TouchRatio should be reduced for mobile");
+        options.Threshold.Should().BeGreaterThan(5, "Threshold should be increased to prevent accidental swipes");
+        options.ShortSwipes.Should().BeFalse("ShortSwipes should be disabled to prevent glitches");
+    }
+
+    #endregion
 }

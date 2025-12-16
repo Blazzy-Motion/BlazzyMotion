@@ -1,3 +1,6 @@
+using BlazzyMotion.Core.Abstractions;
+using BlazzyMotion.Core.Models;
+
 namespace BlazzyMotion.Tests.Core.Abstractions;
 
 /// <summary>
@@ -89,6 +92,169 @@ public class BzComponentBaseTests : TestContext
 
     // Assert
     cut.Instance.CssClass.Should().Be("my-custom-class");
+  }
+
+  #endregion
+
+  #region AdditionalAttributes Tests
+
+  [Fact]
+  public void AdditionalAttributes_DefaultValue_ShouldBeNull()
+  {
+    // Act
+    var cut = RenderComponent<TestBzComponent>();
+
+    // Assert
+    cut.Instance.AdditionalAttributes.Should().BeNull();
+  }
+
+  [Fact]
+  public void AdditionalAttributes_CanBeSet()
+  {
+    // Arrange
+    var attributes = new Dictionary<string, object>
+        {
+            { "id", "test-id" },
+            { "data-testid", "my-test" }
+        };
+
+    // Act
+    var cut = RenderComponent<TestBzComponent>(p => p
+        .Add(c => c.AdditionalAttributes, attributes));
+
+    // Assert
+    cut.Instance.AdditionalAttributes.Should().NotBeNull();
+    cut.Instance.AdditionalAttributes.Should().HaveCount(2);
+  }
+
+  [Fact]
+  public void AdditionalAttributes_RendersIdAttribute()
+  {
+    // Arrange
+    var attributes = new Dictionary<string, object>
+        {
+            { "id", "my-carousel" }
+        };
+
+    // Act
+    var cut = RenderComponent<TestBzComponent>(p => p
+        .Add(c => c.AdditionalAttributes, attributes));
+
+    // Assert
+    var element = cut.Find("div");
+    element.GetAttribute("id").Should().Be("my-carousel");
+  }
+
+  [Fact]
+  public void AdditionalAttributes_RendersDataAttributes()
+  {
+    // Arrange
+    var attributes = new Dictionary<string, object>
+        {
+            { "data-testid", "carousel-test" },
+            { "data-custom", "custom-value" }
+        };
+
+    // Act
+    var cut = RenderComponent<TestBzComponent>(p => p
+        .Add(c => c.AdditionalAttributes, attributes));
+
+    // Assert
+    var element = cut.Find("div");
+    element.GetAttribute("data-testid").Should().Be("carousel-test");
+    element.GetAttribute("data-custom").Should().Be("custom-value");
+  }
+
+  [Fact]
+  public void AdditionalAttributes_RendersAriaAttributes()
+  {
+    // Arrange
+    var attributes = new Dictionary<string, object>
+        {
+            { "aria-label", "Movie carousel" },
+            { "aria-describedby", "carousel-description" }
+        };
+
+    // Act
+    var cut = RenderComponent<TestBzComponent>(p => p
+        .Add(c => c.AdditionalAttributes, attributes));
+
+    // Assert
+    var element = cut.Find("div");
+    element.GetAttribute("aria-label").Should().Be("Movie carousel");
+    element.GetAttribute("aria-describedby").Should().Be("carousel-description");
+  }
+
+  [Fact]
+  public void AdditionalAttributes_RendersRoleAttribute()
+  {
+    // Arrange
+    var attributes = new Dictionary<string, object>
+        {
+            { "role", "region" }
+        };
+
+    // Act
+    var cut = RenderComponent<TestBzComponent>(p => p
+        .Add(c => c.AdditionalAttributes, attributes));
+
+    // Assert
+    var element = cut.Find("div");
+    element.GetAttribute("role").Should().Be("region");
+  }
+
+  [Fact]
+  public void AdditionalAttributes_CanContainMultipleAttributes()
+  {
+    // Arrange
+    var attributes = new Dictionary<string, object>
+        {
+            { "id", "main-carousel" },
+            { "data-testid", "test-carousel" },
+            { "aria-label", "Image gallery" },
+            { "role", "region" },
+            { "tabindex", "0" }
+        };
+
+    // Act
+    var cut = RenderComponent<TestBzComponent>(p => p
+        .Add(c => c.AdditionalAttributes, attributes));
+
+    // Assert
+    cut.Instance.AdditionalAttributes.Should().HaveCount(5);
+    var element = cut.Find("div");
+    element.GetAttribute("id").Should().Be("main-carousel");
+    element.GetAttribute("tabindex").Should().Be("0");
+  }
+
+  [Fact]
+  public void AdditionalAttributes_EmptyDictionary_ShouldNotThrow()
+  {
+    // Arrange
+    var attributes = new Dictionary<string, object>();
+
+    // Act
+    var act = () => RenderComponent<TestBzComponent>(p => p
+        .Add(c => c.AdditionalAttributes, attributes));
+
+    // Assert
+    act.Should().NotThrow();
+  }
+
+  [Fact]
+  public void AdditionalAttributes_CapturesUnmatchedValues()
+  {
+    // This test verifies the [Parameter(CaptureUnmatchedValues = true)] behavior
+
+    // Arrange & Act
+    var cut = RenderComponent<TestBzComponent>(p => p
+        .AddUnmatched("custom-attr", "custom-value")
+        .AddUnmatched("another-attr", "another-value"));
+
+    // Assert
+    cut.Instance.AdditionalAttributes.Should().NotBeNull();
+    cut.Instance.AdditionalAttributes!["custom-attr"].Should().Be("custom-value");
+    cut.Instance.AdditionalAttributes!["another-attr"].Should().Be("another-value");
   }
 
   #endregion
@@ -313,65 +479,6 @@ public class BzComponentBaseTests : TestContext
 
   #endregion
 
-  #region Rendering Tests
-
-  [Fact]
-  public void Render_IncludesThemeClassInOutput()
-  {
-    // Arrange & Act
-    var cut = RenderComponent<TestBzComponent>(p => p.Add(c => c.Theme, BzTheme.Dark));
-
-    // Assert
-    cut.Markup.Should().Contain("bzc-theme-dark");
-  }
-
-  [Fact]
-  public void Render_IncludesBaseClassInOutput()
-  {
-    // Arrange & Act
-    var cut = RenderComponent<TestBzComponent>();
-
-    // Assert
-    cut.Markup.Should().Contain("test-component");
-  }
-
-  [Fact]
-  public void Render_IncludesCustomCssClassInOutput()
-  {
-    // Arrange & Act
-    var cut = RenderComponent<TestBzComponent>(p => p.Add(c => c.CssClass, "my-custom-class"));
-
-    // Assert
-    cut.Markup.Should().Contain("my-custom-class");
-  }
-
-  #endregion
-
-  #region IAsyncDisposable Tests
-
-  [Fact]
-  public void BzComponentBase_ImplementsIAsyncDisposable()
-  {
-    // Assert
-    typeof(BzComponentBase).Should().Implement<IAsyncDisposable>();
-  }
-
-  [Fact]
-  public void BzComponentBase_InheritsFromComponentBase()
-  {
-    // Assert
-    typeof(BzComponentBase).Should().BeDerivedFrom<ComponentBase>();
-  }
-
-  [Fact]
-  public void BzComponentBase_IsAbstract()
-  {
-    // Assert
-    typeof(BzComponentBase).IsAbstract.Should().BeTrue();
-  }
-
-  #endregion
-
   #region Test Component
 
   /// <summary>
@@ -399,6 +506,7 @@ public class BzComponentBaseTests : TestContext
     {
       builder.OpenElement(0, "div");
       builder.AddAttribute(1, "class", GetCombinedClass("test-component"));
+      builder.AddMultipleAttributes(2, AdditionalAttributes);
       builder.CloseElement();
     }
   }

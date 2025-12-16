@@ -4,7 +4,7 @@
 
 @if (IsLoading)
 {
-    <div class="bzc-loading">
+    <div class="bzc-loading" @attributes="AdditionalAttributes">
         @if (LoadingTemplate != null)
         {
             @LoadingTemplate
@@ -18,7 +18,7 @@
 }
 else if (IsEmpty)
 {
-    <div class="bzc-empty">
+    <div class="bzc-empty" @attributes="AdditionalAttributes">
         @if (EmptyTemplate != null)
         {
             @EmptyTemplate
@@ -31,7 +31,8 @@ else if (IsEmpty)
 }
 else
 {
-    <div class="@GetCombinedClass("bzc-carousel-box")" @ref="_carouselRef" data-item-count="@ItemCount">
+    <div class="@GetCombinedClass("bzc-carousel-box")" @ref="_carouselRef" data-item-count="@ItemCount"
+        @attributes="AdditionalAttributes">
         <div class="swiper-container bzc-hidden">
             <div class="swiper-wrapper">
                 @{

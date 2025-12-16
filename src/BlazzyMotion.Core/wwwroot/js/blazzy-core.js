@@ -1,7 +1,9 @@
+
 let swiperLoaded = false;
 const swiperInstances = new Map();
 
-// SCRIPT/STYLESHEET LOADERS
+// script/stylesheet loaders
+
 
 function loadScript(src) {
     return new Promise((resolve, reject) => {
@@ -65,12 +67,11 @@ function loadStylesheet(href) {
 }
 
 
-// SWIPER LOADING
+// swper loading
 
 export async function ensureSwiperLoaded() {
     if (swiperLoaded) return;
 
-   
     await Promise.all([
         loadStylesheet("_content/BlazzyMotion.Core/css/swiper-bundle.min.css"),
         loadStylesheet("_content/BlazzyMotion.Core/css/blazzy-core.css"),
@@ -86,14 +87,30 @@ export async function ensureSwiperLoaded() {
 }
 
 
+const DEFAULT_TOUCH_SETTINGS = {
+    touchRatio: 0.8,
+    threshold: 10,
+    shortSwipes: false,
+    resistanceRatio: 0.85,
+    longSwipesRatio: 0.5,
+    allowTouchMove: true,
+    followFinger: true
+};
+
+
+// CAROUSEL INITIALIZATION
+
+
 export async function initializeCarousel(element, optionsJson) {
     try {
         const container = element.querySelector(".swiper-container");
 
         if (!container) {
+            console.warn("[BlazzyMotion] No .swiper-container found in element");
             return;
         }
 
+        // Destroy existing instance if present
         if (swiperInstances.has(element)) {
             const instance = swiperInstances.get(element);
             instance.destroy(true, true);
@@ -104,6 +121,7 @@ export async function initializeCarousel(element, optionsJson) {
         const wrapper = container.querySelector('.swiper-wrapper');
         const originalSlides = wrapper.querySelectorAll('.swiper-slide');
         const slideCount = originalSlides.length;
+
 
         const minSlidesForLoop = 4;
         const minSlidesForAutoLoop = 7;
@@ -118,7 +136,17 @@ export async function initializeCarousel(element, optionsJson) {
             }
         }
 
+
+        const touchRatio = options.touchRatio ?? DEFAULT_TOUCH_SETTINGS.touchRatio;
+        const threshold = options.threshold ?? DEFAULT_TOUCH_SETTINGS.threshold;
+        const shortSwipes = options.shortSwipes ?? DEFAULT_TOUCH_SETTINGS.shortSwipes;
+        const resistanceRatio = options.resistanceRatio ?? DEFAULT_TOUCH_SETTINGS.resistanceRatio;
+        const longSwipesRatio = options.longSwipesRatio ?? DEFAULT_TOUCH_SETTINGS.longSwipesRatio;
+        const allowTouchMove = options.allowTouchMove ?? DEFAULT_TOUCH_SETTINGS.allowTouchMove;
+        const followFinger = options.followFinger ?? DEFAULT_TOUCH_SETTINGS.followFinger;
+
         const swiperConfig = {
+            // Effect settings
             effect: options.effect || "coverflow",
             grabCursor: options.grabCursor ?? true,
             centeredSlides: options.centeredSlides ?? true,
@@ -131,8 +159,19 @@ export async function initializeCarousel(element, optionsJson) {
             watchSlidesProgress: true,
             observer: true,
             observeParents: true,
-            touchRatio: 1,
+            touchRatio: touchRatio,
+            threshold: threshold,
+            shortSwipes: shortSwipes,
+            resistanceRatio: resistanceRatio,
+            longSwipesRatio: longSwipesRatio,
+            allowTouchMove: allowTouchMove,
+            followFinger: followFinger,
             touchEventsTarget: 'container',
+            passiveListeners: true,
+            touchStartPreventDefault: false,
+            touchMoveStopPropagation: false,
+
+
             coverflowEffect: {
                 rotate: options.rotateDegree || 50,
                 stretch: options.stretch || 0,
@@ -140,8 +179,10 @@ export async function initializeCarousel(element, optionsJson) {
                 modifier: options.modifier || 1.5,
                 slideShadows: options.slideShadows ?? true,
             },
+
             on: {
                 setTranslate: function () {
+                    // Fix z-index issues
                     this.slides.forEach(slide => {
                         const currentZ = parseInt(slide.style.zIndex);
 
@@ -152,10 +193,12 @@ export async function initializeCarousel(element, optionsJson) {
                         slide.style.pointerEvents = 'auto';
                     });
 
+                    // Enable speed after initial render
                     if (this.params.speed === 0) {
-                        this.params.speed = 300;
+                        this.params.speed = options.speed || 300;
                         this.params.runCallbacksOnInit = true;
 
+                        // Show carousel after initialization
                         setTimeout(() => {
                             if (this.el) {
                                 this.el.classList.remove('bzc-hidden');
@@ -163,6 +206,17 @@ export async function initializeCarousel(element, optionsJson) {
                             }
                         }, 100);
                     }
+                },
+
+                // Prevent multiple rapid transitions
+                touchStart: function () {
+                    // Add flag to track touch state
+                    this.touchStartTime = Date.now();
+                },
+
+                touchEnd: function () {
+                    // Calculate touch duration for analytics/debugging
+                    const touchDuration = Date.now() - (this.touchStartTime || 0);
                 }
             }
         };
@@ -174,12 +228,14 @@ export async function initializeCarousel(element, optionsJson) {
 
         const swiperInstance = new Swiper(container, swiperConfig);
 
+        // Store instance for later reference
         swiperInstances.set(element, swiperInstance);
-    }
-    catch (err) {
+
+    } catch (err) {
         console.error("[BlazzyMotion] Initialization error:", err);
     }
 }
+
 
 export function destroyCarousel(element) {
     if (swiperInstances.has(element)) {
@@ -189,9 +245,28 @@ export function destroyCarousel(element) {
     }
 }
 
+
 export function getActiveIndex(element) {
     if (swiperInstances.has(element)) {
         return swiperInstances.get(element).activeIndex;
     }
     return 0;
+}
+
+export function slideTo(element, index, speed = 300) {
+    if (swiperInstances.has(element)) {
+        swiperInstances.get(element).slideTo(index, speed);
+    }
+}
+
+export function slideNext(element, speed = 300) {
+    if (swiperInstances.has(element)) {
+        swiperInstances.get(element).slideNext(speed);
+    }
+}
+
+export function slidePrev(element, speed = 300) {
+    if (swiperInstances.has(element)) {
+        swiperInstances.get(element).slidePrev(speed);
+    }
 }
