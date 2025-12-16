@@ -93,42 +93,55 @@ public class BzCarouselOptions
 
     #endregion
 
-    #region Touch/Swipe Sensitivity Options
+    // ═══════════════════════════════════════════════════════════════════
+    // TOUCH / MOBILE OPTIONS
+    // ═══════════════════════════════════════════════════════════════════
+    #region Touch/Mobile Options
 
     /// <summary>
-    /// Touch sensitivity ratio. Lower values mean less sensitive.
+    /// Touch sensitivity multiplier (0.1 - 2.0).
     /// </summary>
+    /// <remarks>
+    /// Lower values = less sensitive, reduces accidental swipes.
+    /// Default: 0.8 (slightly reduced for smoother mobile experience)
+    /// </remarks>
     public double TouchRatio { get; set; } = 0.8;
 
     /// <summary>
-    /// Minimum distance (in pixels) required to trigger a swipe.
+    /// Minimum pixels to trigger swipe.
     /// </summary>
+    /// <remarks>
+    /// Higher values require more deliberate swipe gesture.
+    /// Default: 10 (prevents accidental micro-swipes)
+    /// </remarks>
     public int Threshold { get; set; } = 10;
 
     /// <summary>
-    /// Enable short swipes. Set to false to reduce glitchiness on mobile.
+    /// Allow quick flick gestures.
     /// </summary>
+    /// <remarks>
+    /// When false, prevents glitchy behavior from rapid successive swipes.
+    /// Default: false
+    /// </remarks>
     public bool ShortSwipes { get; set; } = false;
 
     /// <summary>
-    /// Resistance ratio for edge bouncing (0-1).
+    /// Edge resistance ratio (0 - 1).
     /// </summary>
+    /// <remarks>
+    /// Controls bounce resistance at carousel edges.
+    /// Default: 0.85
+    /// </remarks>
     public double ResistanceRatio { get; set; } = 0.85;
 
     /// <summary>
-    /// Ratio to trigger swipe to next/previous slide during long swipes.
+    /// Percentage of slide width to trigger advance (0.1 - 0.9).
     /// </summary>
+    /// <remarks>
+    /// How far you must swipe to move to next slide.
+    /// Default: 0.5 (50% of slide width)
+    /// </remarks>
     public double LongSwipesRatio { get; set; } = 0.5;
-
-    /// <summary>
-    /// Allow touch move (swiping). Set to false to disable touch/swipe.
-    /// </summary>
-    public bool AllowTouchMove { get; set; } = true;
-
-    /// <summary>
-    /// Follow finger movement precisely during touch.
-    /// </summary>
-    public bool FollowFinger { get; set; } = true;
 
     #endregion
 }

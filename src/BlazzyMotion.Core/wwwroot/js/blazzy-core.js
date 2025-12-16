@@ -92,9 +92,7 @@ const DEFAULT_TOUCH_SETTINGS = {
     threshold: 10,
     shortSwipes: false,
     resistanceRatio: 0.85,
-    longSwipesRatio: 0.5,
-    allowTouchMove: true,
-    followFinger: true
+    longSwipesRatio: 0.5
 };
 
 
@@ -142,8 +140,6 @@ export async function initializeCarousel(element, optionsJson) {
         const shortSwipes = options.shortSwipes ?? DEFAULT_TOUCH_SETTINGS.shortSwipes;
         const resistanceRatio = options.resistanceRatio ?? DEFAULT_TOUCH_SETTINGS.resistanceRatio;
         const longSwipesRatio = options.longSwipesRatio ?? DEFAULT_TOUCH_SETTINGS.longSwipesRatio;
-        const allowTouchMove = options.allowTouchMove ?? DEFAULT_TOUCH_SETTINGS.allowTouchMove;
-        const followFinger = options.followFinger ?? DEFAULT_TOUCH_SETTINGS.followFinger;
 
         const swiperConfig = {
             // Effect settings
@@ -159,17 +155,12 @@ export async function initializeCarousel(element, optionsJson) {
             watchSlidesProgress: true,
             observer: true,
             observeParents: true,
+            // Touch settings - mobile optimization
             touchRatio: touchRatio,
             threshold: threshold,
             shortSwipes: shortSwipes,
             resistanceRatio: resistanceRatio,
             longSwipesRatio: longSwipesRatio,
-            allowTouchMove: allowTouchMove,
-            followFinger: followFinger,
-            touchEventsTarget: 'container',
-            passiveListeners: true,
-            touchStartPreventDefault: false,
-            touchMoveStopPropagation: false,
 
 
             coverflowEffect: {

@@ -30,14 +30,12 @@ public class BzCarouselOptionsTests
         options.Modifier.Should().Be(1.5);
         options.SlideShadows.Should().BeTrue();
 
-        // Assert - Touch Options (NEW)
+        // Assert - Touch Options
         options.TouchRatio.Should().Be(0.8);
         options.Threshold.Should().Be(10);
         options.ShortSwipes.Should().BeFalse();
         options.ResistanceRatio.Should().Be(0.85);
         options.LongSwipesRatio.Should().Be(0.5);
-        options.AllowTouchMove.Should().BeTrue();
-        options.FollowFinger.Should().BeTrue();
     }
 
     #endregion
@@ -395,52 +393,6 @@ public class BzCarouselOptionsTests
         options.LongSwipesRatio.Should().Be(0.5);
     }
 
-    [Fact]
-    public void AllowTouchMove_CanBeToggled()
-    {
-        // Arrange
-        var options = new BzCarouselOptions();
-
-        // Act
-        options.AllowTouchMove = false;
-
-        // Assert
-        options.AllowTouchMove.Should().BeFalse();
-    }
-
-    [Fact]
-    public void AllowTouchMove_DefaultValue_ShouldBeTrue()
-    {
-        // Arrange & Act
-        var options = new BzCarouselOptions();
-
-        // Assert
-        options.AllowTouchMove.Should().BeTrue();
-    }
-
-    [Fact]
-    public void FollowFinger_CanBeToggled()
-    {
-        // Arrange
-        var options = new BzCarouselOptions();
-
-        // Act
-        options.FollowFinger = false;
-
-        // Assert
-        options.FollowFinger.Should().BeFalse();
-    }
-
-    [Fact]
-    public void FollowFinger_DefaultValue_ShouldBeTrue()
-    {
-        // Arrange & Act
-        var options = new BzCarouselOptions();
-
-        // Assert
-        options.FollowFinger.Should().BeTrue();
-    }
-
     #endregion
 
     #region All Properties Together Test
@@ -473,9 +425,7 @@ public class BzCarouselOptionsTests
             Threshold = 15,
             ShortSwipes = true,
             ResistanceRatio = 0.7,
-            LongSwipesRatio = 0.4,
-            AllowTouchMove = false,
-            FollowFinger = false
+            LongSwipesRatio = 0.4
         };
 
         // Assert - Effect Options
@@ -501,8 +451,6 @@ public class BzCarouselOptionsTests
         options.ShortSwipes.Should().BeTrue();
         options.ResistanceRatio.Should().Be(0.7);
         options.LongSwipesRatio.Should().Be(0.4);
-        options.AllowTouchMove.Should().BeFalse();
-        options.FollowFinger.Should().BeFalse();
     }
 
     #endregion
