@@ -6,6 +6,7 @@ using BlazzyMotion.Core.Services;
 using BlazzyMotion.Core.Templates;
 using Microsoft.AspNetCore.Components;
 using Microsoft.JSInterop;
+using System.Diagnostics.CodeAnalysis;
 using System.Text.Json;
 
 namespace BlazzyMotion.Carousel.Components;
@@ -283,6 +284,7 @@ public partial class BzCarousel<TItem> : BzComponentBase where TItem : class
     /// <summary>
     /// Called after render. Initializes or reinitializes Swiper.
     /// </summary>
+    [ExcludeFromCodeCoverage(Justification = "JS initialization - cannot fully test with bUnit")]
     protected override async Task OnAfterRenderAsync(bool firstRender)
     {
         if (IsDisposed) return;
@@ -334,6 +336,7 @@ public partial class BzCarousel<TItem> : BzComponentBase where TItem : class
     /// </summary>
     /// <param name="realIndex">The real index of the active slide (accounts for loop clones)</param>
     [JSInvokable]
+    [ExcludeFromCodeCoverage(Justification = "JS callback - cannot test with bUnit")]
     public async Task OnSlideChangeFromJS(int realIndex)
     {
         if (IsDisposed) return;
@@ -511,6 +514,7 @@ public partial class BzCarousel<TItem> : BzComponentBase where TItem : class
     /// <summary>
     /// Disposes component resources.
     /// </summary>
+    [ExcludeFromCodeCoverage(Justification = "JS disposal - cannot test with bUnit")]
     protected override async ValueTask DisposeAsyncCore()
     {
         _dotNetRef?.Dispose();
