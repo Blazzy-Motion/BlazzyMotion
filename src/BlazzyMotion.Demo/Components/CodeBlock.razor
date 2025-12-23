@@ -1,0 +1,63 @@
+﻿@inject IJSRuntime JS
+
+<div class="bz-code-block">
+    <div class="bz-code-block__header">
+        <span class="bz-code-block__lang">@Language</span>
+        <button class="bz-code-block__copy" @onclick="CopyToClipboard">
+            @if (_copied)
+            {
+                <span>✓ Copied!</span>
+            }
+            else
+            {
+                <span>Copy</span>
+            }
+        </button>
+    </div>
+    <pre><code>@(Code ?? _childContentText)</code></pre>
+</div>
+
+@code {
+    [Parameter]
+    public string Language { get; set; } = "code";
+
+    [Parameter]
+    public string? Code { get; set; }
+
+    [Parameter]
+    public RenderFragment? ChildContent { get; set; }
+
+    private bool _copied = false;
+    private string _childContentText = "";
+
+    protected override void OnParametersSet()
+    {
+        if (ChildContent != null && string.IsNullOrEmpty(Code))
+        {
+            _childContentText = "[Use Code parameter for copyable code]";
+        }
+    }
+
+    private async Task CopyToClipboard()
+    {
+        var textToCopy = Code ?? _childContentText;
+
+        if (!string.IsNullOrEmpty(textToCopy))
+        {
+            try
+            {
+                await JS.InvokeVoidAsync("navigator.clipboard.writeText", textToCopy);
+                _copied = true;
+                StateHasChanged();
+
+                await Task.Delay(2000);
+                _copied = false;
+                StateHasChanged();
+            }
+            catch
+            {
+                // Clipboard API not available
+            }
+        }
+    }
+}

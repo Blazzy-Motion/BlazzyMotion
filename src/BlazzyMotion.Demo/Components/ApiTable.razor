@@ -1,0 +1,47 @@
+﻿<div class="bz-api-table-wrapper">
+    <table class="bz-api-table">
+        <thead>
+            <tr>
+                <th>Parameter</th>
+                <th>Type</th>
+                <th>Default</th>
+                <th>Description</th>
+            </tr>
+        </thead>
+        <tbody>
+            @foreach (var param in Parameters)
+            {
+                <tr>
+                    <td>
+                        <code class="bz-api-table__param">@param.Name</code>
+                        @if (param.Required)
+                        {
+                            <span class="bz-badge bz-badge--purple" style="margin-left: 8px; font-size: 0.625rem;">Required</span>
+                        }
+                    </td>
+                    <td>
+                        <code class="bz-api-table__type">@param.Type</code>
+                    </td>
+                    <td>
+                        <code class="bz-api-table__default">@(param.Default ?? "—")</code>
+                    </td>
+                    <td>@param.Description</td>
+                </tr>
+            }
+        </tbody>
+    </table>
+</div>
+
+@code {
+    [Parameter]
+    public List<ApiParameter> Parameters { get; set; } = new();
+
+    public class ApiParameter
+    {
+        public string Name { get; set; } = "";
+        public string Type { get; set; } = "";
+        public string? Default { get; set; }
+        public string Description { get; set; } = "";
+        public bool Required { get; set; }
+    }
+}

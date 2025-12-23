@@ -1,0 +1,30 @@
+﻿<section class="bz-doc-section @CssClass">
+    @if (!string.IsNullOrEmpty(Title))
+    {
+        <h2 class="bz-doc-section__title">
+            @if (!string.IsNullOrEmpty(Icon))
+            {
+                <span class="bz-doc-section__title-icon">@Icon</span>
+            }
+            @Title
+        </h2>
+    }
+
+    <div class="bz-doc-section__content">
+        @ChildContent
+    </div>
+</section>
+
+@code {
+    [Parameter]
+    public string? Title { get; set; }
+
+    [Parameter]
+    public string? Icon { get; set; }
+
+    [Parameter]
+    public string? CssClass { get; set; }
+
+    [Parameter]
+    public RenderFragment? ChildContent { get; set; }
+}

@@ -1,0 +1,61 @@
+﻿<header class="bz-page-header">
+    <div class="bz-page-header__content">
+        <h1 class="bz-page-header__title">
+            @if (!string.IsNullOrEmpty(Icon))
+            {
+                <span class="bz-page-header__icon">@Icon</span>
+            }
+            @Title
+        </h1>
+
+        @if (!string.IsNullOrEmpty(Subtitle))
+        {
+            <p class="bz-page-header__subtitle">@Subtitle</p>
+        }
+
+        @if (ShowBadges)
+        {
+            <div class="bz-page-header__badges">
+                @if (!string.IsNullOrEmpty(Version))
+                {
+                    <span class="bz-badge bz-badge--purple">v@Version</span>
+                }
+                @if (!string.IsNullOrEmpty(License))
+                {
+                    <span class="bz-badge">@License</span>
+                }
+                @if (!string.IsNullOrEmpty(Framework))
+                {
+                    <span class="bz-badge bz-badge--cyan">@Framework</span>
+                }
+                @ChildContent
+            </div>
+        }
+    </div>
+</header>
+
+@code {
+    [Parameter]
+    public string Title { get; set; } = "";
+
+    [Parameter]
+    public string? Subtitle { get; set; }
+
+    [Parameter]
+    public string? Icon { get; set; }
+
+    [Parameter]
+    public string? Version { get; set; }
+
+    [Parameter]
+    public string? License { get; set; }
+
+    [Parameter]
+    public string? Framework { get; set; }
+
+    [Parameter]
+    public bool ShowBadges { get; set; } = true;
+
+    [Parameter]
+    public RenderFragment? ChildContent { get; set; }
+}

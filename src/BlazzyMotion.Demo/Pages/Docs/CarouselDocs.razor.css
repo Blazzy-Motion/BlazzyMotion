@@ -1,0 +1,26 @@
+﻿.bz-list {
+    list-style: none;
+    padding: 0;
+    margin: 1rem 0;
+}
+
+    .bz-list li {
+        position: relative;
+        padding-left: 1.5rem;
+        margin-bottom: 0.5rem;
+        color: var(--bz-text-secondary);
+    }
+
+        .bz-list li::before {
+            content: '✓';
+            position: absolute;
+            left: 0;
+            color: var(--bz-accent-cyan);
+        }
+
+.bz-api-table-wrapper {
+    overflow-x: auto;
+    margin: 1rem 0;
+    border-radius: var(--bz-border-radius, 12px);
+    border: 1px solid rgba(255, 255, 255, 0.08);
+}

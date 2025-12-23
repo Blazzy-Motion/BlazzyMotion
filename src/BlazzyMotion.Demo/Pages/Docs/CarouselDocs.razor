@@ -1,0 +1,88 @@
+﻿@page "/docs/carousel"
+
+<PageTitle>Carousel Documentation - BlazzyMotion</PageTitle>
+
+<PageHeader Title="BzCarousel"
+            Icon="🎠"
+            Subtitle="A modern, high-performance 3D carousel component"
+            Version="1.1.0"
+            License="MIT"
+            Framework=".NET 8+" />
+
+<DocSection Title="Overview" Icon="📖">
+    <p><code>BzCarousel</code> is a feature-rich carousel component powered by Swiper.js.</p>
+
+    <ul class="bz-list">
+        <li><strong>Zero Configuration</strong> - Source Generators handle template creation</li>
+        <li><strong>3D Coverflow Effect</strong> - Stunning visual presentation</li>
+        <li><strong>4 Themes</strong> - Glass, Dark, Light, and Minimal</li>
+        <li><strong>Responsive</strong> - Adapts to all screen sizes</li>
+    </ul>
+</DocSection>
+
+<DocSection Title="Basic Usage" Icon="💻">
+    <CodeBlock Language="razor" Code="@_basicUsage" />
+</DocSection>
+
+<DocSection Title="API Reference" Icon="📋">
+    <h4>Data Parameters</h4>
+    <ApiTable Parameters="@_dataParams" />
+
+    <h4 class="bz-mt-3">Appearance Parameters</h4>
+    <ApiTable Parameters="@_appearanceParams" />
+
+    <h4 class="bz-mt-3">Behavior Parameters</h4>
+    <ApiTable Parameters="@_behaviorParams" />
+</DocSection>
+
+<DocSection Title="Custom Item Template" Icon="🎨">
+    <CodeBlock Language="razor" Code="@_customTemplate" />
+</DocSection>
+
+<DocSection Title="CSS Customization" Icon="🖌️">
+    <CodeBlock Language="css" Code="@_cssVars" />
+</DocSection>
+
+@code {
+    private string _basicUsage = @"<BzCarousel Items=""@_movies""
+            Theme=""BzTheme.Glass""
+            OnItemSelected=""HandleSelection"" />";
+
+    private string _customTemplate = @"<BzCarousel Items=""@_products"">
+    <ItemTemplate Context=""product"">
+        <div class=""custom-slide"">
+            <img src=""@product.Image"" alt=""@product.Name"" />
+            <h3>@product.Name</h3>
+            <p>$@product.Price</p>
+        </div>
+    </ItemTemplate>
+</BzCarousel>";
+
+    private string _cssVars = @".my-carousel {
+    --bzc-slide-width: 250px;
+    --bzc-hover-scale: 1.08;
+    --bzc-glass-blur: 20px;
+}";
+
+    private List<ApiTable.ApiParameter> _dataParams = new()
+    {
+        new() { Name = "Items", Type = "IEnumerable<TItem>", Description = "Collection of items", Required = true },
+        new() { Name = "ItemTemplate", Type = "RenderFragment<TItem>?", Default = "null", Description = "Custom template" },
+        new() { Name = "OnItemSelected", Type = "EventCallback<TItem>", Description = "Click callback" }
+    };
+
+    private List<ApiTable.ApiParameter> _appearanceParams = new()
+    {
+        new() { Name = "Theme", Type = "BzTheme", Default = "Glass", Description = "Visual theme" },
+        new() { Name = "ShowOverlay", Type = "bool", Default = "true", Description = "Show gradient overlay" },
+        new() { Name = "CssClass", Type = "string?", Default = "null", Description = "Additional CSS classes" }
+    };
+
+    private List<ApiTable.ApiParameter> _behaviorParams = new()
+    {
+        new() { Name = "Loop", Type = "bool", Default = "true", Description = "Infinite loop" },
+        new() { Name = "InitialSlide", Type = "int", Default = "0", Description = "Initial slide index" },
+        new() { Name = "RotateDegree", Type = "int", Default = "50", Description = "Coverflow rotation" },
+        new() { Name = "Depth", Type = "int", Default = "150", Description = "Coverflow depth" }
+    };
+}

@@ -1,46 +1,48 @@
 ﻿@inherits LayoutComponentBase
 
-<div class="demo-container">
-    <header class="demo-header">
-        <div class="header-content">
-            <div class="header-left">
-                <img src="images/logo.png" alt="BlazzyCarousel Logo" class="logo-icon" />
-                <span class="logo-text">BlazzyMotion.Carousel</span>
-            </div>
-            <div class="header-right">
-                <a href="https://github.com/Blazzy-Motion/BlazzyMotion" target="_blank" class="header-link">
-                    <i class="bi bi-github"></i>
-                    <span>GitHub</span>
-                </a>
-                <a href="https://www.nuget.org/packages/BlazzyMotion.Carousel" target="_blank" class="header-link">
-                    <i class="bi bi-box-seam-fill"></i>
-                    <span>NuGet</span>
-                </a>
-            </div>
-        </div>
-    </header>
+<!-- Mobile Menu Toggle Button -->
+<button class="bz-mobile-toggle" @onclick="ToggleSidebar" aria-label="Toggle navigation menu">
+    <svg xmlns="http://www.w3.org/2000/svg" width="24" height="24" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2" stroke-linecap="round" stroke-linejoin="round">
+        @if (_sidebarOpen)
+        {
+            <line x1="18" y1="6" x2="6" y2="18"></line>
+            <line x1="6" y1="6" x2="18" y2="18"></line>
+        }
+        else
+        {
+            <line x1="3" y1="12" x2="21" y2="12"></line>
+            <line x1="3" y1="6" x2="21" y2="6"></line>
+            <line x1="3" y1="18" x2="21" y2="18"></line>
+        }
+    </svg>
+</button>
 
-    <main class="demo-main">
+<!-- Mobile Overlay -->
+@if (_sidebarOpen)
+{
+    <div class="bz-sidebar-overlay" @onclick="CloseSidebar"></div>
+}
+
+<!-- Sidebar Navigation -->
+<NavMenu IsOpen="_sidebarOpen" OnLinkClick="CloseSidebar" />
+
+<!-- Main Content Area -->
+<main class="bz-main">
+    <div class="bz-main__content">
         @Body
-    </main>
+    </div>
+</main>
 
-    <footer class="demo-footer">
-        <div class="footer-content">
-            <p class="footer-text">MIT License · © @DateTime.Now.Year Nenad Ristić</p>
-            <div class="footer-social">
-                <a href="https://github.com/Blazzy-Motion/BlazzyMotion" target="_blank" class="social-link"
-                    aria-label="GitHub">
-                    <i class="bi bi-github"></i>
-                </a>
-                <a href="https://www.nuget.org/packages/BlazzyMotion.Carousel" target="_blank" class="social-link"
-                    aria-label="NuGet">
-                    <i class="bi bi-box-seam-fill"></i>
-                </a>
-                <a href="https://linkedin.com/in/nenad-ristić-27459958" target="_blank" class="social-link"
-                    aria-label="LinkedIn">
-                    <i class="bi bi-linkedin"></i>
-                </a>
-            </div>
-        </div>
-    </footer>
-</div>
+@code {
+    private bool _sidebarOpen = false;
+
+    private void ToggleSidebar()
+    {
+        _sidebarOpen = !_sidebarOpen;
+    }
+
+    private void CloseSidebar()
+    {
+        _sidebarOpen = false;
+    }
+}
