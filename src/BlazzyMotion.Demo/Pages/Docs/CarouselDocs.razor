@@ -2,12 +2,8 @@
 
 <PageTitle>Carousel Documentation - BlazzyMotion</PageTitle>
 
-<PageHeader Title="BzCarousel"
-            Icon="🎠"
-            Subtitle="A modern, high-performance 3D carousel component"
-            Version="1.1.0"
-            License="MIT"
-            Framework=".NET 8+" />
+<PageHeader Title="BzCarousel" Icon="🎠" Subtitle="A modern, high-performance 3D carousel component" Version="1.2.0"
+    License="MIT" Framework=".NET 8+" />
 
 <DocSection Title="Overview" Icon="📖">
     <p><code>BzCarousel</code> is a feature-rich carousel component powered by Swiper.js.</p>
@@ -65,24 +61,24 @@
 }";
 
     private List<ApiTable.ApiParameter> _dataParams = new()
-    {
-        new() { Name = "Items", Type = "IEnumerable<TItem>", Description = "Collection of items", Required = true },
-        new() { Name = "ItemTemplate", Type = "RenderFragment<TItem>?", Default = "null", Description = "Custom template" },
-        new() { Name = "OnItemSelected", Type = "EventCallback<TItem>", Description = "Click callback" }
-    };
+{
+new() { Name = "Items", Type = "IEnumerable<TItem>", Description = "Collection of items", Required = true },
+new() { Name = "ItemTemplate", Type = "RenderFragment<TItem>?", Default = "null", Description = "Custom template" },
+new() { Name = "OnItemSelected", Type = "EventCallback<TItem>", Description = "Click callback" }
+};
 
     private List<ApiTable.ApiParameter> _appearanceParams = new()
-    {
-        new() { Name = "Theme", Type = "BzTheme", Default = "Glass", Description = "Visual theme" },
-        new() { Name = "ShowOverlay", Type = "bool", Default = "true", Description = "Show gradient overlay" },
-        new() { Name = "CssClass", Type = "string?", Default = "null", Description = "Additional CSS classes" }
-    };
+{
+new() { Name = "Theme", Type = "BzTheme", Default = "Glass", Description = "Visual theme" },
+new() { Name = "ShowOverlay", Type = "bool", Default = "true", Description = "Show gradient overlay" },
+new() { Name = "CssClass", Type = "string?", Default = "null", Description = "Additional CSS classes" }
+};
 
     private List<ApiTable.ApiParameter> _behaviorParams = new()
-    {
-        new() { Name = "Loop", Type = "bool", Default = "true", Description = "Infinite loop" },
-        new() { Name = "InitialSlide", Type = "int", Default = "0", Description = "Initial slide index" },
-        new() { Name = "RotateDegree", Type = "int", Default = "50", Description = "Coverflow rotation" },
-        new() { Name = "Depth", Type = "int", Default = "150", Description = "Coverflow depth" }
-    };
+{
+new() { Name = "Loop", Type = "bool", Default = "true", Description = "Infinite loop" },
+new() { Name = "InitialSlide", Type = "int", Default = "0", Description = "Initial slide index" },
+new() { Name = "RotateDegree", Type = "int", Default = "50", Description = "Coverflow rotation" },
+new() { Name = "Depth", Type = "int", Default = "150", Description = "Coverflow depth" }
+};
 }

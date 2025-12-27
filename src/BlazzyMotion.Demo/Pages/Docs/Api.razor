@@ -1,0 +1,200 @@
+@page "/docs/api"
+
+<PageTitle>API Reference - BlazzyMotion</PageTitle>
+
+<PageHeader Title="API Reference" Icon="📋"
+  Subtitle="Complete reference for BzCarousel component parameters and attributes" Version="1.2.0"
+  Framework=".NET 8+" />
+
+<!-- COMPONENT PARAMETERS -->
+<DocSection Title="Component Parameters" Icon="⚙️">
+  <p>BzCarousel accepts the following parameters to customize its behavior and appearance.</p>
+</DocSection>
+
+<!-- DATA PARAMETERS -->
+<DocSection Title="Data Parameters" Icon="📊">
+  <p>Parameters for binding data and handling events.</p>
+  <ApiTable Parameters="@_dataParameters" />
+</DocSection>
+
+<!-- APPEARANCE PARAMETERS -->
+<DocSection Title="Appearance Parameters" Icon="🎨">
+  <p>Parameters for visual customization.</p>
+  <ApiTable Parameters="@_appearanceParameters" />
+</DocSection>
+
+<!-- BEHAVIOR PARAMETERS -->
+<DocSection Title="Behavior Parameters" Icon="🔧">
+  <p>Parameters for controlling carousel behavior.</p>
+  <ApiTable Parameters="@_behaviorParameters" />
+</DocSection>
+
+<!-- EFFECT PARAMETERS -->
+<DocSection Title="Effect Parameters" Icon="✨">
+  <p>Parameters for 3D coverflow effect customization.</p>
+  <ApiTable Parameters="@_effectParameters" />
+</DocSection>
+
+<!-- ADVANCED PARAMETERS -->
+<DocSection Title="Advanced Parameters" Icon="🚀">
+  <p>Parameters for advanced configuration and custom templates.</p>
+  <ApiTable Parameters="@_advancedParameters" />
+</DocSection>
+
+<!-- ATTRIBUTES -->
+<DocSection Title="Attributes" Icon="🏷️">
+  <p>Use these attributes on your model properties to enable automatic template generation.</p>
+</DocSection>
+
+<!-- BzImage Attribute -->
+<DocSection Title="[BzImage]" Icon="🖼️">
+  <p>Marks a property as the image source for carousel items. The Source Generator creates a default template using this
+    property.</p>
+
+  <h4 class="bz-mt-2">Requirements</h4>
+  <ul class="bz-list">
+    <li>Property must be <code>public</code></li>
+    <li>Property must be of type <code>string</code></li>
+    <li>Only one property per class should have this attribute</li>
+  </ul>
+
+  <h4 class="bz-mt-2">Usage</h4>
+  <CodeBlock Language="csharp" Code="@_bzImageExample" />
+</DocSection>
+
+<!-- BzTitle Attribute -->
+<DocSection Title="[BzTitle]" Icon="📝">
+  <p>Marks a property as the title/alt text for carousel items. Used for accessibility attributes on generated
+    <code>img</code> elements.</p>
+  <CodeBlock Language="csharp" Code="@_bzTitleExample" />
+</DocSection>
+
+<!-- BzDescription Attribute -->
+<DocSection Title="[BzDescription]" Icon="📄">
+  <p>Reserved for future use (tooltips, captions, etc.). Currently not used by the default template generator.</p>
+  <CodeBlock Language="csharp" Code="@_bzDescriptionExample" />
+</DocSection>
+
+<!-- TOUCH OPTIONS -->
+<DocSection Title="Touch Options" Icon="👆">
+  <p>BlazzyMotion.Carousel includes mobile-optimized touch settings. Configure via <code>BzCarouselOptions</code>.</p>
+  <ApiTable Parameters="@_touchOptions" />
+</DocSection>
+
+<!-- VALIDATION -->
+<DocSection Title="Validation & Diagnostics" Icon="⚠️">
+  <p>The Source Generator provides compile-time validation with helpful error messages.</p>
+
+  <h4 class="bz-mt-2">BZC001: Non-Public Property</h4>
+  <CodeBlock Language="text" Code="Error BZC001: Property 'ImageUrl' with [BzImage] attribute must be public" />
+  <p><strong>Fix:</strong> Change property accessibility to <code>public</code>.</p>
+
+  <h4 class="bz-mt-2">BZC002: Non-String Property</h4>
+  <CodeBlock Language="text"
+    Code="Error BZC002: Property 'ImageData' with [BzImage] attribute must be of type 'string'" />
+  <p><strong>Fix:</strong> Ensure the property is of type <code>string</code> (URL or path).</p>
+</DocSection>
+
+<!-- NEXT STEPS -->
+<DocSection Title="Next Steps" Icon="➡️">
+  <div class="bz-flex bz-gap-2" style="flex-wrap: wrap;">
+    <a href="/docs/css-variables" class="bz-btn bz-btn--primary">
+      CSS Variables →
+    </a>
+    <a href="/docs/examples" class="bz-btn bz-btn--secondary">
+      View Examples
+    </a>
+  </div>
+</DocSection>
+
+@code {
+  // DATA PARAMETERS
+  private List<ApiTable.ApiParameter> _dataParameters = new()
+{
+new() { Name = "Items", Type = "IEnumerable<TItem>", Default = null, Description = "Collection of items to display in the carousel", Required = true },
+new() { Name = "ItemTemplate", Type = "RenderFragment<TItem>?", Default = "null", Description = "Custom template for rendering items (overrides generated template)", Required = false },
+new() { Name = "OnItemSelected", Type = "EventCallback<TItem>", Default = "—", Description = "Callback invoked when an item is clicked", Required = false },
+new() { Name = "OnActiveItemChanged", Type = "EventCallback<TItem>", Default = "—", Description = "Callback fired on every scroll/swipe, ideal for preview panels", Required = false },
+new() { Name = "OnActiveIndexChanged", Type = "EventCallback<int>", Default = "—", Description = "Callback fired with zero-based slide index on change", Required = false }
+};
+
+  // APPEARANCE PARAMETERS
+  private List<ApiTable.ApiParameter> _appearanceParameters = new()
+{
+new() { Name = "Theme", Type = "BzTheme", Default = "Glass", Description = "Visual theme: Glass, Dark, Light, or Minimal", Required = false },
+new() { Name = "ShowOverlay", Type = "bool", Default = "true", Description = "Whether to show gradient overlay on slides", Required = false },
+new() { Name = "CssClass", Type = "string?", Default = "null", Description = "Additional CSS classes for customization",
+Required = false }
+};
+
+  // BEHAVIOR PARAMETERS
+  private List<ApiTable.ApiParameter> _behaviorParameters = new()
+{
+new() { Name = "Loop", Type = "bool", Default = "true", Description = "Enable infinite loop navigation", Required =
+false },
+new() { Name = "InitialSlide", Type = "int", Default = "0", Description = "Index of the initially active slide",
+Required = false },
+new() { Name = "MinItemsForLoop", Type = "int", Default = "4", Description = "Minimum items required to enable loop mode", Required = false },
+new() { Name = "SelectOnScroll", Type = "bool", Default = "true", Description = "When false, OnItemSelected fires only on click, not on scroll", Required = false },
+new() { Name = "AutoDetectMode", Type = "bool", Default = "true", Description = "Automatically switch between coverflow and simple modes", Required = false },
+new() { Name = "MinItemsForCoverflow", Type = "int", Default = "4", Description = "Minimum items for coverflow effect (below uses simple slider)", Required = false }
+};
+
+  // EFFECT PARAMETERS
+  private List<ApiTable.ApiParameter> _effectParameters = new()
+{
+new() { Name = "RotateDegree", Type = "int", Default = "50", Description = "Rotation angle for coverflow effect (degrees)", Required = false },
+new() { Name = "Depth", Type = "int", Default = "150", Description = "Depth of the coverflow effect", Required = false }
+};
+
+  // ADVANCED PARAMETERS
+  private List<ApiTable.ApiParameter> _advancedParameters = new()
+{
+new() { Name = "Options", Type = "BzCarouselOptions?", Default = "null", Description = "Advanced carousel options (overrides individual parameters)", Required = false },
+new() { Name = "LoadingTemplate", Type = "RenderFragment?", Default = "null", Description = "Custom loading state template", Required = false },
+new() { Name = "EmptyTemplate", Type = "RenderFragment?", Default = "null", Description = "Custom empty state template",
+Required = false },
+new() { Name = "AdditionalAttributes", Type = "Dictionary<string, object>?", Default = "null", Description = "HTML attributes to splat onto root element (id, aria-*, data-*)", Required = false }
+};
+
+  // TOUCH OPTIONS
+  private List<ApiTable.ApiParameter> _touchOptions = new()
+{
+new() { Name = "TouchRatio", Type = "double", Default = "1.0", Description = "Touch sensitivity multiplier (range: 0.1 - 2.0)", Required = false },
+new() { Name = "Threshold", Type = "int", Default = "10", Description = "Minimum pixels to trigger swipe (range: 0 - 50)", Required = false },
+new() { Name = "ShortSwipes", Type = "bool", Default = "false", Description = "Allow quick flick gestures", Required =
+false },
+new() { Name = "ResistanceRatio", Type = "double", Default = "0.85", Description = "Edge bounce resistance (range: 0 - 1)", Required = false },
+new() { Name = "LongSwipesRatio", Type = "double", Default = "0.3", Description = "Slide width percentage to advance (range: 0.1 - 0.9)", Required = false }
+};
+
+  // CODE EXAMPLES
+  private string _bzImageExample = @"public class Movie
+{
+    [BzImage]
+    public string Poster { get; set; } = """";
+    
+    public string Title { get; set; } = """";
+}";
+
+  private string _bzTitleExample = @"public class Movie
+{
+    [BzImage]
+    public string Poster { get; set; } = """";
+    
+    [BzTitle]  // Used for alt text
+    public string Title { get; set; } = """";
+}";
+
+  private string _bzDescriptionExample = @"public class Movie
+{
+    [BzImage]
+    public string Poster { get; set; } = """";
+    
+    [BzTitle]
+    public string Title { get; set; } = """";
+    
+    [BzDescription]  // Reserved for future use
+    public string Synopsis { get; set; } = """";
+}";
+}

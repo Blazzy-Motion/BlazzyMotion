@@ -1,0 +1,242 @@
+@page "/docs/css-variables"
+
+<PageTitle>CSS Variables - BlazzyMotion</PageTitle>
+
+<PageHeader Title="CSS Variables" Icon="⚙️" Subtitle="Customize BlazzyMotion components using CSS custom properties"
+  Version="1.1.0" Framework=".NET 8+" />
+
+<!-- OVERVIEW -->
+<DocSection Title="Overview" Icon="📖">
+  <p>BlazzyMotion uses CSS custom properties (variables) for easy customization. Override these in your app's CSS to
+    match your design system.</p>
+  <CodeBlock Language="css" Code="@_overviewExample" />
+</DocSection>
+
+<!-- DIMENSIONS -->
+<DocSection Title="Dimension Variables" Icon="📐">
+  <p>Control the size of carousel elements.</p>
+  <ApiTable Parameters="@_dimensionVariables" />
+
+  <h4 class="bz-mt-2">Responsive Defaults</h4>
+  <p>These variables automatically adjust at different breakpoints:</p>
+  <CodeBlock Language="css" Code="@_responsiveExample" />
+</DocSection>
+
+<!-- EFFECT VARIABLES -->
+<DocSection Title="Effect Variables" Icon="✨">
+  <p>Control hover effects and transitions.</p>
+  <ApiTable Parameters="@_effectVariables" />
+</DocSection>
+
+<!-- GLASS THEME VARIABLES -->
+<DocSection Title="Glass Theme Variables" Icon="🔮">
+  <p>Customize the glassmorphism effect for the Glass theme.</p>
+  <ApiTable Parameters="@_glassVariables" />
+
+  <h4 class="bz-mt-2">Example: Custom Glass Effect</h4>
+  <CodeBlock Language="css" Code="@_glassExample" />
+</DocSection>
+
+<!-- DARK THEME VARIABLES -->
+<DocSection Title="Dark Theme Variables" Icon="🌙">
+  <p>Customize the Dark theme appearance.</p>
+  <ApiTable Parameters="@_darkVariables" />
+</DocSection>
+
+<!-- LIGHT THEME VARIABLES -->
+<DocSection Title="Light Theme Variables" Icon="☀️">
+  <p>Customize the Light theme appearance.</p>
+  <ApiTable Parameters="@_lightVariables" />
+</DocSection>
+
+<!-- HOW TO OVERRIDE -->
+<DocSection Title="How to Override" Icon="🎯">
+  <p>There are several ways to override CSS variables:</p>
+
+  <h4 class="bz-mt-2">Method 1: Global Override</h4>
+  <p>Override in your <code>app.css</code> or global stylesheet:</p>
+  <CodeBlock Language="css" Code="@_globalOverride" />
+
+  <h4 class="bz-mt-2">Method 2: Scoped Override</h4>
+  <p>Override for a specific carousel using <code>CssClass</code>:</p>
+  <CodeBlock Language="razor" Code="@_scopedOverrideRazor" />
+  <CodeBlock Language="css" Code="@_scopedOverrideCss" />
+
+  <h4 class="bz-mt-2">Method 3: Inline Style</h4>
+  <p>For quick adjustments:</p>
+  <CodeBlock Language="razor" Code="@_inlineOverride" />
+</DocSection>
+
+<!-- RESPONSIVE BREAKPOINTS -->
+<DocSection Title="Responsive Breakpoints" Icon="📱">
+  <p>BlazzyMotion automatically adapts to different screen sizes using these breakpoints:</p>
+  <ApiTable Parameters="@_breakpoints" />
+
+  <h4 class="bz-mt-2">Custom Responsive Values</h4>
+  <CodeBlock Language="css" Code="@_customResponsive" />
+</DocSection>
+
+<!-- COMPLETE REFERENCE -->
+<DocSection Title="Complete Variable Reference" Icon="📚">
+  <p>Copy this block to your CSS for full customization:</p>
+  <CodeBlock Language="css" Code="@_completeReference" />
+</DocSection>
+
+<!-- NEXT STEPS -->
+<DocSection Title="Next Steps" Icon="➡️">
+  <div class="bz-flex bz-gap-2" style="flex-wrap: wrap;">
+    <a href="/docs/examples" class="bz-btn bz-btn--primary">
+      View Examples →
+    </a>
+    <a href="/docs/theming" class="bz-btn bz-btn--secondary">
+      Theming Guide
+    </a>
+  </div>
+</DocSection>
+
+@code {
+  // DIMENSION VARIABLES
+  private List<ApiTable.ApiParameter> _dimensionVariables = new()
+{
+new() { Name = "--bzc-slide-width", Type = "length", Default = "180px", Description = "Width of each carousel slide" },
+new() { Name = "--bzc-image-max-width", Type = "length", Default = "160px", Description = "Maximum width of images inside slides" },
+new() { Name = "--bzc-swiper-height", Type = "length", Default = "400px", Description = "Height of the carousel container" },
+new() { Name = "--bzc-border-radius", Type = "length", Default = "12px", Description = "Border radius of the carousel container" },
+new() { Name = "--bzc-padding", Type = "length", Default = "24px", Description = "Internal padding of the carousel" }
+};
+
+  // EFFECT VARIABLES
+  private List<ApiTable.ApiParameter> _effectVariables = new()
+{
+new() { Name = "--bzc-hover-scale", Type = "number", Default = "1.05", Description = "Scale factor on hover (1.05 = 5% larger)" },
+new() { Name = "--bzc-active-scale", Type = "number", Default = "1.1", Description = "Scale factor for active slide (1.1 = 10% larger)" },
+new() { Name = "--bzc-transition-duration", Type = "time", Default = "0.3s", Description = "Duration of hover/transition animations" }
+};
+
+  // GLASS VARIABLES
+  private List<ApiTable.ApiParameter> _glassVariables = new()
+{
+new() { Name = "--bzc-glass-bg", Type = "color", Default = "rgba(15, 15, 15, 0.6)", Description = "Background color with transparency" },
+new() { Name = "--bzc-glass-border", Type = "color", Default = "rgba(255, 255, 255, 0.15)", Description = "Border color for glass effect" },
+new() { Name = "--bzc-glass-shadow", Type = "shadow", Default = "0 8px 32px rgba(0, 0, 0, 0.4)", Description = "Box shadow for depth" },
+new() { Name = "--bzc-glass-blur", Type = "length", Default = "12px", Description = "Backdrop blur amount" }
+};
+
+  // DARK VARIABLES
+  private List<ApiTable.ApiParameter> _darkVariables = new()
+{
+new() { Name = "--bzc-dark-bg", Type = "gradient", Default = "linear-gradient(...)", Description = "Background gradient for dark theme" },
+new() { Name = "--bzc-dark-border", Type = "color", Default = "rgba(255, 255, 255, 0.08)", Description = "Subtle border color" },
+new() { Name = "--bzc-dark-shadow", Type = "shadow", Default = "0 10px 40px rgba(0, 0, 0, 0.6)", Description = "Deep shadow effect" },
+new() { Name = "--bzc-dark-glow", Type = "shadow", Default = "0 0 30px rgba(100, 100, 255, 0.15)", Description = "Subtle glow effect" }
+};
+
+  // LIGHT VARIABLES
+  private List<ApiTable.ApiParameter> _lightVariables = new()
+{
+new() { Name = "--bzc-light-bg", Type = "color", Default = "rgba(255, 255, 255, 0.98)", Description = "Light background color" },
+new() { Name = "--bzc-light-shadow", Type = "shadow", Default = "0 10px 40px rgba(0, 0, 0, 0.2)", Description = "Soft shadow effect" },
+new() { Name = "--bzc-light-inner", Type = "shadow", Default = "inset 0 1px 0 rgba(255, 255, 255, 1)", Description =
+"Inner highlight" }
+};
+
+  // BREAKPOINTS
+  private List<ApiTable.ApiParameter> _breakpoints = new()
+{
+new() { Name = "Desktop", Type = "> 991px", Default = "—", Description = "Full-size slides with maximum effects" },
+new() { Name = "Tablet", Type = "600px - 991px", Default = "—", Description = "Medium-sized slides" },
+new() { Name = "Mobile", Type = "< 600px", Default = "—", Description = "Compact slides optimized for touch" }
+};
+
+  // CODE EXAMPLES
+  private string _overviewExample = @".my-carousel {
+    --bzc-slide-width: 200px;
+    --bzc-hover-scale: 1.08;
+}";
+
+  private string _responsiveExample = @"/* Desktop (default) */
+--bzc-slide-width: 180px;
+--bzc-swiper-height: 400px;
+
+/* Tablet (max-width: 991px) */
+--bzc-slide-width: 150px;
+--bzc-swiper-height: 300px;
+
+/* Mobile (max-width: 600px) */
+--bzc-slide-width: 100px;
+--bzc-swiper-height: 250px;";
+
+  private string _glassExample = @"/* More frosted glass effect */
+.frosted-carousel {
+    --bzc-glass-bg: rgba(255, 255, 255, 0.1);
+    --bzc-glass-blur: 20px;
+    --bzc-glass-border: rgba(255, 255, 255, 0.25);
+}";
+
+  private string _globalOverride = @":root {
+    --bzc-slide-width: 220px;
+    --bzc-hover-scale: 1.1;
+    --bzc-glass-blur: 16px;
+}";
+
+  private string _scopedOverrideRazor = @"<BzCarousel Items=""movies"" CssClass=""large-carousel"" />";
+
+  private string _scopedOverrideCss = @".large-carousel {
+    --bzc-slide-width: 250px;
+    --bzc-swiper-height: 500px;
+    --bzc-image-max-width: 220px;
+}";
+
+  private string _inlineOverride = @"<div style=""--bzc-slide-width: 200px;"">
+    <BzCarousel Items=""movies"" />
+</div>";
+
+  private string _customResponsive = @"/* Custom tablet breakpoint */
+@media (max-width: 991px) {
+    .my-carousel {
+        --bzc-slide-width: 160px;
+        --bzc-swiper-height: 350px;
+    }
+}
+
+/* Custom mobile breakpoint */
+@media (max-width: 600px) {
+    .my-carousel {
+        --bzc-slide-width: 120px;
+        --bzc-swiper-height: 280px;
+    }
+}";
+
+  private string _completeReference = @":root {
+    /* Dimensions */
+    --bzc-slide-width: 180px;
+    --bzc-image-max-width: 160px;
+    --bzc-swiper-height: 400px;
+    --bzc-border-radius: 12px;
+    --bzc-padding: 24px;
+
+    /* Effects */
+    --bzc-hover-scale: 1.05;
+    --bzc-active-scale: 1.1;
+    --bzc-transition-duration: 0.3s;
+
+    /* Glass Theme */
+    --bzc-glass-bg: rgba(15, 15, 15, 0.6);
+    --bzc-glass-border: rgba(255, 255, 255, 0.15);
+    --bzc-glass-shadow: 0 8px 32px rgba(0, 0, 0, 0.4);
+    --bzc-glass-blur: 12px;
+
+    /* Dark Theme */
+    --bzc-dark-bg: linear-gradient(135deg, 
+        rgba(20, 20, 25, 0.98), 
+        rgba(30, 30, 40, 0.98));
+    --bzc-dark-border: rgba(255, 255, 255, 0.08);
+    --bzc-dark-shadow: 0 10px 40px rgba(0, 0, 0, 0.6);
+    --bzc-dark-glow: 0 0 30px rgba(100, 100, 255, 0.15);
+
+    /* Light Theme */
+    --bzc-light-bg: rgba(255, 255, 255, 0.98);
+    --bzc-light-shadow: 0 10px 40px rgba(0, 0, 0, 0.2);
+    --bzc-light-inner: inset 0 1px 0 rgba(255, 255, 255, 1);
+}";
+}

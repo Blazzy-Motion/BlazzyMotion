@@ -1,0 +1,381 @@
+@page "/docs/examples"
+@using BlazzyMotion.Core.Models
+@using BlazzyMotion.Carousel.Components
+@using BlazzyMotion.Demo.Model
+
+<PageTitle>Examples - BlazzyMotion</PageTitle>
+
+<PageHeader Title="Examples" Icon="💡" Subtitle="Copy-paste examples for common use cases" Version="1.1.0"
+  Framework=".NET 8+" />
+
+<!-- BASIC USAGE -->
+<DocSection Title="Basic Usage" Icon="🎯">
+  <p>The simplest way to use BzCarousel with automatic template generation.</p>
+
+  <h4 class="bz-mt-2">Model</h4>
+  <CodeBlock Language="csharp" Code="@_basicModel" />
+
+  <h4 class="bz-mt-2">Component</h4>
+  <CodeBlock Language="razor" Code="@_basicUsage" />
+</DocSection>
+
+<!-- MOVIE GALLERY -->
+<DocSection Title="Movie Gallery" Icon="🎬">
+  <p>A complete movie gallery with selection handling.</p>
+
+  <h4 class="bz-mt-2">Model</h4>
+  <CodeBlock Language="csharp" Code="@_movieModel" />
+
+  <h4 class="bz-mt-2">Component</h4>
+  <CodeBlock Language="razor" Code="@_movieGallery" />
+</DocSection>
+
+<!-- PRODUCT SHOWCASE -->
+<DocSection Title="Product Showcase" Icon="🛍️">
+  <p>E-commerce product carousel with Light theme.</p>
+
+  <h4 class="bz-mt-2">Model</h4>
+  <CodeBlock Language="csharp" Code="@_productModel" />
+
+  <h4 class="bz-mt-2">Component</h4>
+  <CodeBlock Language="razor" Code="@_productShowcase" />
+</DocSection>
+
+<!-- CUSTOM ITEM TEMPLATE -->
+<DocSection Title="Custom Item Template" Icon="🎨">
+  <p>Full control over slide rendering with custom templates.</p>
+  <CodeBlock Language="razor" Code="@_customTemplate" />
+</DocSection>
+
+<!-- PREVIEW PANEL PATTERN -->
+<DocSection Title="Preview Panel Pattern" Icon="👁️">
+  <p>Show details while browsing, navigate only on click.</p>
+  <CodeBlock Language="razor" Code="@_previewPanel" />
+</DocSection>
+
+<!-- THEME SWITCHING -->
+<DocSection Title="Theme Switching" Icon="🎭">
+  <p>Allow users to switch between themes dynamically.</p>
+  <CodeBlock Language="razor" Code="@_themeSwitching" />
+</DocSection>
+
+<!-- CUSTOM LOADING STATE -->
+<DocSection Title="Custom Loading State" Icon="⏳">
+  <p>Provide custom loading UI while data is being fetched.</p>
+  <CodeBlock Language="razor" Code="@_customLoading" />
+</DocSection>
+
+<!-- CUSTOM EMPTY STATE -->
+<DocSection Title="Custom Empty State" Icon="📭">
+  <p>Handle empty data gracefully with custom messaging.</p>
+  <CodeBlock Language="razor" Code="@_customEmpty" />
+</DocSection>
+
+<!-- ADVANCED CONFIGURATION -->
+<DocSection Title="Advanced Configuration" Icon="⚙️">
+  <p>Fine-grained control using BzCarouselOptions.</p>
+  <CodeBlock Language="razor" Code="@_advancedConfig" />
+</DocSection>
+
+<!-- MOBILE OPTIMIZATION -->
+<DocSection Title="Mobile Optimization" Icon="📱">
+  <p>Customize touch behavior for better mobile experience.</p>
+  <CodeBlock Language="razor" Code="@_mobileOptimization" />
+</DocSection>
+
+<!-- TEAM MEMBERS -->
+<DocSection Title="Team Members" Icon="👥">
+  <p>Display team members with minimal styling.</p>
+
+  <h4 class="bz-mt-2">Model</h4>
+  <CodeBlock Language="csharp" Code="@_teamModel" />
+
+  <h4 class="bz-mt-2">Component</h4>
+  <CodeBlock Language="razor" Code="@_teamCarousel" />
+</DocSection>
+
+<!-- NEXT STEPS -->
+<DocSection Title="Need More Help?" Icon="🤔">
+  <div class="bz-flex bz-gap-2" style="flex-wrap: wrap;">
+    <a href="/docs/api" class="bz-btn bz-btn--primary">
+      API Reference →
+    </a>
+    <a href="/" class="bz-btn bz-btn--secondary">
+      Live Demo
+    </a>
+    <a href="https://github.com/Blazzy-Motion/BlazzyMotion/issues" target="_blank" class="bz-btn bz-btn--secondary">
+      Ask on GitHub
+    </a>
+  </div>
+</DocSection>
+
+@code {
+  // BASIC EXAMPLES
+  private string _basicModel = @"using BlazzyMotion.Carousel.Attributes;
+
+public class Movie
+{
+    [BzImage]
+    public string Poster { get; set; } = """";
+    
+    [BzTitle]
+    public string Title { get; set; } = """";
+}";
+
+  private string _basicUsage = @"@using BlazzyMotion.Carousel.Components
+
+<BzCarousel Items=""@movies"" />
+
+@code {
+    private List<Movie> movies = new()
+    {
+        new() { Poster = ""/images/movie1.jpg"", Title = ""Inception"" },
+        new() { Poster = ""/images/movie2.jpg"", Title = ""Interstellar"" },
+        new() { Poster = ""/images/movie3.jpg"", Title = ""The Dark Knight"" }
+    };
+}";
+
+  // MOVIE GALLERY
+  private string _movieModel = @"public class Movie
+{
+    [BzImage]
+    public string Poster { get; set; } = """";
+    
+    [BzTitle]
+    public string Title { get; set; } = """";
+    
+    public int Year { get; set; }
+    public string Director { get; set; } = """";
+}";
+
+  private string _movieGallery = @"<BzCarousel Items=""@movies""
+            Theme=""BzTheme.Glass""
+            OnItemSelected=""HandleMovieClick"" />
+
+<div class=""selected-movie"">
+    @if (selectedMovie != null)
+    {
+        <h3>@selectedMovie.Title (@selectedMovie.Year)</h3>
+        <p>Directed by @selectedMovie.Director</p>
+    }
+</div>
+
+@code {
+    private Movie? selectedMovie;
+    
+    private void HandleMovieClick(Movie movie)
+    {
+        selectedMovie = movie;
+    }
+}";
+
+  // PRODUCT SHOWCASE
+  private string _productModel = @"public class Product
+{
+    [BzImage]
+    public string ImageUrl { get; set; } = """";
+    
+    [BzTitle]
+    public string Name { get; set; } = """";
+    
+    public decimal Price { get; set; }
+    public string Category { get; set; } = """";
+}";
+
+  private string _productShowcase = @"<BzCarousel Items=""@products""
+            Theme=""BzTheme.Light""
+            RotateDegree=""30""
+            Depth=""100""
+            OnItemSelected=""AddToCart"" />
+
+@code {
+    private void AddToCart(Product product)
+    {
+        // Add to shopping cart logic
+        Console.WriteLine($""Added {product.Name} - ${product.Price}"");
+    }
+}";
+
+  // CUSTOM TEMPLATE
+  private string _customTemplate = @"<BzCarousel Items=""@products"" Theme=""BzTheme.Glass"">
+    <ItemTemplate Context=""product"">
+        <div class=""custom-slide"">
+            <img src=""@product.ImageUrl"" alt=""@product.Name"" />
+            <div class=""slide-overlay"">
+                <h3>@product.Name</h3>
+                <p class=""price"">$@product.Price.ToString(""F2"")</p>
+                <span class=""category"">@product.Category</span>
+            </div>
+        </div>
+    </ItemTemplate>
+</BzCarousel>
+
+<style>
+    .custom-slide {
+        position: relative;
+        border-radius: 12px;
+        overflow: hidden;
+    }
+    .slide-overlay {
+        position: absolute;
+        bottom: 0;
+        left: 0;
+        right: 0;
+        padding: 1rem;
+        background: linear-gradient(transparent, rgba(0,0,0,0.8));
+        color: white;
+    }
+    .price {
+        font-size: 1.25rem;
+        font-weight: bold;
+        color: #22d3ee;
+    }
+</style>";
+
+  // PREVIEW PANEL
+  private string _previewPanel = @"<div class=""carousel-with-preview"">
+    <BzCarousel Items=""@movies""
+                SelectOnScroll=""false""
+                OnItemSelected=""NavigateToMovie""
+                OnActiveItemChanged=""ShowPreview"" />
+    
+    <div class=""preview-panel"">
+        @if (previewMovie != null)
+        {
+            <img src=""@previewMovie.Poster"" alt=""@previewMovie.Title"" />
+            <h3>@previewMovie.Title</h3>
+            <p>@previewMovie.Description</p>
+            <button @onclick=""() => NavigateToMovie(previewMovie)"">
+                View Details
+            </button>
+        }
+    </div>
+</div>
+
+@code {
+    private Movie? previewMovie;
+    
+    private void ShowPreview(Movie movie)
+    {
+        previewMovie = movie;  // Updates on every scroll
+    }
+    
+    private void NavigateToMovie(Movie movie)
+    {
+        // Only fires on click
+        Navigation.NavigateTo($""/movie/{movie.Id}"");
+    }
+}";
+
+  // THEME SWITCHING
+  private string _themeSwitching = @"<div class=""theme-buttons"">
+    <button @onclick=""() => currentTheme = BzTheme.Glass"">🔮 Glass</button>
+    <button @onclick=""() => currentTheme = BzTheme.Dark"">🌙 Dark</button>
+    <button @onclick=""() => currentTheme = BzTheme.Light"">☀️ Light</button>
+    <button @onclick=""() => currentTheme = BzTheme.Minimal"">〰️ Minimal</button>
+</div>
+
+<BzCarousel Items=""@movies"" Theme=""@currentTheme"" />
+
+@code {
+    private BzTheme currentTheme = BzTheme.Glass;
+}";
+
+  // CUSTOM LOADING
+  private string _customLoading = @"<BzCarousel Items=""@asyncMovies"">
+    <LoadingTemplate>
+        <div class=""custom-loader"">
+            <div class=""spinner""></div>
+            <p>Loading amazing content...</p>
+        </div>
+    </LoadingTemplate>
+</BzCarousel>
+
+@code {
+    private List<Movie>? asyncMovies;
+    
+    protected override async Task OnInitializedAsync()
+    {
+        // Simulate API call
+        await Task.Delay(2000);
+        asyncMovies = await MovieService.GetMoviesAsync();
+    }
+}";
+
+  // CUSTOM EMPTY
+  private string _customEmpty = @"<BzCarousel Items=""@filteredMovies"">
+    <EmptyTemplate>
+        <div class=""empty-state"">
+            <span class=""icon"">🎬</span>
+            <h3>No movies found</h3>
+            <p>Try adjusting your filters or search terms.</p>
+            <button @onclick=""ClearFilters"">Clear Filters</button>
+        </div>
+    </EmptyTemplate>
+</BzCarousel>";
+
+  // ADVANCED CONFIG
+  private string _advancedConfig = @"<BzCarousel Items=""@movies"" Options=""@carouselOptions"" />
+
+@code {
+    private BzCarouselOptions carouselOptions = new()
+    {
+        Effect = ""coverflow"",
+        SlidesPerView = ""auto"",
+        Loop = true,
+        Speed = 500,
+        RotateDegree = 45,
+        Depth = 200,
+        Modifier = 1.5,
+        SlideShadows = true,
+        Centeredslides = true
+    };
+}";
+
+  // MOBILE OPTIMIZATION
+  private string _mobileOptimization = @"<BzCarousel Items=""@movies"" Options=""@mobileOptions"" />
+
+@code {
+    private BzCarouselOptions mobileOptions = new()
+    {
+        // More deliberate swipe required
+        Threshold = 15,
+        
+        // Disable quick flicks for stability
+        ShortSwipes = false,
+        
+        // Lighter edge resistance
+        ResistanceRatio = 0.75,
+        
+        // Need to swipe 40% to advance
+        LongSwipesRatio = 0.4
+    };
+}";
+
+  // TEAM MODEL
+  private string _teamModel = @"public class TeamMember
+{
+    [BzImage]
+    public string Photo { get; set; } = """";
+    
+    [BzTitle]
+    public string Name { get; set; } = """";
+    
+    public string Position { get; set; } = """";
+    public string LinkedIn { get; set; } = """";
+}";
+
+  private string _teamCarousel = @"<BzCarousel Items=""@team""
+            Theme=""BzTheme.Minimal""
+            ShowOverlay=""false""
+            RotateDegree=""30"" />
+
+@code {
+    private List<TeamMember> team = new()
+    {
+        new() { Photo = ""/team/ceo.jpg"", Name = ""Jane Doe"", Position = ""CEO"" },
+        new() { Photo = ""/team/cto.jpg"", Name = ""John Smith"", Position = ""CTO"" },
+        new() { Photo = ""/team/designer.jpg"", Name = ""Alice Johnson"", Position = ""Lead Designer"" }
+    };
+}";
+}

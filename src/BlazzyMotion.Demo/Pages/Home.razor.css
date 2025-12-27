@@ -54,24 +54,30 @@
     line-height: 1.6;
 }
 
-/* INSTALL BOX */
+
 
 .bz-install-box {
     display: flex;
     align-items: center;
-    gap: 0.75rem;
+    gap: 0.5rem;
     background: rgba(0, 0, 0, 0.4);
     border: 1px solid rgba(255, 255, 255, 0.1);
     border-radius: 12px;
-    padding: 1rem 1.5rem;
+    padding: 1rem 1.25rem;
     position: relative;
     margin-top: 0.5rem;
+    max-width: 100%;
+    overflow-x: auto;
+    will-change: backdrop-filter;
+    transform: translateZ(0);
+    -webkit-transform: translateZ(0);
 }
 
 .bz-install-box__prompt {
     color: var(--bz-text-muted, rgba(255, 255, 255, 0.5));
     font-family: 'JetBrains Mono', monospace;
     font-weight: 600;
+    flex-shrink: 0;
 }
 
 .bz-install-box__command {
@@ -80,6 +86,7 @@
     color: var(--bz-accent-cyan, #22d3ee);
     background: transparent;
     padding: 0;
+    white-space: nowrap;
 }
 
 .bz-install-box__copy {
@@ -94,12 +101,13 @@
     border-radius: 6px;
     transition: all 0.2s ease;
     margin-left: auto;
+    flex-shrink: 0;
 }
 
-    .bz-install-box__copy:hover {
-        color: var(--bz-text-primary, rgba(255, 255, 255, 0.95));
-        background: rgba(255, 255, 255, 0.1);
-    }
+.bz-install-box__copy:hover {
+    color: var(--bz-text-primary, rgba(255, 255, 255, 0.95));
+    background: rgba(255, 255, 255, 0.1);
+}
 
 .bz-install-box__tooltip {
     position: absolute;
@@ -151,16 +159,18 @@
     transition: color 0.2s ease;
 }
 
-    .bz-scroll-indicator:hover {
-        color: var(--bz-text-primary, rgba(255, 255, 255, 0.95));
-    }
+.bz-scroll-indicator:hover {
+    color: var(--bz-text-primary, rgba(255, 255, 255, 0.95));
+}
 
-    .bz-scroll-indicator svg {
-        animation: bounce 2s ease-in-out infinite;
-    }
+.bz-scroll-indicator svg {
+    animation: bounce 2s ease-in-out infinite;
+}
 
 @keyframes bounce {
-    0%, 100% {
+
+    0%,
+    100% {
         transform: translateY(0);
     }
 
@@ -205,6 +215,9 @@
     border-radius: 50px;
     padding: 0.375rem;
     margin-bottom: 2rem;
+    will-change: backdrop-filter;
+    transform: translateZ(0);
+    -webkit-transform: translateZ(0);
 }
 
 .bz-pill {
@@ -220,27 +233,25 @@
     transition: all 0.2s ease;
 }
 
-    .bz-pill:hover {
-        color: var(--bz-text-primary, rgba(255, 255, 255, 0.95));
-        background: rgba(255, 255, 255, 0.05);
-    }
+.bz-pill:hover {
+    color: var(--bz-text-primary, rgba(255, 255, 255, 0.95));
+    background: rgba(255, 255, 255, 0.05);
+}
 
-    .bz-pill.active {
-        background: rgba(255, 255, 255, 0.1);
-        color: var(--bz-text-primary, rgba(255, 255, 255, 0.95));
-        border-color: rgba(255, 255, 255, 0.2);
-        box-shadow: 0 0 20px rgba(139, 92, 246, 0.25);
-    }
+.bz-pill.active {
+    background: rgba(255, 255, 255, 0.1);
+    color: var(--bz-text-primary, rgba(255, 255, 255, 0.95));
+    border-color: rgba(255, 255, 255, 0.2);
+    box-shadow: 0 0 20px rgba(139, 92, 246, 0.25);
+}
 
-/* DEMO STAGE (3D PERSPECTIVE CONTAINER) */
+/* DEMO STAGE */
 
 .bz-demo__stage {
     max-width: 1000px;
     margin: 0 auto;
     padding: 2rem 0;
 }
-
-/* SELECTED MOVIE TITLE */
 
 .bz-selected-title {
     font-size: 2rem;
@@ -286,13 +297,20 @@
     padding: 2.5rem 2rem;
     text-align: center;
     transition: all 0.3s ease;
+    will-change: transform, backdrop-filter;
+    transform: translateZ(0);
+    -webkit-transform: translateZ(0);
+    backface-visibility: hidden;
+    -webkit-backface-visibility: hidden;
 }
 
-    .bz-feature-card:hover {
-        transform: translateY(-8px);
-        border-color: rgba(139, 92, 246, 0.3);
-        box-shadow: 0 20px 40px rgba(0, 0, 0, 0.3), 0 0 30px rgba(139, 92, 246, 0.1);
-    }
+.bz-feature-card:hover {
+    transform: translateY(-8px) translateZ(0);
+    border-color: rgba(139, 92, 246, 0.3);
+    box-shadow:
+        0 20px 40px rgba(0, 0, 0, 0.3),
+        0 0 30px rgba(139, 92, 246, 0.1);
+}
 
 .bz-feature__icon {
     margin-bottom: 1.5rem;
@@ -300,10 +318,10 @@
     justify-content: center;
 }
 
-    .bz-feature__icon svg {
-        width: 48px;
-        height: 48px;
-    }
+.bz-feature__icon svg {
+    width: 48px;
+    height: 48px;
+}
 
 .bz-feature__title {
     font-size: 1.25rem;
@@ -318,13 +336,13 @@
     line-height: 1.6;
 }
 
-    .bz-feature__desc code {
-        font-size: 0.875em;
-        color: var(--bz-accent-cyan, #22d3ee);
-        background: rgba(0, 0, 0, 0.3);
-        padding: 0.125rem 0.375rem;
-        border-radius: 4px;
-    }
+.bz-feature__desc code {
+    font-size: 0.875em;
+    color: var(--bz-accent-cyan, #22d3ee);
+    background: rgba(0, 0, 0, 0.3);
+    padding: 0.125rem 0.375rem;
+    border-radius: 4px;
+}
 
 /* RESPONSIVE - TABLET (992px) */
 
@@ -337,11 +355,11 @@
         grid-template-columns: repeat(2, 1fr);
     }
 
-        .bz-features__grid .bz-feature-card:last-child {
-            grid-column: span 2;
-            max-width: 400px;
-            margin: 0 auto;
-        }
+    .bz-features__grid .bz-feature-card:last-child {
+        grid-column: span 2;
+        max-width: 400px;
+        margin: 0 auto;
+    }
 }
 
 /* RESPONSIVE - MOBILE (768px) */
@@ -365,13 +383,16 @@
     }
 
     .bz-install-box {
-        flex-wrap: wrap;
-        justify-content: center;
         padding: 0.875rem 1rem;
+        gap: 0.375rem;
+    }
+
+    .bz-install-box__prompt {
+        font-size: 0.875rem;
     }
 
     .bz-install-box__command {
-        font-size: 0.8125rem;
+        font-size: 0.75rem;
     }
 
     .bz-hero__actions {
@@ -380,10 +401,10 @@
         max-width: 280px;
     }
 
-        .bz-hero__actions .bz-btn {
-            width: 100%;
-            justify-content: center;
-        }
+    .bz-hero__actions .bz-btn {
+        width: 100%;
+        justify-content: center;
+    }
 
     .bz-scroll-indicator {
         margin-top: 1rem;
@@ -425,10 +446,10 @@
         gap: 1.5rem;
     }
 
-        .bz-features__grid .bz-feature-card:last-child {
-            grid-column: auto;
-            max-width: none;
-        }
+    .bz-features__grid .bz-feature-card:last-child {
+        grid-column: auto;
+        max-width: none;
+    }
 
     .bz-feature-card {
         padding: 2rem 1.5rem;
@@ -442,11 +463,26 @@
         font-size: 1.75rem;
     }
 
+    .bz-install-box {
+        padding: 0.75rem 0.875rem;
+        gap: 0.25rem;
+    }
+
     .bz-install-box__prompt {
-        display: none;
+        display: block;
+        font-size: 0.8125rem;
     }
 
     .bz-install-box__command {
-        font-size: 0.75rem;
+        font-size: 0.6875rem;
+    }
+
+    .bz-install-box__copy {
+        padding: 0.25rem;
+    }
+
+    .bz-install-box__copy svg {
+        width: 16px;
+        height: 16px;
     }
 }
