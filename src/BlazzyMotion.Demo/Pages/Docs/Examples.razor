@@ -5,7 +5,7 @@
 
 <PageTitle>Examples - BlazzyMotion</PageTitle>
 
-<PageHeader Title="Examples" Icon="💡" Subtitle="Copy-paste examples for common use cases" Version="1.1.0"
+<PageHeader Title="Examples" Icon="💡" Subtitle="Copy-paste examples for common use cases" Version="1.2.0"
   Framework=".NET 8+" />
 
 <!-- BASIC USAGE -->
@@ -95,18 +95,27 @@
 </DocSection>
 
 <!-- NEXT STEPS -->
-<DocSection Title="Need More Help?" Icon="🤔">
-  <div class="bz-flex bz-gap-2" style="flex-wrap: wrap;">
-    <a href="/docs/api" class="bz-btn bz-btn--primary">
-      API Reference →
-    </a>
-    <a href="/" class="bz-btn bz-btn--secondary">
-      Live Demo
-    </a>
-    <a href="https://github.com/Blazzy-Motion/BlazzyMotion/issues" target="_blank" class="bz-btn bz-btn--secondary">
-      Ask on GitHub
-    </a>
-  </div>
+<DocSection Title="Need More Help?">
+  <IconContent>
+    <svg class="bz-icon" viewBox="0 0 24 24">
+      <circle cx="12" cy="12" r="10"/>
+      <path d="M9.09 9a3 3 0 0 1 5.83 1c0 2-3 3-3 3"/>
+      <line x1="12" y1="17" x2="12.01" y2="17"/>
+    </svg>
+  </IconContent>
+  <ChildContent>
+    <div class="bz-flex bz-gap-2" style="flex-wrap: wrap;">
+      <a href="/docs/api" class="bz-btn bz-btn--primary">
+        API Reference →
+      </a>
+      <a href="/" class="bz-btn bz-btn--secondary">
+        Live Demo
+      </a>
+      <a href="https://github.com/Blazzy-Motion/BlazzyMotion/issues" target="_blank" class="bz-btn bz-btn--secondary">
+        Ask on GitHub
+      </a>
+    </div>
+  </ChildContent>
 </DocSection>
 
 @code {
@@ -149,7 +158,6 @@ public class Movie
 }";
 
   private string _movieGallery = @"<BzCarousel Items=""@movies""
-            Theme=""BzTheme.Glass""
             OnItemSelected=""HandleMovieClick"" />
 
 <div class=""selected-movie"">
@@ -197,7 +205,7 @@ public class Movie
 }";
 
   // CUSTOM TEMPLATE
-  private string _customTemplate = @"<BzCarousel Items=""@products"" Theme=""BzTheme.Glass"">
+  private string _customTemplate = @"<BzCarousel Items=""@products"">
     <ItemTemplate Context=""product"">
         <div class=""custom-slide"">
             <img src=""@product.ImageUrl"" alt=""@product.Name"" />

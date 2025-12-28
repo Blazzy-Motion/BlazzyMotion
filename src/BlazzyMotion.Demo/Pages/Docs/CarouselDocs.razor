@@ -8,7 +8,7 @@
 <DocSection Title="Overview" Icon="📖">
     <p><code>BzCarousel</code> is a feature-rich carousel component powered by Swiper.js.</p>
 
-    <ul class="bz-list">
+    <ul class="bz-feature-list">
         <li><strong>Zero Configuration</strong> - Source Generators handle template creation</li>
         <li><strong>3D Coverflow Effect</strong> - Stunning visual presentation</li>
         <li><strong>4 Themes</strong> - Glass, Dark, Light, and Minimal</li>
@@ -41,7 +41,6 @@
 
 @code {
     private string _basicUsage = @"<BzCarousel Items=""@_movies""
-            Theme=""BzTheme.Glass""
             OnItemSelected=""HandleSelection"" />";
 
     private string _customTemplate = @"<BzCarousel Items=""@_products"">

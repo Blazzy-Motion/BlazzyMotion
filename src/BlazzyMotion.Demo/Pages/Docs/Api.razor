@@ -52,10 +52,10 @@
     property.</p>
 
   <h4 class="bz-mt-2">Requirements</h4>
-  <ul class="bz-list">
-    <li>Property must be <code>public</code></li>
-    <li>Property must be of type <code>string</code></li>
-    <li>Only one property per class should have this attribute</li>
+  <ul class="bz-list" style="margin-left: 24px !important; padding-left: 16px !important; list-style-position: outside !important;">
+    <li style="margin-bottom: 12px; padding-left: 8px;">Property must be <code>public</code></li>
+    <li style="margin-bottom: 12px; padding-left: 8px;">Property must be of type <code>string</code></li>
+    <li style="margin-bottom: 12px; padding-left: 8px;">Only one property per class should have this attribute</li>
   </ul>
 
   <h4 class="bz-mt-2">Usage</h4>
@@ -96,15 +96,23 @@
 </DocSection>
 
 <!-- NEXT STEPS -->
-<DocSection Title="Next Steps" Icon="➡️">
-  <div class="bz-flex bz-gap-2" style="flex-wrap: wrap;">
-    <a href="/docs/css-variables" class="bz-btn bz-btn--primary">
-      CSS Variables →
-    </a>
-    <a href="/docs/examples" class="bz-btn bz-btn--secondary">
-      View Examples
-    </a>
-  </div>
+<DocSection Title="Next Steps">
+  <IconContent>
+    <svg class="bz-icon" viewBox="0 0 24 24">
+      <line x1="5" y1="12" x2="19" y2="12"/>
+      <polyline points="12 5 19 12 12 19"/>
+    </svg>
+  </IconContent>
+  <ChildContent>
+    <div class="bz-flex bz-gap-2" style="flex-wrap: wrap;">
+      <a href="/docs/css-variables" class="bz-btn bz-btn--primary">
+        CSS Variables →
+      </a>
+      <a href="/docs/examples" class="bz-btn bz-btn--secondary">
+        View Examples
+      </a>
+    </div>
+  </ChildContent>
 </DocSection>
 
 @code {

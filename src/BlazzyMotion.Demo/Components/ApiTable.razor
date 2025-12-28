@@ -12,20 +12,20 @@
             @foreach (var param in Parameters)
             {
                 <tr>
-                    <td>
+                    <td data-label="Parameter">
                         <code class="bz-api-table__param">@param.Name</code>
                         @if (param.Required)
                         {
                             <span class="bz-badge bz-badge--purple" style="margin-left: 8px; font-size: 0.625rem;">Required</span>
                         }
                     </td>
-                    <td>
+                    <td data-label="Type">
                         <code class="bz-api-table__type">@param.Type</code>
                     </td>
-                    <td>
+                    <td data-label="Default">
                         <code class="bz-api-table__default">@(param.Default ?? "—")</code>
                     </td>
-                    <td>@param.Description</td>
+                    <td data-label="Description">@param.Description</td>
                 </tr>
             }
         </tbody>

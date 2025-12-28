@@ -2,7 +2,11 @@
     @if (!string.IsNullOrEmpty(Title))
     {
         <h2 class="bz-doc-section__title">
-            @if (!string.IsNullOrEmpty(Icon))
+            @if (IconContent != null)
+            {
+                @IconContent
+            }
+            else if (!string.IsNullOrEmpty(Icon))
             {
                 <span class="bz-doc-section__title-icon">@Icon</span>
             }
@@ -21,6 +25,9 @@
 
     [Parameter]
     public string? Icon { get; set; }
+
+    [Parameter]
+    public RenderFragment? IconContent { get; set; }
 
     [Parameter]
     public string? CssClass { get; set; }
