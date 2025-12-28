@@ -1,16 +1,17 @@
 ﻿@page "/docs/installation"
+@using BlazzyMotion.Demo.Services
 
 <PageTitle>Installation - BlazzyMotion</PageTitle>
 
 <PageHeader Title="Installation" Icon="📦" Subtitle="Get started with BlazzyMotion in your Blazor project"
-    Version="1.2.0" Framework=".NET 8+" />
+    Version="@AppVersions.Carousel" Framework="@AppVersions.DotNetVersion" />
 
 <DocSection Title="Prerequisites" Icon="✅">
     <p>Before installing BlazzyMotion, make sure you have:</p>
-    <ul class="bz-list" style="margin-left: 24px !important; padding-left: 16px !important; list-style-position: outside !important;">
-        <li style="margin-bottom: 12px; padding-left: 8px;">NET 8.0 SDK or later</li>
-        <li style="margin-bottom: 12px; padding-left: 8px;">A Blazor WebAssembly or Blazor Server project</li>
-        <li style="margin-bottom: 12px; padding-left: 8px;">Visual Studio 2022,Visual Studio 2026, VS Code, or JetBrains Rider</li>
+    <ul class="bz-list">
+        <li>.NET 8.0 SDK or later</li>
+        <li>A Blazor WebAssembly or Blazor Server project</li>
+        <li>Visual Studio 2022, VS Code, or JetBrains Rider</li>
     </ul>
 </DocSection>
 
@@ -74,7 +75,7 @@
 
     private string _pmcInstall = "Install-Package BlazzyMotion.Carousel";
 
-    private string _packageRef = "<PackageReference Include=\"BlazzyMotion.Carousel\" Version=\"1.2.0\" />";
+    private string _packageRef => $"<PackageReference Include=\"BlazzyMotion.Carousel\" Version=\"{AppVersions.Carousel}\" />";
 
     private string _imports = @"@using BlazzyMotion.Core.Models
 @using BlazzyMotion.Carousel.Components";

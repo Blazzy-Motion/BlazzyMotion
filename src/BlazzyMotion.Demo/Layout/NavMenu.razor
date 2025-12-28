@@ -1,10 +1,10 @@
 ﻿@using Microsoft.AspNetCore.Components.Routing
+@using BlazzyMotion.Demo.Services
+@using BlazzyMotion.Demo.Models
 
 <aside class="bz-sidebar @(IsOpen ? "bz-sidebar--open" : "")">
 
-    <!-- Header with Close Button + Logo -->
     <header class="bz-sidebar__header">
-        <!-- Close Button (Mobile Only) -->
         <button class="bz-sidebar__close" @onclick="HandleLinkClick" aria-label="Close menu">
             <svg xmlns="http://www.w3.org/2000/svg" width="20" height="20" viewBox="0 0 24 24" fill="none"
                 stroke="currentColor" stroke-width="2" stroke-linecap="round" stroke-linejoin="round">
@@ -13,14 +13,12 @@
             </svg>
         </button>
 
-        <!-- Logo -->
         <a href="/" class="bz-sidebar__logo" @onclick="HandleLinkClick">
             <img src="images/bm-logo.png" alt="BlazzyMotion Logo" class="bz-sidebar__logo-img" />
             <span class="bz-sidebar__logo-text">BlazzyMotion</span>
         </a>
     </header>
 
-    <!-- Navigation -->
     <nav class="bz-sidebar__nav">
 
         <!-- GET STARTED -->
@@ -40,26 +38,38 @@
             </NavLink>
         </div>
 
-        <!-- COMPONENTS -->
+        <!-- COMPONENTS - Dynamic from Registry -->
         <div class="bz-sidebar__group">
             <span class="bz-sidebar__group-title">Components</span>
 
-            <NavLink href="/" class="bz-sidebar__link" Match="NavLinkMatch.All" @onclick="HandleLinkClick">
-                <span class="bz-sidebar__link-icon">🎠</span>
-                <span>Carousel</span>
-                <span class="bz-sidebar__link-badge">Live</span>
-            </NavLink>
+            @foreach (var component in ComponentRegistry.Components)
+            {
+                @if (component.IsAvailable)
+                {
+                    <!-- Live Demo Link -->
+                    <NavLink href="/" class="bz-sidebar__link" Match="NavLinkMatch.All" @onclick="HandleLinkClick">
+                        <span class="bz-sidebar__link-icon">@component.Icon</span>
+                        <span>@component.Name</span>
+                        <span class="bz-sidebar__link-badge">Live</span>
+                    </NavLink>
 
-            <NavLink href="docs/carousel" class="bz-sidebar__link" Match="NavLinkMatch.All" @onclick="HandleLinkClick">
-                <span class="bz-sidebar__link-icon">📖</span>
-                <span>Carousel Docs</span>
-            </NavLink>
-
-            <span class="bz-sidebar__link bz-sidebar__link--disabled">
-                <span class="bz-sidebar__link-icon">🍱</span>
-                <span>Bento Grid</span>
-                <span class="bz-sidebar__link-badge bz-sidebar__link-badge--soon">Soon</span>
-            </span>
+                    <!-- Docs Link -->
+                    <NavLink href="@($"docs/{component.Id}")" class="bz-sidebar__link" Match="NavLinkMatch.All" 
+                        @onclick="HandleLinkClick">
+                        <span class="bz-sidebar__link-icon">📖</span>
+                        <span>@component.Name Docs</span>
+                    </NavLink>
+                }
+                else
+                {
+                    <!-- Coming Soon -->
+                    <span class="bz-sidebar__link bz-sidebar__link--disabled">
+                        <span class="bz-sidebar__link-icon">@component.Icon</span>
+                        <span>@component.Name</span>
+                        <span class="bz-sidebar__link-badge bz-sidebar__link-badge--soon">Soon</span>
+                    </span>
+                }
+            }
         </div>
 
         <!-- CUSTOMIZATION -->
@@ -95,12 +105,11 @@
 
     </nav>
 
-    <!-- Footer -->
     <footer class="bz-sidebar__footer">
 
         <div class="bz-sidebar__version">
-            <span class="bz-badge bz-badge--purple">v1.2.0</span>
-            <span class="bz-badge">.NET 8</span>
+            <span class="bz-badge bz-badge--purple">v@(AppVersions.Carousel)</span>
+            <span class="bz-badge">@AppVersions.DotNetVersion</span>
         </div>
 
         <div class="bz-sidebar__external">

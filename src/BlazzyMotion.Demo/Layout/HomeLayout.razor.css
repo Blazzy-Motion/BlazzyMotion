@@ -7,8 +7,7 @@
     min-height: 100vh;
 }
 
-/* FLOATING DOCS BUTTON */
-
+/* Floating Docs Button */
 .bz-home-layout__docs-btn {
     position: fixed;
     top: 1.5rem;
@@ -28,36 +27,37 @@
     font-size: 0.875rem;
     font-weight: 500;
     transition: all 0.2s ease;
+    will-change: transform;
+    transform: translateZ(0);
+    -webkit-transform: translateZ(0);
+    backface-visibility: hidden;
+    -webkit-backface-visibility: hidden;
 }
 
-    .bz-home-layout__docs-btn:hover {
-        background: rgba(139, 92, 246, 0.2);
-        border-color: rgba(139, 92, 246, 0.4);
-        color: var(--bz-text-primary, rgba(255, 255, 255, 0.95));
-        box-shadow: 0 0 20px rgba(139, 92, 246, 0.3);
-    }
+.bz-home-layout__docs-btn:hover {
+    background: rgba(139, 92, 246, 0.2);
+    border-color: rgba(139, 92, 246, 0.4);
+    color: var(--bz-text-primary, rgba(255, 255, 255, 0.95));
+    box-shadow: 0 0 20px rgba(139, 92, 246, 0.3);
+}
 
-    .bz-home-layout__docs-btn svg {
-        width: 18px;
-        height: 18px;
-    }
+.bz-home-layout__docs-btn svg {
+    width: 18px;
+    height: 18px;
+}
 
-/* RESPONSIVE STYLES */
-
+/* Mobile Responsive */
 @media (max-width: 768px) {
     .bz-home-layout__docs-btn {
         top: 1rem;
         right: 1rem;
-        padding: 0.5rem 1rem;
-        font-size: 0.8125rem;
-    }
-
-        .bz-home-layout__docs-btn span {
-            display: none;
-        }
-
-    .bz-home-layout__docs-btn {
         padding: 0.75rem;
         border-radius: 50%;
+        backdrop-filter: blur(8px);
+        -webkit-backdrop-filter: blur(8px);
+    }
+
+    .bz-home-layout__docs-btn span {
+        display: none;
     }
 }

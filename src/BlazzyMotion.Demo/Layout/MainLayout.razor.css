@@ -1,10 +1,12 @@
-﻿.bz-sidebar-overlay {
+﻿/* Sidebar Overlay */
+.bz-sidebar-overlay {
     display: none;
     position: fixed;
     inset: 0;
-    background: rgba(0, 0, 0, 0.5);
+    background: rgba(0, 0, 0, 0.6);
     backdrop-filter: blur(4px);
-    z-index: 99;
+    -webkit-backdrop-filter: blur(4px);
+    z-index: 999;
     animation: fadeIn 0.2s ease;
 }
 
@@ -12,7 +14,6 @@
     from {
         opacity: 0;
     }
-
     to {
         opacity: 1;
     }

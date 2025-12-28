@@ -1,10 +1,11 @@
 @page "/docs/api"
+@using BlazzyMotion.Demo.Services
 
 <PageTitle>API Reference - BlazzyMotion</PageTitle>
 
 <PageHeader Title="API Reference" Icon="📋"
-  Subtitle="Complete reference for BzCarousel component parameters and attributes" Version="1.2.0"
-  Framework=".NET 8+" />
+  Subtitle="Complete reference for BzCarousel component parameters and attributes" Version="@AppVersions.Carousel"
+  Framework="@AppVersions.DotNetVersion" />
 
 <!-- COMPONENT PARAMETERS -->
 <DocSection Title="Component Parameters" Icon="⚙️">
@@ -52,10 +53,10 @@
     property.</p>
 
   <h4 class="bz-mt-2">Requirements</h4>
-  <ul class="bz-list" style="margin-left: 24px !important; padding-left: 16px !important; list-style-position: outside !important;">
-    <li style="margin-bottom: 12px; padding-left: 8px;">Property must be <code>public</code></li>
-    <li style="margin-bottom: 12px; padding-left: 8px;">Property must be of type <code>string</code></li>
-    <li style="margin-bottom: 12px; padding-left: 8px;">Only one property per class should have this attribute</li>
+  <ul class="bz-list">
+    <li>Property must be <code>public</code></li>
+    <li>Property must be of type <code>string</code></li>
+    <li>Only one property per class should have this attribute</li>
   </ul>
 
   <h4 class="bz-mt-2">Usage</h4>
