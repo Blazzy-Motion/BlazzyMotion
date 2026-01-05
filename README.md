@@ -394,6 +394,7 @@ var options = new BzCarouselOptions
 | `ShortSwipes`     | `false` | bool      | Allow quick flick gestures      |
 | `ResistanceRatio` | `0.85`  | 0 - 1     | Edge bounce resistance          |
 | `LongSwipesRatio` | `0.3`   | 0.1 - 0.9 | Slide width % to advance        |
+| `SpaceBetween`    | `0`     | 0 - 100+  | Gap between slides in pixels    |
 
 > 💡 **Tip:** If you experience glitchy behavior on mobile, try increasing `Threshold` to 15-20.
 
