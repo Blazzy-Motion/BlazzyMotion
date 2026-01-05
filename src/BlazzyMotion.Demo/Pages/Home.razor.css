@@ -123,6 +123,7 @@
         opacity: 0;
         transform: translateY(8px);
     }
+
     to {
         opacity: 1;
         transform: translateY(0);
@@ -161,9 +162,12 @@
 }
 
 @keyframes bounce {
-    0%, 100% {
+
+    0%,
+    100% {
         transform: translateY(0);
     }
+
     50% {
         transform: translateY(8px);
     }
@@ -293,7 +297,7 @@
     contain: layout style paint;
 }
 
-.bz-feature-card > * {
+.bz-feature-card>* {
     transform: translateZ(0);
     -webkit-transform: translateZ(0);
 }
@@ -444,9 +448,30 @@
     }
 
     .bz-feature-card {
-        padding: 2rem 1.5rem;
-        backdrop-filter: blur(6px);
-        -webkit-backdrop-filter: blur(6px);
+        padding: 1.5rem;
+        backdrop-filter: none;
+        -webkit-backdrop-filter: none;
+        background: rgba(255, 255, 255, 0.03);
+        border: 1px solid rgba(255, 255, 255, 0.08);
+        border-radius: 16px;
+        transition: none;
+    }
+
+    .bz-feature-card:hover {
+        transform: none;
+    }
+
+    .bz-feature__icon svg {
+        width: 40px;
+        height: 40px;
+    }
+
+    .bz-feature__title {
+        font-size: 1.1rem;
+    }
+
+    .bz-feature__desc {
+        font-size: 0.875rem;
     }
 }
 
@@ -481,8 +506,8 @@
 
     .bz-feature-card {
         padding: 1.5rem 1.25rem;
-        backdrop-filter: blur(4px);
-        -webkit-backdrop-filter: blur(4px);
+        backdrop-filter: none;
+        -webkit-backdrop-filter: none;
     }
 
     .bz-feature__icon {

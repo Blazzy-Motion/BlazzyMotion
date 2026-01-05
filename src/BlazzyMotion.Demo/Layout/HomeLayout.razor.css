@@ -53,8 +53,9 @@
         right: 1rem;
         padding: 0.75rem;
         border-radius: 50%;
-        backdrop-filter: blur(8px);
-        -webkit-backdrop-filter: blur(8px);
+        backdrop-filter: none;
+        -webkit-backdrop-filter: none;
+        background: rgba(15, 23, 42, 0.95);
     }
 
     .bz-home-layout__docs-btn span {

@@ -28,7 +28,7 @@ public class BzCarouselOptionsTests
         options.Depth.Should().Be(150);
         options.Stretch.Should().Be(0);
         options.Modifier.Should().Be(1.5);
-        options.SlideShadows.Should().BeTrue();
+        options.SlideShadows.Should().BeFalse();
 
         // Assert - Touch Options
         options.TouchRatio.Should().Be(1.0);
@@ -467,6 +467,81 @@ public class BzCarouselOptionsTests
         options.Threshold.Should().BeGreaterThan(5, "Threshold should be increased to prevent accidental swipes");
         options.ShortSwipes.Should().BeFalse("ShortSwipes should be disabled to prevent glitches");
         options.LongSwipesRatio.Should().BeLessOrEqualTo(0.5, "LongSwipesRatio should allow easier slide transitions");
+    }
+
+    #endregion
+
+    #region ShallowClone Tests
+
+    [Fact]
+    public void ShallowClone_ShouldCreateExactCopy()
+    {
+        // Arrange
+        var original = new BzCarouselOptions
+        {
+            Effect = "slide",
+            SlidesPerView = "3",
+            InitialSlide = 2,
+            CenteredSlides = false,
+            Loop = false,
+            SpaceBetween = 50,
+            Speed = 500,
+            GrabCursor = false,
+            RotateDegree = 45,
+            Depth = 200,
+            Stretch = 10,
+            Modifier = 2.0,
+            SlideShadows = true,
+            TouchRatio = 0.8,
+            Threshold = 15,
+            ShortSwipes = true,
+            ResistanceRatio = 0.7,
+            LongSwipesRatio = 0.4
+        };
+
+        // Act
+        var clone = original.ShallowClone();
+
+        // Assert
+        clone.Should().NotBeSameAs(original);
+        clone.Effect.Should().Be(original.Effect);
+        clone.SlidesPerView.Should().Be(original.SlidesPerView);
+        clone.InitialSlide.Should().Be(original.InitialSlide);
+        clone.CenteredSlides.Should().Be(original.CenteredSlides);
+        clone.Loop.Should().Be(original.Loop);
+        clone.SpaceBetween.Should().Be(original.SpaceBetween);
+        clone.Speed.Should().Be(original.Speed);
+        clone.GrabCursor.Should().Be(original.GrabCursor);
+        clone.RotateDegree.Should().Be(original.RotateDegree);
+        clone.Depth.Should().Be(original.Depth);
+        clone.Stretch.Should().Be(original.Stretch);
+        clone.Modifier.Should().Be(original.Modifier);
+        clone.SlideShadows.Should().Be(original.SlideShadows);
+        clone.TouchRatio.Should().Be(original.TouchRatio);
+        clone.Threshold.Should().Be(original.Threshold);
+        clone.ShortSwipes.Should().Be(original.ShortSwipes);
+        clone.ResistanceRatio.Should().Be(original.ResistanceRatio);
+        clone.LongSwipesRatio.Should().Be(original.LongSwipesRatio);
+    }
+
+    [Fact]
+    public void ShallowClone_ModifyingClone_ShouldNotAffectOriginal()
+    {
+        // Arrange
+        var original = new BzCarouselOptions
+        {
+            SpaceBetween = 30,
+            Speed = 300
+        };
+
+        // Act
+        var clone = original.ShallowClone();
+        clone.SpaceBetween = 100;
+        clone.Speed = 500;
+
+        // Assert
+        original.SpaceBetween.Should().Be(30);
+        original.Speed.Should().Be(300);
     }
 
     #endregion

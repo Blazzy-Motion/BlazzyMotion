@@ -397,9 +397,7 @@ public partial class BzCarousel<TItem> : BzComponentBase where TItem : class
     /// </summary>
     private BzCarouselOptions BuildOptions()
     {
-        if (Options != null) return Options;
-
-        return CurrentMode switch
+        var baseOptions = CurrentMode switch
         {
             CarouselMode.Simple => new BzCarouselOptions
             {
@@ -409,7 +407,8 @@ public partial class BzCarousel<TItem> : BzComponentBase where TItem : class
                 SpaceBetween = 30,
                 Loop = false,
                 Speed = 300,
-                GrabCursor = true
+                GrabCursor = true,
+                SlideShadows = false
             },
 
             CarouselMode.Coverflow => new BzCarouselOptions
@@ -424,11 +423,40 @@ public partial class BzCarousel<TItem> : BzComponentBase where TItem : class
                 Modifier = ItemCount < 5 ? 1.0 : 1.5,
                 Speed = 300,
                 GrabCursor = true,
-                SlideShadows = true
+                SlideShadows = false
             },
 
             _ => throw new InvalidOperationException($"Unknown mode: {CurrentMode}")
         };
+
+        if (Options != null)
+        {
+            return MergeOptions(baseOptions, Options);
+        }
+
+        return baseOptions;
+    }
+
+    /// <summary>
+    /// Merges user-provided options with base options.
+    /// Effect, Loop, and SlidesPerView are ALWAYS from baseOptions (AutoDetectMode controls them).
+    /// Other parameters can be overridden by user.
+    /// </summary>
+    private BzCarouselOptions MergeOptions(BzCarouselOptions baseOptions, BzCarouselOptions userOptions)
+    {
+
+        var merged = userOptions.ShallowClone();
+
+        merged.Effect = baseOptions.Effect;
+        merged.Loop = baseOptions.Loop;
+        merged.SlidesPerView = baseOptions.SlidesPerView;
+
+        if (merged.SpaceBetween == 0)
+        {
+            merged.SpaceBetween = baseOptions.SpaceBetween;
+        }
+
+        return merged;
     }
 
     /// <summary>

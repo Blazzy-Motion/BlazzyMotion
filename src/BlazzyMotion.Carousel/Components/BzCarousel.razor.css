@@ -1,4 +1,4 @@
-﻿/* SWIPER CONTAINER - Initial Hidden State (Scoped) */
+/* SWIPER CONTAINER - Initial Hidden State (Scoped) */
 
 ::deep .swiper-container.bzc-hidden {
     opacity: 0 !important;
@@ -25,7 +25,8 @@
     display: flex;
     justify-content: center;
     align-items: center;
-    box-shadow: 0px 10px 30px rgba(0, 0, 0, 0.6);
+    box-shadow: 0px 15px 40px rgba(0, 0, 0, 0.7),
+        0px 5px 15px rgba(0, 0, 0, 0.5);
     border-radius: 10px;
     overflow: hidden;
     position: relative;
@@ -48,7 +49,9 @@
     object-fit: cover;
     object-position: center;
     display: block;
-    transition: transform var(--bzc-transition-duration) ease;
+    box-shadow: 0px 0px 8px rgba(255, 255, 255, 0.2);
+    transition: transform var(--bzc-transition-duration) ease,
+        box-shadow 0.4s ease-out 0.3s;
 }
 
 ::deep .swiper-slide img:hover {
@@ -56,8 +59,20 @@
 }
 
 ::deep .swiper-slide-active img {
-    box-shadow: 0px 0px 15px rgba(255, 255, 255, 0.9);
+    box-shadow: 0px 0px 25px rgba(255, 255, 255, 0.95);
     transform: scale(var(--bzc-active-scale));
+}
+
+
+::deep .swiper-slide-shadow,
+::deep .swiper-slide-shadow-left,
+::deep .swiper-slide-shadow-right,
+::deep .swiper-slide-shadow-top,
+::deep .swiper-slide-shadow-bottom,
+::deep .swiper-slide-shadow-coverflow {
+    display: none !important;
+    opacity: 0 !important;
+    visibility: hidden !important;
 }
 
 /* OVERLAY */
@@ -68,12 +83,26 @@
     left: 0;
     right: 0;
     bottom: 0;
-    background: linear-gradient(to bottom, rgba(0, 0, 0, 0) 0%, rgba(0, 0, 0, 0.3) 100%);
     pointer-events: none;
     border-radius: 10px;
+    background: linear-gradient(to bottom,
+            rgba(0, 0, 0, 0.05) 0%,
+            rgba(0, 0, 0, 0.3) 50%,
+            rgba(0, 0, 0, 0.5) 100%);
+    opacity: 1;
+    transition: opacity 0.4s ease-out 0.3s;
 }
 
-/*  FALLBACK ITEM (when no [BzImage] or ItemTemplate provided) */
+::deep .swiper-slide-active .bzc-overlay {
+    opacity: 0.1;
+}
+
+::deep .swiper-slide-prev .bzc-overlay,
+::deep .swiper-slide-next .bzc-overlay {
+    opacity: 0.5;
+}
+
+/* FALLBACK ITEM */
 
 ::deep .bzc-fallback-item {
     display: flex;

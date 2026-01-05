@@ -145,6 +145,7 @@ export async function initializeCarousel(element, optionsJson, dotNetRef = null)
             effect: options.effect || "coverflow",
             grabCursor: options.grabCursor ?? true,
             centeredSlides: options.centeredSlides ?? true,
+            spaceBetween: options.spaceBetween || 0,
             slidesPerView: options.slidesPerView || "auto",
             initialSlide: options.initialSlide || 0,
             loop: shouldLoop,
@@ -167,60 +168,35 @@ export async function initializeCarousel(element, optionsJson, dotNetRef = null)
                 stretch: options.stretch || 0,
                 depth: options.depth || 150,
                 modifier: options.modifier || 1.5,
-                slideShadows: options.slideShadows ?? true,
+                slideShadows: options.slideShadows ?? false,
             },
 
             on: {
-                setTranslate: function () {
-                    // Fix z-index issues
-                    this.slides.forEach(slide => {
-                        const currentZ = parseInt(slide.style.zIndex);
+                afterInit: function () {
+                    this.params.speed = options.speed || 300;
+                    this.params.runCallbacksOnInit = true;
 
-                        if (currentZ < 0 || isNaN(currentZ)) {
-                            slide.style.zIndex = '1';
-                        }
-
-                        slide.style.pointerEvents = 'auto';
-                    });
-
-                    // Enable speed after initial render
-                    if (this.params.speed === 0) {
-                        this.params.speed = options.speed || 300;
-                        this.params.runCallbacksOnInit = true;
-
-                        // Show carousel after initialization
-                        setTimeout(() => {
+                    // Show carousel after initialization
+                    requestAnimationFrame(() => {
+                        requestAnimationFrame(() => {
                             if (this.el) {
                                 this.el.classList.remove('bzc-hidden');
                                 this.el.classList.add('bzc-visible');
                             }
-                        }, 100);
-                    }
+                        });
+                    });
                 },
-
 
                 slideChange: function () {
                     if (dotNetRef) {
                         const realIndex = this.realIndex;
                         dotNetRef.invokeMethodAsync('OnSlideChangeFromJS', realIndex)
                             .catch(err => {
-                                // Ignore errors during disposal
                                 if (!err.message?.includes('disposed')) {
                                     console.warn('[BlazzyMotion] slideChange callback error:', err);
                                 }
                             });
                     }
-                },
-
-                // Prevent multiple rapid transitions
-                touchStart: function () {
-                    // Add flag to track touch state
-                    this.touchStartTime = Date.now();
-                },
-
-                touchEnd: function () {
-                    // Calculate touch duration for analytics/debugging
-                    const touchDuration = Date.now() - (this.touchStartTime || 0);
                 }
             }
         };

@@ -87,15 +87,12 @@ public class BzCarouselOptions
     public double Modifier { get; set; } = 1.5;
 
     /// <summary>
-    /// Enable slide shadows in coverflow.
+    /// Enable slide shadows in coverflow. Default is false (uses custom overlay instead).
     /// </summary>
-    public bool SlideShadows { get; set; } = true;
+    public bool SlideShadows { get; set; } = false;
 
     #endregion
 
-    // ═══════════════════════════════════════════════════════════════════
-    // TOUCH / MOBILE OPTIONS
-    // ═══════════════════════════════════════════════════════════════════
     #region Touch/Mobile Options
 
     /// <summary>
@@ -141,6 +138,19 @@ public class BzCarouselOptions
     /// Default: 0.3 (30% of slide width)
     /// </remarks>
     public double LongSwipesRatio { get; set; } = 0.3;
+
+    #endregion
+
+    #region Methods
+
+    /// <summary>
+    /// Creates a shallow copy of the options.
+    /// </summary>
+    /// <returns>A new instance with the same property values.</returns>
+    public BzCarouselOptions ShallowClone()
+    {
+        return (BzCarouselOptions)this.MemberwiseClone();
+    }
 
     #endregion
 }
