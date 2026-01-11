@@ -1,4 +1,4 @@
-﻿using BlazzyMotion.Core.Models;
+using BlazzyMotion.Core.Models;
 using Microsoft.AspNetCore.Components;
 
 namespace BlazzyMotion.Core.Templates;
@@ -14,98 +14,163 @@ namespace BlazzyMotion.Core.Templates;
 /// <para>
 /// <strong>Available Templates:</strong>
 /// <list type="bullet">
-/// <item><see cref="CreateImage"/> - Simple img element</item>
+/// <item><see cref="CreateImage"/> - Simple img element (for Carousel)</item>
+/// <item><see cref="CreateBentoItem"/> - Bento grid item with image, title, description</item>
+/// <item><see cref="CreateBentoCard"/> - Bento card with image and overlay text</item>
+/// <item><see cref="CreateBentoStat"/> - Bento stat/metric display</item>
 /// <item><see cref="CreateFallback"/> - Fallback for unmapped items</item>
-/// </list>
-/// </para>
-/// <para>
-/// <strong>Future Templates (planned):</strong>
-/// <list type="bullet">
-/// <item>CreateCard - Image with title overlay</item>
-/// <item>CreateThumbnail - Small preview image</item>
-/// <item>CreateVideo - Video element with poster</item>
 /// </list>
 /// </para>
 /// </remarks>
 public static class BzTemplateFactory
 {
+    #region Carousel Templates
+
     /// <summary>
     /// Creates a RenderFragment that renders a BzItem as an img element.
     /// </summary>
-    /// <returns>RenderFragment for image rendering</returns>
-    /// <remarks>
-    /// <para>
-    /// Generated HTML:
-    /// <code>
-    /// &lt;img src="{ImageUrl}" alt="{Title}" title="{Title}" loading="lazy" /&gt;
-    /// </code>
-    /// </para>
-    /// <para>
-    /// <strong>Features:</strong>
-    /// <list type="bullet">
-    /// <item>Null safety - skips null items or empty URLs</item>
-    /// <item>Accessibility - uses Title for alt/title attributes</item>
-    /// <item>Performance - lazy loading enabled</item>
-    /// </list>
-    /// </para>
-    /// </remarks>
-    /// <example>
-    /// <code>
-    /// // Usage in component
-    /// @foreach (var item in MappedItems)
-    /// {
-    ///     @BzTemplateFactory.CreateImage()(item)
-    /// }
-    /// </code>
-    /// </example>
     public static RenderFragment<BzItem> CreateImage()
     {
         return item => builder =>
         {
-            if (item is null || !item.HasImage)
-            {
-                return;
-            }
+            if (item is null || !item.HasImage) return;
 
             builder.OpenElement(0, "img");
             builder.AddAttribute(1, "src", item.ImageUrl);
+            builder.AddAttribute(2, "alt", item.HasTitle ? item.Title : "Image");
+            if (item.HasTitle) builder.AddAttribute(3, "title", item.Title);
+            builder.AddAttribute(4, "loading", "lazy");
+            builder.CloseElement();
+        };
+    }
+
+    #endregion
+
+    #region Bento Templates
+
+    /// <summary>
+    /// Creates a RenderFragment that renders a BzItem for Bento Grid.
+    /// </summary>
+    public static RenderFragment<BzItem> CreateBentoItem()
+    {
+        return item => builder =>
+        {
+            if (item is null) return;
+            var seq = 0;
+
+            if (item.HasImage)
+            {
+                builder.OpenElement(seq++, "img");
+                builder.AddAttribute(seq++, "class", "bzb-item-image");
+                builder.AddAttribute(seq++, "src", item.ImageUrl);
+                builder.AddAttribute(seq++, "alt", item.HasTitle ? item.Title : "Image");
+                builder.AddAttribute(seq++, "loading", "lazy");
+                builder.CloseElement();
+            }
 
             if (item.HasTitle)
             {
-                builder.AddAttribute(2, "alt", item.Title);
-                builder.AddAttribute(3, "title", item.Title);
-            }
-            else
-            {
-                builder.AddAttribute(2, "alt", "Image");
+                builder.OpenElement(seq++, "h4");
+                builder.AddAttribute(seq++, "class", "bzb-item-title");
+                builder.AddContent(seq++, item.Title);
+                builder.CloseElement();
             }
 
-            builder.AddAttribute(4, "loading", "lazy");
+            if (!string.IsNullOrWhiteSpace(item.Description))
+            {
+                builder.OpenElement(seq++, "p");
+                builder.AddAttribute(seq++, "class", "bzb-item-description");
+                builder.AddContent(seq++, item.Description);
+                builder.CloseElement();
+            }
+        };
+    }
+
+    /// <summary>
+    /// Creates a RenderFragment that renders a BzItem as a card with overlay.
+    /// </summary>
+    public static RenderFragment<BzItem> CreateBentoCard()
+    {
+        return item => builder =>
+        {
+            if (item is null) return;
+            var seq = 0;
+
+            builder.OpenElement(seq++, "div");
+            builder.AddAttribute(seq++, "class", "bzb-card");
+
+            if (item.HasImage)
+            {
+                builder.OpenElement(seq++, "img");
+                builder.AddAttribute(seq++, "class", "bzb-card-image");
+                builder.AddAttribute(seq++, "src", item.ImageUrl);
+                builder.AddAttribute(seq++, "alt", item.HasTitle ? item.Title : "Image");
+                builder.AddAttribute(seq++, "loading", "lazy");
+                builder.CloseElement();
+            }
+
+            if (item.HasTitle || !string.IsNullOrWhiteSpace(item.Description))
+            {
+                builder.OpenElement(seq++, "div");
+                builder.AddAttribute(seq++, "class", "bzb-card-overlay");
+
+                if (item.HasTitle)
+                {
+                    builder.OpenElement(seq++, "h4");
+                    builder.AddAttribute(seq++, "class", "bzb-card-title");
+                    builder.AddContent(seq++, item.Title);
+                    builder.CloseElement();
+                }
+
+                if (!string.IsNullOrWhiteSpace(item.Description))
+                {
+                    builder.OpenElement(seq++, "p");
+                    builder.AddAttribute(seq++, "class", "bzb-card-description");
+                    builder.AddContent(seq++, item.Description);
+                    builder.CloseElement();
+                }
+
+                builder.CloseElement();
+            }
 
             builder.CloseElement();
         };
     }
 
     /// <summary>
+    /// Creates a RenderFragment that renders a BzItem as a stat/metric display.
+    /// </summary>
+    public static RenderFragment<BzItem> CreateBentoStat()
+    {
+        return item => builder =>
+        {
+            if (item is null) return;
+            var seq = 0;
+
+            builder.OpenElement(seq++, "div");
+            builder.AddAttribute(seq++, "class", "bzb-stat");
+
+            builder.OpenElement(seq++, "span");
+            builder.AddAttribute(seq++, "class", "bzb-stat-value");
+            builder.AddContent(seq++, item.Description ?? "-");
+            builder.CloseElement();
+
+            builder.OpenElement(seq++, "span");
+            builder.AddAttribute(seq++, "class", "bzb-stat-label");
+            builder.AddContent(seq++, item.Title ?? "Metric");
+            builder.CloseElement();
+
+            builder.CloseElement();
+        };
+    }
+
+    #endregion
+
+    #region Fallback Templates
+
+    /// <summary>
     /// Creates a fallback RenderFragment for items without valid data.
     /// </summary>
-    /// <returns>RenderFragment for fallback rendering</returns>
-    /// <remarks>
-    /// <para>
-    /// Used when:
-    /// <list type="bullet">
-    /// <item>No mapper is registered for the type</item>
-    /// <item>Item has no valid ImageUrl</item>
-    /// <item>Custom ItemTemplate is not provided</item>
-    /// </list>
-    /// </para>
-    /// <para>
-    /// Generated HTML:
-    /// <code>
-    /// &lt;div class="bzc-fallback-item"&gt;{Title or "Item"}&lt;/div&gt;
-    /// </code>
-    /// </para>
-    /// </remarks>
     public static RenderFragment<BzItem> CreateFallback()
     {
         return item => builder =>
@@ -120,44 +185,41 @@ public static class BzTemplateFactory
     /// <summary>
     /// Creates a generic fallback for any object type.
     /// </summary>
-    /// <typeparam name="T">The type of item to render</typeparam>
-    /// <returns>RenderFragment that displays ToString() result</returns>
-    /// <remarks>
-    /// Used when ItemTemplate is not provided and no [BzImage] attribute exists.
-    /// Displays the item's ToString() representation.
-    /// </remarks>
     public static RenderFragment<T> CreateGenericFallback<T>()
     {
         return item => builder =>
         {
             builder.OpenElement(0, "div");
-            builder.AddAttribute(1, "class", "bzc-fallback-item");
+            builder.AddAttribute(1, "class", "bz-fallback-item");
             builder.AddContent(2, item?.ToString() ?? "[null]");
             builder.CloseElement();
         };
     }
 
+    #endregion
+
+    #region Template Selection
+
     /// <summary>
-    /// Selects the appropriate template based on item state.
+    /// Selects the appropriate template based on item state (for Carousel).
     /// </summary>
-    /// <param name="item">The BzItem to render</param>
-    /// <returns>Appropriate RenderFragment based on item data</returns>
-    /// <remarks>
-    /// <para>
-    /// Selection logic:
-    /// <list type="number">
-    /// <item>If item has image → CreateImage()</item>
-    /// <item>Otherwise → CreateFallback()</item>
-    /// </list>
-    /// </para>
-    /// </remarks>
     public static RenderFragment<BzItem> SelectTemplate(BzItem? item)
     {
-        if (item is null || !item.HasImage)
-        {
-            return CreateFallback();
-        }
-
+        if (item is null || !item.HasImage) return CreateFallback();
         return CreateImage();
     }
+
+    /// <summary>
+    /// Selects the appropriate Bento template based on item state.
+    /// </summary>
+    public static RenderFragment<BzItem> SelectBentoTemplate(BzItem? item)
+    {
+        if (item is null) return CreateFallback();
+        if (item.HasImage && item.ColSpan > 1) return CreateBentoCard();
+        if (item.HasImage) return CreateBentoItem();
+        if (item.HasTitle || !string.IsNullOrWhiteSpace(item.Description)) return CreateBentoStat();
+        return CreateFallback();
+    }
+
+    #endregion
 }

@@ -27,7 +27,7 @@ public static class ComponentRegistry
             Name = "Bento Grid",
             Icon = "🍱",
             Version = AppVersions.Bento,
-            Status = ComponentStatus.ComingSoon,
+            Status = ComponentStatus.Stable,
             Description = "Responsive bento grid layout component",
             DocsUrl = "/docs/bento",
             NuGetPackage = "BlazzyMotion.Bento"

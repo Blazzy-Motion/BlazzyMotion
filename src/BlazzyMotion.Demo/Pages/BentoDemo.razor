@@ -1,0 +1,167 @@
+@page "/bento"
+@layout HomeLayout
+@using BlazzyMotion.Core.Models
+@using BlazzyMotion.Bento.Components
+@using BlazzyMotion.Demo.Model
+
+<PageTitle>BzBento Demo - BlazzyMotion</PageTitle>
+
+<div class="bz-home">
+
+    <section class="bz-hero" style="min-height: auto; padding: 60px 20px;">
+        <div class="bz-hero__content">
+            <h1 class="bz-hero__brand">BzBento</h1>
+            <h2 class="bz-hero__title">Beautiful Grid Layouts</h2>
+            <p class="bz-hero__subtitle">
+                CSS Grid powered Bento layouts with glassmorphism design.
+            </p>
+        </div>
+    </section>
+
+    <section class="bz-demo" id="demo">
+
+        <span class="bz-demo__label">Live Preview</span>
+
+        <h3 class="bz-demo__title">Bento Grid</h3>
+
+        <div class="bz-theme-pills">
+            <button class="bz-pill @(_currentTheme == BzTheme.Glass ? "active" : "")"
+                    @onclick="() => SetTheme(BzTheme.Glass)">
+                Glass
+            </button>
+            <button class="bz-pill @(_currentTheme == BzTheme.Dark ? "active" : "")"
+                    @onclick="() => SetTheme(BzTheme.Dark)">
+                Dark
+            </button>
+            <button class="bz-pill @(_currentTheme == BzTheme.Light ? "active" : "")"
+                    @onclick="() => SetTheme(BzTheme.Light)">
+                Light
+            </button>
+            <button class="bz-pill @(_currentTheme == BzTheme.Minimal ? "active" : "")"
+                    @onclick="() => SetTheme(BzTheme.Minimal)">
+                Minimal
+            </button>
+        </div>
+
+        <div class="bz-demo__stage" style="max-width: 1200px; margin: 0 auto;">
+            <BzBento TItem="BentoItem"
+                     Items="@_bentoItems"
+                     Theme="@_currentTheme"
+                     Columns="4"
+                     Gap="16"
+                     OnItemSelected="@OnItemSelected" />
+        </div>
+
+        @if (_selectedItem != null)
+        {
+            <h4 class="bz-selected-title">Selected: @_selectedItem.Title</h4>
+        }
+
+    </section>
+
+    <section class="bz-demo" style="padding-top: 40px;">
+
+        <h3 class="bz-demo__title">Composition Mode</h3>
+        <p style="color: rgba(255,255,255,0.7); text-align: center; margin-bottom: 30px;">
+            Use ChildContent for complete control over grid items
+        </p>
+
+        <div class="bz-demo__stage" style="max-width: 1200px; margin: 0 auto;">
+            <BzBento TItem="object" Items="null" Theme="@_currentTheme" Columns="4" Gap="16">
+                <ChildContent>
+                    <BzBentoItem ColSpan="2" RowSpan="2">
+                        <div style="width: 100%; height: 100%; position: relative; overflow: hidden; border-radius: inherit;">
+                            <img src="images/joker.jpg" alt="Hero"
+                                 style="width: 100%; height: 100%; object-fit: cover;" />
+                            <div style="position: absolute; bottom: 0; left: 0; right: 0; padding: 20px; background: linear-gradient(to top, rgba(0,0,0,0.8), transparent);">
+                                <h3 style="margin: 0; color: white; font-size: 1.5rem;">Featured</h3>
+                                <p style="margin: 5px 0 0; color: rgba(255,255,255,0.8);">Hero card with 2x2 span</p>
+                            </div>
+                        </div>
+                    </BzBentoItem>
+
+                    <BzBentoItem>
+                        <div class="bzb-stat">
+                            <span class="bzb-stat-value">8</span>
+                            <span class="bzb-stat-label">Movies</span>
+                        </div>
+                    </BzBentoItem>
+
+                    <BzBentoItem>
+                        <div class="bzb-stat">
+                            <span class="bzb-stat-value">4</span>
+                            <span class="bzb-stat-label">Themes</span>
+                        </div>
+                    </BzBentoItem>
+
+                    <BzBentoItem>
+                        <img src="images/venom.jpg" alt="Venom"
+                             style="width: 100%; height: 100%; object-fit: cover; border-radius: inherit;" />
+                    </BzBentoItem>
+
+                    <BzBentoItem>
+                        <img src="images/wild-robot.jpg" alt="Wild Robot"
+                             style="width: 100%; height: 100%; object-fit: cover; border-radius: inherit;" />
+                    </BzBentoItem>
+
+                    <BzBentoItem ColSpan="2">
+                        <div style="display: flex; align-items: center; justify-content: center; height: 100%; padding: 20px; text-align: center;">
+                            <div>
+                                <h4 style="margin: 0 0 10px; font-size: 1.2rem;">Wide Card (2x1)</h4>
+                                <p style="margin: 0; opacity: 0.7;">Perfect for CTAs or descriptions</p>
+                            </div>
+                        </div>
+                    </BzBentoItem>
+
+                    <BzBentoItem RowSpan="2">
+                        <img src="images/thesubstance.jpg" alt="The Substance"
+                             style="width: 100%; height: 100%; object-fit: cover; border-radius: inherit;" />
+                    </BzBentoItem>
+
+                    <BzBentoItem>
+                        <div class="bzb-stat">
+                            <span class="bzb-stat-value">60</span>
+                            <span class="bzb-stat-label">FPS</span>
+                        </div>
+                    </BzBentoItem>
+
+                </ChildContent>
+            </BzBento>
+        </div>
+
+    </section>
+
+    <section class="bz-features" style="padding: 60px 20px;">
+        <a href="/" class="bz-btn bz-btn--secondary">
+            Back to Home
+        </a>
+    </section>
+
+</div>
+
+@code {
+    private BzTheme _currentTheme = BzTheme.Glass;
+    private BentoItem? _selectedItem;
+
+    private List<BentoItem> _bentoItems = new()
+    {
+        new() { Title = "Despicable Me 4", ImageUrl = "images/despicableme.jpg" },
+        new() { Title = "Joker", ImageUrl = "images/joker.jpg" },
+        new() { Title = "The Platform 2", ImageUrl = "images/the-platform.jpg" },
+        new() { Title = "The Substance", ImageUrl = "images/thesubstance.jpg" },
+        new() { Title = "Venom", ImageUrl = "images/venom.jpg" },
+        new() { Title = "Survive", ImageUrl = "images/survive.jpg" },
+        new() { Title = "The Wild Robot", ImageUrl = "images/wild-robot.jpg" },
+        new() { Title = "Deadpool & Wolverine", ImageUrl = "images/wolwerine.jpg" }
+    };
+
+    private void SetTheme(BzTheme theme)
+    {
+        _currentTheme = theme;
+    }
+
+    private void OnItemSelected(BentoItem item)
+    {
+        _selectedItem = item;
+    }
+}

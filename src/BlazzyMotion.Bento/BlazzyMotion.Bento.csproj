@@ -1,0 +1,48 @@
+<Project Sdk="Microsoft.NET.Sdk.Razor">
+
+  <PropertyGroup>
+    <TargetFramework>net8.0</TargetFramework>
+    <Version>$(BlazzyBentoVersion)</Version>
+    <PackageVersion>$(BlazzyBentoVersion)</PackageVersion>
+    <PackageId>BlazzyMotion.Bento</PackageId>
+    <Title>BlazzyMotion Bento Grid</Title>
+    <Description>A modern Bento Grid component for Blazor with Glassmorphism design, staggered animations, and pagination support. Features zero-config setup with [BzBentoItem] attribute and automatic layout generation via Source Generator. Supports embedding BzCarousel and other BlazzyMotion components. Live demo: https://blazzymotion.com/</Description>
+    <PackageTags>blazor;bento;grid;layout;dashboard;ui;component;glassmorphism;source-generator;css-grid</PackageTags>
+    <PackageIcon>icon.png</PackageIcon>
+    <PackageReadmeFile>README.md</PackageReadmeFile>
+
+    <EmitCompilerGeneratedFiles>true</EmitCompilerGeneratedFiles>
+    <CompilerGeneratedFilesOutputPath>$(BaseIntermediateOutputPath)Generated</CompilerGeneratedFilesOutputPath>
+  </PropertyGroup>
+
+  <ItemGroup>
+    <SupportedPlatform Include="browser" />
+  </ItemGroup>
+
+  <ItemGroup>
+    <PackageReference Include="Microsoft.AspNetCore.Components.Web" Version="8.0.0" />
+  </ItemGroup>
+
+  <!-- Reference to Core for shared infrastructure -->
+  <ItemGroup>
+    <ProjectReference Include="..\BlazzyMotion.Core\BlazzyMotion.Core.csproj" />
+    <ProjectReference Include="..\BlazzyMotion.SourceGen\BlazzyMotion.SourceGen.csproj"
+                      OutputItemType="Analyzer"
+                      ReferenceOutputAssembly="false" />
+  </ItemGroup>
+
+  <!-- Include Source Generator DLL in package -->
+  <ItemGroup>
+    <None Include="..\BlazzyMotion.SourceGen\bin\$(Configuration)\netstandard2.0\BlazzyMotion.SourceGen.dll"
+          Pack="true"
+          PackagePath="analyzers/dotnet/cs"
+          Visible="false" />
+  </ItemGroup>
+
+  <!-- Package assets -->
+  <ItemGroup>
+    <None Include="icon.png" Pack="true" PackagePath="\" Condition="Exists('icon.png')" />
+    <None Include="README.md" Pack="true" PackagePath="\" />
+  </ItemGroup>
+
+</Project>

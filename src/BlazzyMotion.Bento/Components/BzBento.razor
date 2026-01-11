@@ -1,0 +1,96 @@
+@namespace BlazzyMotion.Bento.Components
+@typeparam TItem where TItem : class
+@inherits BlazzyMotion.Core.Abstractions.BzComponentBase
+
+@if (IsLoading)
+{
+    <div class="bz-loading" @attributes="AdditionalAttributes">
+        @if (LoadingTemplate != null)
+        {
+            @LoadingTemplate
+        }
+        else
+        {
+            <div class="bz-spinner"></div>
+            <p>Loading grid...</p>
+        }
+    </div>
+}
+else if (IsEmpty && ChildContent == null)
+{
+    <div class="bz-empty" @attributes="AdditionalAttributes">
+        @if (EmptyTemplate != null)
+        {
+            @EmptyTemplate
+        }
+        else
+        {
+            <p>No items to display</p>
+        }
+    </div>
+}
+else if (Paginated && ChildContent == null && Items != null)
+{
+    @* PAGINATED MODE - Swiper with pages *@
+    <div class="@GetCombinedClass("bzb-grid")"
+         @ref="_gridRef"
+         style="@GetGridStyle()"
+         @attributes="AdditionalAttributes">
+        <div class="swiper-container">
+            <div class="swiper-wrapper">
+                @foreach (var page in GetPages())
+                {
+                    <div class="swiper-slide">
+                        <div class="bzb-page-grid" style="@GetPageGridStyle()">
+                            @foreach (var (item, index) in page)
+                            {
+                                var bzItem = GetMappedItem(item, index);
+                                <div class="bzb-item @GetSpanClasses(bzItem)"
+                                     style="@GetItemStyle(bzItem)"
+                                     @onclick="() => HandleItemClick(item)">
+                                    @GetItemContent(item, index)
+                                </div>
+                            }
+                        </div>
+                    </div>
+                }
+            </div>
+        </div>
+        <div class="bzb-pagination"></div>
+    </div>
+}
+else if (ChildContent != null)
+{
+    @* COMPOSITION MODE - User provides BzBentoItem children *@
+    <div class="@GetCombinedClass("bzb-grid")"
+         @ref="_gridRef"
+         style="@GetGridStyle()"
+         @attributes="AdditionalAttributes">
+        @ChildContent
+    </div>
+}
+else
+{
+    @* STATIC MODE - Auto-generated grid from Items *@
+    <div class="@GetCombinedClass("bzb-grid")"
+         @ref="_gridRef"
+         style="@GetGridStyle()"
+         @attributes="AdditionalAttributes">
+        @{
+            var index = 0;
+            foreach (var item in Items!)
+            {
+                var currentIndex = index;
+                var bzItem = GetMappedItem(item, currentIndex);
+
+                <div class="bzb-item @GetSpanClasses(bzItem)"
+                     style="@GetItemStyle(bzItem)"
+                     @onclick="() => HandleItemClick(item)">
+                    @GetItemContent(item, currentIndex)
+                </div>
+
+                index++;
+            }
+        }
+    </div>
+}

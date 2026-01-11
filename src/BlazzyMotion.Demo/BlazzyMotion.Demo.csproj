@@ -12,6 +12,7 @@
   </PropertyGroup>
 
   <ItemGroup>
+    <ProjectReference Include="..\BlazzyMotion.Bento\BlazzyMotion.Bento.csproj" />
     <ProjectReference Include="..\BlazzyMotion.Carousel\BlazzyMotion.Carousel.csproj" />
     <ProjectReference Include="..\BlazzyMotion.Core\BlazzyMotion.Core.csproj" />
     <ProjectReference Include="..\BlazzyMotion.SourceGen\BlazzyMotion.SourceGen.csproj" OutputItemType="Analyzer" ReferenceOutputAssembly="false" />

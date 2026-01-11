@@ -47,14 +47,14 @@
                 @if (component.IsAvailable)
                 {
                     <!-- Live Demo Link -->
-                    <NavLink href="/" class="bz-sidebar__link" Match="NavLinkMatch.All" @onclick="HandleLinkClick">
+                    <NavLink href="@GetLiveDemoUrl(component.Id)" class="bz-sidebar__link" Match="NavLinkMatch.All" @onclick="HandleLinkClick">
                         <span class="bz-sidebar__link-icon">@component.Icon</span>
                         <span>@component.Name</span>
                         <span class="bz-sidebar__link-badge">Live</span>
                     </NavLink>
 
                     <!-- Docs Link -->
-                    <NavLink href="@($"docs/{component.Id}")" class="bz-sidebar__link" Match="NavLinkMatch.All" 
+                    <NavLink href="@($"docs/{component.Id}")" class="bz-sidebar__link" Match="NavLinkMatch.All"
                         @onclick="HandleLinkClick">
                         <span class="bz-sidebar__link-icon">📖</span>
                         <span>@component.Name Docs</span>
@@ -146,4 +146,11 @@
     {
         await OnLinkClick.InvokeAsync();
     }
+
+    private static string GetLiveDemoUrl(string componentId) => componentId switch
+    {
+        "carousel" => "/",
+        "bento" => "/bento",
+        _ => "/"
+    };
 }
