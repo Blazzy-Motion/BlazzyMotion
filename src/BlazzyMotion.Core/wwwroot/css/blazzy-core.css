@@ -588,6 +588,85 @@
     letter-spacing: 0.05em;
 }
 
+/* BENTO RICH IMAGE TEMPLATE (1x1 items with overlay) */
+
+.bzb-card-simple {
+    position: relative;
+    width: 100%;
+    height: 100%;
+    min-height: 200px;
+    overflow: hidden;
+    border-radius: inherit;
+}
+
+.bzb-card-simple-overlay {
+    position: absolute;
+    bottom: 0;
+    left: 0;
+    right: 0;
+    padding: 16px;
+    background: linear-gradient(to top, rgba(0, 0, 0, 0.85) 0%, rgba(0, 0, 0, 0.5) 50%, transparent 100%);
+    color: #fff;
+    z-index: 1;
+}
+
+.bzb-card-simple-title {
+    font-size: 1rem;
+    font-weight: 600;
+    margin: 0;
+    color: white;
+    text-shadow: 0 1px 3px rgba(0, 0, 0, 0.5);
+}
+
+/* HOVER EFFECTS FOR ALL BENTO IMAGES */
+
+.bzb-item:hover .bzb-card-image,
+.bzb-item:hover .bzb-item-image {
+    transform: scale(1.05);
+}
+
+.bzb-card-image,
+.bzb-item-image {
+    transition: transform 0.4s cubic-bezier(0.4, 0, 0.2, 1);
+}
+
+/* ENHANCED STAT CARDS */
+
+.bzb-stat {
+    background: linear-gradient(135deg, rgba(139, 92, 246, 0.05), rgba(34, 211, 238, 0.05));
+}
+
+/* BENTO PRESENTATION WRAPPER (self-contained demo styles) */
+
+.bzb-presentation {
+    padding: 4rem 2rem;
+    text-align: center;
+    max-width: 100%;
+}
+
+.bzb-presentation__label {
+    display: inline-block;
+    font-size: 0.75rem;
+    font-weight: 600;
+    text-transform: uppercase;
+    letter-spacing: 0.15em;
+    color: rgba(255, 255, 255, 0.4);
+    margin-bottom: 1rem;
+}
+
+.bzb-presentation__title {
+    font-size: 1.75rem;
+    font-weight: 600;
+    color: rgba(255, 255, 255, 0.95);
+    margin-bottom: 2rem;
+}
+
+.bzb-presentation__stage {
+    max-width: 1200px;
+    margin: 0 auto;
+    padding: 2rem 0;
+}
+
 /* RESPONSIVE BREAKPOINTS */
 
 /* Tablet (max-width: 991px) */

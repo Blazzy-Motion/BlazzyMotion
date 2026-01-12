@@ -164,6 +164,46 @@ public static class BzTemplateFactory
         };
     }
 
+    /// <summary>
+    /// Creates a RenderFragment for regular image items with rich overlay (1x1).
+    /// </summary>
+    public static RenderFragment<BzItem> CreateBentoImageRich()
+    {
+        return item => builder =>
+        {
+            if (item is null) return;
+            var seq = 0;
+
+            builder.OpenElement(seq++, "div");
+            builder.AddAttribute(seq++, "class", "bzb-card-simple");
+
+            if (item.HasImage)
+            {
+                builder.OpenElement(seq++, "img");
+                builder.AddAttribute(seq++, "class", "bzb-card-image");
+                builder.AddAttribute(seq++, "src", item.ImageUrl);
+                builder.AddAttribute(seq++, "alt", item.HasTitle ? item.Title : "Image");
+                builder.AddAttribute(seq++, "loading", "lazy");
+                builder.CloseElement();
+            }
+
+            if (item.HasTitle)
+            {
+                builder.OpenElement(seq++, "div");
+                builder.AddAttribute(seq++, "class", "bzb-card-simple-overlay");
+
+                builder.OpenElement(seq++, "h5");
+                builder.AddAttribute(seq++, "class", "bzb-card-simple-title");
+                builder.AddContent(seq++, item.Title);
+                builder.CloseElement();
+
+                builder.CloseElement(); // overlay
+            }
+
+            builder.CloseElement(); // container
+        };
+    }
+
     #endregion
 
     #region Fallback Templates
@@ -210,14 +250,24 @@ public static class BzTemplateFactory
     }
 
     /// <summary>
-    /// Selects the appropriate Bento template based on item state.
+    /// Selects the appropriate Bento template based on item state and size.
     /// </summary>
     public static RenderFragment<BzItem> SelectBentoTemplate(BzItem? item)
     {
         if (item is null) return CreateFallback();
-        if (item.HasImage && item.ColSpan > 1) return CreateBentoCard();
-        if (item.HasImage) return CreateBentoItem();
-        if (item.HasTitle || !string.IsNullOrWhiteSpace(item.Description)) return CreateBentoStat();
+
+        // Featured cards (2x2 or 2x1 or 1x2) - use rich card template
+        if (item.HasImage && (item.ColSpan >= 2 || item.RowSpan >= 2))
+            return CreateBentoCard();
+
+        // Regular items with image - rich overlay
+        if (item.HasImage)
+            return CreateBentoImageRich();
+
+        // No image but has data - stat/metric card
+        if (item.HasTitle || !string.IsNullOrWhiteSpace(item.Description))
+            return CreateBentoStat();
+
         return CreateFallback();
     }
 

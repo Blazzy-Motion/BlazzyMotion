@@ -161,6 +161,34 @@ public partial class BzBento<TItem> : BzComponentBase where TItem : class
 
     #endregion
 
+    #region Parameters - Auto-Layout
+
+    /// <summary>
+    /// Enable automatic layout pattern assignment.
+    /// </summary>
+    /// <remarks>
+    /// When enabled, items automatically receive ColSpan and RowSpan values
+    /// based on the selected <see cref="Pattern"/>, creating visually dynamic
+    /// Bento grids without manual configuration.
+    /// Explicit ColSpan/RowSpan values in your model will override auto-layout.
+    /// Default: true
+    /// </remarks>
+    [Parameter]
+    public bool AutoLayout { get; set; } = true;
+
+    /// <summary>
+    /// Layout pattern to use when AutoLayout is enabled.
+    /// </summary>
+    /// <remarks>
+    /// Only applies when <see cref="AutoLayout"/> is true.
+    /// See <see cref="BentoLayoutPattern"/> for available patterns.
+    /// Default: Dynamic
+    /// </remarks>
+    [Parameter]
+    public BentoLayoutPattern Pattern { get; set; } = BentoLayoutPattern.Dynamic;
+
+    #endregion
+
     #region Parameters - Events
 
     /// <summary>
@@ -386,16 +414,23 @@ public partial class BzBento<TItem> : BzComponentBase where TItem : class
     /// </summary>
     private BzItem GetMappedItem(TItem item, int index)
     {
+        BzItem bzItem;
+
         if (_useRegistryMapping && index < _mappedItems.Count)
         {
-            return _mappedItems[index];
+            bzItem = _mappedItems[index];
+        }
+        else
+        {
+            bzItem = new BzItem
+            {
+                Title = item?.ToString(),
+                OriginalItem = item
+            };
         }
 
-        return new BzItem
-        {
-            Title = item?.ToString(),
-            OriginalItem = item
-        };
+        // Apply auto-layout pattern
+        return ApplyAutoLayout(bzItem, index);
     }
 
     /// <summary>
@@ -449,6 +484,136 @@ public partial class BzBento<TItem> : BzComponentBase where TItem : class
         {
             await OnItemSelected.InvokeAsync(item);
         }
+    }
+
+    #endregion
+
+    #region Private Methods - Auto-Layout
+
+    /// <summary>
+    /// Applies auto-layout pattern to an item if AutoLayout is enabled.
+    /// </summary>
+    /// <param name="item">The BzItem to apply pattern to</param>
+    /// <param name="index">The item's index in the collection</param>
+    /// <returns>BzItem with ColSpan and RowSpan applied</returns>
+    private BzItem ApplyAutoLayout(BzItem item, int index)
+    {
+        if (!AutoLayout) return item;
+
+        // Respect explicit spans set by user
+        if (item.ColSpan > 1 || item.RowSpan > 1) return item;
+
+        return Pattern switch
+        {
+            BentoLayoutPattern.Dynamic => ApplyDynamicPattern(item, index),
+            BentoLayoutPattern.Featured => ApplyFeaturedPattern(item, index),
+            BentoLayoutPattern.Balanced => ApplyBalancedPattern(item, index),
+            _ => item
+        };
+    }
+
+    /// <summary>
+    /// Applies Dynamic pattern: varied mix of hero, tall, wide, and normal cards.
+    /// </summary>
+    /// <remarks>
+    /// Pattern (repeating cycle of 8):
+    /// [0] 2x2 Hero, [1] 1x2 Tall, [2-3] 1x1 Normal, 
+    /// [4] 2x1 Wide, [5] 1x1 Normal, [6] 1x2 Tall, [7] 1x1 Normal
+    /// </remarks>
+    private static BzItem ApplyDynamicPattern(BzItem item, int index)
+    {
+        var patterns = new[]
+        {
+            (Col: 2, Row: 2), // 0 - Hero
+            (Col: 1, Row: 2), // 1 - Tall
+            (Col: 1, Row: 1), // 2 - Normal
+            (Col: 1, Row: 1), // 3 - Normal
+            (Col: 2, Row: 1), // 4 - Wide
+            (Col: 1, Row: 1), // 5 - Normal
+            (Col: 1, Row: 2), // 6 - Tall
+            (Col: 1, Row: 1), // 7 - Normal
+        };
+
+        var pattern = patterns[index % patterns.Length];
+        var newItem = CloneBzItem(item);
+        newItem.ColSpan = pattern.Col;
+        newItem.RowSpan = pattern.Row;
+        return newItem;
+    }
+
+    /// <summary>
+    /// Applies Featured pattern: one large hero (2x2) at start, rest smaller.
+    /// </summary>
+    /// <remarks>
+    /// First item is always 2x2 hero.
+    /// Every 3rd item after is 1x2 tall, others are 1x1.
+    /// </remarks>
+    private static BzItem ApplyFeaturedPattern(BzItem item, int index)
+    {
+        var newItem = CloneBzItem(item);
+        
+        if (index == 0)
+        {
+            newItem.ColSpan = 2;
+            newItem.RowSpan = 2;
+        }
+        else if (index % 3 == 0)
+        {
+            newItem.ColSpan = 1;
+            newItem.RowSpan = 2;
+        }
+        else
+        {
+            newItem.ColSpan = 1;
+            newItem.RowSpan = 1;
+        }
+        
+        return newItem;
+    }
+
+    /// <summary>
+    /// Applies Balanced pattern: mostly uniform with some wide and tall cards.
+    /// </summary>
+    /// <remarks>
+    /// Pattern (repeating cycle of 6):
+    /// [0] 2x1 Wide, [1-2] 1x1 Normal, [3] 1x2 Tall, 
+    /// [4] 2x1 Wide, [5] 1x1 Normal
+    /// No 2x2 hero cards for more uniform appearance.
+    /// </remarks>
+    private static BzItem ApplyBalancedPattern(BzItem item, int index)
+    {
+        var patterns = new[]
+        {
+            (Col: 2, Row: 1), // 0 - Wide
+            (Col: 1, Row: 1), // 1 - Normal
+            (Col: 1, Row: 1), // 2 - Normal
+            (Col: 1, Row: 2), // 3 - Tall
+            (Col: 2, Row: 1), // 4 - Wide
+            (Col: 1, Row: 1), // 5 - Normal
+        };
+
+        var pattern = patterns[index % patterns.Length];
+        var newItem = CloneBzItem(item);
+        newItem.ColSpan = pattern.Col;
+        newItem.RowSpan = pattern.Row;
+        return newItem;
+    }
+
+    /// <summary>
+    /// Creates a shallow clone of a BzItem for pattern modification.
+    /// </summary>
+    private static BzItem CloneBzItem(BzItem item)
+    {
+        return new BzItem
+        {
+            ImageUrl = item.ImageUrl,
+            Title = item.Title,
+            Description = item.Description,
+            OriginalItem = item.OriginalItem,
+            ColSpan = item.ColSpan,
+            RowSpan = item.RowSpan,
+            Order = item.Order
+        };
     }
 
     #endregion

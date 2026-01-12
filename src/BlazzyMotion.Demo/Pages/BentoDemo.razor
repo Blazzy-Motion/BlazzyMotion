@@ -2,6 +2,7 @@
 @layout HomeLayout
 @using BlazzyMotion.Core.Models
 @using BlazzyMotion.Bento.Components
+@using BlazzyMotion.Bento.Models
 @using BlazzyMotion.Demo.Model
 
 <PageTitle>BzBento Demo - BlazzyMotion</PageTitle>
@@ -18,11 +19,11 @@
         </div>
     </section>
 
-    <section class="bz-demo" id="demo">
+    <section class="bzb-presentation">
 
-        <span class="bz-demo__label">Live Preview</span>
+        <span class="bzb-presentation__label">Live Preview - Auto Layout</span>
 
-        <h3 class="bz-demo__title">Bento Grid</h3>
+        <h3 class="bzb-presentation__title">Bento Grid with Dynamic Pattern</h3>
 
         <div class="bz-theme-pills">
             <button class="bz-pill @(_currentTheme == BzTheme.Glass ? "active" : "")"
@@ -43,10 +44,12 @@
             </button>
         </div>
 
-        <div class="bz-demo__stage" style="max-width: 1200px; margin: 0 auto;">
+        <div class="bzb-presentation__stage">
             <BzBento TItem="BentoItem"
                      Items="@_bentoItems"
                      Theme="@_currentTheme"
+                     AutoLayout="true"
+                     Pattern="BentoLayoutPattern.Dynamic"
                      Columns="4"
                      Gap="16"
                      OnItemSelected="@OnItemSelected" />
@@ -59,15 +62,15 @@
 
     </section>
 
-    <section class="bz-demo" style="padding-top: 40px;">
+    <section class="bzb-presentation" style="padding-top: 40px;">
 
-        <h3 class="bz-demo__title">Composition Mode</h3>
+        <h3 class="bzb-presentation__title">Composition Mode (Manual Layout)</h3>
         <p style="color: rgba(255,255,255,0.7); text-align: center; margin-bottom: 30px;">
-            Use ChildContent for complete control over grid items
+            Use ChildContent for complete control - AutoLayout disabled
         </p>
 
-        <div class="bz-demo__stage" style="max-width: 1200px; margin: 0 auto;">
-            <BzBento TItem="object" Items="null" Theme="@_currentTheme" Columns="4" Gap="16">
+        <div class="bzb-presentation__stage">
+            <BzBento TItem="object" Items="null" Theme="@_currentTheme" AutoLayout="false" Columns="4" Gap="16">
                 <ChildContent>
                     <BzBentoItem ColSpan="2" RowSpan="2">
                         <div style="width: 100%; height: 100%; position: relative; overflow: hidden; border-radius: inherit;">
