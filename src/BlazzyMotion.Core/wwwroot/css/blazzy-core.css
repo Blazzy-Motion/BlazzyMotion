@@ -812,10 +812,12 @@
 
 /* Image hover effects */
 
+.bzb-item:hover .bzb-card-image,
 .bzb-item:hover .bzb-item-image {
     transform: scale(1.05);
 }
 
+.bzb-card-image,
 .bzb-item-image {
     transition: transform 0.4s cubic-bezier(0.4, 0, 0.2, 1);
 }
@@ -833,6 +835,11 @@
 }
 
 /* Bento presentation wrapper */
+/* ENHANCED STAT CARDS */
+
+.bzb-stat {
+    background: linear-gradient(135deg, rgba(139, 92, 246, 0.05), rgba(34, 211, 238, 0.05));
+}
 
 .bzb-presentation {
     padding: 4rem 2rem;

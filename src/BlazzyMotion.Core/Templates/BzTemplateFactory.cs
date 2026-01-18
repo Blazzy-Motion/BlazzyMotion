@@ -275,7 +275,7 @@ public static class BzTemplateFactory
         if (item.HasImage && isFeatured)
             return CreateBentoCard();
 
-        // Regular items with image - rich overlay for 1x1
+        // Regular items with image - rich overlay
         if (item.HasImage)
             return CreateBentoImageRich();
 
