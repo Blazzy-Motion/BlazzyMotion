@@ -16,7 +16,8 @@ namespace BlazzyMotion.Core.Templates;
 /// <list type="bullet">
 /// <item><see cref="CreateImage"/> - Simple img element (for Carousel)</item>
 /// <item><see cref="CreateBentoItem"/> - Bento grid item with image, title, description</item>
-/// <item><see cref="CreateBentoCard"/> - Bento card with image and overlay text</item>
+/// <item><see cref="CreateBentoCard"/> - Bento card with image and overlay text (for featured items)</item>
+/// <item><see cref="CreateBentoImageRich"/> - Bento image with overlay (for 1x1 items)</item>
 /// <item><see cref="CreateBentoStat"/> - Bento stat/metric display</item>
 /// <item><see cref="CreateFallback"/> - Fallback for unmapped items</item>
 /// </list>
@@ -49,7 +50,7 @@ public static class BzTemplateFactory
     #region Bento Templates
 
     /// <summary>
-    /// Creates a RenderFragment that renders a BzItem for Bento Grid.
+    /// Creates a RenderFragment that renders a BzItem for Bento Grid (basic version).
     /// </summary>
     public static RenderFragment<BzItem> CreateBentoItem()
     {
@@ -87,7 +88,8 @@ public static class BzTemplateFactory
     }
 
     /// <summary>
-    /// Creates a RenderFragment that renders a BzItem as a card with overlay.
+    /// Creates a RenderFragment that renders a BzItem as a featured card with overlay.
+    /// Best for 2x2, 2x1, or 1x2 items.
     /// </summary>
     public static RenderFragment<BzItem> CreateBentoCard()
     {
@@ -130,10 +132,50 @@ public static class BzTemplateFactory
                     builder.CloseElement();
                 }
 
+                builder.CloseElement(); // overlay
+            }
+
+            builder.CloseElement(); // card
+        };
+    }
+
+    /// <summary>
+    /// Creates a RenderFragment for regular image items with rich overlay (1x1 items).
+    /// </summary>
+    public static RenderFragment<BzItem> CreateBentoImageRich()
+    {
+        return item => builder =>
+        {
+            if (item is null) return;
+            var seq = 0;
+
+            builder.OpenElement(seq++, "div");
+            builder.AddAttribute(seq++, "class", "bzb-card-simple");
+
+            if (item.HasImage)
+            {
+                builder.OpenElement(seq++, "img");
+                builder.AddAttribute(seq++, "class", "bzb-card-image");
+                builder.AddAttribute(seq++, "src", item.ImageUrl);
+                builder.AddAttribute(seq++, "alt", item.HasTitle ? item.Title : "Image");
+                builder.AddAttribute(seq++, "loading", "lazy");
                 builder.CloseElement();
             }
 
-            builder.CloseElement();
+            if (item.HasTitle)
+            {
+                builder.OpenElement(seq++, "div");
+                builder.AddAttribute(seq++, "class", "bzb-card-simple-overlay");
+
+                builder.OpenElement(seq++, "h5");
+                builder.AddAttribute(seq++, "class", "bzb-card-simple-title");
+                builder.AddContent(seq++, item.Title);
+                builder.CloseElement();
+
+                builder.CloseElement(); // overlay
+            }
+
+            builder.CloseElement(); // container
         };
     }
 
@@ -210,14 +252,37 @@ public static class BzTemplateFactory
     }
 
     /// <summary>
-    /// Selects the appropriate Bento template based on item state.
+    /// Selects the appropriate Bento template based on item state and size.
     /// </summary>
+    /// <remarks>
+    /// <para>
+    /// Template selection logic:
+    /// <list type="number">
+    /// <item>Featured cards (2x2, 2x1, or 1x2 with image) → BentoCard (rich overlay)</item>
+    /// <item>Regular items with image (1x1) → BentoImageRich (simple overlay)</item>
+    /// <item>Items without image but with data → BentoStat (metric display)</item>
+    /// <item>Items without valid data → Fallback</item>
+    /// </list>
+    /// </para>
+    /// </remarks>
     public static RenderFragment<BzItem> SelectBentoTemplate(BzItem? item)
     {
         if (item is null) return CreateFallback();
-        if (item.HasImage && item.ColSpan > 1) return CreateBentoCard();
-        if (item.HasImage) return CreateBentoItem();
-        if (item.HasTitle || !string.IsNullOrWhiteSpace(item.Description)) return CreateBentoStat();
+
+        // Featured cards (2x2, 2x1, or 1x2) - use rich card template
+        bool isFeatured = item.ColSpan >= 2 || item.RowSpan >= 2;
+
+        if (item.HasImage && isFeatured)
+            return CreateBentoCard();
+
+        // Regular items with image - rich overlay for 1x1
+        if (item.HasImage)
+            return CreateBentoImageRich();
+
+        // No image but has data - stat/metric card
+        if (item.HasTitle || !string.IsNullOrWhiteSpace(item.Description))
+            return CreateBentoStat();
+
         return CreateFallback();
     }
 

@@ -1,0 +1,26 @@
+@namespace BlazzyMotion.Bento.Components
+@typeparam TItem where TItem : class
+@inherits BlazzyMotion.Bento.Abstractions.BzBentoItemBase
+
+<div class="@GetCombinedClass("bzb-card-container")"     style="@GetItemStyle()"     @onclick="HandleClick"
+     @attributes="AdditionalAttributes">
+
+  @if (HasImage)
+  {
+    <img src="@GetImage()"             class="bzb-card-image" alt="@GetTitle()" loading="lazy" />
+  }
+
+  @if (HasOverlay)
+  {
+    <div class="bzb-card-overlay">
+      @if (HasTitle)
+      {
+        <h4 class="bzb-card-title">@GetTitle()</h4>
+      }
+      @if (HasDescription)
+      {
+        <p class="bzb-card-description">@GetDescription()</p>
+      }
+    </div>
+  }
+</div>

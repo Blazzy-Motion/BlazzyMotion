@@ -1,48 +1,15 @@
 @namespace BlazzyMotion.Bento.Components
+@inherits BlazzyMotion.Bento.Abstractions.BzBentoItemBase
 
-<div class="bzb-item @SpanClasses @CssClass" style="@GetStyleString()" @onclick="OnClick">
+<div class="@GetCombinedClass("")" style="@GetItemStyle()" @onclick="HandleClick" @attributes="AdditionalAttributes">
     @ChildContent
 </div>
 
 @code {
+    /// <summary>
+    /// Content to render inside the Bento item.
+    /// Use for custom content that doesn't fit other helper components.
+    /// </summary>
     [Parameter]
     public RenderFragment? ChildContent { get; set; }
-
-    [Parameter]
-    public int ColSpan { get; set; } = 1;
-
-    [Parameter]
-    public int RowSpan { get; set; } = 1;
-
-    [Parameter]
-    public int Order { get; set; } = 0;
-
-    [Parameter]
-    public string? CssClass { get; set; }
-
-    [Parameter]
-    public string? Style { get; set; }
-
-    [Parameter]
-    public EventCallback OnClick { get; set; }
-
-    private string SpanClasses
-    {
-        get
-        {
-            var col = Math.Clamp(ColSpan, 1, 4);
-            var row = Math.Clamp(RowSpan, 1, 4);
-            return $"bzb-col-{col} bzb-row-{row}";
-        }
-    }
-
-    private string GetStyleString()
-    {
-        var styles = new List<string>();
-        if (Order > 0)
-            styles.Add($"order: {Order}");
-        if (!string.IsNullOrWhiteSpace(Style))
-            styles.Add(Style);
-        return string.Join("; ", styles);
-    }
 }

@@ -1,0 +1,28 @@
+@namespace BlazzyMotion.Bento.Components
+@inherits BlazzyMotion.Bento.Abstractions.BzBentoItemBase
+
+<div class="@GetCombinedClass("bzb-metric")"   style="@GetItemStyle()"     @onclick="HandleClick"
+     @attributes="AdditionalAttributes">
+
+  @if (HasIcon)
+  {
+    <div class="bzb-metric-icon">
+      @if (Icon != null)
+      {
+        @Icon
+      }
+      else if (!string.IsNullOrWhiteSpace(IconText))
+      {
+        @IconText
+      }
+    </div>
+  }
+
+  <span class="bzb-metric-value">@Value</span>
+  <span class="bzb-metric-label">@Label</span>
+
+  @if (HasTrend)
+  {
+    <span class="bzb-metric-trend @TrendClass">@Trend</span>
+  }
+</div>

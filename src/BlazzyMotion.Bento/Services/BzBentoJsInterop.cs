@@ -15,52 +15,33 @@ namespace BlazzyMotion.Bento.Services;
 /// for Bento Grid functionality including:
 /// <list type="bullet">
 /// <item>Staggered entrance animations (static mode)</item>
-/// <item>Swiper-based pagination (paginated mode)</item>
+/// <item>Swiper-based pagination (paginated mode only)</item>
 /// <item>Intersection Observer for performance</item>
 /// </list>
+/// </para>
+/// <para>
+/// <strong>Performance Note:</strong>
+/// Swiper library is loaded lazily only when Paginated mode is enabled.
+/// Static and Composition modes do not load Swiper.
 /// </para>
 /// </remarks>
 [ExcludeFromCodeCoverage]
 public class BzBentoJsInterop : IAsyncDisposable
 {
-    #region Private Fields
-
-    /// <summary>
-    /// Lazy-loaded JavaScript module reference.
-    /// </summary>
     private readonly Lazy<Task<IJSObjectReference>> _moduleTask;
-
-    /// <summary>
-    /// Reference to the Bento grid's root element.
-    /// </summary>
     private ElementReference? _element;
-
-    /// <summary>
-    /// Indicates whether this instance has been initialized.
-    /// </summary>
     private bool _initialized;
-
-    #endregion
-
-    #region Constructor
+    private bool _swiperLoaded;
 
     /// <summary>
     /// Initializes a new instance of the BzBentoJsInterop class.
     /// </summary>
     /// <param name="jsRuntime">The Blazor JS runtime</param>
-    /// <remarks>
-    /// The JavaScript module is loaded lazily on first use.
-    /// Path points to BlazzyMotion.Core unified JS module.
-    /// </remarks>
     public BzBentoJsInterop(IJSRuntime jsRuntime)
     {
         _moduleTask = new(() => jsRuntime.InvokeAsync<IJSObjectReference>(
             "import", "./_content/BlazzyMotion.Core/js/blazzy-core.js").AsTask());
     }
-
-    #endregion
-
-    #region Public Methods
 
     /// <summary>
     /// Initializes the Bento Grid with the specified options.
@@ -69,15 +50,7 @@ public class BzBentoJsInterop : IAsyncDisposable
     /// <param name="options">Bento configuration options</param>
     /// <param name="dotNetRef">Reference to the Blazor component for callbacks</param>
     /// <remarks>
-    /// <para>
-    /// This method:
-    /// <list type="number">
-    /// <item>Detects mode (static vs paginated)</item>
-    /// <item>For static: Sets up Intersection Observer for animations</item>
-    /// <item>For paginated: Initializes Swiper for page transitions</item>
-    /// <item>Registers callbacks to Blazor</item>
-    /// </list>
-    /// </para>
+    /// Swiper is loaded only when Paginated mode is enabled.
     /// </remarks>
     public async ValueTask InitializeAsync<TComponent>(
         ElementReference element,
@@ -87,16 +60,18 @@ public class BzBentoJsInterop : IAsyncDisposable
         _element = element;
         var module = await _moduleTask.Value;
 
-        // Ensure Swiper is loaded (needed for paginated mode, but also loads core CSS)
-        await module.InvokeVoidAsync("ensureSwiperLoaded");
+        // Load Swiper only when paginated mode is enabled
+        if (options.Paginated && !_swiperLoaded)
+        {
+            await module.InvokeVoidAsync("ensureSwiperLoaded");
+            _swiperLoaded = true;
+        }
 
-        // Serialize options to JSON for JS
         var optionsJson = JsonSerializer.Serialize(options, new JsonSerializerOptions
         {
             PropertyNamingPolicy = JsonNamingPolicy.CamelCase
         });
 
-        // Initialize Bento with optional .NET callback reference
         if (dotNetRef != null)
         {
             await module.InvokeVoidAsync("initializeBento", element, optionsJson, dotNetRef);
@@ -112,9 +87,6 @@ public class BzBentoJsInterop : IAsyncDisposable
     /// <summary>
     /// Refreshes the Bento Grid, re-triggering animations.
     /// </summary>
-    /// <remarks>
-    /// Useful after dynamically adding/removing items.
-    /// </remarks>
     public async ValueTask RefreshAsync()
     {
         if (_moduleTask.IsValueCreated && _element.HasValue && _initialized)
@@ -126,11 +98,9 @@ public class BzBentoJsInterop : IAsyncDisposable
             }
             catch (JSDisconnectedException)
             {
-                // Circuit disconnected - expected during navigation
             }
             catch (ObjectDisposedException)
             {
-                // Module already disposed
             }
         }
     }
@@ -151,11 +121,9 @@ public class BzBentoJsInterop : IAsyncDisposable
             }
             catch (JSDisconnectedException)
             {
-                // Circuit disconnected
             }
             catch (ObjectDisposedException)
             {
-                // Module disposed
             }
         }
     }
@@ -175,11 +143,9 @@ public class BzBentoJsInterop : IAsyncDisposable
             }
             catch (JSDisconnectedException)
             {
-                // Circuit disconnected
             }
             catch (ObjectDisposedException)
             {
-                // Module disposed
             }
         }
         return 0;
@@ -188,9 +154,6 @@ public class BzBentoJsInterop : IAsyncDisposable
     /// <summary>
     /// Destroys the Bento Grid instance and cleans up resources.
     /// </summary>
-    /// <remarks>
-    /// Should be called before reinitializing or when the component is disposed.
-    /// </remarks>
     public async ValueTask DestroyAsync()
     {
         if (_moduleTask.IsValueCreated && _element.HasValue)
@@ -203,18 +166,12 @@ public class BzBentoJsInterop : IAsyncDisposable
             }
             catch (JSDisconnectedException)
             {
-                // Circuit disconnected - expected during navigation
             }
             catch (ObjectDisposedException)
             {
-                // Module already disposed
             }
         }
     }
-
-    #endregion
-
-    #region Disposal
 
     /// <summary>
     /// Disposes the JS interop resources.
@@ -232,14 +189,10 @@ public class BzBentoJsInterop : IAsyncDisposable
             }
             catch (JSDisconnectedException)
             {
-                // Expected during navigation
             }
             catch (ObjectDisposedException)
             {
-                // Already disposed
             }
         }
     }
-
-    #endregion
 }
