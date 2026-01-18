@@ -294,7 +294,7 @@ function initializeBentoStatic(element, options, dotNetRef) {
     const animationEnabled = options.animationEnabled !== false;
 
     if (animationEnabled) {
-        // Setup Intersection Observer for staggered animations
+        // Setup Intersection Observer for staggered animations - per item
         const observer = new IntersectionObserver((entries) => {
             entries.forEach((entry) => {
                 if (entry.isIntersecting) {
@@ -313,10 +313,9 @@ function initializeBentoStatic(element, options, dotNetRef) {
             rootMargin: '50px'
         });
 
-        // Observe all items
+        // Observe all items individually
         items.forEach(item => observer.observe(item));
 
-        // Store observer reference for cleanup (use a wrapper object)
         swiperInstances.set(element, {
             type: 'bento-static',
             observer: observer,

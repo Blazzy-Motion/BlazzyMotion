@@ -516,22 +516,24 @@ public partial class BzBento<TItem> : BzComponentBase where TItem : class
     /// Applies Dynamic pattern: varied mix of hero, tall, wide, and normal cards.
     /// </summary>
     /// <remarks>
-    /// Pattern (repeating cycle of 8):
-    /// [0] 2x2 Hero, [1] 1x2 Tall, [2-3] 1x1 Normal, 
-    /// [4] 2x1 Wide, [5] 1x1 Normal, [6] 1x2 Tall, [7] 1x1 Normal
+    /// Pattern optimized for 4-column grid (repeating cycle of 8):
+    /// Row 1-2: [0] 2x2 Hero + [1] 1x2 Tall + [2] 1x1 + [3] 1x1 = 4 cols
+    /// Row 3:   [4] 2x1 Wide + [5] 1x1 + [6] 1x1 = 4 cols
+    /// Row 4:   [7] 2x1 Wide + [8] 1x1 + [9] 1x1 = 4 cols (cycle continues)
+    /// Uses grid-auto-flow: dense for optimal filling.
     /// </remarks>
     private static BzItem ApplyDynamicPattern(BzItem item, int index)
     {
         var patterns = new[]
         {
-            (Col: 2, Row: 2), // 0 - Hero
-            (Col: 1, Row: 2), // 1 - Tall
-            (Col: 1, Row: 1), // 2 - Normal
-            (Col: 1, Row: 1), // 3 - Normal
+            (Col: 2, Row: 2), // 0 - Hero (takes 2x2)
+            (Col: 1, Row: 2), // 1 - Tall (fills beside hero)
+            (Col: 1, Row: 1), // 2 - Normal (top right of hero)
+            (Col: 1, Row: 1), // 3 - Normal (below item 2)
             (Col: 2, Row: 1), // 4 - Wide
             (Col: 1, Row: 1), // 5 - Normal
-            (Col: 1, Row: 2), // 6 - Tall
-            (Col: 1, Row: 1), // 7 - Normal
+            (Col: 1, Row: 1), // 6 - Normal
+            (Col: 2, Row: 1), // 7 - Wide (starts new cycle feel)
         };
 
         var pattern = patterns[index % patterns.Length];

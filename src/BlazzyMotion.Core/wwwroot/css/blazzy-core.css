@@ -366,6 +366,10 @@
     display: flex;
     flex-direction: column;
     opacity: 0;
+    /* GPU acceleration hints for smoother rendering */
+    will-change: transform, opacity;
+    transform: translateZ(0);
+    -webkit-transform: translateZ(0);
 }
 
 .bzb-item.bzb-animate {
@@ -426,7 +430,7 @@
 
 /* Bento grid themes */
 
-/* Glass theme */
+/* Glass theme - Desktop: blur on each card for premium look */
 .bzb-grid.bzc-theme-glass .bzb-item {
     background: var(--bz-theme-glass-bg);
     border: 1px solid var(--bz-theme-glass-border);
@@ -908,6 +912,33 @@
     .bz-visible {
         transition: opacity 0.2s ease-out, visibility 0.2s ease-out;
     }
+
+    /* Glass theme mobile - NO blur for performance, use solid backgrounds instead */
+    .bzb-grid.bzc-theme-glass .bzb-item {
+        backdrop-filter: none !important;
+        -webkit-backdrop-filter: none !important;
+        /* Solid dark background simulating glass look without blur */
+        background: linear-gradient(135deg, rgba(25, 25, 30, 0.92), rgba(15, 15, 20, 0.95)) !important;
+        border: 1px solid rgba(255, 255, 255, 0.12);
+    }
+
+    .bzb-grid.bzc-theme-glass .bzb-item::before {
+        /* Keep subtle highlight for glass-like appearance */
+        background: linear-gradient(90deg, transparent, rgba(255, 255, 255, 0.15), transparent);
+    }
+
+    /* Mobile grid optimizations */
+    .bzb-grid {
+        padding: 12px;
+        gap: 12px;
+    }
+
+    /* Card containers - remove padding for full-bleed images */
+    .bzb-item.bzb-card-container,
+    .bzb-item:has(.bzb-item-image),
+    .bzb-item:has(.bzb-card-image) {
+        padding: 0 !important;
+    }
 }
 
 /* Responsive - Small Mobile */
@@ -925,16 +956,17 @@
         --bzc-slide-width: var(--bz-slide-width);
         --bzc-image-max-width: var(--bz-image-max-width);
 
-        --bzb-item-padding: 15px;
-        --bzb-item-min-height: 100px;
-        --bzb-metric-value-size: 1.75rem;
-        --bzb-feature-icon-size: 1.75rem;
+        --bzb-item-padding: 16px;
+        --bzb-item-min-height: 140px;
+        --bzb-metric-value-size: 2rem;
+        --bzb-feature-icon-size: 2rem;
         --bzb-quote-text-size: 1rem;
     }
 
     .bzb-grid {
         grid-template-columns: repeat(var(--bzb-columns-mobile), 1fr);
-        gap: var(--bzb-gap-mobile);
+        gap: 12px;
+        padding: 10px;
     }
 
     .bzb-item[class*="bzb-col-"] {
@@ -947,5 +979,19 @@
 
     .bzb-stat-value {
         font-size: 2rem;
+    }
+
+    /* Ensure card images fill the card on small mobile */
+    .bzb-item.bzb-card-container,
+    .bzb-item:has(.bzb-item-image),
+    .bzb-item:has(.bzb-card-image) {
+        padding: 0 !important;
+        min-height: 200px;
+    }
+
+    /* Better touch targets for metrics and features */
+    .bzb-metric,
+    .bzb-feature {
+        min-height: 120px;
     }
 }
