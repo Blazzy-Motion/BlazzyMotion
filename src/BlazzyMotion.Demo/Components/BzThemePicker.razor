@@ -1,0 +1,38 @@
+@using BlazzyMotion.Core.Models
+
+<div class="bz-theme-pills">
+    <button class="bz-pill @(CurrentTheme == BzTheme.Glass ? "active" : "")"
+            @onclick="() => SetTheme(BzTheme.Glass)">
+        🔮 Glass
+    </button>
+    <button class="bz-pill @(CurrentTheme == BzTheme.Dark ? "active" : "")"
+            @onclick="() => SetTheme(BzTheme.Dark)">
+        🌙 Dark
+    </button>
+    <button class="bz-pill @(CurrentTheme == BzTheme.Light ? "active" : "")"
+            @onclick="() => SetTheme(BzTheme.Light)">
+        ☀️ Light
+    </button>
+    <button class="bz-pill @(CurrentTheme == BzTheme.Minimal ? "active" : "")"
+            @onclick="() => SetTheme(BzTheme.Minimal)">
+        〰️ Minimal
+    </button>
+</div>
+
+@code {
+    [Parameter]
+    public BzTheme CurrentTheme { get; set; } = BzTheme.Glass;
+
+    [Parameter]
+    public EventCallback<BzTheme> CurrentThemeChanged { get; set; }
+
+    [Parameter]
+    public EventCallback<BzTheme> OnThemeChanged { get; set; }
+
+    private async Task SetTheme(BzTheme theme)
+    {
+        CurrentTheme = theme;
+        await CurrentThemeChanged.InvokeAsync(theme);
+        await OnThemeChanged.InvokeAsync(theme);
+    }
+}

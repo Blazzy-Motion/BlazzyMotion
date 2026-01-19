@@ -1,0 +1,50 @@
+@inject IJSRuntime JS
+
+<div class="bz-install-box">
+    <span class="bz-install-box__prompt">$</span>
+    <code class="bz-install-box__command">dotnet add package @PackageName</code>
+    <button class="bz-install-box__copy" @onclick="CopyToClipboard" title="Copy to clipboard">
+        @if (_copied)
+        {
+            <svg xmlns="http://www.w3.org/2000/svg" width="18" height="18" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2" stroke-linecap="round" stroke-linejoin="round">
+                <polyline points="20 6 9 17 4 12"></polyline>
+            </svg>
+        }
+        else
+        {
+            <svg xmlns="http://www.w3.org/2000/svg" width="18" height="18" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2" stroke-linecap="round" stroke-linejoin="round">
+                <rect x="9" y="9" width="13" height="13" rx="2" ry="2"></rect>
+                <path d="M5 15H4a2 2 0 0 1-2-2V4a2 2 0 0 1 2-2h9a2 2 0 0 1 2 2v1"></path>
+            </svg>
+        }
+    </button>
+    @if (_copied)
+    {
+        <span class="bz-install-box__tooltip">Copied!</span>
+    }
+</div>
+
+@code {
+    [Parameter]
+    public string PackageName { get; set; } = "BlazzyMotion.Carousel";
+
+    private bool _copied = false;
+
+    private async Task CopyToClipboard()
+    {
+        try
+        {
+            await JS.InvokeVoidAsync("navigator.clipboard.writeText", $"dotnet add package {PackageName}");
+            _copied = true;
+            StateHasChanged();
+
+            await Task.Delay(2000);
+            _copied = false;
+            StateHasChanged();
+        }
+        catch
+        {
+            // Clipboard API not available
+        }
+    }
+}

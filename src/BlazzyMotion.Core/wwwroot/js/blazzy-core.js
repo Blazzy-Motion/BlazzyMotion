@@ -124,6 +124,9 @@ export async function initializeCarousel(element, optionsJson, dotNetRef = null)
         const minSlidesForAutoLoop = 7;
         const shouldLoop = options.loop === true && slideCount >= minSlidesForLoop;
 
+        // Store original slide count for correct realIndex calculation with clones
+        const originalSlideCount = slideCount;
+
         if (shouldLoop && slideCount < minSlidesForAutoLoop) {
             const slidesToAdd = minSlidesForAutoLoop - slideCount + 2;
             for (let i = 0; i < slidesToAdd; i++) {
@@ -189,7 +192,8 @@ export async function initializeCarousel(element, optionsJson, dotNetRef = null)
 
                 slideChange: function () {
                     if (dotNetRef) {
-                        const realIndex = this.realIndex;
+                        // Use modulo to get correct index when clones are present
+                        const realIndex = this.realIndex % originalSlideCount;
                         dotNetRef.invokeMethodAsync('OnSlideChangeFromJS', realIndex)
                             .catch(err => {
                                 if (!err.message?.includes('disposed')) {

@@ -4,7 +4,7 @@
 @using BlazzyMotion.Core.Attributes
 @using BlazzyMotion.Carousel.Components
 @using BlazzyMotion.Demo.Model
-@inject IJSRuntime JS
+@using BlazzyMotion.Demo.Components
 
 <PageTitle>BlazzyMotion - Beautiful Blazor UI Components</PageTitle>
 
@@ -22,29 +22,7 @@
                 High-performance components with glassmorphism design.
             </p>
           
-            <div class="bz-install-box">
-                <span class="bz-install-box__prompt">$</span>
-                <code class="bz-install-box__command">dotnet add package BlazzyMotion.Carousel</code>
-                <button class="bz-install-box__copy" @onclick="CopyToClipboard" title="Copy to clipboard">
-                    @if (_copied)
-                    {
-                        <svg xmlns="http://www.w3.org/2000/svg" width="18" height="18" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2" stroke-linecap="round" stroke-linejoin="round">
-                            <polyline points="20 6 9 17 4 12"></polyline>
-                        </svg>
-                    }
-                    else
-                    {
-                        <svg xmlns="http://www.w3.org/2000/svg" width="18" height="18" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2" stroke-linecap="round" stroke-linejoin="round">
-                            <rect x="9" y="9" width="13" height="13" rx="2" ry="2"></rect>
-                            <path d="M5 15H4a2 2 0 0 1-2-2V4a2 2 0 0 1 2-2h9a2 2 0 0 1 2 2v1"></path>
-                        </svg>
-                    }
-                </button>
-                @if (_copied)
-                {
-                    <span class="bz-install-box__tooltip">Copied!</span>
-                }
-            </div>
+            <BzInstallBox PackageName="BlazzyMotion.Carousel" />
            
             <div class="bz-hero__actions">
                 <a href="/docs/installation" class="bz-btn bz-btn--primary">
@@ -81,24 +59,7 @@
         <h3 class="bz-demo__title">🎠 BzCarousel</h3>
 
         
-        <div class="bz-theme-pills">
-            <button class="bz-pill @(_currentTheme == BzTheme.Glass ? "active" : "")"
-                    @onclick="() => SetTheme(BzTheme.Glass)">
-                🔮 Glass
-            </button>
-            <button class="bz-pill @(_currentTheme == BzTheme.Dark ? "active" : "")"
-                    @onclick="() => SetTheme(BzTheme.Dark)">
-                🌙 Dark
-            </button>
-            <button class="bz-pill @(_currentTheme == BzTheme.Light ? "active" : "")"
-                    @onclick="() => SetTheme(BzTheme.Light)">
-                ☀️ Light
-            </button>
-            <button class="bz-pill @(_currentTheme == BzTheme.Minimal ? "active" : "")"
-                    @onclick="() => SetTheme(BzTheme.Minimal)">
-                〰️ Minimal
-            </button>
-        </div>
+        <BzThemePicker @bind-CurrentTheme="_currentTheme" />
 
       
         <div class="bz-demo__stage">
@@ -189,11 +150,10 @@
 </div>
 
 @code {
+    [Inject] private IJSRuntime JS { get; set; } = default!;
 
     private BzTheme _currentTheme = BzTheme.Glass;
     private Movie? _selectedMovie;
-    private bool _copied = false;
-
 
     private List<Movie> _movies = new()
     {
@@ -207,48 +167,13 @@
         new() { Title = "Deadpool & Wolverine", ImageUrl = "images/wolwerine.jpg" }
     };
 
-
-    private void SetTheme(BzTheme theme)
-    {
-        _currentTheme = theme;
-    }
-
     private void OnItemSelected(Movie selectedItem)
     {
         _selectedMovie = selectedItem;
-    }
-
-    private async Task CopyToClipboard()
-    {
-        try
-        {
-            await JS.InvokeVoidAsync("navigator.clipboard.writeText", "dotnet add package BlazzyMotion.Carousel");
-            _copied = true;
-            StateHasChanged();
-
-            await Task.Delay(2000);
-            _copied = false;
-            StateHasChanged();
-        }
-        catch
-        {
-            // Clipboard API not available
-        }
     }
 
     private async Task ScrollToDemo()
     {
         await JS.InvokeVoidAsync("eval", "document.getElementById('demo').scrollIntoView({ behavior: 'smooth' })");
     }
-
-   
-
-    // public class Movie
-    // {
-    //     [BzImage]
-    //     public string ImageUrl { get; set; } = "";
-
-    //     [BzTitle]
-    //     public string Title { get; set; } = "";
-    // }
 }

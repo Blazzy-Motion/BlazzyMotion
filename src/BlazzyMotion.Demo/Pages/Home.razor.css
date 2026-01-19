@@ -1,140 +1,7 @@
-﻿/* Main Container */
+/* Main Container */
 .bz-home {
     min-height: 100vh;
     position: relative;
-}
-
-/* Hero Section */
-.bz-hero {
-    min-height: 100vh;
-    display: flex;
-    align-items: center;
-    justify-content: center;
-    padding: 2rem;
-    text-align: center;
-}
-
-.bz-hero__content {
-    max-width: 800px;
-    display: flex;
-    flex-direction: column;
-    align-items: center;
-    gap: 1.5rem;
-}
-
-.bz-hero__brand {
-    font-size: 1.25rem;
-    font-weight: 600;
-    letter-spacing: 0.2em;
-    text-transform: uppercase;
-    color: var(--bz-text-muted, rgba(255, 255, 255, 0.5));
-    margin-bottom: -0.5rem;
-}
-
-.bz-hero__title {
-    font-size: 3.5rem;
-    font-weight: 800;
-    line-height: 1.1;
-    letter-spacing: -0.02em;
-    background: linear-gradient(135deg, var(--bz-accent-purple, #8b5cf6), var(--bz-accent-cyan, #22d3ee));
-    -webkit-background-clip: text;
-    -webkit-text-fill-color: transparent;
-    background-clip: text;
-}
-
-.bz-hero__subtitle {
-    font-size: 1.25rem;
-    color: var(--bz-text-secondary, rgba(255, 255, 255, 0.7));
-    max-width: 500px;
-    line-height: 1.6;
-}
-
-/* Install Box */
-.bz-install-box {
-    display: flex;
-    align-items: center;
-    gap: 0.5rem;
-    background: rgba(0, 0, 0, 0.4);
-    border: 1px solid rgba(255, 255, 255, 0.1);
-    border-radius: 12px;
-    padding: 1rem 1.25rem;
-    position: relative;
-    margin-top: 0.5rem;
-    max-width: 100%;
-    overflow-x: auto;
-    will-change: transform;
-    transform: translateZ(0);
-    -webkit-transform: translateZ(0);
-    backface-visibility: hidden;
-    -webkit-backface-visibility: hidden;
-}
-
-.bz-install-box__prompt {
-    color: var(--bz-text-muted, rgba(255, 255, 255, 0.5));
-    font-family: 'JetBrains Mono', monospace;
-    font-weight: 600;
-    flex-shrink: 0;
-}
-
-.bz-install-box__command {
-    font-family: 'JetBrains Mono', monospace;
-    font-size: 0.9375rem;
-    color: var(--bz-accent-cyan, #22d3ee);
-    background: transparent;
-    padding: 0;
-    white-space: nowrap;
-}
-
-.bz-install-box__copy {
-    display: flex;
-    align-items: center;
-    justify-content: center;
-    background: transparent;
-    border: none;
-    color: var(--bz-text-muted, rgba(255, 255, 255, 0.5));
-    cursor: pointer;
-    padding: 0.375rem;
-    border-radius: 6px;
-    transition: all 0.2s ease;
-    margin-left: auto;
-    flex-shrink: 0;
-}
-
-.bz-install-box__copy:hover {
-    color: var(--bz-text-primary, rgba(255, 255, 255, 0.95));
-    background: rgba(255, 255, 255, 0.1);
-}
-
-.bz-install-box__tooltip {
-    position: absolute;
-    top: -2.5rem;
-    right: 0;
-    background: var(--bz-accent-purple, #8b5cf6);
-    color: white;
-    font-size: 0.75rem;
-    font-weight: 500;
-    padding: 0.375rem 0.75rem;
-    border-radius: 6px;
-    animation: fadeInUp 0.2s ease;
-}
-
-@keyframes fadeInUp {
-    from {
-        opacity: 0;
-        transform: translateY(8px);
-    }
-
-    to {
-        opacity: 1;
-        transform: translateY(0);
-    }
-}
-
-/* Action Buttons */
-.bz-hero__actions {
-    display: flex;
-    gap: 1rem;
-    margin-top: 0.5rem;
 }
 
 /* Scroll Indicator */
@@ -162,7 +29,6 @@
 }
 
 @keyframes bounce {
-
     0%,
     100% {
         transform: translateY(0);
@@ -196,65 +62,11 @@
     margin-bottom: 2rem;
 }
 
-/* Theme Pills */
-.bz-theme-pills {
-    display: inline-flex;
-    flex-wrap: wrap;
-    justify-content: center;
-    gap: 0.5rem;
-    background: rgba(255, 255, 255, 0.03);
-    border: 1px solid rgba(255, 255, 255, 0.05);
-    border-radius: 50px;
-    padding: 0.375rem;
-    margin-bottom: 2rem;
-    will-change: transform;
-    transform: translateZ(0);
-    -webkit-transform: translateZ(0);
-    backface-visibility: hidden;
-    -webkit-backface-visibility: hidden;
-}
-
-.bz-pill {
-    background: transparent;
-    border: 1px solid transparent;
-    color: var(--bz-text-secondary, rgba(255, 255, 255, 0.6));
-    font-family: inherit;
-    font-size: 0.9375rem;
-    font-weight: 500;
-    padding: 0.625rem 1.25rem;
-    border-radius: 25px;
-    cursor: pointer;
-    transition: all 0.2s ease;
-}
-
-.bz-pill:hover {
-    color: var(--bz-text-primary, rgba(255, 255, 255, 0.95));
-    background: rgba(255, 255, 255, 0.05);
-}
-
-.bz-pill.active {
-    background: rgba(255, 255, 255, 0.1);
-    color: var(--bz-text-primary, rgba(255, 255, 255, 0.95));
-    border-color: rgba(255, 255, 255, 0.2);
-    box-shadow: 0 0 20px rgba(139, 92, 246, 0.25);
-}
-
 /* Demo Stage */
 .bz-demo__stage {
     max-width: 1000px;
     margin: 0 auto;
     padding: 2rem 0;
-}
-
-.bz-selected-title {
-    font-size: 2rem;
-    font-weight: 700;
-    background: linear-gradient(135deg, var(--bz-accent-purple, #8b5cf6), var(--bz-accent-cyan, #22d3ee));
-    -webkit-background-clip: text;
-    -webkit-text-fill-color: transparent;
-    background-clip: text;
-    margin-top: 1.5rem;
-    transition: all 0.3s ease;
 }
 
 /* Features Section */
@@ -344,10 +156,6 @@
 
 /* Tablet Responsive (992px) */
 @media (max-width: 992px) {
-    .bz-hero__title {
-        font-size: 2.75rem;
-    }
-
     .bz-features__grid {
         grid-template-columns: repeat(2, 1fr);
     }
@@ -361,47 +169,6 @@
 
 /* Mobile Responsive (768px) */
 @media (max-width: 768px) {
-    .bz-hero {
-        min-height: auto;
-        padding: 4rem 1.5rem 3rem;
-    }
-
-    .bz-hero__brand {
-        font-size: 1rem;
-    }
-
-    .bz-hero__title {
-        font-size: 2rem;
-    }
-
-    .bz-hero__subtitle {
-        font-size: 1rem;
-    }
-
-    .bz-install-box {
-        padding: 0.875rem 1rem;
-        gap: 0.375rem;
-    }
-
-    .bz-install-box__prompt {
-        font-size: 0.875rem;
-    }
-
-    .bz-install-box__command {
-        font-size: 0.75rem;
-    }
-
-    .bz-hero__actions {
-        flex-direction: column;
-        width: 100%;
-        max-width: 280px;
-    }
-
-    .bz-hero__actions .bz-btn {
-        width: 100%;
-        justify-content: center;
-    }
-
     .bz-scroll-indicator {
         margin-top: 1rem;
     }
@@ -411,20 +178,6 @@
     }
 
     .bz-demo__title {
-        font-size: 1.5rem;
-    }
-
-    .bz-theme-pills {
-        border-radius: 16px;
-        padding: 0.5rem;
-    }
-
-    .bz-pill {
-        font-size: 0.8125rem;
-        padding: 0.5rem 1rem;
-    }
-
-    .bz-selected-title {
         font-size: 1.5rem;
     }
 
@@ -477,33 +230,6 @@
 
 /* Small Mobile (480px) */
 @media (max-width: 480px) {
-    .bz-hero__title {
-        font-size: 1.75rem;
-    }
-
-    .bz-install-box {
-        padding: 0.75rem 0.875rem;
-        gap: 0.25rem;
-    }
-
-    .bz-install-box__prompt {
-        display: block;
-        font-size: 0.8125rem;
-    }
-
-    .bz-install-box__command {
-        font-size: 0.6875rem;
-    }
-
-    .bz-install-box__copy {
-        padding: 0.25rem;
-    }
-
-    .bz-install-box__copy svg {
-        width: 16px;
-        height: 16px;
-    }
-
     .bz-feature-card {
         padding: 1.5rem 1.25rem;
         backdrop-filter: none;

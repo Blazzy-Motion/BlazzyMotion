@@ -3,7 +3,9 @@
 @using BlazzyMotion.Core.Models
 @using BlazzyMotion.Bento.Components
 @using BlazzyMotion.Bento.Models
+@using BlazzyMotion.Carousel.Components
 @using BlazzyMotion.Demo.Model
+@using BlazzyMotion.Demo.Components
 
 <PageTitle>BzBento Demo - BlazzyMotion</PageTitle>
 
@@ -16,33 +18,32 @@
             <p class="bz-hero__subtitle">
                 CSS Grid powered Bento layouts with glassmorphism design.
             </p>
+            <BzInstallBox PackageName="BlazzyMotion.Bento" />
+            <div class="bz-hero__actions">
+                <a href="/docs/bento" class="bz-btn bz-btn--primary">
+                    <svg xmlns="http://www.w3.org/2000/svg" width="18" height="18" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2" stroke-linecap="round" stroke-linejoin="round">
+                        <polygon points="13 2 3 14 12 14 11 22 21 10 12 10 13 2"></polygon>
+                    </svg>
+                    Get Started
+                </a>
+                <a href="https://github.com/Blazzy-Motion/BlazzyMotion" target="_blank" rel="noopener noreferrer" class="bz-btn bz-btn--secondary">
+                    <svg xmlns="http://www.w3.org/2000/svg" width="18" height="18" viewBox="0 0 24 24" fill="currentColor">
+                        <path d="M12 0c-6.626 0-12 5.373-12 12 0 5.302 3.438 9.8 8.207 11.387.599.111.793-.261.793-.577v-2.234c-3.338.726-4.033-1.416-4.033-1.416-.546-1.387-1.333-1.756-1.333-1.756-1.089-.745.083-.729.083-.729 1.205.084 1.839 1.237 1.839 1.237 1.07 1.834 2.807 1.304 3.492.997.107-.775.418-1.305.762-1.604-2.665-.305-5.467-1.334-5.467-5.931 0-1.311.469-2.381 1.236-3.221-.124-.303-.535-1.524.117-3.176 0 0 1.008-.322 3.301 1.23.957-.266 1.983-.399 3.003-.404 1.02.005 2.047.138 3.006.404 2.291-1.552 3.297-1.23 3.297-1.23.653 1.653.242 2.874.118 3.176.77.84 1.235 1.911 1.235 3.221 0 4.609-2.807 5.624-5.479 5.921.43.372.823 1.102.823 2.222v3.293c0 .319.192.694.801.576 4.765-1.589 8.199-6.086 8.199-11.386 0-6.627-5.373-12-12-12z" />
+                    </svg>
+                    Star on GitHub
+                </a>
+            </div>
         </div>
     </section>
 
+    @* ==================== STATIC MODE ==================== *@
     <section class="bzb-presentation">
 
-        <span class="bzb-presentation__label">Live Preview - Auto Layout</span>
+        <span class="bzb-presentation__label">Static Mode - Auto Layout</span>
 
         <h3 class="bzb-presentation__title">Bento Grid with Dynamic Pattern</h3>
 
-        <div class="bz-theme-pills">
-            <button class="bz-pill @(_currentTheme == BzTheme.Glass ? "active" : "")"
-                    @onclick="() => SetTheme(BzTheme.Glass)">
-                Glass
-            </button>
-            <button class="bz-pill @(_currentTheme == BzTheme.Dark ? "active" : "")"
-                    @onclick="() => SetTheme(BzTheme.Dark)">
-                Dark
-            </button>
-            <button class="bz-pill @(_currentTheme == BzTheme.Light ? "active" : "")"
-                    @onclick="() => SetTheme(BzTheme.Light)">
-                Light
-            </button>
-            <button class="bz-pill @(_currentTheme == BzTheme.Minimal ? "active" : "")"
-                    @onclick="() => SetTheme(BzTheme.Minimal)">
-                Minimal
-            </button>
-        </div>
+        <BzThemePicker @bind-CurrentTheme="_currentTheme" />
 
         <div class="bzb-presentation__stage">
             <BzBento TItem="BentoItem"
@@ -61,6 +62,79 @@
 
     </section>
 
+    @* ==================== INTERACTIVE DASHBOARD ==================== *@
+    <section class="bzb-presentation" style="padding-top: 40px;">
+
+        <span class="bzb-presentation__label">Interactive Dashboard</span>
+
+        <h3 class="bzb-presentation__title">Swipe to Explore Companies</h3>
+        <p style="color: rgba(255,255,255,0.7); text-align: center; margin-bottom: 30px;">
+            All metrics update in real-time as you browse
+        </p>
+
+        <div class="bzb-presentation__stage">
+            <BzBento TItem="object" Items="null" Theme="@_currentTheme" AutoLayout="false" Columns="4" Gap="16">
+
+                @* Company Carousel - 2x2, centered *@
+                <BzBentoItem ColSpan="2" RowSpan="2" Style="display: flex; align-items: center; justify-content: center; --bzc-swiper-height: 220px; --bzc-slide-width: 100px; --bzc-image-max-width: 90px;">
+                    <BzCarousel TItem="CompanyData"
+                                Items="@_companies"
+                                Theme="@_currentTheme"
+                                OnItemSelected="@OnCompanyChanged" />
+                </BzBentoItem>
+
+                @* Dynamic Company Name - shows company logo *@
+                <BzBentoMetric Value="@(_activeCompany?.Name ?? "Swipe")"
+                               Label="Company">
+                    <Icon>@GetCompanyLogo(_activeCompany?.Name)</Icon>
+                </BzBentoMetric>
+
+                @* Dynamic Revenue *@
+                <BzBentoMetric Value="@(_activeCompany?.Revenue ?? "$0")"
+                               Label="Revenue"
+                               Trend="@(_activeCompany?.RevenueTrend ?? "")">
+                    <Icon>@MetricIcons["Revenue"]</Icon>
+                </BzBentoMetric>
+
+                @* Dynamic Users *@
+                <BzBentoMetric Value="@(_activeCompany?.Users ?? "0")"
+                               Label="Users"
+                               Trend="@(_activeCompany?.UsersTrend ?? "")">
+                    <Icon>@MetricIcons["Users"]</Icon>
+                </BzBentoMetric>
+
+                @* Dynamic Growth *@
+                <BzBentoMetric Value="@(_activeCompany?.Growth ?? "0%")"
+                               Label="Growth"
+                               Trend="@(_activeCompany?.GrowthTrend ?? "")">
+                    <Icon>@MetricIcons["Growth"]</Icon>
+                </BzBentoMetric>
+
+                @* Company Description - shows company logo *@
+                <BzBentoFeature ColSpan="2"
+                                Label="@(_activeCompany?.Name ?? "Select Company")"
+                                Description="@(_activeCompany?.Description ?? "Swipe the carousel to see company details")">
+                    <Icon>@GetCompanyLogo(_activeCompany?.Name)</Icon>
+                </BzBentoFeature>
+
+                @* Dynamic Rating *@
+                <BzBentoMetric Value="@(_activeCompany?.Rating ?? "0")"
+                               Label="Rating">
+                    <Icon>@MetricIcons["Rating"]</Icon>
+                </BzBentoMetric>
+
+                @* Dynamic Market Cap *@
+                <BzBentoMetric Value="@(_activeCompany?.MarketCap ?? "$0")"
+                               Label="Market Cap">
+                    <Icon>@MetricIcons["MarketCap"]</Icon>
+                </BzBentoMetric>
+
+            </BzBento>
+        </div>
+
+    </section>
+
+    @* ==================== COMPOSITION MODE - Manual Layout ==================== *@
     <section class="bzb-presentation" style="padding-top: 40px;">
 
         <h3 class="bzb-presentation__title">Composition Mode (Manual Layout)</h3>
@@ -76,9 +150,13 @@
                              Title="Featured"
                              Description="Hero card with 2x2 span" />
 
-                <BzBentoMetric Value="8" Label="Movies" IconText="🎬" />
+                <BzBentoMetric Value="8" Label="Movies">
+                    <Icon>@MetricIcons["Movies"]</Icon>
+                </BzBentoMetric>
 
-                <BzBentoMetric Value="4" Label="Themes" IconText="🎨" />
+                <BzBentoMetric Value="4" Label="Themes">
+                    <Icon>@MetricIcons["Themes"]</Icon>
+                </BzBentoMetric>
 
                 <BzBentoCard TItem="object"
                              Image="images/venom.jpg"
@@ -92,20 +170,31 @@
                              Image="images/thesubstance.jpg"
                              Title="The Substance" />
 
-                <BzBentoMetric Value="60" Label="FPS" IconText="⚡" />
+                <BzBentoMetric Value="60" Label="FPS">
+                    <Icon>@MetricIcons["FPS"]</Icon>
+                </BzBentoMetric>
 
                 <BzBentoFeature ColSpan="2"
                                 Label="Wide Card (2x1)"
-                                Description="Perfect for CTAs or descriptions"
-                                IconText="📐" />
+                                Description="Perfect for CTAs or descriptions">
+                    <Icon>@MetricIcons["Layout"]</Icon>
+                </BzBentoFeature>
 
-                <BzBentoMetric Value="99.9" Label="Uptime" IconText="✓" Trend="+2%" />
+                <BzBentoMetric Value="99.9" Label="Uptime" Trend="+2%">
+                    <Icon>@MetricIcons["Uptime"]</Icon>
+                </BzBentoMetric>
 
-                <BzBentoMetric Value="24/7" Label="Support" IconText="💬" />
+                <BzBentoMetric Value="24/7" Label="Support">
+                    <Icon>@MetricIcons["Support"]</Icon>
+                </BzBentoMetric>
 
-                <BzBentoMetric Value="50+" Label="Components" IconText="🧩" />
+                <BzBentoMetric Value="50+" Label="Components">
+                    <Icon>@MetricIcons["Components"]</Icon>
+                </BzBentoMetric>
 
-                <BzBentoMetric Value="0" Label="Dependencies" IconText="📦" />
+                <BzBentoMetric Value="0" Label="Dependencies">
+                    <Icon>@MetricIcons["Dependencies"]</Icon>
+                </BzBentoMetric>
             </BzBento>
         </div>
 
@@ -122,7 +211,55 @@
 @code {
     private BzTheme _currentTheme = BzTheme.Glass;
     private BentoItem? _selectedItem;
+    private CompanyData? _activeCompany;
 
+    protected override void OnInitialized()
+    {
+        // Set initial company so metrics show data on load
+        _activeCompany = _companies.FirstOrDefault();
+    }
+
+    // SVG icons for companies
+    private static readonly Dictionary<string, MarkupString> CompanyLogos = new()
+    {
+        ["Apple"] = new MarkupString(@"<svg xmlns=""http://www.w3.org/2000/svg"" width=""24"" height=""24"" viewBox=""0 0 24 24"" fill=""currentColor""><path d=""M18.71 19.5c-.83 1.24-1.71 2.45-3.05 2.47-1.34.03-1.77-.79-3.29-.79-1.53 0-2 .77-3.27.82-1.31.05-2.3-1.32-3.14-2.53C4.25 17 2.94 12.45 4.7 9.39c.87-1.52 2.43-2.48 4.12-2.51 1.28-.02 2.5.87 3.29.87.78 0 2.26-1.07 3.81-.91.65.03 2.47.26 3.64 1.98-.09.06-2.17 1.28-2.15 3.81.03 3.02 2.65 4.03 2.68 4.04-.03.07-.42 1.44-1.38 2.83M13 3.5c.73-.83 1.94-1.46 2.94-1.5.13 1.17-.34 2.35-1.04 3.19-.69.85-1.83 1.51-2.95 1.42-.15-1.15.41-2.35 1.05-3.11z""/></svg>"),
+        ["Microsoft"] = new MarkupString(@"<svg xmlns=""http://www.w3.org/2000/svg"" width=""24"" height=""24"" viewBox=""0 0 24 24"" fill=""currentColor""><path d=""M11.4 24H0V12.6h11.4V24zM24 24H12.6V12.6H24V24zM11.4 11.4H0V0h11.4v11.4zm12.6 0H12.6V0H24v11.4z""/></svg>"),
+        ["Google"] = new MarkupString(@"<svg xmlns=""http://www.w3.org/2000/svg"" width=""24"" height=""24"" viewBox=""0 0 24 24"" fill=""currentColor""><path d=""M22.56 12.25c0-.78-.07-1.53-.2-2.25H12v4.26h5.92c-.26 1.37-1.04 2.53-2.21 3.31v2.77h3.57c2.08-1.92 3.28-4.74 3.28-8.09z""/><path d=""M12 23c2.97 0 5.46-.98 7.28-2.66l-3.57-2.77c-.98.66-2.23 1.06-3.71 1.06-2.86 0-5.29-1.93-6.16-4.53H2.18v2.84C3.99 20.53 7.7 23 12 23z""/><path d=""M5.84 14.09c-.22-.66-.35-1.36-.35-2.09s.13-1.43.35-2.09V7.07H2.18C1.43 8.55 1 10.22 1 12s.43 3.45 1.18 4.93l2.85-2.22.81-.62z""/><path d=""M12 5.38c1.62 0 3.06.56 4.21 1.64l3.15-3.15C17.45 2.09 14.97 1 12 1 7.7 1 3.99 3.47 2.18 7.07l3.66 2.84c.87-2.6 3.3-4.53 6.16-4.53z""/></svg>"),
+        ["Amazon"] = new MarkupString(@"<svg xmlns=""http://www.w3.org/2000/svg"" width=""24"" height=""24"" viewBox=""0 0 24 24"" fill=""currentColor""><path d=""M.045 18.02c.072-.116.187-.124.348-.022 3.636 2.11 7.594 3.166 11.87 3.166 2.852 0 5.668-.533 8.447-1.595l.315-.14c.138-.06.234-.1.293-.13.226-.088.39-.046.502.123.086.131.094.27-.008.413-.182.256-.52.544-1.013.862-1.08.696-2.32 1.273-3.722 1.733-1.404.46-2.812.69-4.223.69-2.177 0-4.266-.388-6.263-1.163-1.998-.775-3.744-1.81-5.24-3.108a.405.405 0 0 1-.134-.309c0-.093.034-.18.1-.257l.728-.863zM6.093 14.12c0-.78.195-1.51.584-2.188a4.144 4.144 0 0 1 1.628-1.567c.62-.362 1.414-.652 2.384-.872.97-.22 2.127-.378 3.47-.473l.095-.006V8.4c0-.756-.09-1.283-.27-1.58-.18-.3-.538-.448-1.072-.448-.447 0-.8.112-1.06.336-.26.224-.44.61-.54 1.155-.075.406-.24.644-.496.713l-2.735-.338c-.272-.063-.408-.195-.408-.395 0-.063.01-.135.03-.217.176-.85.486-1.573.93-2.17.443-.596 1.03-1.054 1.757-1.372.728-.318 1.59-.476 2.59-.476 1.188 0 2.143.163 2.865.49.722.326 1.24.782 1.554 1.37.313.587.47 1.37.47 2.346v5.197c0 .37.045.667.133.895.088.228.196.387.326.48.13.09.34.167.633.228.178.036.267.145.267.327v2.12c0 .2-.09.32-.266.365l-.688.152c-.376.085-.703.127-.98.127-.71 0-1.28-.206-1.71-.62-.43-.412-.71-.984-.84-1.716-.83 1.527-2.154 2.29-3.97 2.29-.913 0-1.706-.27-2.38-.815-.674-.543-1.01-1.362-1.01-2.457zm5.14-.88c.31-.186.553-.426.73-.72.177-.294.266-.664.266-1.11v-.617l-1.17.086c-1.188.085-2.002.275-2.443.573-.44.297-.66.716-.66 1.256 0 .406.127.72.38.94.253.22.576.33.97.33.462 0 .882-.146 1.26-.44l.666-.298z""/><path d=""M22.438 19.77c.406-.31.763-.408 1.07-.3.306.11.46.37.46.78 0 .166-.023.34-.068.52-.286 1.14-.943 1.71-1.97 1.71-.406 0-.76-.113-1.06-.34-.3-.225-.55-.64-.75-1.24l-.23-.68c-.11-.34-.24-.55-.39-.64-.15-.09-.37-.08-.66.04l-.23.1c-.25.11-.41.13-.48.05-.07-.08-.05-.23.05-.45l.97-2.16c.1-.22.23-.34.38-.36.15-.02.37.04.65.18l.28.14c.31.16.53.2.66.12.13-.08.23-.27.3-.57l.03-.14c.04-.15.09-.25.15-.3.06-.05.15-.05.26 0l1.19.53c.21.09.31.23.31.41 0 .06-.01.13-.04.2l-.42 1.08c-.08.21-.05.37.08.49.13.12.34.18.63.18l.15-.01.15-.01c.19-.01.32.02.4.1.08.08.09.22.03.42l-.51 1.47z""/></svg>"),
+        ["Tesla"] = new MarkupString(@"<svg xmlns=""http://www.w3.org/2000/svg"" width=""24"" height=""24"" viewBox=""0 0 24 24"" fill=""currentColor""><path d=""M12 5.362l2.475-3.026s4.245.09 8.471 2.054c-1.082 1.636-3.231 2.438-3.231 2.438-.146-1.439-1.154-1.79-4.354-1.79L12 24 8.619 5.034c-3.18 0-4.188.354-4.335 1.792 0 0-2.148-.795-3.229-2.43C5.28 2.431 9.525 2.34 9.525 2.34L12 5.362zm0-3.676c3.173 0 6.852.477 9.777 1.564.632-.37 1.096-.704 1.223-.856C18.981 0.274 13.676 0 12 0c-1.676 0-6.981.274-11 2.394.127.152.591.487 1.223.856 2.925-1.087 6.604-1.564 9.777-1.564z""/></svg>"),
+        ["Meta"] = new MarkupString(@"<svg xmlns=""http://www.w3.org/2000/svg"" width=""24"" height=""24"" viewBox=""0 0 24 24"" fill=""currentColor""><path d=""M6.915 4.03c-1.968 0-3.683 1.28-4.871 3.113C.704 9.208 0 11.883 0 14.449c0 .706.07 1.369.21 1.973a6.624 6.624 0 0 0 .265.86c.196.478.463.9.795 1.25.332.351.733.628 1.2.807.467.178.99.264 1.55.264.551 0 1.06-.09 1.508-.262.448-.172.844-.422 1.186-.745.342-.324.635-.705.878-1.13.243-.425.446-.883.608-1.366.162-.482.292-.976.392-1.471.1-.496.178-.987.236-1.456.057-.468.1-.903.127-1.286.027-.383.041-.694.041-.902 0-.38-.022-.835-.066-1.345a18.322 18.322 0 0 0-.224-1.639 23.926 23.926 0 0 0-.41-1.866 18.6 18.6 0 0 0-.572-1.73c-.207-.51-.446-.993-.715-1.425a6.262 6.262 0 0 0-.876-1.076 3.725 3.725 0 0 0-.977-.702 2.451 2.451 0 0 0-1.04-.234zm10.17 0c-.365 0-.71.078-1.04.234a3.726 3.726 0 0 0-.977.702 6.261 6.261 0 0 0-.876 1.076c-.27.432-.508.914-.715 1.424-.207.51-.398 1.09-.571 1.73a23.924 23.924 0 0 0-.41 1.867 18.32 18.32 0 0 0-.225 1.639c-.044.51-.065.964-.065 1.345 0 .208.013.519.04.902.028.383.07.818.127 1.286.058.469.137.96.237 1.456.1.495.23.99.391 1.47.163.484.366.942.609 1.367.243.425.536.806.878 1.13.342.323.738.573 1.186.745.448.172.957.262 1.509.262.56 0 1.082-.086 1.549-.264.467-.179.868-.456 1.2-.807.332-.35.6-.772.795-1.25.096-.233.183-.49.265-.86.14-.603.21-1.267.21-1.973 0-2.566-.704-5.24-2.044-7.306-1.188-1.833-2.903-3.113-4.871-3.113zM12 10.148c-.432 0-.827.165-1.168.488-.34.322-.608.78-.804 1.33-.196.55-.294 1.194-.294 1.893 0 .7.098 1.343.294 1.893.196.55.464 1.008.804 1.33.341.323.736.488 1.168.488.432 0 .827-.165 1.167-.487.34-.323.609-.781.805-1.331.196-.55.293-1.193.293-1.893 0-.7-.097-1.343-.293-1.893-.196-.55-.464-1.008-.805-1.33-.34-.323-.735-.488-1.167-.488z""/></svg>"),
+        ["Nvidia"] = new MarkupString(@"<svg xmlns=""http://www.w3.org/2000/svg"" width=""24"" height=""24"" viewBox=""0 0 24 24"" fill=""currentColor""><path d=""M8.948 8.798v-1.43a6.7 6.7 0 0 1 .424-.018c3.922-.124 6.493 3.374 6.493 3.374s-2.774 3.851-5.75 3.851c-.424 0-.814-.062-1.167-.171V9.395c1.244.132 1.488.64 2.227 1.694l1.663-1.4S10.99 8.675 8.948 8.798zm0-5.191v2.342l.424-.016c5.518-.174 9.156 4.678 9.156 4.678s-4.107 5.203-8.384 5.203a6.11 6.11 0 0 1-1.196-.12v1.382c.357.052.721.083 1.092.083 3.839 0 6.905-2.04 9.76-4.482.466.372 2.375 1.286 2.767 1.685-2.578 2.17-8.574 4.203-12.423 4.203-.4 0-.787-.027-1.196-.078V22.5H0V3.607h8.948zm0 9.368v1.415c-2.825-.453-3.61-3.218-3.61-3.218s1.376-1.483 3.61-1.64v1.53h-.004c-1.246-.132-2.224.96-2.224.96s.538 1.762 2.228.953zM2.864 9.433c0 .006 1.474-1.905 4.177-2.17V5.806c-3.168.327-5.353 2.6-5.353 2.6s1.263 5.823 5.353 6.521v-1.553c-2.77-.584-4.177-3.94-4.177-3.94z""/></svg>"),
+        ["Netflix"] = new MarkupString(@"<svg xmlns=""http://www.w3.org/2000/svg"" width=""24"" height=""24"" viewBox=""0 0 24 24"" fill=""currentColor""><path d=""M5.398 0v.006c3.028 8.556 5.37 15.175 8.348 23.596 2.344.058 4.85.398 4.854.398-2.8-7.924-5.923-16.747-8.487-24zm8.489 0v9.63L18.6 22.951c-.043-7.86-.004-15.913.002-22.95zM5.398 1.05V24c1.873-.225 2.81-.312 4.715-.398v-9.22z""/></svg>")
+    };
+
+    // SVG icons for metrics
+    private static readonly Dictionary<string, MarkupString> MetricIcons = new()
+    {
+        ["Company"] = new MarkupString(@"<svg xmlns=""http://www.w3.org/2000/svg"" width=""20"" height=""20"" viewBox=""0 0 24 24"" fill=""none"" stroke=""currentColor"" stroke-width=""2"" stroke-linecap=""round"" stroke-linejoin=""round""><path d=""M6 22V4a2 2 0 0 1 2-2h8a2 2 0 0 1 2 2v18Z""/><path d=""M6 12H4a2 2 0 0 0-2 2v6a2 2 0 0 0 2 2h2""/><path d=""M18 9h2a2 2 0 0 1 2 2v9a2 2 0 0 1-2 2h-2""/><path d=""M10 6h4""/><path d=""M10 10h4""/><path d=""M10 14h4""/><path d=""M10 18h4""/></svg>"),
+        ["Revenue"] = new MarkupString(@"<svg xmlns=""http://www.w3.org/2000/svg"" width=""20"" height=""20"" viewBox=""0 0 24 24"" fill=""none"" stroke=""currentColor"" stroke-width=""2"" stroke-linecap=""round"" stroke-linejoin=""round""><line x1=""12"" y1=""1"" x2=""12"" y2=""23""/><path d=""M17 5H9.5a3.5 3.5 0 0 0 0 7h5a3.5 3.5 0 0 1 0 7H6""/></svg>"),
+        ["Users"] = new MarkupString(@"<svg xmlns=""http://www.w3.org/2000/svg"" width=""20"" height=""20"" viewBox=""0 0 24 24"" fill=""none"" stroke=""currentColor"" stroke-width=""2"" stroke-linecap=""round"" stroke-linejoin=""round""><path d=""M16 21v-2a4 4 0 0 0-4-4H6a4 4 0 0 0-4 4v2""/><circle cx=""9"" cy=""7"" r=""4""/><path d=""M22 21v-2a4 4 0 0 0-3-3.87""/><path d=""M16 3.13a4 4 0 0 1 0 7.75""/></svg>"),
+        ["Growth"] = new MarkupString(@"<svg xmlns=""http://www.w3.org/2000/svg"" width=""20"" height=""20"" viewBox=""0 0 24 24"" fill=""none"" stroke=""currentColor"" stroke-width=""2"" stroke-linecap=""round"" stroke-linejoin=""round""><polyline points=""23 6 13.5 15.5 8.5 10.5 1 18""/><polyline points=""17 6 23 6 23 12""/></svg>"),
+        ["Rating"] = new MarkupString(@"<svg xmlns=""http://www.w3.org/2000/svg"" width=""20"" height=""20"" viewBox=""0 0 24 24"" fill=""currentColor""><polygon points=""12 2 15.09 8.26 22 9.27 17 14.14 18.18 21.02 12 17.77 5.82 21.02 7 14.14 2 9.27 8.91 8.26 12 2""/></svg>"),
+        ["MarketCap"] = new MarkupString(@"<svg xmlns=""http://www.w3.org/2000/svg"" width=""20"" height=""20"" viewBox=""0 0 24 24"" fill=""none"" stroke=""currentColor"" stroke-width=""2"" stroke-linecap=""round"" stroke-linejoin=""round""><path d=""M3 3v18h18""/><path d=""m19 9-5 5-4-4-3 3""/></svg>"),
+        // Composition mode icons
+        ["Movies"] = new MarkupString(@"<svg xmlns=""http://www.w3.org/2000/svg"" width=""20"" height=""20"" viewBox=""0 0 24 24"" fill=""none"" stroke=""currentColor"" stroke-width=""2"" stroke-linecap=""round"" stroke-linejoin=""round""><rect x=""2"" y=""2"" width=""20"" height=""20"" rx=""2.18"" ry=""2.18""/><line x1=""7"" y1=""2"" x2=""7"" y2=""22""/><line x1=""17"" y1=""2"" x2=""17"" y2=""22""/><line x1=""2"" y1=""12"" x2=""22"" y2=""12""/><line x1=""2"" y1=""7"" x2=""7"" y2=""7""/><line x1=""2"" y1=""17"" x2=""7"" y2=""17""/><line x1=""17"" y1=""17"" x2=""22"" y2=""17""/><line x1=""17"" y1=""7"" x2=""22"" y2=""7""/></svg>"),
+        ["Themes"] = new MarkupString(@"<svg xmlns=""http://www.w3.org/2000/svg"" width=""20"" height=""20"" viewBox=""0 0 24 24"" fill=""none"" stroke=""currentColor"" stroke-width=""2"" stroke-linecap=""round"" stroke-linejoin=""round""><circle cx=""13.5"" cy=""6.5"" r=""0.5"" fill=""currentColor""/><circle cx=""17.5"" cy=""10.5"" r=""0.5"" fill=""currentColor""/><circle cx=""8.5"" cy=""7.5"" r=""0.5"" fill=""currentColor""/><circle cx=""6.5"" cy=""12.5"" r=""0.5"" fill=""currentColor""/><path d=""M12 2C6.5 2 2 6.5 2 12s4.5 10 10 10c.926 0 1.648-.746 1.648-1.688 0-.437-.18-.835-.437-1.125-.29-.289-.438-.652-.438-1.125a1.64 1.64 0 0 1 1.668-1.668h1.996c3.051 0 5.555-2.503 5.555-5.555C21.965 6.012 17.461 2 12 2z""/></svg>"),
+        ["FPS"] = new MarkupString(@"<svg xmlns=""http://www.w3.org/2000/svg"" width=""20"" height=""20"" viewBox=""0 0 24 24"" fill=""none"" stroke=""currentColor"" stroke-width=""2"" stroke-linecap=""round"" stroke-linejoin=""round""><polygon points=""13 2 3 14 12 14 11 22 21 10 12 10 13 2""/></svg>"),
+        ["Layout"] = new MarkupString(@"<svg xmlns=""http://www.w3.org/2000/svg"" width=""20"" height=""20"" viewBox=""0 0 24 24"" fill=""none"" stroke=""currentColor"" stroke-width=""2"" stroke-linecap=""round"" stroke-linejoin=""round""><rect x=""3"" y=""3"" width=""18"" height=""18"" rx=""2"" ry=""2""/><line x1=""3"" y1=""9"" x2=""21"" y2=""9""/><line x1=""9"" y1=""21"" x2=""9"" y2=""9""/></svg>"),
+        ["Uptime"] = new MarkupString(@"<svg xmlns=""http://www.w3.org/2000/svg"" width=""20"" height=""20"" viewBox=""0 0 24 24"" fill=""none"" stroke=""currentColor"" stroke-width=""2"" stroke-linecap=""round"" stroke-linejoin=""round""><polyline points=""20 6 9 17 4 12""/></svg>"),
+        ["Support"] = new MarkupString(@"<svg xmlns=""http://www.w3.org/2000/svg"" width=""20"" height=""20"" viewBox=""0 0 24 24"" fill=""none"" stroke=""currentColor"" stroke-width=""2"" stroke-linecap=""round"" stroke-linejoin=""round""><path d=""M21 15a2 2 0 0 1-2 2H7l-4 4V5a2 2 0 0 1 2-2h14a2 2 0 0 1 2 2z""/></svg>"),
+        ["Components"] = new MarkupString(@"<svg xmlns=""http://www.w3.org/2000/svg"" width=""20"" height=""20"" viewBox=""0 0 24 24"" fill=""none"" stroke=""currentColor"" stroke-width=""2"" stroke-linecap=""round"" stroke-linejoin=""round""><rect x=""3"" y=""3"" width=""7"" height=""7""/><rect x=""14"" y=""3"" width=""7"" height=""7""/><rect x=""14"" y=""14"" width=""7"" height=""7""/><rect x=""3"" y=""14"" width=""7"" height=""7""/></svg>"),
+        ["Dependencies"] = new MarkupString(@"<svg xmlns=""http://www.w3.org/2000/svg"" width=""20"" height=""20"" viewBox=""0 0 24 24"" fill=""none"" stroke=""currentColor"" stroke-width=""2"" stroke-linecap=""round"" stroke-linejoin=""round""><path d=""M21 16V8a2 2 0 0 0-1-1.73l-7-4a2 2 0 0 0-2 0l-7 4A2 2 0 0 0 3 8v8a2 2 0 0 0 1 1.73l7 4a2 2 0 0 0 2 0l7-4A2 2 0 0 0 21 16z""/><polyline points=""3.27 6.96 12 12.01 20.73 6.96""/><line x1=""12"" y1=""22.08"" x2=""12"" y2=""12""/></svg>")
+    };
+
+    private MarkupString GetCompanyLogo(string? companyName)
+    {
+        if (string.IsNullOrEmpty(companyName) || !CompanyLogos.TryGetValue(companyName, out var logo))
+            return new MarkupString(@"<svg xmlns=""http://www.w3.org/2000/svg"" width=""24"" height=""24"" viewBox=""0 0 24 24"" fill=""none"" stroke=""currentColor"" stroke-width=""2""><circle cx=""12"" cy=""12"" r=""10""/><path d=""M12 16v-4""/><path d=""M12 8h.01""/></svg>");
+        return logo;
+    }
+
+    // Static mode items (movies)
     private List<BentoItem> _bentoItems = new()
     {
         new() { Title = "Despicable Me 4", ImageUrl = "images/despicableme.jpg" },
@@ -135,13 +272,138 @@
         new() { Title = "Deadpool & Wolverine", ImageUrl = "images/wolwerine.jpg" }
     };
 
-    private void SetTheme(BzTheme theme)
+    // Company data for interactive dashboard - using numeric IDs (more reliable)
+    private List<CompanyData> _companies = new()
     {
-        _currentTheme = theme;
-    }
+        new()
+        {
+            Name = "Apple",
+            ImageUrl = "https://picsum.photos/id/180/200/280",
+            Revenue = "$394B",
+            RevenueTrend = "+8%",
+            Users = "2.2B",
+            UsersTrend = "+12%",
+            Growth = "15%",
+            GrowthTrend = "+3%",
+            Rating = "4.8",
+            MarketCap = "$3.0T",
+            Description = "Technology company known for iPhone, Mac, and services",
+            Icon = "🍎"
+        },
+        new()
+        {
+            Name = "Microsoft",
+            ImageUrl = "https://picsum.photos/id/160/200/280",
+            Revenue = "$211B",
+            RevenueTrend = "+12%",
+            Users = "1.4B",
+            UsersTrend = "+18%",
+            Growth = "22%",
+            GrowthTrend = "+5%",
+            Rating = "4.6",
+            MarketCap = "$2.8T",
+            Description = "Cloud computing, AI, and enterprise software leader",
+            Icon = "🪟"
+        },
+        new()
+        {
+            Name = "Google",
+            ImageUrl = "https://picsum.photos/id/119/200/280",
+            Revenue = "$307B",
+            RevenueTrend = "+10%",
+            Users = "4.3B",
+            UsersTrend = "+5%",
+            Growth = "18%",
+            GrowthTrend = "+2%",
+            Rating = "4.5",
+            MarketCap = "$1.9T",
+            Description = "Search, advertising, and cloud platform giant",
+            Icon = "🔍"
+        },
+        new()
+        {
+            Name = "Amazon",
+            ImageUrl = "https://picsum.photos/id/96/200/280",
+            Revenue = "$574B",
+            RevenueTrend = "+11%",
+            Users = "310M",
+            UsersTrend = "+8%",
+            Growth = "12%",
+            GrowthTrend = "+4%",
+            Rating = "4.4",
+            MarketCap = "$1.8T",
+            Description = "E-commerce and cloud computing powerhouse",
+            Icon = "📦"
+        },
+        new()
+        {
+            Name = "Tesla",
+            ImageUrl = "https://picsum.photos/id/111/200/280",
+            Revenue = "$96B",
+            RevenueTrend = "+19%",
+            Users = "5M",
+            UsersTrend = "+35%",
+            Growth = "40%",
+            GrowthTrend = "+15%",
+            Rating = "4.2",
+            MarketCap = "$780B",
+            Description = "Electric vehicles and clean energy innovation",
+            Icon = "⚡"
+        },
+        new()
+        {
+            Name = "Meta",
+            ImageUrl = "https://picsum.photos/id/177/200/280",
+            Revenue = "$134B",
+            RevenueTrend = "+16%",
+            Users = "3.9B",
+            UsersTrend = "+7%",
+            Growth = "21%",
+            GrowthTrend = "+8%",
+            Rating = "4.1",
+            MarketCap = "$1.2T",
+            Description = "Social media and metaverse technology pioneer",
+            Icon = "📱"
+        },
+        new()
+        {
+            Name = "Nvidia",
+            ImageUrl = "https://picsum.photos/id/201/200/280",
+            Revenue = "$61B",
+            RevenueTrend = "+126%",
+            Users = "50M",
+            UsersTrend = "+45%",
+            Growth = "85%",
+            GrowthTrend = "+40%",
+            Rating = "4.7",
+            MarketCap = "$1.4T",
+            Description = "AI chips and graphics processing leader",
+            Icon = "🎮"
+        },
+        new()
+        {
+            Name = "Netflix",
+            ImageUrl = "https://picsum.photos/id/145/200/280",
+            Revenue = "$33B",
+            RevenueTrend = "+7%",
+            Users = "260M",
+            UsersTrend = "+13%",
+            Growth = "9%",
+            GrowthTrend = "+2%",
+            Rating = "4.3",
+            MarketCap = "$250B",
+            Description = "Streaming entertainment and content production",
+            Icon = "🎬"
+        }
+    };
 
     private void OnItemSelected(BentoItem item)
     {
         _selectedItem = item;
+    }
+
+    private void OnCompanyChanged(CompanyData company)
+    {
+        _activeCompany = company;
     }
 }
