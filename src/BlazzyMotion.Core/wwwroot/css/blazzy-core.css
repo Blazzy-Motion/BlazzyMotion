@@ -691,6 +691,7 @@
     font-size: var(--bzb-feature-label-size);
     font-weight: var(--bzb-feature-label-weight);
     line-height: 1.3;
+    color: inherit;
 }
 
 .bzb-feature-description {
@@ -698,6 +699,7 @@
     opacity: var(--bzb-feature-desc-opacity);
     margin: 0;
     line-height: 1.4;
+    color: inherit;
 }
 
 /* Bento Quote component */
