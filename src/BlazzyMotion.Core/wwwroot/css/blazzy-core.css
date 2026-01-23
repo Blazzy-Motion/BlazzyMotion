@@ -498,38 +498,6 @@
     background: rgba(255, 255, 255, 0.02);
 }
 
-/* Bento pagination */
-
-.bzb-pagination {
-    display: flex;
-    justify-content: center;
-    gap: 8px;
-    margin-top: 20px;
-}
-
-.bzb-pagination .swiper-pagination-bullet {
-    width: 10px;
-    height: 10px;
-    background: rgba(255, 255, 255, 0.3);
-    border-radius: 50%;
-    cursor: pointer;
-    transition: all 0.3s ease;
-}
-
-.bzb-pagination .swiper-pagination-bullet-active {
-    background: rgba(255, 255, 255, 0.9);
-    transform: scale(1.2);
-}
-
-/* Light theme pagination */
-.bzb-grid.bzc-theme-light .bzb-pagination .swiper-pagination-bullet {
-    background: rgba(0, 0, 0, 0.2);
-}
-
-.bzb-grid.bzc-theme-light .bzb-pagination .swiper-pagination-bullet-active {
-    background: rgba(0, 0, 0, 0.7);
-}
-
 /* Bento content helpers (for Items mode) */
 
 .bzb-item-image {
@@ -996,4 +964,282 @@
     .bzb-feature {
         min-height: 120px;
     }
+}
+
+/* Semantic color system */
+
+:root {
+    --bz-text-primary: rgba(255, 255, 255, 0.95);
+    --bz-text-secondary: rgba(255, 255, 255, 0.7);
+    --bz-text-muted: rgba(255, 255, 255, 0.5);
+    --bz-accent-primary: #3b82f6;
+    --bz-accent-success: #10b981;
+    --bz-accent-danger: #ef4444;
+    --bz-accent-warning: #f59e0b;
+    --bz-accent-info: #06b6d4;
+}
+
+.bzc-theme-light,
+.bzb-grid.bzc-theme-light {
+    --bz-text-primary: rgba(0, 0, 0, 0.87);
+    --bz-text-secondary: rgba(0, 0, 0, 0.6);
+    --bz-text-muted: rgba(0, 0, 0, 0.38);
+}
+
+/* Bento hover states */
+
+.bzb-item {
+    transition:
+        transform 0.3s cubic-bezier(0.4, 0, 0.2, 1),
+        box-shadow 0.3s cubic-bezier(0.4, 0, 0.2, 1),
+        border-color 0.3s ease;
+}
+
+.bzb-item:hover {
+    transform: translateY(-4px);
+}
+
+.bzb-grid.bzc-theme-glass .bzb-item:hover {
+    box-shadow:
+        0 20px 40px rgba(0, 0, 0, 0.4),
+        0 0 30px rgba(255, 255, 255, 0.08);
+    border-color: rgba(255, 255, 255, 0.25);
+}
+
+.bzb-grid.bzc-theme-dark .bzb-item:hover {
+    box-shadow:
+        var(--bz-theme-dark-shadow),
+        var(--bz-theme-dark-glow),
+        0 0 40px rgba(100, 100, 255, 0.1);
+}
+
+.bzb-grid.bzc-theme-light .bzb-item:hover {
+    box-shadow: 0 20px 60px rgba(0, 0, 0, 0.15);
+}
+
+.bzb-grid.bzc-theme-minimal .bzb-item:hover {
+    border-color: rgba(255, 255, 255, 0.3);
+    background: rgba(255, 255, 255, 0.05);
+}
+
+/* Card hover effects */
+
+.bzb-card-container:hover .bzb-card-image,
+.bzb-item:hover .bzb-card-image {
+    transform: scale(1.08);
+}
+
+.bzb-card-container:hover .bzb-card-overlay {
+    background: linear-gradient(to top, rgba(0, 0, 0, 0.9) 0%, rgba(0, 0, 0, 0.3) 60%, transparent 100%);
+}
+
+/* Metric hover effects */
+
+.bzb-metric .bzb-metric-value,
+.bzb-metric .bzb-metric-icon {
+    transition: transform 0.3s cubic-bezier(0.4, 0, 0.2, 1);
+}
+
+.bzb-metric:hover .bzb-metric-value {
+    transform: scale(1.05);
+}
+
+.bzb-metric:hover .bzb-metric-icon {
+    transform: scale(1.15);
+}
+
+/* Feature hover effects */
+
+.bzb-feature .bzb-feature-icon {
+    transition: transform 0.3s cubic-bezier(0.68, -0.55, 0.265, 1.55);
+}
+
+.bzb-feature:hover .bzb-feature-icon {
+    transform: scale(1.2);
+}
+
+/* Quote hover effects */
+
+.bzb-quote .bzb-quote-text,
+.bzb-quote .bzb-quote-avatar {
+    transition: transform 0.3s ease, box-shadow 0.3s ease;
+}
+
+.bzb-quote:hover .bzb-quote-text {
+    transform: translateX(4px);
+}
+
+.bzb-quote:hover .bzb-quote-avatar {
+    transform: scale(1.1);
+    box-shadow: 0 4px 12px rgba(0, 0, 0, 0.3);
+}
+
+/* Text overflow protection */
+
+.bzb-card-title {
+    display: -webkit-box;
+    -webkit-line-clamp: 2;
+    -webkit-box-orient: vertical;
+    overflow: hidden;
+    text-overflow: ellipsis;
+}
+
+.bzb-card-description {
+    display: -webkit-box;
+    -webkit-line-clamp: 3;
+    -webkit-box-orient: vertical;
+    overflow: hidden;
+    text-overflow: ellipsis;
+}
+
+.bzb-feature-label {
+    display: -webkit-box;
+    -webkit-line-clamp: 2;
+    -webkit-box-orient: vertical;
+    overflow: hidden;
+}
+
+.bzb-feature-description {
+    display: -webkit-box;
+    -webkit-line-clamp: 2;
+    -webkit-box-orient: vertical;
+    overflow: hidden;
+}
+
+.bzb-quote-text {
+    display: -webkit-box;
+    -webkit-line-clamp: 4;
+    -webkit-box-orient: vertical;
+    overflow: hidden;
+}
+
+.bzb-metric-label {
+    display: -webkit-box;
+    -webkit-line-clamp: 1;
+    -webkit-box-orient: vertical;
+    overflow: hidden;
+    text-overflow: ellipsis;
+}
+
+/* Accessibility focus states */
+
+.bzb-item:focus {
+    outline: none;
+}
+
+.bzb-item:focus-visible {
+    outline: 2px solid var(--bz-accent-primary);
+    outline-offset: 4px;
+}
+
+.bzb-grid.bzc-theme-light .bzb-item:focus-visible {
+    outline-color: rgba(0, 0, 0, 0.6);
+}
+
+.bzb-item a:focus-visible,
+.bzb-item button:focus-visible {
+    outline: 2px solid currentColor;
+    outline-offset: 2px;
+}
+
+/* Nested carousel in Bento - default sizing for carousel inside Bento cells */
+
+.bzb-item:has(.bzc-carousel-box) {
+    display: flex;
+    align-items: center;
+    justify-content: center;
+    --bzc-swiper-height: 220px;
+    --bzc-slide-width: 100px;
+    --bzc-image-max-width: 90px;
+}
+
+.bzb-item .bzc-carousel-box {
+    width: 100%;
+    max-width: none;
+    margin: 0;
+    padding: 12px;
+    min-height: auto;
+    border-radius: inherit;
+}
+
+.bzb-item .swiper-container {
+    height: var(--bzc-swiper-height);
+}
+
+.bzb-item .bzc-carousel-box.bzc-theme-glass {
+    background: rgba(255, 255, 255, 0.03);
+    box-shadow:
+        inset 0 2px 4px rgba(0, 0, 0, 0.15),
+        inset 0 -1px 2px rgba(255, 255, 255, 0.05);
+    border: 1px solid rgba(255, 255, 255, 0.08);
+}
+
+.bzb-item .bzc-carousel-box.bzc-theme-dark {
+    background: rgba(0, 0, 0, 0.2);
+    box-shadow: inset 0 2px 6px rgba(0, 0, 0, 0.25);
+    border: 1px solid rgba(255, 255, 255, 0.05);
+}
+
+.bzb-item .bzc-carousel-box.bzc-theme-light {
+    background: rgba(0, 0, 0, 0.02);
+    box-shadow: inset 0 1px 4px rgba(0, 0, 0, 0.08);
+    border: 1px solid rgba(0, 0, 0, 0.06);
+}
+
+.bzb-item .bzc-carousel-box.bzc-theme-minimal {
+    background: transparent;
+    box-shadow: none;
+    border: none;
+    padding: 0;
+}
+
+.bzb-item:has(.bzc-carousel-box) {
+    min-height: 280px;
+}
+
+.bzb-item.bzb-row-2:has(.bzc-carousel-box) {
+    min-height: 400px;
+}
+
+.bzb-carousel-container {
+    min-height: 280px;
+}
+
+.bzb-carousel-container.bzb-row-2 {
+    min-height: 400px;
+}
+
+/* Semantic colors for components */
+
+.bzb-metric-value {
+    color: var(--bz-text-primary);
+}
+
+.bzb-metric-label {
+    color: var(--bz-text-secondary);
+}
+
+.bzb-feature-label {
+    color: var(--bz-text-primary);
+}
+
+.bzb-feature-description {
+    color: var(--bz-text-secondary);
+}
+
+.bzb-quote-text {
+    color: var(--bz-text-primary);
+}
+
+.bzb-quote-name {
+    color: var(--bz-text-primary);
+}
+
+.bzb-quote-role {
+    color: var(--bz-text-muted);
+}
+
+.bzb-card-overlay .bzb-card-title,
+.bzb-card-overlay .bzb-card-description {
+    color: #ffffff;
 }

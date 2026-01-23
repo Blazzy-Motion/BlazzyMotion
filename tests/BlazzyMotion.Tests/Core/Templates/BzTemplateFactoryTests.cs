@@ -287,7 +287,7 @@ public class BzTemplateFactoryTests : TestContext
 
     // Assert
     var div = cut.Find("div");
-    div.ClassList.Should().Contain("bzc-fallback-item");
+    div.ClassList.Should().Contain("bz-fallback-item");
   }
 
   [Fact]

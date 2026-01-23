@@ -11,7 +11,7 @@ using System.Diagnostics.CodeAnalysis;
 namespace BlazzyMotion.Bento.Components;
 
 /// <summary>
-/// A modern Bento Grid component with glassmorphism design, staggered animations, and pagination support.
+/// A modern Bento Grid component with glassmorphism design and staggered animations.
 /// </summary>
 /// <typeparam name="TItem">The type of items to display in the grid</typeparam>
 /// <remarks>
@@ -21,30 +21,27 @@ namespace BlazzyMotion.Bento.Components;
 /// <item>Zero-config setup with [BzBentoItem] attribute</item>
 /// <item>Glassmorphism visual themes (Glass, Dark, Light, Minimal)</item>
 /// <item>Staggered entrance animations</item>
-/// <item>Optional pagination with swipe support</item>
 /// <item>Composition mode for embedding other components (like BzCarousel)</item>
+/// <item>Auto-layout patterns for dynamic grid arrangements</item>
 /// </list>
 /// </para>
 /// <para>
 /// <strong>Usage Modes:</strong>
 /// <list type="number">
 /// <item>
-/// <strong>Zero Config:</strong> Just provide Items and optional Theme
+/// <strong>Items Mode (Zero Config):</strong> Just provide Items and optional Theme
 /// <code>
 /// &lt;BzBento Items="dashboardItems" Theme="BzTheme.Glass" /&gt;
 /// </code>
 /// </item>
 /// <item>
-/// <strong>Paginated:</strong> Automatic pagination with swipe
-/// <code>
-/// &lt;BzBento Items="items" Paginated="true" ItemsPerPage="6" /&gt;
-/// </code>
-/// </item>
-/// <item>
-/// <strong>Composition:</strong> Custom layout with BzBentoItem children
+/// <strong>Composition Mode:</strong> Custom layout with helper components
 /// <code>
 /// &lt;BzBento Theme="BzTheme.Glass"&gt;
-///     &lt;BzBentoItem ColSpan="2"&gt;
+///     &lt;BzBentoCard Image="hero.jpg" Title="Featured" ColSpan="2" RowSpan="2" /&gt;
+///     &lt;BzBentoMetric Value="1,234" Label="Users" /&gt;
+///     &lt;BzBentoFeature IconText="🚀" Label="Fast" /&gt;
+///     &lt;BzBentoItem ColSpan="2" RowSpan="2"&gt;
 ///         &lt;BzCarousel Items="movies" /&gt;
 ///     &lt;/BzBentoItem&gt;
 /// &lt;/BzBento&gt;
@@ -59,14 +56,14 @@ public partial class BzBento<TItem> : BzComponentBase where TItem : class
 
     /// <summary>
     /// Collection of items to display in the grid.
-    /// Used in zero-config and paginated modes.
+    /// Used in Items mode (zero-config).
     /// </summary>
     [Parameter]
     public IEnumerable<TItem>? Items { get; set; }
 
     /// <summary>
     /// Child content for composition mode.
-    /// Use BzBentoItem components as children.
+    /// Use BzBentoCard, BzBentoMetric, BzBentoFeature, BzBentoQuote, or BzBentoItem components.
     /// </summary>
     /// <remarks>
     /// When ChildContent is provided, Items parameter is ignored.
@@ -76,7 +73,7 @@ public partial class BzBento<TItem> : BzComponentBase where TItem : class
     public RenderFragment? ChildContent { get; set; }
 
     /// <summary>
-    /// Custom template for rendering each item.
+    /// Custom template for rendering each item in Items mode.
     /// Overrides the auto-generated template from [BzBentoItem] attribute.
     /// </summary>
     [Parameter]
@@ -87,7 +84,7 @@ public partial class BzBento<TItem> : BzComponentBase where TItem : class
     #region Parameters - Layout
 
     /// <summary>
-    /// Number of columns in the grid.
+    /// Number of columns in the grid (1-12).
     /// </summary>
     /// <remarks>
     /// Responsive behavior is automatic:
@@ -125,7 +122,7 @@ public partial class BzBento<TItem> : BzComponentBase where TItem : class
     public bool AnimationEnabled { get; set; } = true;
 
     /// <summary>
-    /// Delay between each item's animation in milliseconds.
+    /// Delay between each item's animation in milliseconds (0-1000).
     /// </summary>
     /// <remarks>
     /// Only applies when AnimationEnabled is true.
@@ -133,31 +130,6 @@ public partial class BzBento<TItem> : BzComponentBase where TItem : class
     /// </remarks>
     [Parameter]
     public int StaggerDelay { get; set; } = 50;
-
-    #endregion
-
-    #region Parameters - Pagination
-
-    /// <summary>
-    /// Enable paginated mode with swipeable pages.
-    /// </summary>
-    /// <remarks>
-    /// When enabled, items are grouped into pages with dot navigation.
-    /// Touch/swipe gestures are supported on mobile.
-    /// Default: false
-    /// </remarks>
-    [Parameter]
-    public bool Paginated { get; set; } = false;
-
-    /// <summary>
-    /// Number of items per page when paginated.
-    /// </summary>
-    /// <remarks>
-    /// Only applies when Paginated is true.
-    /// Default: 6
-    /// </remarks>
-    [Parameter]
-    public int ItemsPerPage { get; set; } = 6;
 
     #endregion
 
@@ -181,7 +153,12 @@ public partial class BzBento<TItem> : BzComponentBase where TItem : class
     /// </summary>
     /// <remarks>
     /// Only applies when <see cref="AutoLayout"/> is true.
-    /// See <see cref="BentoLayoutPattern"/> for available patterns.
+    /// See <see cref="BentoLayoutPattern"/> for available patterns:
+    /// <list type="bullet">
+    /// <item><strong>Dynamic:</strong> Varied mix with hero (2x2), tall, wide, and normal cards</item>
+    /// <item><strong>Featured:</strong> Large hero at start, rest smaller</item>
+    /// <item><strong>Balanced:</strong> Uniform appearance with wide and tall cards, no 2x2</item>
+    /// </list>
     /// Default: Dynamic
     /// </remarks>
     [Parameter]
@@ -196,12 +173,6 @@ public partial class BzBento<TItem> : BzComponentBase where TItem : class
     /// </summary>
     [Parameter]
     public EventCallback<TItem> OnItemSelected { get; set; }
-
-    /// <summary>
-    /// Callback invoked when the page changes (paginated mode).
-    /// </summary>
-    [Parameter]
-    public EventCallback<int> OnPageChanged { get; set; }
 
     #endregion
 
@@ -262,10 +233,13 @@ public partial class BzBento<TItem> : BzComponentBase where TItem : class
     #region Lifecycle Methods
 
     /// <summary>
-    /// Called when parameters are set. Maps items and detects changes.
+    /// Called when parameters are set. Validates, maps items and prepares rendering.
     /// </summary>
     protected override async Task OnParametersSetAsync()
     {
+        // Validate parameters first
+        ValidateParameters();
+
         // Cache items for O(1) access
         _itemsCache = Items?.ToList() ?? new List<TItem>();
 
@@ -297,7 +271,7 @@ public partial class BzBento<TItem> : BzComponentBase where TItem : class
     {
         if (IsDisposed) return;
 
-        // First render - initialize JS interop
+        // First render - initialize JS interop for Items mode
         if (firstRender && !_initialized && !IsEmpty && ChildContent == null)
         {
             try
@@ -312,9 +286,9 @@ public partial class BzBento<TItem> : BzComponentBase where TItem : class
                 Console.Error.WriteLine($"[BzBento] Initialization error: {ex.Message}");
             }
         }
+        // Composition mode with animations
         else if (firstRender && !_initialized && ChildContent != null && AnimationEnabled)
         {
-            // Composition mode with animations
             try
             {
                 _dotNetRef = DotNetObjectReference.Create(this);
@@ -336,27 +310,36 @@ public partial class BzBento<TItem> : BzComponentBase where TItem : class
     /// <summary>
     /// Called from JavaScript when the Bento grid is initialized.
     /// </summary>
-    /// <param name="itemOrPageCount">Number of items (static) or pages (paginated)</param>
+    /// <param name="itemCount">Number of items in the grid</param>
     [JSInvokable]
     [ExcludeFromCodeCoverage(Justification = "JS callback")]
-    public Task OnBentoInitializedFromJS(int itemOrPageCount)
+    public Task OnBentoInitializedFromJS(int itemCount)
     {
         // Optional: Handle initialization complete
         return Task.CompletedTask;
     }
 
+    #endregion
+
+    #region Private Methods - Validation
+
     /// <summary>
-    /// Called from JavaScript when the page changes (paginated mode).
+    /// Validates component parameters.
     /// </summary>
-    /// <param name="pageIndex">Zero-based page index</param>
-    [JSInvokable]
-    [ExcludeFromCodeCoverage(Justification = "JS callback")]
-    public async Task OnBentoPageChangeFromJS(int pageIndex)
+    /// <exception cref="ArgumentOutOfRangeException">Thrown when parameters are invalid</exception>
+    private void ValidateParameters()
     {
-        if (OnPageChanged.HasDelegate)
-        {
-            await OnPageChanged.InvokeAsync(pageIndex);
-        }
+        if (Columns < 1 || Columns > 12)
+            throw new ArgumentOutOfRangeException(nameof(Columns),
+                "Columns must be between 1 and 12.");
+
+        if (Gap < 0)
+            throw new ArgumentOutOfRangeException(nameof(Gap),
+                "Gap cannot be negative.");
+
+        if (StaggerDelay < 0 || StaggerDelay > 1000)
+            throw new ArgumentOutOfRangeException(nameof(StaggerDelay),
+                "StaggerDelay must be between 0 and 1000ms.");
     }
 
     #endregion
@@ -375,9 +358,7 @@ public partial class BzBento<TItem> : BzComponentBase where TItem : class
             Columns = Columns,
             Gap = Gap,
             AnimationEnabled = AnimationEnabled,
-            StaggerDelay = StaggerDelay,
-            Paginated = Paginated,
-            ItemsPerPage = ItemsPerPage
+            StaggerDelay = StaggerDelay
         };
     }
 
@@ -395,14 +376,6 @@ public partial class BzBento<TItem> : BzComponentBase where TItem : class
             styles.Add($"--bzb-gap: {Gap}px");
 
         return string.Join("; ", styles);
-    }
-
-    /// <summary>
-    /// Generates inline style for paginated page grid.
-    /// </summary>
-    private string GetPageGridStyle()
-    {
-        return $"display: grid; grid-template-columns: repeat({Columns}, 1fr); gap: {Gap}px; width: 100%;";
     }
 
     #endregion
@@ -486,6 +459,17 @@ public partial class BzBento<TItem> : BzComponentBase where TItem : class
         }
     }
 
+    /// <summary>
+    /// Handles keyboard navigation for accessibility.
+    /// </summary>
+    private async Task HandleKeyDown(Microsoft.AspNetCore.Components.Web.KeyboardEventArgs e, TItem item)
+    {
+        if (e.Key == "Enter")
+        {
+            await HandleItemClick(item);
+        }
+    }
+
     #endregion
 
     #region Private Methods - Auto-Layout
@@ -553,7 +537,7 @@ public partial class BzBento<TItem> : BzComponentBase where TItem : class
     private static BzItem ApplyFeaturedPattern(BzItem item, int index)
     {
         var newItem = CloneBzItem(item);
-        
+
         if (index == 0)
         {
             newItem.ColSpan = 2;
@@ -569,7 +553,7 @@ public partial class BzBento<TItem> : BzComponentBase where TItem : class
             newItem.ColSpan = 1;
             newItem.RowSpan = 1;
         }
-        
+
         return newItem;
     }
 
@@ -578,7 +562,7 @@ public partial class BzBento<TItem> : BzComponentBase where TItem : class
     /// </summary>
     /// <remarks>
     /// Pattern (repeating cycle of 6):
-    /// [0] 2x1 Wide, [1-2] 1x1 Normal, [3] 1x2 Tall, 
+    /// [0] 2x1 Wide, [1-2] 1x1 Normal, [3] 1x2 Tall,
     /// [4] 2x1 Wide, [5] 1x1 Normal
     /// No 2x2 hero cards for more uniform appearance.
     /// </remarks>
@@ -616,28 +600,6 @@ public partial class BzBento<TItem> : BzComponentBase where TItem : class
             RowSpan = item.RowSpan,
             Order = item.Order
         };
-    }
-
-    #endregion
-
-    #region Private Methods - Pagination
-
-    /// <summary>
-    /// Groups items into pages for paginated mode.
-    /// </summary>
-    private IEnumerable<IEnumerable<(TItem Item, int Index)>> GetPages()
-    {
-        if (Items == null) yield break;
-
-        var itemsWithIndex = Items.Select((item, index) => (Item: item, Index: index)).ToList();
-        var pageCount = (int)Math.Ceiling((double)itemsWithIndex.Count / ItemsPerPage);
-
-        for (int i = 0; i < pageCount; i++)
-        {
-            yield return itemsWithIndex
-                .Skip(i * ItemsPerPage)
-                .Take(ItemsPerPage);
-        }
     }
 
     #endregion

@@ -1,8 +1,9 @@
 let swiperLoaded = false;
 const swiperInstances = new Map();
 
-// script/stylesheet loaders
-
+// ═══════════════════════════════════════════════════════════════════════════
+// SCRIPT/STYLESHEET LOADERS
+// ═══════════════════════════════════════════════════════════════════════════
 
 function loadScript(src) {
     return new Promise((resolve, reject) => {
@@ -65,8 +66,9 @@ function loadStylesheet(href) {
     });
 }
 
-
-// swper loading
+// ═══════════════════════════════════════════════════════════════════════════
+// SWIPER LOADING
+// ═══════════════════════════════════════════════════════════════════════════
 
 export async function ensureSwiperLoaded() {
     if (swiperLoaded) return;
@@ -85,7 +87,6 @@ export async function ensureSwiperLoaded() {
     swiperLoaded = true;
 }
 
-
 const DEFAULT_TOUCH_SETTINGS = {
     touchRatio: 1.0,
     threshold: 10,
@@ -94,10 +95,13 @@ const DEFAULT_TOUCH_SETTINGS = {
     longSwipesRatio: 0.3
 };
 
+// ═══════════════════════════════════════════════════════════════════════════
+// CAROUSEL FUNCTIONS
+// ═══════════════════════════════════════════════════════════════════════════
 
-// CAROUSEL INITIALIZATION
-
-
+/**
+ * Initialize BzCarousel with 3D Coverflow effect
+ */
 export async function initializeCarousel(element, optionsJson, dotNetRef = null) {
     try {
         const container = element.querySelector(".swiper-container");
@@ -119,7 +123,6 @@ export async function initializeCarousel(element, optionsJson, dotNetRef = null)
         const originalSlides = wrapper.querySelectorAll('.swiper-slide');
         const slideCount = originalSlides.length;
 
-
         const minSlidesForLoop = 4;
         const minSlidesForAutoLoop = 7;
         const shouldLoop = options.loop === true && slideCount >= minSlidesForLoop;
@@ -135,7 +138,6 @@ export async function initializeCarousel(element, optionsJson, dotNetRef = null)
                 wrapper.appendChild(clone);
             }
         }
-
 
         const touchRatio = options.touchRatio ?? DEFAULT_TOUCH_SETTINGS.touchRatio;
         const threshold = options.threshold ?? DEFAULT_TOUCH_SETTINGS.threshold;
@@ -164,7 +166,6 @@ export async function initializeCarousel(element, optionsJson, dotNetRef = null)
             shortSwipes: shortSwipes,
             resistanceRatio: resistanceRatio,
             longSwipesRatio: longSwipesRatio,
-
 
             coverflowEffect: {
                 rotate: options.rotateDegree || 50,
@@ -220,7 +221,6 @@ export async function initializeCarousel(element, optionsJson, dotNetRef = null)
     }
 }
 
-
 export function destroyCarousel(element) {
     if (swiperInstances.has(element)) {
         const instance = swiperInstances.get(element);
@@ -254,10 +254,12 @@ export function slidePrev(element, speed = 300) {
     }
 }
 
-/* BENTO GRID INITIALIZATION */
+// ═══════════════════════════════════════════════════════════════════════════
+// BENTO GRID FUNCTIONS
+// ═══════════════════════════════════════════════════════════════════════════
 
 /**
- * Initialize Bento Grid
+ * Initialize BzBento Grid with staggered animations
  * @param {HTMLElement} element - The grid container element
  * @param {string} optionsJson - JSON string with options
  * @param {object} dotNetRef - .NET object reference for callbacks
@@ -265,18 +267,14 @@ export function slidePrev(element, speed = 300) {
 export async function initializeBento(element, optionsJson, dotNetRef = null) {
     try {
         const options = optionsJson ? JSON.parse(optionsJson) : {};
-        const isPaginated = options.paginated === true;
 
         // Destroy existing instance if present
         if (swiperInstances.has(element)) {
             destroyBento(element);
         }
 
-        if (isPaginated) {
-            await initializeBentoPaginated(element, options, dotNetRef);
-        } else {
-            initializeBentoStatic(element, options, dotNetRef);
-        }
+        // Initialize static Bento Grid
+        initializeBentoStatic(element, options, dotNetRef);
 
     } catch (err) {
         console.error("[BlazzyMotion] Bento initialization error:", err);
@@ -284,7 +282,7 @@ export async function initializeBento(element, optionsJson, dotNetRef = null) {
 }
 
 /**
- * Initialize static (non-paginated) Bento Grid with staggered animations
+ * Initialize static Bento Grid with staggered animations
  */
 function initializeBentoStatic(element, options, dotNetRef) {
     const items = element.querySelectorAll('.bzb-item');
@@ -342,107 +340,6 @@ function initializeBentoStatic(element, options, dotNetRef) {
 }
 
 /**
- * Initialize paginated Bento Grid using Swiper
- */
-async function initializeBentoPaginated(element, options, dotNetRef) {
-    const container = element.querySelector(".swiper-container");
-
-    if (!container) {
-        console.warn("[BlazzyMotion] No .swiper-container found in paginated Bento");
-        return;
-    }
-
-    // Ensure Swiper is loaded
-    await ensureSwiperLoaded();
-
-    const swiperConfig = {
-        effect: 'slide',
-        slidesPerView: 1,
-        spaceBetween: 20,
-        speed: options.speed || 300,
-        grabCursor: true,
-
-        // Touch settings
-        touchRatio: options.touchRatio ?? DEFAULT_TOUCH_SETTINGS.touchRatio,
-        threshold: options.threshold ?? DEFAULT_TOUCH_SETTINGS.threshold,
-        shortSwipes: options.shortSwipes ?? DEFAULT_TOUCH_SETTINGS.shortSwipes,
-        resistanceRatio: options.resistanceRatio ?? DEFAULT_TOUCH_SETTINGS.resistanceRatio,
-        longSwipesRatio: options.longSwipesRatio ?? DEFAULT_TOUCH_SETTINGS.longSwipesRatio,
-
-        // Pagination
-        pagination: {
-            el: element.querySelector('.bzb-pagination'),
-            clickable: true,
-            dynamicBullets: options.dynamicBullets ?? false,
-        },
-
-        on: {
-            init: function () {
-                // Animate items on first page
-                const firstSlide = this.slides[0];
-                if (firstSlide) {
-                    animateBentoPage(firstSlide, options.staggerDelay || 50);
-                }
-            },
-
-            slideChange: function () {
-                // Animate items on new page
-                const activeSlide = this.slides[this.activeIndex];
-                if (activeSlide) {
-                    animateBentoPage(activeSlide, options.staggerDelay || 50);
-                }
-
-                // Callback to Blazor
-                if (dotNetRef) {
-                    dotNetRef.invokeMethodAsync('OnBentoPageChangeFromJS', this.activeIndex)
-                        .catch(err => {
-                            if (!err.message?.includes('disposed')) {
-                                console.warn('[BlazzyMotion] Bento page change callback error:', err);
-                            }
-                        });
-                }
-            }
-        }
-    };
-
-    const swiperInstance = new Swiper(container, swiperConfig);
-
-    // Store with type marker
-    swiperInstances.set(element, {
-        type: 'bento-paginated',
-        swiper: swiperInstance,
-        dotNetRef: dotNetRef
-    });
-
-    // Callback to Blazor when initialized
-    if (dotNetRef) {
-        const totalPages = swiperInstance.slides.length;
-        dotNetRef.invokeMethodAsync('OnBentoInitializedFromJS', totalPages)
-            .catch(err => {
-                if (!err.message?.includes('disposed')) {
-                    console.warn('[BlazzyMotion] Bento init callback error:', err);
-                }
-            });
-    }
-}
-
-/**
- * Animate items within a Bento page (for paginated mode)
- */
-function animateBentoPage(slideElement, staggerDelay) {
-    const items = slideElement.querySelectorAll('.bzb-item');
-    items.forEach((item, index) => {
-        // Reset animation
-        item.classList.remove('bzb-animate');
-        void item.offsetWidth; // Trigger reflow
-
-        // Apply staggered animation
-        item.style.animationDelay = `${index * staggerDelay}ms`;
-        item.classList.add('bzb-animate');
-    });
-}
-
-/**
  * Destroy Bento Grid instance
  */
 export function destroyBento(element) {
@@ -451,8 +348,6 @@ export function destroyBento(element) {
 
         if (instance.type === 'bento-static' && instance.observer) {
             instance.observer.disconnect();
-        } else if (instance.type === 'bento-paginated' && instance.swiper) {
-            instance.swiper.destroy(true, true);
         } else if (instance.destroy) {
             // Legacy: direct Swiper instance
             instance.destroy(true, true);
@@ -474,41 +369,10 @@ export function refreshBento(element) {
             const items = element.querySelectorAll('.bzb-item');
             items.forEach((item, index) => {
                 item.classList.remove('bzb-animate');
-                void item.offsetWidth;
+                void item.offsetWidth; // Trigger reflow
                 item.style.animationDelay = `${index * 50}ms`;
                 item.classList.add('bzb-animate');
             });
-        } else if (instance.type === 'bento-paginated' && instance.swiper) {
-            // Re-animate current page
-            const activeSlide = instance.swiper.slides[instance.swiper.activeIndex];
-            if (activeSlide) {
-                animateBentoPage(activeSlide, 50);
-            }
         }
     }
-}
-
-/**
- * Navigate to specific Bento page (paginated mode only)
- */
-export function bentoSlideTo(element, pageIndex, speed = 300) {
-    if (swiperInstances.has(element)) {
-        const instance = swiperInstances.get(element);
-        if (instance.type === 'bento-paginated' && instance.swiper) {
-            instance.swiper.slideTo(pageIndex, speed);
-        }
-    }
-}
-
-/**
- * Get current Bento page index (paginated mode only)
- */
-export function getBentoActiveIndex(element) {
-    if (swiperInstances.has(element)) {
-        const instance = swiperInstances.get(element);
-        if (instance.type === 'bento-paginated' && instance.swiper) {
-            return instance.swiper.activeIndex;
-        }
-    }
-    return 0;
 }

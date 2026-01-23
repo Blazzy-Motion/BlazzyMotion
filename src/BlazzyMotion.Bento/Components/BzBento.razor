@@ -1,4 +1,5 @@
 @namespace BlazzyMotion.Bento.Components
+@using Microsoft.AspNetCore.Components.Web
 @typeparam TItem where TItem : class
 @inherits BlazzyMotion.Core.Abstractions.BzComponentBase
 
@@ -29,39 +30,9 @@ else if (IsEmpty && ChildContent == null)
         }
     </div>
 }
-else if (Paginated && ChildContent == null && Items != null)
-{
-    @* PAGINATED MODE - Swiper with pages *@
-    <div class="@GetCombinedClass("bzb-grid")"
-         @ref="_gridRef"
-         style="@GetGridStyle()"
-         @attributes="AdditionalAttributes">
-        <div class="swiper-container">
-            <div class="swiper-wrapper">
-                @foreach (var page in GetPages())
-                {
-                    <div class="swiper-slide">
-                        <div class="bzb-page-grid" style="@GetPageGridStyle()">
-                            @foreach (var (item, index) in page)
-                            {
-                                var bzItem = GetMappedItem(item, index);
-                                <div class="bzb-item @GetSpanClasses(bzItem)"
-                                     style="@GetItemStyle(bzItem)"
-                                     @onclick="() => HandleItemClick(item)">
-                                    @GetItemContent(item, index)
-                                </div>
-                            }
-                        </div>
-                    </div>
-                }
-            </div>
-        </div>
-        <div class="bzb-pagination"></div>
-    </div>
-}
 else if (ChildContent != null)
 {
-    @* COMPOSITION MODE - User provides BzBentoItem children *@
+    @* COMPOSITION MODE - User provides BzBentoCard, BzBentoMetric, etc. *@
     <div class="@GetCombinedClass("bzb-grid")"
          @ref="_gridRef"
          style="@GetGridStyle()"
@@ -71,7 +42,7 @@ else if (ChildContent != null)
 }
 else
 {
-    @* STATIC MODE - Auto-generated grid from Items *@
+    @* ITEMS MODE - Auto-generated grid from Items collection *@
     <div class="@GetCombinedClass("bzb-grid")"
          @ref="_gridRef"
          style="@GetGridStyle()"
@@ -81,11 +52,14 @@ else
             foreach (var item in Items!)
             {
                 var currentIndex = index;
+                var currentItem = item;
                 var bzItem = GetMappedItem(item, currentIndex);
 
                 <div class="bzb-item @GetSpanClasses(bzItem)"
                      style="@GetItemStyle(bzItem)"
-                     @onclick="() => HandleItemClick(item)">
+                     tabindex="0"
+                     @onclick="@(() => HandleItemClick(currentItem))"
+                     @onkeydown="@((KeyboardEventArgs e) => HandleKeyDown(e, currentItem))">
                     @GetItemContent(item, currentIndex)
                 </div>
 
