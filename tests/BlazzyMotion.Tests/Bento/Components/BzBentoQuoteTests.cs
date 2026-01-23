@@ -11,19 +11,13 @@ public class BzBentoQuoteTests : TestBase
   #region Rendering Tests
 
   [Fact]
-  public void BzBentoQuote_WithItem_ShouldMapProperties()
+  public void BzBentoQuote_WithAllParameters_ShouldRenderContent()
   {
-    // Arrange
-    var item = new TestBentoItem
-    {
-      Description = "Amazing product!",
-      Title = "John Doe",
-      ImageUrl = "avatar.jpg"
-    };
-
-    // Act
-    var cut = RenderComponent<BzBentoQuote<TestBentoItem>>(parameters => parameters
-        .Add(p => p.Item, item));
+    // Arrange & Act - Use direct parameters
+    var cut = RenderComponent<BzBentoQuote<object>>(parameters => parameters
+        .Add(p => p.Text, "Amazing product!")
+        .Add(p => p.Author, "John Doe")
+        .Add(p => p.Avatar, "avatar.jpg"));
 
     // Assert
     cut.Markup.Should().Contain("Amazing product!");

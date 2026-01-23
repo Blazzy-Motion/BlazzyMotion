@@ -22,20 +22,21 @@ namespace BlazzyMotion.Bento.Components;
 /// <item>Glassmorphism visual themes (Glass, Dark, Light, Minimal)</item>
 /// <item>Staggered entrance animations</item>
 /// <item>Composition mode for embedding other components (like BzCarousel)</item>
-/// <item>Auto-layout patterns for dynamic grid arrangements</item>
 /// </list>
 /// </para>
 /// <para>
 /// <strong>Usage Modes:</strong>
 /// <list type="number">
 /// <item>
-/// <strong>Items Mode (Zero Config):</strong> Just provide Items and optional Theme
+/// <strong>Items Mode (Zero Config):</strong> Just provide Items and optional Theme.
+/// All items render as uniform 1x1 grid cells.
 /// <code>
 /// &lt;BzBento Items="dashboardItems" Theme="BzTheme.Glass" /&gt;
 /// </code>
 /// </item>
 /// <item>
-/// <strong>Composition Mode:</strong> Custom layout with helper components
+/// <strong>Composition Mode:</strong> Custom layout with helper components.
+/// Full control over ColSpan/RowSpan for each item.
 /// <code>
 /// &lt;BzBento Theme="BzTheme.Glass"&gt;
 ///     &lt;BzBentoCard Image="hero.jpg" Title="Featured" ColSpan="2" RowSpan="2" /&gt;
@@ -130,39 +131,6 @@ public partial class BzBento<TItem> : BzComponentBase where TItem : class
     /// </remarks>
     [Parameter]
     public int StaggerDelay { get; set; } = 50;
-
-    #endregion
-
-    #region Parameters - Auto-Layout
-
-    /// <summary>
-    /// Enable automatic layout pattern assignment.
-    /// </summary>
-    /// <remarks>
-    /// When enabled, items automatically receive ColSpan and RowSpan values
-    /// based on the selected <see cref="Pattern"/>, creating visually dynamic
-    /// Bento grids without manual configuration.
-    /// Explicit ColSpan/RowSpan values in your model will override auto-layout.
-    /// Default: true
-    /// </remarks>
-    [Parameter]
-    public bool AutoLayout { get; set; } = true;
-
-    /// <summary>
-    /// Layout pattern to use when AutoLayout is enabled.
-    /// </summary>
-    /// <remarks>
-    /// Only applies when <see cref="AutoLayout"/> is true.
-    /// See <see cref="BentoLayoutPattern"/> for available patterns:
-    /// <list type="bullet">
-    /// <item><strong>Dynamic:</strong> Varied mix with hero (2x2), tall, wide, and normal cards</item>
-    /// <item><strong>Featured:</strong> Large hero at start, rest smaller</item>
-    /// <item><strong>Balanced:</strong> Uniform appearance with wide and tall cards, no 2x2</item>
-    /// </list>
-    /// Default: Dynamic
-    /// </remarks>
-    [Parameter]
-    public BentoLayoutPattern Pattern { get; set; } = BentoLayoutPattern.Dynamic;
 
     #endregion
 
@@ -271,23 +239,8 @@ public partial class BzBento<TItem> : BzComponentBase where TItem : class
     {
         if (IsDisposed) return;
 
-        // First render - initialize JS interop for Items mode
-        if (firstRender && !_initialized && !IsEmpty && ChildContent == null)
-        {
-            try
-            {
-                _dotNetRef = DotNetObjectReference.Create(this);
-                _jsInterop ??= new BzBentoJsInterop(JS);
-                await _jsInterop.InitializeAsync(_gridRef, BuildOptions(), _dotNetRef);
-                _initialized = true;
-            }
-            catch (Exception ex)
-            {
-                Console.Error.WriteLine($"[BzBento] Initialization error: {ex.Message}");
-            }
-        }
-        // Composition mode with animations
-        else if (firstRender && !_initialized && ChildContent != null && AnimationEnabled)
+        // First render - initialize JS interop
+        if (firstRender && !_initialized && !IsEmpty)
         {
             try
             {
@@ -384,26 +337,20 @@ public partial class BzBento<TItem> : BzComponentBase where TItem : class
 
     /// <summary>
     /// Gets the mapped BzItem for a given source item.
+    /// Items mode always renders uniform 1x1 grid cells.
     /// </summary>
     private BzItem GetMappedItem(TItem item, int index)
     {
-        BzItem bzItem;
-
         if (_useRegistryMapping && index < _mappedItems.Count)
         {
-            bzItem = _mappedItems[index];
-        }
-        else
-        {
-            bzItem = new BzItem
-            {
-                Title = item?.ToString(),
-                OriginalItem = item
-            };
+            return _mappedItems[index];
         }
 
-        // Apply auto-layout pattern
-        return ApplyAutoLayout(bzItem, index);
+        return new BzItem
+        {
+            Title = item?.ToString(),
+            OriginalItem = item
+        };
     }
 
     /// <summary>
@@ -468,138 +415,6 @@ public partial class BzBento<TItem> : BzComponentBase where TItem : class
         {
             await HandleItemClick(item);
         }
-    }
-
-    #endregion
-
-    #region Private Methods - Auto-Layout
-
-    /// <summary>
-    /// Applies auto-layout pattern to an item if AutoLayout is enabled.
-    /// </summary>
-    /// <param name="item">The BzItem to apply pattern to</param>
-    /// <param name="index">The item's index in the collection</param>
-    /// <returns>BzItem with ColSpan and RowSpan applied</returns>
-    private BzItem ApplyAutoLayout(BzItem item, int index)
-    {
-        if (!AutoLayout) return item;
-
-        // Respect explicit spans set by user
-        if (item.ColSpan > 1 || item.RowSpan > 1) return item;
-
-        return Pattern switch
-        {
-            BentoLayoutPattern.Dynamic => ApplyDynamicPattern(item, index),
-            BentoLayoutPattern.Featured => ApplyFeaturedPattern(item, index),
-            BentoLayoutPattern.Balanced => ApplyBalancedPattern(item, index),
-            _ => item
-        };
-    }
-
-    /// <summary>
-    /// Applies Dynamic pattern: varied mix of hero, tall, wide, and normal cards.
-    /// </summary>
-    /// <remarks>
-    /// Pattern optimized for 4-column grid (repeating cycle of 8):
-    /// Row 1-2: [0] 2x2 Hero + [1] 1x2 Tall + [2] 1x1 + [3] 1x1 = 4 cols
-    /// Row 3:   [4] 2x1 Wide + [5] 1x1 + [6] 1x1 = 4 cols
-    /// Row 4:   [7] 2x1 Wide + [8] 1x1 + [9] 1x1 = 4 cols (cycle continues)
-    /// Uses grid-auto-flow: dense for optimal filling.
-    /// </remarks>
-    private static BzItem ApplyDynamicPattern(BzItem item, int index)
-    {
-        var patterns = new[]
-        {
-            (Col: 2, Row: 2), // 0 - Hero (takes 2x2)
-            (Col: 1, Row: 2), // 1 - Tall (fills beside hero)
-            (Col: 1, Row: 1), // 2 - Normal (top right of hero)
-            (Col: 1, Row: 1), // 3 - Normal (below item 2)
-            (Col: 2, Row: 1), // 4 - Wide
-            (Col: 1, Row: 1), // 5 - Normal
-            (Col: 1, Row: 1), // 6 - Normal
-            (Col: 2, Row: 1), // 7 - Wide (starts new cycle feel)
-        };
-
-        var pattern = patterns[index % patterns.Length];
-        var newItem = CloneBzItem(item);
-        newItem.ColSpan = pattern.Col;
-        newItem.RowSpan = pattern.Row;
-        return newItem;
-    }
-
-    /// <summary>
-    /// Applies Featured pattern: one large hero (2x2) at start, rest smaller.
-    /// </summary>
-    /// <remarks>
-    /// First item is always 2x2 hero.
-    /// Every 3rd item after is 1x2 tall, others are 1x1.
-    /// </remarks>
-    private static BzItem ApplyFeaturedPattern(BzItem item, int index)
-    {
-        var newItem = CloneBzItem(item);
-
-        if (index == 0)
-        {
-            newItem.ColSpan = 2;
-            newItem.RowSpan = 2;
-        }
-        else if (index % 3 == 0)
-        {
-            newItem.ColSpan = 1;
-            newItem.RowSpan = 2;
-        }
-        else
-        {
-            newItem.ColSpan = 1;
-            newItem.RowSpan = 1;
-        }
-
-        return newItem;
-    }
-
-    /// <summary>
-    /// Applies Balanced pattern: mostly uniform with some wide and tall cards.
-    /// </summary>
-    /// <remarks>
-    /// Pattern (repeating cycle of 6):
-    /// [0] 2x1 Wide, [1-2] 1x1 Normal, [3] 1x2 Tall,
-    /// [4] 2x1 Wide, [5] 1x1 Normal
-    /// No 2x2 hero cards for more uniform appearance.
-    /// </remarks>
-    private static BzItem ApplyBalancedPattern(BzItem item, int index)
-    {
-        var patterns = new[]
-        {
-            (Col: 2, Row: 1), // 0 - Wide
-            (Col: 1, Row: 1), // 1 - Normal
-            (Col: 1, Row: 1), // 2 - Normal
-            (Col: 1, Row: 2), // 3 - Tall
-            (Col: 2, Row: 1), // 4 - Wide
-            (Col: 1, Row: 1), // 5 - Normal
-        };
-
-        var pattern = patterns[index % patterns.Length];
-        var newItem = CloneBzItem(item);
-        newItem.ColSpan = pattern.Col;
-        newItem.RowSpan = pattern.Row;
-        return newItem;
-    }
-
-    /// <summary>
-    /// Creates a shallow clone of a BzItem for pattern modification.
-    /// </summary>
-    private static BzItem CloneBzItem(BzItem item)
-    {
-        return new BzItem
-        {
-            ImageUrl = item.ImageUrl,
-            Title = item.Title,
-            Description = item.Description,
-            OriginalItem = item.OriginalItem,
-            ColSpan = item.ColSpan,
-            RowSpan = item.RowSpan,
-            Order = item.Order
-        };
     }
 
     #endregion

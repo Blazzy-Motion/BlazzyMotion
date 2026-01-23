@@ -2,7 +2,6 @@
 @layout HomeLayout
 @using BlazzyMotion.Core.Models
 @using BlazzyMotion.Bento.Components
-@using BlazzyMotion.Bento.Models
 @using BlazzyMotion.Carousel.Components
 @using BlazzyMotion.Demo.Model
 @using BlazzyMotion.Demo.Components
@@ -36,12 +35,12 @@
         </div>
     </section>
 
-    @* ==================== STATIC MODE ==================== *@
+    @* ==================== ITEMS MODE ==================== *@
     <section class="bzb-presentation">
 
-        <span class="bzb-presentation__label">Static Mode - Auto Layout</span>
+        <span class="bzb-presentation__label">Items Mode - Zero Config</span>
 
-        <h3 class="bzb-presentation__title">Bento Grid with Dynamic Pattern</h3>
+        <h3 class="bzb-presentation__title">Uniform Grid Layout</h3>
 
         <BzThemePicker @bind-CurrentTheme="_currentTheme" />
 
@@ -49,7 +48,6 @@
             <BzBento TItem="BentoItem"
                      Items="@_bentoItems"
                      Theme="@_currentTheme"
-                     AutoLayout="false"
                      Columns="4"
                      Gap="16"
                      OnItemSelected="@OnItemSelected" />
@@ -73,7 +71,7 @@
         </p>
 
         <div class="bzb-presentation__stage">
-            <BzBento TItem="object" Items="null" Theme="@_currentTheme" AutoLayout="false" Columns="4" Gap="16">
+            <BzBento TItem="object" Theme="@_currentTheme" Columns="4" Gap="16">
 
                 @* Company Carousel - 2x2 *@
                 <BzBentoItem ColSpan="2" RowSpan="2">
@@ -137,13 +135,13 @@
     @* ==================== COMPOSITION MODE - Manual Layout ==================== *@
     <section class="bzb-presentation" style="padding-top: 40px;">
 
-        <h3 class="bzb-presentation__title">Composition Mode (Manual Layout)</h3>
+        <h3 class="bzb-presentation__title">Composition Mode</h3>
         <p style="color: rgba(255,255,255,0.7); text-align: center; margin-bottom: 30px;">
-            Use ChildContent for complete control - AutoLayout disabled
+            Use ChildContent with BzBentoCard, BzBentoMetric, BzBentoFeature for complete control
         </p>
 
         <div class="bzb-presentation__stage">
-            <BzBento TItem="object" Items="null" Theme="@_currentTheme" AutoLayout="false" Columns="4" Gap="16">
+            <BzBento TItem="object" Theme="@_currentTheme" Columns="4" Gap="16">
                 <BzBentoCard TItem="object"
                              ColSpan="2" RowSpan="2"
                              Image="images/joker.webp"

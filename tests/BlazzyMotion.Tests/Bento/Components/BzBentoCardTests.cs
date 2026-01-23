@@ -22,19 +22,13 @@ public class BzBentoCardTests : TestBase
   }
 
   [Fact]
-  public void BzBentoCard_WithItem_ShouldMapProperties()
+  public void BzBentoCard_WithDirectParameters_ShouldRenderContent()
   {
-    // Arrange
-    var item = new TestBentoItem
-    {
-      ImageUrl = "test.jpg",
-      Title = "Test Title",
-      Description = "Test Description"
-    };
-
-    // Act
+    // Arrange & Act - Use direct parameters instead of Item mapping
     var cut = RenderComponent<BzBentoCard<TestBentoItem>>(parameters => parameters
-        .Add(p => p.Item, item));
+        .Add(p => p.Image, "test.jpg")
+        .Add(p => p.Title, "Test Title")
+        .Add(p => p.Description, "Test Description"));
 
     // Assert
     cut.Markup.Should().Contain("test.jpg");
@@ -241,7 +235,7 @@ public class BzBentoCardTests : TestBase
         .Add(p => p.OnClick, EventCallback.Factory.Create(this, () => clicked = true)));
 
     // Act
-    cut.Find(".bzb-card").Click();
+    cut.Find(".bzb-card-container").Click();
 
     // Assert
     clicked.Should().BeTrue();

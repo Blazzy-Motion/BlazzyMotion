@@ -2,7 +2,9 @@
 @typeparam TItem where TItem : class
 @inherits BlazzyMotion.Bento.Abstractions.BzBentoItemBase
 
-<div class="@GetCombinedClass("bzb-quote")"  style="@GetItemStyle()"    @onclick="HandleClick"
+<div class="@GetCombinedClass("bzb-quote")"
+     style="@GetItemStyle()"
+     @onclick="HandleClick"
      @attributes="AdditionalAttributes">
 
   @if (HasText)
@@ -17,7 +19,7 @@
     <div class="bzb-quote-author">
       @if (HasAvatar)
       {
-        <img src="@GetAvatar()" class="bzb-quote-avatar"      alt="@GetAuthor()"            loading="lazy" />
+        <img src="@GetAvatar()" class="bzb-quote-avatar" alt="@GetAuthor()" loading="lazy" />
       }
 
       <div class="bzb-quote-info">

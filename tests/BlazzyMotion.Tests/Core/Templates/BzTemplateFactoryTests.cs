@@ -506,6 +506,548 @@ public class BzTemplateFactoryTests : TestContext
 
   #endregion
 
+  #region CreateBentoItem Tests
+
+  [Fact]
+  public void CreateBentoItem_ReturnsRenderFragment()
+  {
+    // Act
+    var template = BzTemplateFactory.CreateBentoItem();
+
+    // Assert
+    template.Should().NotBeNull();
+    template.Should().BeOfType<RenderFragment<BzItem>>();
+  }
+
+  [Fact]
+  public void CreateBentoItem_RendersNothing_WhenItemIsNull()
+  {
+    // Arrange
+    var template = BzTemplateFactory.CreateBentoItem();
+
+    // Act
+    var cut = Render(builder => template(null!)(builder));
+
+    // Assert
+    cut.Markup.Should().BeEmpty();
+  }
+
+  [Fact]
+  public void CreateBentoItem_RendersImage_WhenHasImage()
+  {
+    // Arrange
+    var template = BzTemplateFactory.CreateBentoItem();
+    var item = new BzItem { ImageUrl = "test.jpg", Title = "Test" };
+
+    // Act
+    var cut = Render(builder => template(item)(builder));
+
+    // Assert
+    var img = cut.Find("img");
+    img.GetAttribute("src").Should().Be("test.jpg");
+    img.ClassList.Should().Contain("bzb-item-image");
+    img.GetAttribute("loading").Should().Be("lazy");
+  }
+
+  [Fact]
+  public void CreateBentoItem_RendersTitle_WhenHasTitle()
+  {
+    // Arrange
+    var template = BzTemplateFactory.CreateBentoItem();
+    var item = new BzItem { Title = "Test Title" };
+
+    // Act
+    var cut = Render(builder => template(item)(builder));
+
+    // Assert
+    var h4 = cut.Find("h4");
+    h4.ClassList.Should().Contain("bzb-item-title");
+    h4.TextContent.Should().Be("Test Title");
+  }
+
+  [Fact]
+  public void CreateBentoItem_RendersDescription_WhenHasDescription()
+  {
+    // Arrange
+    var template = BzTemplateFactory.CreateBentoItem();
+    var item = new BzItem { Description = "Test Description" };
+
+    // Act
+    var cut = Render(builder => template(item)(builder));
+
+    // Assert
+    var p = cut.Find("p");
+    p.ClassList.Should().Contain("bzb-item-description");
+    p.TextContent.Should().Be("Test Description");
+  }
+
+  [Fact]
+  public void CreateBentoItem_RendersAllElements_WhenAllPropertiesSet()
+  {
+    // Arrange
+    var template = BzTemplateFactory.CreateBentoItem();
+    var item = new BzItem { ImageUrl = "img.jpg", Title = "Title", Description = "Desc" };
+
+    // Act
+    var cut = Render(builder => template(item)(builder));
+
+    // Assert
+    cut.Find("img.bzb-item-image").Should().NotBeNull();
+    cut.Find("h4.bzb-item-title").Should().NotBeNull();
+    cut.Find("p.bzb-item-description").Should().NotBeNull();
+  }
+
+  [Fact]
+  public void CreateBentoItem_SetsAltToImage_WhenNoTitle()
+  {
+    // Arrange
+    var template = BzTemplateFactory.CreateBentoItem();
+    var item = new BzItem { ImageUrl = "test.jpg" };
+
+    // Act
+    var cut = Render(builder => template(item)(builder));
+
+    // Assert
+    var img = cut.Find("img");
+    img.GetAttribute("alt").Should().Be("Image");
+  }
+
+  #endregion
+
+  #region CreateBentoCard Tests
+
+  [Fact]
+  public void CreateBentoCard_ReturnsRenderFragment()
+  {
+    // Act
+    var template = BzTemplateFactory.CreateBentoCard();
+
+    // Assert
+    template.Should().NotBeNull();
+    template.Should().BeOfType<RenderFragment<BzItem>>();
+  }
+
+  [Fact]
+  public void CreateBentoCard_RendersNothing_WhenItemIsNull()
+  {
+    // Arrange
+    var template = BzTemplateFactory.CreateBentoCard();
+
+    // Act
+    var cut = Render(builder => template(null!)(builder));
+
+    // Assert
+    cut.Markup.Should().BeEmpty();
+  }
+
+  [Fact]
+  public void CreateBentoCard_RendersCardContainer()
+  {
+    // Arrange
+    var template = BzTemplateFactory.CreateBentoCard();
+    var item = new BzItem { ImageUrl = "test.jpg" };
+
+    // Act
+    var cut = Render(builder => template(item)(builder));
+
+    // Assert
+    cut.Find("div.bzb-card").Should().NotBeNull();
+  }
+
+  [Fact]
+  public void CreateBentoCard_RendersImage_WhenHasImage()
+  {
+    // Arrange
+    var template = BzTemplateFactory.CreateBentoCard();
+    var item = new BzItem { ImageUrl = "test.jpg", Title = "Card" };
+
+    // Act
+    var cut = Render(builder => template(item)(builder));
+
+    // Assert
+    var img = cut.Find("img.bzb-card-image");
+    img.GetAttribute("src").Should().Be("test.jpg");
+    img.GetAttribute("loading").Should().Be("lazy");
+  }
+
+  [Fact]
+  public void CreateBentoCard_RendersOverlay_WhenHasTitle()
+  {
+    // Arrange
+    var template = BzTemplateFactory.CreateBentoCard();
+    var item = new BzItem { Title = "Card Title" };
+
+    // Act
+    var cut = Render(builder => template(item)(builder));
+
+    // Assert
+    cut.Find("div.bzb-card-overlay").Should().NotBeNull();
+    cut.Find("h4.bzb-card-title").TextContent.Should().Be("Card Title");
+  }
+
+  [Fact]
+  public void CreateBentoCard_RendersOverlay_WhenHasDescription()
+  {
+    // Arrange
+    var template = BzTemplateFactory.CreateBentoCard();
+    var item = new BzItem { Description = "Card Description" };
+
+    // Act
+    var cut = Render(builder => template(item)(builder));
+
+    // Assert
+    cut.Find("div.bzb-card-overlay").Should().NotBeNull();
+    cut.Find("p.bzb-card-description").TextContent.Should().Be("Card Description");
+  }
+
+  [Fact]
+  public void CreateBentoCard_DoesNotRenderOverlay_WhenNoTitleOrDescription()
+  {
+    // Arrange
+    var template = BzTemplateFactory.CreateBentoCard();
+    var item = new BzItem { ImageUrl = "test.jpg" };
+
+    // Act
+    var cut = Render(builder => template(item)(builder));
+
+    // Assert
+    cut.FindAll("div.bzb-card-overlay").Should().BeEmpty();
+  }
+
+  [Fact]
+  public void CreateBentoCard_RendersAllElements_WhenAllPropertiesSet()
+  {
+    // Arrange
+    var template = BzTemplateFactory.CreateBentoCard();
+    var item = new BzItem { ImageUrl = "img.jpg", Title = "Title", Description = "Desc" };
+
+    // Act
+    var cut = Render(builder => template(item)(builder));
+
+    // Assert
+    cut.Find("div.bzb-card").Should().NotBeNull();
+    cut.Find("img.bzb-card-image").Should().NotBeNull();
+    cut.Find("div.bzb-card-overlay").Should().NotBeNull();
+    cut.Find("h4.bzb-card-title").Should().NotBeNull();
+    cut.Find("p.bzb-card-description").Should().NotBeNull();
+  }
+
+  #endregion
+
+  #region CreateBentoImageRich Tests
+
+  [Fact]
+  public void CreateBentoImageRich_ReturnsRenderFragment()
+  {
+    // Act
+    var template = BzTemplateFactory.CreateBentoImageRich();
+
+    // Assert
+    template.Should().NotBeNull();
+    template.Should().BeOfType<RenderFragment<BzItem>>();
+  }
+
+  [Fact]
+  public void CreateBentoImageRich_RendersNothing_WhenItemIsNull()
+  {
+    // Arrange
+    var template = BzTemplateFactory.CreateBentoImageRich();
+
+    // Act
+    var cut = Render(builder => template(null!)(builder));
+
+    // Assert
+    cut.Markup.Should().BeEmpty();
+  }
+
+  [Fact]
+  public void CreateBentoImageRich_RendersContainer()
+  {
+    // Arrange
+    var template = BzTemplateFactory.CreateBentoImageRich();
+    var item = new BzItem { ImageUrl = "test.jpg" };
+
+    // Act
+    var cut = Render(builder => template(item)(builder));
+
+    // Assert
+    cut.Find("div.bzb-card-simple").Should().NotBeNull();
+  }
+
+  [Fact]
+  public void CreateBentoImageRich_RendersImage_WhenHasImage()
+  {
+    // Arrange
+    var template = BzTemplateFactory.CreateBentoImageRich();
+    var item = new BzItem { ImageUrl = "test.jpg", Title = "Rich Image" };
+
+    // Act
+    var cut = Render(builder => template(item)(builder));
+
+    // Assert
+    var img = cut.Find("img.bzb-card-image");
+    img.GetAttribute("src").Should().Be("test.jpg");
+    img.GetAttribute("alt").Should().Be("Rich Image");
+    img.GetAttribute("loading").Should().Be("lazy");
+  }
+
+  [Fact]
+  public void CreateBentoImageRich_RendersOverlay_WhenHasTitle()
+  {
+    // Arrange
+    var template = BzTemplateFactory.CreateBentoImageRich();
+    var item = new BzItem { ImageUrl = "test.jpg", Title = "Overlay Title" };
+
+    // Act
+    var cut = Render(builder => template(item)(builder));
+
+    // Assert
+    cut.Find("div.bzb-card-simple-overlay").Should().NotBeNull();
+    cut.Find("h5.bzb-card-simple-title").TextContent.Should().Be("Overlay Title");
+  }
+
+  [Fact]
+  public void CreateBentoImageRich_DoesNotRenderOverlay_WhenNoTitle()
+  {
+    // Arrange
+    var template = BzTemplateFactory.CreateBentoImageRich();
+    var item = new BzItem { ImageUrl = "test.jpg" };
+
+    // Act
+    var cut = Render(builder => template(item)(builder));
+
+    // Assert
+    cut.FindAll("div.bzb-card-simple-overlay").Should().BeEmpty();
+  }
+
+  [Fact]
+  public void CreateBentoImageRich_SetsAltToImage_WhenNoTitle()
+  {
+    // Arrange
+    var template = BzTemplateFactory.CreateBentoImageRich();
+    var item = new BzItem { ImageUrl = "test.jpg" };
+
+    // Act
+    var cut = Render(builder => template(item)(builder));
+
+    // Assert
+    var img = cut.Find("img");
+    img.GetAttribute("alt").Should().Be("Image");
+  }
+
+  #endregion
+
+  #region CreateBentoStat Tests
+
+  [Fact]
+  public void CreateBentoStat_ReturnsRenderFragment()
+  {
+    // Act
+    var template = BzTemplateFactory.CreateBentoStat();
+
+    // Assert
+    template.Should().NotBeNull();
+    template.Should().BeOfType<RenderFragment<BzItem>>();
+  }
+
+  [Fact]
+  public void CreateBentoStat_RendersNothing_WhenItemIsNull()
+  {
+    // Arrange
+    var template = BzTemplateFactory.CreateBentoStat();
+
+    // Act
+    var cut = Render(builder => template(null!)(builder));
+
+    // Assert
+    cut.Markup.Should().BeEmpty();
+  }
+
+  [Fact]
+  public void CreateBentoStat_RendersStatContainer()
+  {
+    // Arrange
+    var template = BzTemplateFactory.CreateBentoStat();
+    var item = new BzItem { Title = "Metric", Description = "100" };
+
+    // Act
+    var cut = Render(builder => template(item)(builder));
+
+    // Assert
+    cut.Find("div.bzb-stat").Should().NotBeNull();
+  }
+
+  [Fact]
+  public void CreateBentoStat_RendersValue()
+  {
+    // Arrange
+    var template = BzTemplateFactory.CreateBentoStat();
+    var item = new BzItem { Description = "1,234" };
+
+    // Act
+    var cut = Render(builder => template(item)(builder));
+
+    // Assert
+    cut.Find("span.bzb-stat-value").TextContent.Should().Be("1,234");
+  }
+
+  [Fact]
+  public void CreateBentoStat_RendersLabel()
+  {
+    // Arrange
+    var template = BzTemplateFactory.CreateBentoStat();
+    var item = new BzItem { Title = "Users" };
+
+    // Act
+    var cut = Render(builder => template(item)(builder));
+
+    // Assert
+    cut.Find("span.bzb-stat-label").TextContent.Should().Be("Users");
+  }
+
+  [Fact]
+  public void CreateBentoStat_RendersDefaultValue_WhenNoDescription()
+  {
+    // Arrange
+    var template = BzTemplateFactory.CreateBentoStat();
+    var item = new BzItem { Title = "Metric" };
+
+    // Act
+    var cut = Render(builder => template(item)(builder));
+
+    // Assert
+    cut.Find("span.bzb-stat-value").TextContent.Should().Be("-");
+  }
+
+  [Fact]
+  public void CreateBentoStat_RendersDefaultLabel_WhenNoTitle()
+  {
+    // Arrange
+    var template = BzTemplateFactory.CreateBentoStat();
+    var item = new BzItem { Description = "50" };
+
+    // Act
+    var cut = Render(builder => template(item)(builder));
+
+    // Assert
+    cut.Find("span.bzb-stat-label").TextContent.Should().Be("Metric");
+  }
+
+  #endregion
+
+  #region SelectBentoTemplate Tests
+
+  [Fact]
+  public void SelectBentoTemplate_ReturnsFallback_WhenItemIsNull()
+  {
+    // Act
+    var template = BzTemplateFactory.SelectBentoTemplate(null);
+
+    // Assert
+    var cut = Render(builder => template(new BzItem())(builder));
+    cut.Find("div.bzc-fallback-item").Should().NotBeNull();
+  }
+
+  [Fact]
+  public void SelectBentoTemplate_ReturnsBentoCard_WhenFeaturedWithImage()
+  {
+    // Arrange
+    var item = new BzItem { ImageUrl = "test.jpg", ColSpan = 2, RowSpan = 2 };
+
+    // Act
+    var template = BzTemplateFactory.SelectBentoTemplate(item);
+
+    // Assert
+    var cut = Render(builder => template(item)(builder));
+    cut.Find("div.bzb-card").Should().NotBeNull();
+  }
+
+  [Fact]
+  public void SelectBentoTemplate_ReturnsBentoCard_WhenColSpan2()
+  {
+    // Arrange
+    var item = new BzItem { ImageUrl = "test.jpg", ColSpan = 2, RowSpan = 1 };
+
+    // Act
+    var template = BzTemplateFactory.SelectBentoTemplate(item);
+
+    // Assert
+    var cut = Render(builder => template(item)(builder));
+    cut.Find("div.bzb-card").Should().NotBeNull();
+  }
+
+  [Fact]
+  public void SelectBentoTemplate_ReturnsBentoCard_WhenRowSpan2()
+  {
+    // Arrange
+    var item = new BzItem { ImageUrl = "test.jpg", ColSpan = 1, RowSpan = 2 };
+
+    // Act
+    var template = BzTemplateFactory.SelectBentoTemplate(item);
+
+    // Assert
+    var cut = Render(builder => template(item)(builder));
+    cut.Find("div.bzb-card").Should().NotBeNull();
+  }
+
+  [Fact]
+  public void SelectBentoTemplate_ReturnsBentoImageRich_WhenRegularWithImage()
+  {
+    // Arrange
+    var item = new BzItem { ImageUrl = "test.jpg", ColSpan = 1, RowSpan = 1 };
+
+    // Act
+    var template = BzTemplateFactory.SelectBentoTemplate(item);
+
+    // Assert
+    var cut = Render(builder => template(item)(builder));
+    cut.Find("div.bzb-card-simple").Should().NotBeNull();
+  }
+
+  [Fact]
+  public void SelectBentoTemplate_ReturnsBentoStat_WhenNoImageButHasTitle()
+  {
+    // Arrange
+    var item = new BzItem { Title = "Users", Description = "100" };
+
+    // Act
+    var template = BzTemplateFactory.SelectBentoTemplate(item);
+
+    // Assert
+    var cut = Render(builder => template(item)(builder));
+    cut.Find("div.bzb-stat").Should().NotBeNull();
+  }
+
+  [Fact]
+  public void SelectBentoTemplate_ReturnsBentoStat_WhenNoImageButHasDescription()
+  {
+    // Arrange
+    var item = new BzItem { Description = "Some value" };
+
+    // Act
+    var template = BzTemplateFactory.SelectBentoTemplate(item);
+
+    // Assert
+    var cut = Render(builder => template(item)(builder));
+    cut.Find("div.bzb-stat").Should().NotBeNull();
+  }
+
+  [Fact]
+  public void SelectBentoTemplate_ReturnsFallback_WhenNoData()
+  {
+    // Arrange
+    var item = new BzItem();
+
+    // Act
+    var template = BzTemplateFactory.SelectBentoTemplate(item);
+
+    // Assert
+    var cut = Render(builder => template(item)(builder));
+    cut.Find("div.bzc-fallback-item").Should().NotBeNull();
+  }
+
+  #endregion
+
   #region Test Models
 
   private class TestItem

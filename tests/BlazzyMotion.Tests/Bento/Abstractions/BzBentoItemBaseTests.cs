@@ -409,16 +409,15 @@ public class BzBentoItemBaseTests : TestBase
   }
 
   [Fact]
-  public void GetItemStyle_WithOrderZero_IncludesOrderInStyle()
+  public void GetItemStyle_WithOrderZero_ShouldNotIncludeOrderInStyle()
   {
     // Arrange & Act
     var cut = RenderComponent<BzBentoFeature>(parameters => parameters
         .Add(p => p.Label, "Test")
         .Add(p => p.Order, 0));
 
-    // Assert
-    // Order 0 is default but should still be in style
-    cut.Markup.Should().Contain("order: 0");
+    // Assert - Order 0 is default, no need to render it
+    cut.Markup.Should().NotContain("order:");
   }
 
   #endregion

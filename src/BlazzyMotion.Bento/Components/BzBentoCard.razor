@@ -2,12 +2,14 @@
 @typeparam TItem where TItem : class
 @inherits BlazzyMotion.Bento.Abstractions.BzBentoItemBase
 
-<div class="@GetCombinedClass("bzb-card-container")"     style="@GetItemStyle()"     @onclick="HandleClick"
+<div class="@GetCombinedClass("bzb-card-container")"
+     style="@GetItemStyle()"
+     @onclick="HandleClick"
      @attributes="AdditionalAttributes">
 
   @if (HasImage)
   {
-    <img src="@GetImage()"             class="bzb-card-image" alt="@GetTitle()" loading="lazy" />
+    <img src="@GetImage()" class="bzb-card-image" alt="@GetTitle()" loading="lazy" />
   }
 
   @if (HasOverlay)

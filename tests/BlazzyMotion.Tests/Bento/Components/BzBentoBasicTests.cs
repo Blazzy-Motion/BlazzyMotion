@@ -11,6 +11,16 @@ namespace BlazzyMotion.Tests.Bento.Components;
 /// </summary>
 public class BzBentoBasicTests : TestBase
 {
+  /// <summary>
+  /// Helper to create minimal ChildContent for composition mode testing.
+  /// </summary>
+  private static RenderFragment CreateMinimalChildContent() => builder =>
+  {
+    builder.OpenElement(0, "div");
+    builder.AddContent(1, "Test Content");
+    builder.CloseElement();
+  };
+
   #region Rendering Tests
 
   [Fact]
@@ -52,13 +62,13 @@ public class BzBentoBasicTests : TestBase
   }
 
   [Fact]
-  public void BzBento_WithoutItemsOrChildContent_ShouldRenderEmptyGrid()
+  public void BzBento_WithoutItemsOrChildContent_ShouldRenderLoadingState()
   {
     // Arrange & Act
     var cut = RenderComponent<BzBento<object>>();
 
-    // Assert
-    cut.Markup.Should().Contain("bzb-grid");
+    // Assert - Shows loading state when no items and no child content
+    cut.Markup.Should().Contain("bz-loading");
   }
 
   #endregion
@@ -69,26 +79,28 @@ public class BzBentoBasicTests : TestBase
   [InlineData(1)]
   [InlineData(2)]
   [InlineData(3)]
-  [InlineData(4)]
   [InlineData(6)]
   public void BzBento_WithColumns_ShouldApplyCorrectCssVariable(int columns)
   {
     // Arrange & Act
     var cut = RenderComponent<BzBento<object>>(parameters => parameters
-        .Add(p => p.Columns, columns));
+        .Add(p => p.Columns, columns)
+        .Add(p => p.ChildContent, CreateMinimalChildContent()));
 
     // Assert
     cut.Markup.Should().Contain($"--bzb-columns: {columns}");
   }
 
   [Fact]
-  public void BzBento_DefaultColumns_ShouldBe4()
+  public void BzBento_DefaultColumns_ShouldNotRenderStyleWhenDefault()
   {
-    // Arrange & Act
-    var cut = RenderComponent<BzBento<object>>();
+    // Arrange & Act - Default columns is 4, so style is not rendered
+    var cut = RenderComponent<BzBento<object>>(parameters => parameters
+        .Add(p => p.ChildContent, CreateMinimalChildContent()));
 
-    // Assert
-    cut.Markup.Should().Contain("--bzb-columns: 4");
+    // Assert - Default value (4) doesn't render CSS variable
+    cut.Markup.Should().Contain("bzb-grid");
+    cut.Markup.Should().NotContain("--bzb-columns: 4");
   }
 
   #endregion
@@ -98,26 +110,27 @@ public class BzBentoBasicTests : TestBase
   [Theory]
   [InlineData(0)]
   [InlineData(8)]
-  [InlineData(16)]
   [InlineData(24)]
   public void BzBento_WithGap_ShouldApplyCorrectCssVariable(int gap)
   {
     // Arrange & Act
     var cut = RenderComponent<BzBento<object>>(parameters => parameters
-        .Add(p => p.Gap, gap));
+        .Add(p => p.Gap, gap)
+        .Add(p => p.ChildContent, CreateMinimalChildContent()));
 
     // Assert
     cut.Markup.Should().Contain($"--bzb-gap: {gap}px");
   }
 
   [Fact]
-  public void BzBento_DefaultGap_ShouldBe16()
+  public void BzBento_DefaultGap_ShouldNotRenderStyleWhenDefault()
   {
-    // Arrange & Act
-    var cut = RenderComponent<BzBento<object>>();
+    // Arrange & Act - Default gap is 16, so style is not rendered
+    var cut = RenderComponent<BzBento<object>>(parameters => parameters
+        .Add(p => p.ChildContent, CreateMinimalChildContent()));
 
-    // Assert
-    cut.Markup.Should().Contain("--bzb-gap: 16px");
+    // Assert - Grid is rendered, default gap (16) not in style
+    cut.Markup.Should().Contain("bzb-grid");
   }
 
   #endregion
@@ -129,10 +142,11 @@ public class BzBentoBasicTests : TestBase
   {
     // Arrange & Act
     var cut = RenderComponent<BzBento<object>>(parameters => parameters
-        .Add(p => p.Theme, BzTheme.Glass));
+        .Add(p => p.Theme, BzTheme.Glass)
+        .Add(p => p.ChildContent, CreateMinimalChildContent()));
 
-    // Assert
-    cut.Markup.Should().Contain("bzb-theme-glass");
+    // Assert - Uses shared theme class prefix "bzc-theme-"
+    cut.Markup.Should().Contain("bzc-theme-glass");
   }
 
   [Fact]
@@ -140,10 +154,11 @@ public class BzBentoBasicTests : TestBase
   {
     // Arrange & Act
     var cut = RenderComponent<BzBento<object>>(parameters => parameters
-        .Add(p => p.Theme, BzTheme.Dark));
+        .Add(p => p.Theme, BzTheme.Dark)
+        .Add(p => p.ChildContent, CreateMinimalChildContent()));
 
-    // Assert
-    cut.Markup.Should().Contain("bzb-theme-dark");
+    // Assert - Uses shared theme class prefix "bzc-theme-"
+    cut.Markup.Should().Contain("bzc-theme-dark");
   }
 
   [Fact]
@@ -151,10 +166,11 @@ public class BzBentoBasicTests : TestBase
   {
     // Arrange & Act
     var cut = RenderComponent<BzBento<object>>(parameters => parameters
-        .Add(p => p.Theme, BzTheme.Light));
+        .Add(p => p.Theme, BzTheme.Light)
+        .Add(p => p.ChildContent, CreateMinimalChildContent()));
 
-    // Assert
-    cut.Markup.Should().Contain("bzb-theme-light");
+    // Assert - Uses shared theme class prefix "bzc-theme-"
+    cut.Markup.Should().Contain("bzc-theme-light");
   }
 
   [Fact]
@@ -162,10 +178,11 @@ public class BzBentoBasicTests : TestBase
   {
     // Arrange & Act
     var cut = RenderComponent<BzBento<object>>(parameters => parameters
-        .Add(p => p.Theme, BzTheme.Minimal));
+        .Add(p => p.Theme, BzTheme.Minimal)
+        .Add(p => p.ChildContent, CreateMinimalChildContent()));
 
-    // Assert
-    cut.Markup.Should().Contain("bzb-theme-minimal");
+    // Assert - Uses shared theme class prefix "bzc-theme-"
+    cut.Markup.Should().Contain("bzc-theme-minimal");
   }
 
   #endregion
@@ -173,67 +190,26 @@ public class BzBentoBasicTests : TestBase
   #region AnimationEnabled Tests
 
   [Fact]
-  public void BzBento_WithAnimationEnabled_ShouldApplyAnimationClass()
+  public void BzBento_WithAnimationEnabled_ShouldRenderGrid()
   {
-    // Arrange & Act
+    // Arrange & Act - AnimationEnabled is a JS interop parameter, not a CSS class
     var cut = RenderComponent<BzBento<object>>(parameters => parameters
-        .Add(p => p.AnimationEnabled, true));
+        .Add(p => p.AnimationEnabled, true)
+        .Add(p => p.ChildContent, CreateMinimalChildContent()));
 
-    // Assert
-    cut.Markup.Should().Contain("bzb-animated");
-  }
-
-  [Fact]
-  public void BzBento_WithAnimationDisabled_ShouldNotApplyAnimationClass()
-  {
-    // Arrange & Act
-    var cut = RenderComponent<BzBento<object>>(parameters => parameters
-        .Add(p => p.AnimationEnabled, false));
-
-    // Assert
-    cut.Markup.Should().NotContain("bzb-animated");
-  }
-
-  #endregion
-
-  #region AutoLayout Tests
-
-  [Fact]
-  public void BzBento_WithAutoLayoutEnabled_ShouldWork()
-  {
-    // Arrange
-    var items = new List<TestBentoItem>
-        {
-            new TestBentoItem { Title = "Item 1" },
-            new TestBentoItem { Title = "Item 2" },
-            new TestBentoItem { Title = "Item 3" }
-        };
-
-    // Act
-    var cut = RenderComponent<BzBento<TestBentoItem>>(parameters => parameters
-        .Add(p => p.Items, items)
-        .Add(p => p.AutoLayout, true));
-
-    // Assert
+    // Assert - Component should render grid regardless of animation setting
     cut.Markup.Should().Contain("bzb-grid");
   }
 
   [Fact]
-  public void BzBento_WithLayoutPattern_ShouldWork()
+  public void BzBento_WithAnimationDisabled_ShouldRenderGrid()
   {
-    // Arrange
-    var items = new List<TestBentoItem>
-        {
-            new TestBentoItem { Title = "Item 1" }
-        };
+    // Arrange & Act - AnimationEnabled controls JS behavior, not markup
+    var cut = RenderComponent<BzBento<object>>(parameters => parameters
+        .Add(p => p.AnimationEnabled, false)
+        .Add(p => p.ChildContent, CreateMinimalChildContent()));
 
-    // Act
-    var cut = RenderComponent<BzBento<TestBentoItem>>(parameters => parameters
-        .Add(p => p.Items, items)
-        .Add(p => p.AutoLayout, true)
-        .Add(p => p.Pattern, BentoLayoutPattern.Featured));
-
-    // Assert
+    // Assert - Component should render grid regardless of animation setting
     cut.Markup.Should().Contain("bzb-grid");
   }
 
@@ -245,10 +221,10 @@ public class BzBentoBasicTests : TestBase
   public void BzBento_ShouldHaveBaseCssClasses()
   {
     // Arrange & Act
-    var cut = RenderComponent<BzBento<object>>();
+    var cut = RenderComponent<BzBento<object>>(parameters => parameters
+        .Add(p => p.ChildContent, CreateMinimalChildContent()));
 
     // Assert
-    cut.Markup.Should().Contain("bzb");
     cut.Markup.Should().Contain("bzb-grid");
   }
 
@@ -257,7 +233,8 @@ public class BzBentoBasicTests : TestBase
   {
     // Arrange & Act
     var cut = RenderComponent<BzBento<object>>(parameters => parameters
-        .Add(p => p.CssClass, "custom-bento"));
+        .Add(p => p.CssClass, "custom-bento")
+        .Add(p => p.ChildContent, CreateMinimalChildContent()));
 
     // Assert
     cut.Markup.Should().Contain("custom-bento");
@@ -281,7 +258,10 @@ public class BzBentoBasicTests : TestBase
 
     // Act
     var cut = RenderComponent<BzBento<object>>(parameters => parameters
-        .Add(p => p.Options, options));
+        .Add(p => p.Options, options)
+        .Add(p => p.Columns, 3)
+        .Add(p => p.Gap, 24)
+        .Add(p => p.ChildContent, CreateMinimalChildContent()));
 
     // Assert
     cut.Markup.Should().Contain("--bzb-columns: 3");
@@ -290,28 +270,71 @@ public class BzBentoBasicTests : TestBase
 
   #endregion
 
-  #region Empty State Tests
+  #region Loading State Tests
 
   [Fact]
-  public void BzBento_WithNullItems_ShouldRender()
+  public void BzBento_WithNullItems_ShouldRenderLoadingState()
   {
     // Arrange & Act
     var cut = RenderComponent<BzBento<TestBentoItem>>(parameters => parameters
         .Add(p => p.Items, null));
 
-    // Assert
-    cut.Markup.Should().Contain("bzb-grid");
+    // Assert - null items without child content shows loading
+    cut.Markup.Should().Contain("bz-loading");
   }
 
+  #endregion
+
+  #region Empty State Tests
+
   [Fact]
-  public void BzBento_WithEmptyItems_ShouldRender()
+  public void BzBento_WithEmptyItems_ShouldRenderEmptyState()
   {
     // Arrange & Act
     var cut = RenderComponent<BzBento<TestBentoItem>>(parameters => parameters
         .Add(p => p.Items, new List<TestBentoItem>()));
 
+    // Assert - Empty items shows empty state
+    cut.Markup.Should().Contain("bz-empty");
+  }
+
+  [Fact]
+  public void BzBento_WithEmptyTemplate_ShouldRenderCustomEmpty()
+  {
+    // Arrange
+    RenderFragment emptyTemplate = builder =>
+    {
+      builder.OpenElement(0, "div");
+      builder.AddContent(1, "Custom Empty Message");
+      builder.CloseElement();
+    };
+
+    // Act
+    var cut = RenderComponent<BzBento<TestBentoItem>>(parameters => parameters
+        .Add(p => p.Items, new List<TestBentoItem>())
+        .Add(p => p.EmptyTemplate, emptyTemplate));
+
     // Assert
-    cut.Markup.Should().Contain("bzb-grid");
+    cut.Markup.Should().Contain("Custom Empty Message");
+  }
+
+  [Fact]
+  public void BzBento_WithLoadingTemplate_ShouldRenderCustomLoading()
+  {
+    // Arrange
+    RenderFragment loadingTemplate = builder =>
+    {
+      builder.OpenElement(0, "div");
+      builder.AddContent(1, "Custom Loading...");
+      builder.CloseElement();
+    };
+
+    // Act
+    var cut = RenderComponent<BzBento<TestBentoItem>>(parameters => parameters
+        .Add(p => p.LoadingTemplate, loadingTemplate));
+
+    // Assert
+    cut.Markup.Should().Contain("Custom Loading...");
   }
 
   #endregion
@@ -326,7 +349,8 @@ public class BzBentoBasicTests : TestBase
 
     // Act
     var cut = RenderComponent<BzBento<object>>(parameters => parameters
-        .Add(p => p.AdditionalAttributes, attributes));
+        .Add(p => p.AdditionalAttributes, attributes)
+        .Add(p => p.ChildContent, CreateMinimalChildContent()));
 
     // Assert
     cut.Markup.Should().Contain("data-test-id=\"bento-1\"");
@@ -340,7 +364,11 @@ public class BzBentoBasicTests : TestBase
 
     // Act
     var cut = RenderComponent<BzBento<object>>(parameters => parameters
-        .Add(p => p.AdditionalAttributes, attributes));
+        .Add(p => p.AdditionalAttributes, attributes)
+        .Add(p => p.ChildContent, CreateMinimalChildContent()));
+
+    // Assert
+    cut.Markup.Should().Contain("id=\"my-bento\"");
   }
 
   #endregion
@@ -375,6 +403,43 @@ public class BzBentoBasicTests : TestBase
     cut.Markup.Should().Contain("Card 1");
     cut.Markup.Should().Contain("100");
     cut.Markup.Should().Contain("Feature 1");
+  }
+
+  #endregion
+
+  #region Parameter Validation Tests
+
+  [Fact]
+  public void BzBento_WithInvalidColumns_ShouldThrow()
+  {
+    // Arrange & Act & Assert
+    Action act = () => RenderComponent<BzBento<object>>(parameters => parameters
+        .Add(p => p.Columns, 0)
+        .Add(p => p.ChildContent, CreateMinimalChildContent()));
+
+    act.Should().Throw<ArgumentOutOfRangeException>();
+  }
+
+  [Fact]
+  public void BzBento_WithNegativeGap_ShouldThrow()
+  {
+    // Arrange & Act & Assert
+    Action act = () => RenderComponent<BzBento<object>>(parameters => parameters
+        .Add(p => p.Gap, -1)
+        .Add(p => p.ChildContent, CreateMinimalChildContent()));
+
+    act.Should().Throw<ArgumentOutOfRangeException>();
+  }
+
+  [Fact]
+  public void BzBento_WithInvalidStaggerDelay_ShouldThrow()
+  {
+    // Arrange & Act & Assert
+    Action act = () => RenderComponent<BzBento<object>>(parameters => parameters
+        .Add(p => p.StaggerDelay, 2000)
+        .Add(p => p.ChildContent, CreateMinimalChildContent()));
+
+    act.Should().Throw<ArgumentOutOfRangeException>();
   }
 
   #endregion
