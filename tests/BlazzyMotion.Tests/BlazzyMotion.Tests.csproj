@@ -30,6 +30,7 @@
   </ItemGroup>
 
   <ItemGroup>
+    <ProjectReference Include="..\..\src\BlazzyMotion.Bento\BlazzyMotion.Bento.csproj" />
     <ProjectReference Include="..\..\src\BlazzyMotion.Carousel\BlazzyMotion.Carousel.csproj" />
     <ProjectReference Include="..\..\src\BlazzyMotion.Core\BlazzyMotion.Core.csproj" />
     <ProjectReference Include="..\..\src\BlazzyMotion.SourceGen\BlazzyMotion.SourceGen.csproj" />

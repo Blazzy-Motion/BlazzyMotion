@@ -27,6 +27,11 @@ public abstract class TestBase : TestContext
     CoreModule.SetupVoid("ensureSwiperLoaded", _ => true);
     CoreModule.Setup<int>("getActiveIndex", _ => true).SetResult(0);
     CoreModule.Setup<int>("getRealIndex", _ => true).SetResult(0);
+
+    // Setup Bento methods
+    CoreModule.SetupVoid("initializeBento", _ => true);
+    CoreModule.SetupVoid("refreshBento", _ => true);
+    CoreModule.SetupVoid("destroyBento", _ => true);
   }
 
   // Legacy property for backward compatibility with existing tests
