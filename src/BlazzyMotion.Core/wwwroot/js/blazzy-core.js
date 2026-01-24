@@ -1,9 +1,8 @@
 let swiperLoaded = false;
 const swiperInstances = new Map();
 
-// ═══════════════════════════════════════════════════════════════════════════
-// SCRIPT/STYLESHEET LOADERS
-// ═══════════════════════════════════════════════════════════════════════════
+// script/stylesheet loaders
+
 
 function loadScript(src) {
     return new Promise((resolve, reject) => {
@@ -66,9 +65,8 @@ function loadStylesheet(href) {
     });
 }
 
-// ═══════════════════════════════════════════════════════════════════════════
-// SWIPER LOADING
-// ═══════════════════════════════════════════════════════════════════════════
+
+// swper loading
 
 export async function ensureSwiperLoaded() {
     if (swiperLoaded) return;
@@ -95,9 +93,7 @@ const DEFAULT_TOUCH_SETTINGS = {
     longSwipesRatio: 0.3
 };
 
-// ═══════════════════════════════════════════════════════════════════════════
-// CAROUSEL FUNCTIONS
-// ═══════════════════════════════════════════════════════════════════════════
+// CAROUSEL INITIALIZATION
 
 /**
  * Initialize BzCarousel with 3D Coverflow effect
@@ -254,9 +250,7 @@ export function slidePrev(element, speed = 300) {
     }
 }
 
-// ═══════════════════════════════════════════════════════════════════════════
-// BENTO GRID FUNCTIONS
-// ═══════════════════════════════════════════════════════════════════════════
+// BENTO INITIALIZATION
 
 /**
  * Initialize BzBento Grid with staggered animations
