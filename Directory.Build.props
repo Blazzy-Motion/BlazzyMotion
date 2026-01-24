@@ -1,6 +1,6 @@
 <Project>
   <PropertyGroup>
-    <BlazzyCoreVersion Condition="'$(BlazzyCoreVersion)' == ''">1.2.0</BlazzyCoreVersion>
+    <BlazzyCoreVersion Condition="'$(BlazzyCoreVersion)' == ''">1.3.0</BlazzyCoreVersion>
     <BlazzyCarouselVersion Condition="'$(BlazzyCarouselVersion)' == ''">1.3.0</BlazzyCarouselVersion>
     <BlazzyBentoVersion Condition="'$(BlazzyBentoVersion)' == ''">1.0.0</BlazzyBentoVersion>
   </PropertyGroup>
