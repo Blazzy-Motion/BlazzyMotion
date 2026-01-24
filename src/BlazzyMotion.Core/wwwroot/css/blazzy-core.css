@@ -1,3 +1,5 @@
+/* CSS VARIABLES (Design Tokens) */
+
 [class*="bz"],
 [class*="bz"] * {
     -webkit-tap-highlight-color: transparent !important;
@@ -10,31 +12,30 @@
 }
 
 :root {
-
+    /* BASE VALUES */
     --bz-border-radius: 12px;
     --bz-padding: 24px;
     --bz-padding-tablet: 20px;
     --bz-padding-mobile: 15px;
     --bz-min-height: 400px;
     --bz-transition-speed: 0.3s;
-
+    /* CONTAINER DIMENSIONS */
     --bz-container-max-width: 800px;
     --bz-container-max-width-tablet: 750px;
     --bz-container-max-width-mobile: 350px;
-
-
+    /* SWIPER HEIGHTS */
     --bz-swiper-height: 400px;
     --bz-swiper-height-tablet: 300px;
     --bz-swiper-height-mobile: 250px;
-
+    /* SLIDE DIMENSIONS */
     --bz-slide-width: 180px;
     --bz-slide-width-tablet: 150px;
     --bz-slide-width-mobile: 100px;
-
+    /* IMAGE DIMENSIONS */
     --bz-image-max-width: 160px;
     --bz-image-max-width-tablet: 140px;
     --bz-image-max-width-mobile: 90px;
-
+    /* EFFECTS */
     --bz-hover-scale: 1.05;
     --bz-active-scale: 1.1;
     --bz-transition-duration: 0.3s;
@@ -64,7 +65,7 @@
     --bz-animation-duration: 0.6s;
     --bz-animation-stagger: 50ms;
     --bz-animation-easing: cubic-bezier(0.4, 0, 0.2, 1);
-
+    /* CAROUSEL SPECIFIC (bzc- prefix) - BACKWARD COMPATIBLE */
     --bzc-border-radius: var(--bz-border-radius);
     --bzc-padding: var(--bz-padding);
     --bzc-swiper-height: var(--bz-swiper-height);
@@ -73,16 +74,17 @@
     --bzc-hover-scale: var(--bz-hover-scale);
     --bzc-active-scale: var(--bz-active-scale);
     --bzc-transition-duration: var(--bz-transition-duration);
-
-
+    /* GLASS THEME VARIABLES */
     --bzc-glass-bg: var(--bz-theme-glass-bg);
     --bzc-glass-border: var(--bz-theme-glass-border);
     --bzc-glass-shadow: var(--bz-theme-glass-shadow);
     --bzc-glass-blur: var(--bz-theme-glass-blur);
+    /* DARK THEME VARIABLES */
     --bzc-dark-border: var(--bz-theme-dark-border);
     --bzc-dark-shadow: var(--bz-theme-dark-shadow);
     --bzc-dark-bg: var(--bz-theme-dark-bg);
     --bzc-dark-glow: var(--bz-theme-dark-glow);
+    /* LIGHT THEME VARIABLES */
     --bzc-light-bg: var(--bz-theme-light-bg);
     --bzc-light-shadow: var(--bz-theme-light-shadow);
     --bzc-light-inner: var(--bz-theme-light-inner);
