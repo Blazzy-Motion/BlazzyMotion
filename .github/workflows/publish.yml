@@ -13,6 +13,11 @@ on:
         required: true
         default: "1.1.0"
         type: string
+      bento_version:
+        description: "Bento Package Version (e.g., 1.0.0)"
+        required: true
+        default: "1.0.0"
+        type: string
       publish_core:
         description: "Publish Core package?"
         required: true
@@ -23,11 +28,17 @@ on:
         required: true
         default: true
         type: boolean
+      publish_bento:
+        description: "Publish Bento package?"
+        required: true
+        default: true
+        type: boolean
 
 env:
   DOTNET_VERSION: "8.0.x"
   CORE_PROJECT: "src/BlazzyMotion.Core/BlazzyMotion.Core.csproj"
   CAROUSEL_PROJECT: "src/BlazzyMotion.Carousel/BlazzyMotion.Carousel.csproj"
+  BENTO_PROJECT: "src/BlazzyMotion.Bento/BlazzyMotion.Bento.csproj"
 
 jobs:
   publish:
@@ -39,8 +50,10 @@ jobs:
     env:
       CORE_VERSION: ${{ inputs.core_version }}
       CAROUSEL_VERSION: ${{ inputs.carousel_version }}
+      BENTO_VERSION: ${{ inputs.bento_version }}
       PUBLISH_CORE: ${{ inputs.publish_core }}
       PUBLISH_CAROUSEL: ${{ inputs.publish_carousel }}
+      PUBLISH_BENTO: ${{ inputs.publish_bento }}
 
     steps:
       - name: Checkout Repository
@@ -58,7 +71,8 @@ jobs:
         run: |
           dotnet build --configuration Release --no-restore \
             /p:BlazzyCoreVersion="$CORE_VERSION" \
-            /p:BlazzyCarouselVersion="$CAROUSEL_VERSION"
+            /p:BlazzyCarouselVersion="$CAROUSEL_VERSION" \
+            /p:BlazzyBentoVersion="$BENTO_VERSION"
 
       - name: Run Tests
         run: dotnet test --configuration Release --no-build --verbosity normal
@@ -82,14 +96,32 @@ jobs:
             /p:BlazzyCarouselVersion="$CAROUSEL_VERSION" \
             /p:BlazzyCoreVersion="$CORE_VERSION"
 
+      - name: Pack BlazzyMotion.Bento
+        if: ${{ inputs.publish_bento }}
+        run: |
+          dotnet pack ${{ env.BENTO_PROJECT }} \
+            --configuration Release \
+            --no-build \
+            --output ./nupkgs \
+            /p:BlazzyBentoVersion="$BENTO_VERSION" \
+            /p:BlazzyCoreVersion="$CORE_VERSION"
+
       - name: List Packages
         run: ls -lah ./nupkgs
 
-      - name: Verify Package Dependencies
+      - name: Verify Carousel Package Dependencies
         if: ${{ inputs.publish_carousel }}
         run: |
           echo "=== Verifying Carousel package dependencies ==="
           unzip -p ./nupkgs/BlazzyMotion.Carousel.*.nupkg "*.nuspec" | grep -A5 "<dependencies>"
+          echo ""
+          echo "Expected Core dependency version: $CORE_VERSION"
+
+      - name: Verify Bento Package Dependencies
+        if: ${{ inputs.publish_bento }}
+        run: |
+          echo "=== Verifying Bento package dependencies ==="
+          unzip -p ./nupkgs/BlazzyMotion.Bento.*.nupkg "*.nuspec" | grep -A5 "<dependencies>"
           echo ""
           echo "Expected Core dependency version: $CORE_VERSION"
 
@@ -120,6 +152,11 @@ jobs:
             git push origin "carousel-v$CAROUSEL_VERSION" || echo "Tag already exists"
           fi
 
+          if [ "$PUBLISH_BENTO" = "true" ]; then
+            git tag -a "bento-v$BENTO_VERSION" -m "Release BlazzyMotion.Bento v$BENTO_VERSION" || true
+            git push origin "bento-v$BENTO_VERSION" || echo "Tag already exists"
+          fi
+
       - name: Publication Summary
         run: |
           echo "### 🎉 NuGet Packages Published!" >> $GITHUB_STEP_SUMMARY
@@ -142,6 +179,15 @@ jobs:
             echo "" >> $GITHUB_STEP_SUMMARY
           fi
 
+          if [ "$PUBLISH_BENTO" = "true" ]; then
+            echo "#### BlazzyMotion.Bento" >> $GITHUB_STEP_SUMMARY
+            echo "- **Version:** $BENTO_VERSION" >> $GITHUB_STEP_SUMMARY
+            echo "- **Depends on:** BlazzyMotion.Core >= $CORE_VERSION" >> $GITHUB_STEP_SUMMARY
+            echo "- **NuGet:** https://www.nuget.org/packages/BlazzyMotion.Bento/$BENTO_VERSION" >> $GITHUB_STEP_SUMMARY
+            echo "- **Tag:** \`bento-v$BENTO_VERSION\`" >> $GITHUB_STEP_SUMMARY
+            echo "" >> $GITHUB_STEP_SUMMARY
+          fi
+
           echo "---" >> $GITHUB_STEP_SUMMARY
           echo "" >> $GITHUB_STEP_SUMMARY
           echo "### 📥 Installation" >> $GITHUB_STEP_SUMMARY
@@ -149,7 +195,12 @@ jobs:
           if [ "$PUBLISH_CAROUSEL" = "true" ]; then
             echo "# Install Carousel (automatically installs Core)" >> $GITHUB_STEP_SUMMARY
             echo "dotnet add package BlazzyMotion.Carousel --version $CAROUSEL_VERSION" >> $GITHUB_STEP_SUMMARY
-          elif [ "$PUBLISH_CORE" = "true" ]; then
+          fi
+          if [ "$PUBLISH_BENTO" = "true" ]; then
+            echo "# Install Bento (automatically installs Core)" >> $GITHUB_STEP_SUMMARY
+            echo "dotnet add package BlazzyMotion.Bento --version $BENTO_VERSION" >> $GITHUB_STEP_SUMMARY
+          fi
+          if [ "$PUBLISH_CORE" = "true" ] && [ "$PUBLISH_CAROUSEL" != "true" ] && [ "$PUBLISH_BENTO" != "true" ]; then
             echo "# Install Core only" >> $GITHUB_STEP_SUMMARY
             echo "dotnet add package BlazzyMotion.Core --version $CORE_VERSION" >> $GITHUB_STEP_SUMMARY
           fi
