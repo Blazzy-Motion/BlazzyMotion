@@ -1231,6 +1231,19 @@ ul.bz-feature-list li::before {
     margin-bottom: 2rem;
 }
 
+.bz-section-title {
+    font-size: 1.5rem;
+    font-weight: 600;
+    color: var(--bz-text-primary);
+    margin: 2rem 0 1rem;
+    padding-bottom: 0.5rem;
+    border-bottom: 1px solid rgba(255, 255, 255, 0.1);
+    background: linear-gradient(135deg, var(--bz-accent-purple), var(--bz-accent-cyan));
+    -webkit-background-clip: text;
+    -webkit-text-fill-color: transparent;
+    background-clip: text;
+}
+
 .bz-flex {
     display: flex;
 }

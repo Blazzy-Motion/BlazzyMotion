@@ -7,10 +7,12 @@
 
 <PageTitle>Examples - BlazzyMotion</PageTitle>
 
-<PageHeader Title="Examples" Subtitle="Copy-paste examples for common use cases" Version="@AppVersions.Carousel"
+<PageHeader Title="Examples" Subtitle="Copy-paste examples for common use cases"
   Framework="@AppVersions.DotNetVersion">
   <IconContent>@Icons.Lightbulb</IconContent>
 </PageHeader>
+
+<h2 class="bz-section-title">Carousel Examples</h2>
 
 <!-- BASIC USAGE -->
 <DocSection Title="Basic Usage">
@@ -131,6 +133,68 @@
   </ChildContent>
 </DocSection>
 
+<!-- BENTO SECTION HEADER -->
+<h2 class="bz-section-title bz-mt-4">Bento Examples</h2>
+
+<!-- BENTO BASIC USAGE -->
+<DocSection Title="Basic Bento Grid">
+  <IconContent>@Icons.BentoGrid</IconContent>
+  <ChildContent>
+    <p>The simplest way to use BzBento with composition mode.</p>
+    <CodeBlock Language="razor" Code="@_bentoBasic" />
+  </ChildContent>
+</DocSection>
+
+<!-- DASHBOARD METRICS -->
+<DocSection Title="Dashboard Metrics">
+  <IconContent>@Icons.BarChart</IconContent>
+  <ChildContent>
+    <p>Create KPI dashboards with metrics and trends.</p>
+    <CodeBlock Language="razor" Code="@_bentoDashboard" />
+  </ChildContent>
+</DocSection>
+
+<!-- FEATURE GRID -->
+<DocSection Title="Feature Grid">
+  <IconContent>@Icons.Sparkles</IconContent>
+  <ChildContent>
+    <p>Showcase product features with icons and descriptions.</p>
+    <CodeBlock Language="razor" Code="@_bentoFeatures" />
+  </ChildContent>
+</DocSection>
+
+<!-- MIXED CONTENT -->
+<DocSection Title="Mixed Content Layout">
+  <IconContent>@Icons.Palette</IconContent>
+  <ChildContent>
+    <p>Combine cards, metrics, and features in one grid.</p>
+    <CodeBlock Language="razor" Code="@_bentoMixed" />
+  </ChildContent>
+</DocSection>
+
+<!-- CAROUSEL IN BENTO -->
+<DocSection Title="Carousel in Bento">
+  <IconContent>@Icons.Carousel</IconContent>
+  <ChildContent>
+    <p>Embed BzCarousel inside a Bento grid for interactive layouts.</p>
+    <CodeBlock Language="razor" Code="@_bentoWithCarousel" />
+  </ChildContent>
+</DocSection>
+
+<!-- ITEMS MODE -->
+<DocSection Title="Items Mode (Data-Driven)">
+  <IconContent>@Icons.Code</IconContent>
+  <ChildContent>
+    <p>Auto-generate grid from a collection with custom templates.</p>
+
+    <h4 class="bz-mt-2">Model</h4>
+    <CodeBlock Language="csharp" Code="@_bentoItemModel" />
+
+    <h4 class="bz-mt-2">Component</h4>
+    <CodeBlock Language="razor" Code="@_bentoItemsMode" />
+  </ChildContent>
+</DocSection>
+
 <!-- NEXT STEPS -->
 <DocSection Title="Need More Help?">
   <IconContent>
@@ -142,13 +206,16 @@
   </IconContent>
   <ChildContent>
     <div class="bz-flex bz-gap-2" style="flex-wrap: wrap;">
-      <a href="/docs/api" class="bz-btn bz-btn--primary">
-        API Reference
+      <a href="/docs/carousel" class="bz-btn bz-btn--primary">
+        Carousel Docs
+      </a>
+      <a href="/docs/bento" class="bz-btn bz-btn--primary">
+        Bento Docs
       </a>
       <a href="/" class="bz-btn bz-btn--secondary">
         Live Demo
       </a>
-      <a href="https://github.com/Blazzy-Motion/BlazzyMotion/issues" target="_blank" class="bz-btn bz-btn--secondary">
+      <a href="https://github.com/nicengi/BlazzyMotion/issues" target="_blank" class="bz-btn bz-btn--secondary">
         Ask on GitHub
       </a>
     </div>
@@ -422,5 +489,124 @@ public class Movie
         new() { Photo = ""/team/cto.jpg"", Name = ""John Smith"", Position = ""CTO"" },
         new() { Photo = ""/team/designer.jpg"", Name = ""Alice Johnson"", Position = ""Lead Designer"" }
     };
+}";
+
+  // BENTO EXAMPLES
+  private string _bentoBasic = @"@using BlazzyMotion.Bento.Components
+
+<BzBento TItem=""object"" Theme=""BzTheme.Glass"" Columns=""4"">
+    <BzBentoCard Image=""hero.jpg"" Title=""Featured"" ColSpan=""2"" RowSpan=""2"" />
+    <BzBentoMetric Value=""1,234"" Label=""Users"" />
+    <BzBentoMetric Value=""$48.5K"" Label=""Revenue"" Trend=""+12%"" />
+    <BzBentoFeature Label=""Fast"" Description=""60 FPS animations"" />
+    <BzBentoFeature Label=""Responsive"" Description=""Mobile-first design"" />
+</BzBento>";
+
+  private string _bentoDashboard = @"<BzBento TItem=""object"" Theme=""BzTheme.Dark"" Columns=""4"" Gap=""20"">
+    <BzBentoMetric Value=""99.9%"" Label=""Uptime"" Trend=""+0.1%"" ColSpan=""2"">
+        <Icon><i class=""bi bi-check-circle""></i></Icon>
+    </BzBentoMetric>
+    <BzBentoMetric Value=""2.4M"" Label=""Requests"" Trend=""+23%"" />
+    <BzBentoMetric Value=""45ms"" Label=""Latency"" Trend=""-5%"" />
+    <BzBentoMetric Value=""$127K"" Label=""MRR"" Trend=""+18%"" ColSpan=""2"" />
+    <BzBentoMetric Value=""4,521"" Label=""Active Users"" />
+    <BzBentoMetric Value=""98%"" Label=""Satisfaction"" />
+</BzBento>";
+
+  private string _bentoFeatures = @"<BzBento TItem=""object"" Theme=""BzTheme.Glass"" Columns=""3"">
+    <BzBentoFeature Label=""Lightning Fast""
+                    Description=""Optimized for 60 FPS animations""
+                    ColSpan=""1"">
+        <Icon><i class=""bi bi-lightning""></i></Icon>
+    </BzBentoFeature>
+    <BzBentoFeature Label=""Fully Responsive""
+                    Description=""Works on any screen size""
+                    ColSpan=""1"">
+        <Icon><i class=""bi bi-phone""></i></Icon>
+    </BzBentoFeature>
+    <BzBentoFeature Label=""Easy Theming""
+                    Description=""4 built-in themes + custom""
+                    ColSpan=""1"">
+        <Icon><i class=""bi bi-palette""></i></Icon>
+    </BzBentoFeature>
+</BzBento>";
+
+  private string _bentoMixed = @"<BzBento TItem=""object"" Theme=""BzTheme.Glass"" Columns=""4"">
+    <!-- Hero card spanning 2x2 -->
+    <BzBentoCard Image=""images/hero.webp""
+                 Title=""Featured Project""
+                 Description=""Our latest work""
+                 ColSpan=""2"" RowSpan=""2"" />
+
+    <!-- Metrics on the right -->
+    <BzBentoMetric Value=""15K+"" Label=""Downloads"" Trend=""+45%"" />
+    <BzBentoMetric Value=""4.9"" Label=""Rating"" IconText=""⭐"" />
+
+    <!-- Features at the bottom -->
+    <BzBentoFeature Label=""Open Source""
+                    Description=""MIT License""
+                    ColSpan=""2"" />
+</BzBento>";
+
+  private string _bentoWithCarousel = @"<BzBento TItem=""object"" Theme=""BzTheme.Glass"" Columns=""4"">
+    <!-- Carousel spanning 2 columns and 2 rows -->
+    <BzBentoItem ColSpan=""2"" RowSpan=""2"">
+        <BzCarousel TItem=""Movie""
+                    Items=""@movies""
+                    Theme=""BzTheme.Glass""
+                    OnItemSelected=""HandleMovieChange"" />
+    </BzBentoItem>
+
+    <!-- Dynamic metrics based on selected movie -->
+    <BzBentoMetric Value=""@selectedMovie?.Rating.ToString(""0.0"")""
+                   Label=""Rating"" IconText=""⭐"" />
+    <BzBentoMetric Value=""@selectedMovie?.Year.ToString()""
+                   Label=""Year"" />
+    <BzBentoFeature Label=""@selectedMovie?.Genre""
+                    Description=""@selectedMovie?.Director""
+                    ColSpan=""2"" />
+</BzBento>
+
+@code {
+    private Movie? selectedMovie;
+
+    private void HandleMovieChange(Movie movie)
+    {
+        selectedMovie = movie;
+    }
+}";
+
+  private string _bentoItemModel = @"public class BentoItem
+{
+    public string Image { get; set; } = """";
+    public string Title { get; set; } = """";
+    public string Description { get; set; } = """";
+}";
+
+  private string _bentoItemsMode = @"<BzBento TItem=""BentoItem""
+         Items=""@items""
+         Theme=""BzTheme.Glass""
+         Columns=""4""
+         OnItemSelected=""HandleSelection"">
+    <ItemTemplate Context=""item"">
+        <div class=""custom-bento-item"">
+            <img src=""@item.Image"" alt=""@item.Title"" />
+            <h4>@item.Title</h4>
+            <p>@item.Description</p>
+        </div>
+    </ItemTemplate>
+</BzBento>
+
+@code {
+    private List<BentoItem> items = new()
+    {
+        new() { Image = ""item1.jpg"", Title = ""Item 1"", Description = ""Description"" },
+        new() { Image = ""item2.jpg"", Title = ""Item 2"", Description = ""Description"" }
+    };
+
+    private void HandleSelection(BentoItem item)
+    {
+        Console.WriteLine($""Selected: {item.Title}"");
+    }
 }";
 }

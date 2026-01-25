@@ -1,0 +1,229 @@
+@page "/docs/bento"
+@using BlazzyMotion.Demo.Services
+@using BlazzyMotion.Demo.Icons
+
+<PageTitle>Bento Documentation - BlazzyMotion</PageTitle>
+
+<PageHeader Title="BzBento" Subtitle="A modern CSS Grid-based Bento layout component" Version="@AppVersions.Bento"
+    License="MIT" Framework="@AppVersions.DotNetVersion">
+    <IconContent>@Icons.BentoGrid</IconContent>
+</PageHeader>
+
+<DocSection Title="Overview">
+    <IconContent>@Icons.BookOpen</IconContent>
+    <ChildContent>
+        <p><code>BzBento</code> is a flexible grid component for creating Apple-style Bento layouts.</p>
+
+        <ul class="bz-feature-list">
+            <li><strong>Two Modes</strong> - Items mode (zero-config) or Composition mode (full control)</li>
+            <li><strong>4 Themes</strong> - Glass, Dark, Light, and Minimal</li>
+            <li><strong>Helper Components</strong> - BzBentoCard, BzBentoMetric, BzBentoFeature, BzBentoQuote</li>
+            <li><strong>Responsive</strong> - Auto-adjusts columns on tablet/mobile</li>
+            <li><strong>Staggered Animations</strong> - Items fade in sequentially</li>
+        </ul>
+    </ChildContent>
+</DocSection>
+
+<DocSection Title="Items Mode (Zero Config)">
+    <IconContent>@Icons.Code</IconContent>
+    <ChildContent>
+        <p>Just provide a collection and let BzBento handle the rest:</p>
+        <CodeBlock Language="razor" Code="@_itemsMode" />
+    </ChildContent>
+</DocSection>
+
+<DocSection Title="Composition Mode">
+    <IconContent>@Icons.Palette</IconContent>
+    <ChildContent>
+        <p>Full control over layout using helper components:</p>
+        <CodeBlock Language="razor" Code="@_compositionMode" />
+    </ChildContent>
+</DocSection>
+
+<DocSection Title="API Reference - BzBento">
+    <IconContent>@Icons.Settings</IconContent>
+    <ChildContent>
+        <h4>Data Parameters</h4>
+        <ApiTable Parameters="@_bentoDataParams" />
+
+        <h4 class="bz-mt-3">Layout Parameters</h4>
+        <ApiTable Parameters="@_bentoLayoutParams" />
+
+        <h4 class="bz-mt-3">Animation Parameters</h4>
+        <ApiTable Parameters="@_bentoAnimationParams" />
+    </ChildContent>
+</DocSection>
+
+<DocSection Title="API Reference - BzBentoMetric">
+    <IconContent>@Icons.BarChart</IconContent>
+    <ChildContent>
+        <p>Display KPIs and statistics:</p>
+        <CodeBlock Language="razor" Code="@_metricExample" />
+        <h4 class="bz-mt-3">Parameters</h4>
+        <ApiTable Parameters="@_metricParams" />
+    </ChildContent>
+</DocSection>
+
+<DocSection Title="API Reference - BzBentoCard">
+    <IconContent>@Icons.Image</IconContent>
+    <ChildContent>
+        <p>Image cards with overlay text:</p>
+        <CodeBlock Language="razor" Code="@_cardExample" />
+        <h4 class="bz-mt-3">Parameters</h4>
+        <ApiTable Parameters="@_cardParams" />
+    </ChildContent>
+</DocSection>
+
+<DocSection Title="API Reference - BzBentoFeature">
+    <IconContent>@Icons.Sparkles</IconContent>
+    <ChildContent>
+        <p>Feature highlights with icon and description:</p>
+        <CodeBlock Language="razor" Code="@_featureExample" />
+        <h4 class="bz-mt-3">Parameters</h4>
+        <ApiTable Parameters="@_featureParams" />
+    </ChildContent>
+</DocSection>
+
+<DocSection Title="Common Item Parameters">
+    <IconContent>@Icons.Wrench</IconContent>
+    <ChildContent>
+        <p>All helper components (BzBentoCard, BzBentoMetric, BzBentoFeature, BzBentoQuote) share these parameters:</p>
+        <ApiTable Parameters="@_commonItemParams" />
+    </ChildContent>
+</DocSection>
+
+<DocSection Title="CSS Customization">
+    <IconContent>@Icons.Pen</IconContent>
+    <ChildContent>
+        <CodeBlock Language="css" Code="@_cssVars" />
+    </ChildContent>
+</DocSection>
+
+<DocSection Title="Embedding Carousel">
+    <IconContent>@Icons.Carousel</IconContent>
+    <ChildContent>
+        <p>Use <code>BzBentoItem</code> to embed other components like BzCarousel:</p>
+        <CodeBlock Language="razor" Code="@_carouselEmbed" />
+    </ChildContent>
+</DocSection>
+
+@code {
+    private string _itemsMode = @"<BzBento TItem=""Movie""
+         Items=""@_movies""
+         Theme=""BzTheme.Glass""
+         Columns=""4""
+         OnItemSelected=""HandleSelection"" />";
+
+    private string _compositionMode = @"<BzBento TItem=""object"" Theme=""BzTheme.Glass"" Columns=""4"">
+    <BzBentoCard Image=""hero.jpg"" Title=""Featured"" ColSpan=""2"" RowSpan=""2"" />
+    <BzBentoMetric Value=""1,234"" Label=""Users"">
+        <Icon><i class=""bi bi-people""></i></Icon>
+    </BzBentoMetric>
+    <BzBentoMetric Value=""$48.5K"" Label=""Revenue"" Trend=""+12%"" />
+    <BzBentoFeature Label=""Lightning Fast"" Description=""60 FPS animations"">
+        <Icon><i class=""bi bi-lightning""></i></Icon>
+    </BzBentoFeature>
+</BzBento>";
+
+    private string _metricExample = @"<BzBentoMetric Value=""99.9%"" Label=""Uptime"" Trend=""+2%"">
+    <Icon>@Icons.Uptime</Icon>
+</BzBentoMetric>";
+
+    private string _cardExample = @"<BzBentoCard TItem=""object""
+              Image=""images/hero.webp""
+              Title=""Featured""
+              Description=""Hero card""
+              ColSpan=""2""
+              RowSpan=""2"" />";
+
+    private string _featureExample = @"<BzBentoFeature Label=""Real-time Updates""
+                 Description=""Data syncs in milliseconds""
+                 ColSpan=""2"">
+    <Icon><i class=""bi bi-broadcast""></i></Icon>
+</BzBentoFeature>";
+
+    private string _cssVars = @":root {
+    /* Grid sizing */
+    --bzb-max-width: 1200px;
+    --bzb-row-height: 160px;
+    --bzb-columns: 4;
+    --bzb-gap: 16px;
+
+    /* Item styling */
+    --bzb-item-radius: 12px;
+    --bzb-item-padding: 20px;
+
+    /* Metric component */
+    --bzb-metric-value-size: 2.5rem;
+    --bzb-metric-label-size: 0.85rem;
+
+    /* Feature component */
+    --bzb-feature-icon-size: 2.5rem;
+    --bzb-feature-label-size: 0.95rem;
+}";
+
+    private string _carouselEmbed = @"<BzBento TItem=""object"" Theme=""BzTheme.Glass"" Columns=""4"">
+    <BzBentoItem ColSpan=""2"" RowSpan=""2"">
+        <BzCarousel TItem=""Company""
+                    Items=""@_companies""
+                    Theme=""BzTheme.Glass""
+                    OnItemSelected=""HandleCompanyChange"" />
+    </BzBentoItem>
+    <BzBentoMetric Value=""@_activeCompany.Revenue"" Label=""Revenue"" />
+</BzBento>";
+
+    private List<ApiTable.ApiParameter> _bentoDataParams = new()
+    {
+        new() { Name = "Items", Type = "IEnumerable<TItem>?", Description = "Collection for Items mode" },
+        new() { Name = "ChildContent", Type = "RenderFragment?", Description = "Content for Composition mode" },
+        new() { Name = "ItemTemplate", Type = "RenderFragment<TItem>?", Description = "Custom item template" },
+        new() { Name = "OnItemSelected", Type = "EventCallback<TItem>", Description = "Item click callback" }
+    };
+
+    private List<ApiTable.ApiParameter> _bentoLayoutParams = new()
+    {
+        new() { Name = "Theme", Type = "BzTheme", Default = "Glass", Description = "Visual theme" },
+        new() { Name = "Columns", Type = "int", Default = "4", Description = "Grid columns (1-12)" },
+        new() { Name = "Gap", Type = "int", Default = "16", Description = "Gap between items (px)" }
+    };
+
+    private List<ApiTable.ApiParameter> _bentoAnimationParams = new()
+    {
+        new() { Name = "AnimationEnabled", Type = "bool", Default = "true", Description = "Enable staggered animations" },
+        new() { Name = "StaggerDelay", Type = "int", Default = "50", Description = "Delay between items (ms)" }
+    };
+
+    private List<ApiTable.ApiParameter> _metricParams = new()
+    {
+        new() { Name = "Value", Type = "string", Required = true, Description = "Metric value (e.g., \"1,234\")" },
+        new() { Name = "Label", Type = "string", Required = true, Description = "Metric label" },
+        new() { Name = "Trend", Type = "string?", Description = "Trend indicator (e.g., \"+12%\")" },
+        new() { Name = "Icon", Type = "RenderFragment?", Description = "Icon content" },
+        new() { Name = "IconText", Type = "string?", Description = "Simple emoji/text icon" }
+    };
+
+    private List<ApiTable.ApiParameter> _cardParams = new()
+    {
+        new() { Name = "Item", Type = "TItem?", Description = "Item to display (auto-mapped)" },
+        new() { Name = "Image", Type = "string?", Description = "Override image URL" },
+        new() { Name = "Title", Type = "string?", Description = "Override title" },
+        new() { Name = "Description", Type = "string?", Description = "Override description" }
+    };
+
+    private List<ApiTable.ApiParameter> _featureParams = new()
+    {
+        new() { Name = "Label", Type = "string", Required = true, Description = "Feature name" },
+        new() { Name = "Description", Type = "string?", Description = "Feature description" },
+        new() { Name = "Icon", Type = "RenderFragment?", Description = "Icon content" },
+        new() { Name = "IconText", Type = "string?", Description = "Simple emoji/text icon" }
+    };
+
+    private List<ApiTable.ApiParameter> _commonItemParams = new()
+    {
+        new() { Name = "ColSpan", Type = "int", Default = "1", Description = "Columns to span (1-4)" },
+        new() { Name = "RowSpan", Type = "int", Default = "1", Description = "Rows to span (1-4)" },
+        new() { Name = "Order", Type = "int", Default = "0", Description = "CSS order for positioning" },
+        new() { Name = "CssClass", Type = "string?", Description = "Additional CSS classes" },
+        new() { Name = "OnClick", Type = "EventCallback", Description = "Click callback" }
+    };
+}

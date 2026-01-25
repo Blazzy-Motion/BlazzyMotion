@@ -5,252 +5,202 @@
 <PageTitle>CSS Variables - BlazzyMotion</PageTitle>
 
 <PageHeader Title="CSS Variables" Subtitle="Customize BlazzyMotion components using CSS custom properties"
-  Version="@AppVersions.Carousel" Framework="@AppVersions.DotNetVersion">
+  Framework="@AppVersions.DotNetVersion">
   <IconContent>@Icons.Settings</IconContent>
 </PageHeader>
 
-<!-- OVERVIEW -->
 <DocSection Title="Overview">
   <IconContent>@Icons.BookOpen</IconContent>
   <ChildContent>
-    <p>BlazzyMotion uses CSS custom properties (variables) for easy customization. Override these in your app's CSS to
-      match your design system.</p>
+    <p>BlazzyMotion uses CSS custom properties for easy customization. Variables use prefixes:</p>
+    <ul class="bz-feature-list">
+      <li><code>--bz-*</code> - Shared/Core variables (themes, colors)</li>
+      <li><code>--bzc-*</code> - Carousel-specific variables</li>
+      <li><code>--bzb-*</code> - Bento-specific variables</li>
+    </ul>
     <CodeBlock Language="css" Code="@_overviewExample" />
   </ChildContent>
 </DocSection>
 
-<!-- DIMENSIONS -->
-<DocSection Title="Dimension Variables">
-  <IconContent>@Icons.Ruler</IconContent>
+<DocSection Title="Shared Theme Variables">
+  <IconContent>@Icons.Palette</IconContent>
   <ChildContent>
-    <p>Control the size of carousel elements.</p>
-    <ApiTable Parameters="@_dimensionVariables" />
+    <p>These variables apply to all components:</p>
+    <ApiTable Parameters="@_sharedVariables" />
+  </ChildContent>
+</DocSection>
 
-    <h4 class="bz-mt-2">Responsive Defaults</h4>
-    <p>These variables automatically adjust at different breakpoints:</p>
+<DocSection Title="Carousel Variables">
+  <IconContent>@Icons.Carousel</IconContent>
+  <ChildContent>
+    <h4>Dimensions</h4>
+    <ApiTable Parameters="@_carouselDimensions" />
+
+    <h4 class="bz-mt-3">Effects</h4>
+    <ApiTable Parameters="@_carouselEffects" />
+
+    <h4 class="bz-mt-3">Example</h4>
+    <CodeBlock Language="css" Code="@_carouselExample" />
+  </ChildContent>
+</DocSection>
+
+<DocSection Title="Bento Variables">
+  <IconContent>@Icons.BentoGrid</IconContent>
+  <ChildContent>
+    <h4>Grid Layout</h4>
+    <ApiTable Parameters="@_bentoGrid" />
+
+    <h4 class="bz-mt-3">Item Styling</h4>
+    <ApiTable Parameters="@_bentoItems" />
+
+    <h4 class="bz-mt-3">Metric Component</h4>
+    <ApiTable Parameters="@_bentoMetric" />
+
+    <h4 class="bz-mt-3">Example</h4>
+    <CodeBlock Language="css" Code="@_bentoExample" />
+  </ChildContent>
+</DocSection>
+
+<DocSection Title="How to Override">
+  <IconContent>@Icons.Target</IconContent>
+  <ChildContent>
+    <h4>Method 1: Global Override</h4>
+    <CodeBlock Language="css" Code="@_globalOverride" />
+
+    <h4 class="bz-mt-3">Method 2: Scoped Override</h4>
+    <CodeBlock Language="css" Code="@_scopedOverride" />
+
+    <h4 class="bz-mt-3">Method 3: Component CssClass</h4>
+    <CodeBlock Language="razor" Code="@_cssClassOverride" />
+  </ChildContent>
+</DocSection>
+
+<DocSection Title="Responsive Breakpoints">
+  <IconContent>@Icons.Smartphone</IconContent>
+  <ChildContent>
+    <ApiTable Parameters="@_breakpoints" />
+    <p class="bz-mt-2">Variables automatically adjust at breakpoints. Override as needed:</p>
     <CodeBlock Language="css" Code="@_responsiveExample" />
   </ChildContent>
 </DocSection>
 
-<!-- EFFECT VARIABLES -->
-<DocSection Title="Effect Variables">
-  <IconContent>@Icons.Sparkles</IconContent>
-  <ChildContent>
-    <p>Control hover effects and transitions.</p>
-    <ApiTable Parameters="@_effectVariables" />
-  </ChildContent>
-</DocSection>
-
-<!-- GLASS THEME VARIABLES -->
-<DocSection Title="Glass Theme Variables">
-  <IconContent>@Icons.Crystal</IconContent>
-  <ChildContent>
-    <p>Customize the glassmorphism effect for the Glass theme.</p>
-    <ApiTable Parameters="@_glassVariables" />
-
-    <h4 class="bz-mt-2">Example: Custom Glass Effect</h4>
-    <CodeBlock Language="css" Code="@_glassExample" />
-  </ChildContent>
-</DocSection>
-
-<!-- DARK THEME VARIABLES -->
-<DocSection Title="Dark Theme Variables">
-  <IconContent>@Icons.Moon</IconContent>
-  <ChildContent>
-    <p>Customize the Dark theme appearance.</p>
-    <ApiTable Parameters="@_darkVariables" />
-  </ChildContent>
-</DocSection>
-
-<!-- LIGHT THEME VARIABLES -->
-<DocSection Title="Light Theme Variables">
-  <IconContent>@Icons.Sun</IconContent>
-  <ChildContent>
-    <p>Customize the Light theme appearance.</p>
-    <ApiTable Parameters="@_lightVariables" />
-  </ChildContent>
-</DocSection>
-
-<!-- HOW TO OVERRIDE -->
-<DocSection Title="How to Override">
-  <IconContent>@Icons.Target</IconContent>
-  <ChildContent>
-    <p>There are several ways to override CSS variables:</p>
-
-    <h4 class="bz-mt-2">Method 1: Global Override</h4>
-    <p>Override in your <code>app.css</code> or global stylesheet:</p>
-    <CodeBlock Language="css" Code="@_globalOverride" />
-
-    <h4 class="bz-mt-2">Method 2: Scoped Override</h4>
-    <p>Override for a specific carousel using <code>CssClass</code>:</p>
-    <CodeBlock Language="razor" Code="@_scopedOverrideRazor" />
-    <CodeBlock Language="css" Code="@_scopedOverrideCss" />
-
-    <h4 class="bz-mt-2">Method 3: Inline Style</h4>
-    <p>For quick adjustments:</p>
-    <CodeBlock Language="razor" Code="@_inlineOverride" />
-  </ChildContent>
-</DocSection>
-
-<!-- RESPONSIVE BREAKPOINTS -->
-<DocSection Title="Responsive Breakpoints">
-  <IconContent>@Icons.Smartphone</IconContent>
-  <ChildContent>
-    <p>BlazzyMotion automatically adapts to different screen sizes using these breakpoints:</p>
-    <ApiTable Parameters="@_breakpoints" />
-
-    <h4 class="bz-mt-2">Custom Responsive Values</h4>
-    <CodeBlock Language="css" Code="@_customResponsive" />
-  </ChildContent>
-</DocSection>
-
-<!-- COMPLETE REFERENCE -->
-<DocSection Title="Complete Variable Reference">
+<DocSection Title="Complete Reference">
   <IconContent>@Icons.Library</IconContent>
   <ChildContent>
-    <p>Copy this block to your CSS for full customization:</p>
-    <CodeBlock Language="css" Code="@_completeReference" />
-  </ChildContent>
-</DocSection>
+    <h4>All Carousel Variables</h4>
+    <CodeBlock Language="css" Code="@_carouselReference" />
 
-<!-- NEXT STEPS -->
-<DocSection Title="Next Steps">
-  <IconContent>
-    <svg class="bz-icon" viewBox="0 0 24 24">
-      <line x1="5" y1="12" x2="19" y2="12"/>
-      <polyline points="12 5 19 12 12 19"/>
-    </svg>
-  </IconContent>
-  <ChildContent>
-    <div class="bz-flex bz-gap-2" style="flex-wrap: wrap;">
-      <a href="/docs/examples" class="bz-btn bz-btn--primary">
-        View Examples
-      </a>
-      <a href="/docs/theming" class="bz-btn bz-btn--secondary">
-        Theming Guide
-      </a>
-    </div>
+    <h4 class="bz-mt-3">All Bento Variables</h4>
+    <CodeBlock Language="css" Code="@_bentoReference" />
   </ChildContent>
 </DocSection>
 
 @code {
-  // DIMENSION VARIABLES
-  private List<ApiTable.ApiParameter> _dimensionVariables = new()
-{
-new() { Name = "--bzc-slide-width", Type = "length", Default = "180px", Description = "Width of each carousel slide" },
-new() { Name = "--bzc-image-max-width", Type = "length", Default = "160px", Description = "Maximum width of images inside slides" },
-new() { Name = "--bzc-swiper-height", Type = "length", Default = "400px", Description = "Height of the carousel container" },
-new() { Name = "--bzc-border-radius", Type = "length", Default = "12px", Description = "Border radius of the carousel container" },
-new() { Name = "--bzc-padding", Type = "length", Default = "24px", Description = "Internal padding of the carousel" }
-};
+  private List<ApiTable.ApiParameter> _sharedVariables = new()
+  {
+    new() { Name = "--bz-theme-glass-bg", Type = "color", Default = "rgba(15, 15, 15, 0.6)", Description = "Glass theme background" },
+    new() { Name = "--bz-theme-glass-blur", Type = "length", Default = "12px", Description = "Glass backdrop blur" },
+    new() { Name = "--bz-theme-dark-bg", Type = "gradient", Default = "linear-gradient(...)", Description = "Dark theme background" },
+    new() { Name = "--bz-theme-light-bg", Type = "color", Default = "rgba(255, 255, 255, 0.98)", Description = "Light theme background" },
+    new() { Name = "--bz-border-radius", Type = "length", Default = "12px", Description = "Shared border radius" }
+  };
 
-  // EFFECT VARIABLES
-  private List<ApiTable.ApiParameter> _effectVariables = new()
-{
-new() { Name = "--bzc-hover-scale", Type = "number", Default = "1.05", Description = "Scale factor on hover (1.05 = 5% larger)" },
-new() { Name = "--bzc-active-scale", Type = "number", Default = "1.1", Description = "Scale factor for active slide (1.1 = 10% larger)" },
-new() { Name = "--bzc-transition-duration", Type = "time", Default = "0.3s", Description = "Duration of hover/transition animations" }
-};
+  private List<ApiTable.ApiParameter> _carouselDimensions = new()
+  {
+    new() { Name = "--bzc-slide-width", Type = "length", Default = "180px", Description = "Width of each slide" },
+    new() { Name = "--bzc-swiper-height", Type = "length", Default = "400px", Description = "Carousel container height" },
+    new() { Name = "--bzc-image-max-width", Type = "length", Default = "160px", Description = "Max image width in slides" }
+  };
 
-  // GLASS VARIABLES
-  private List<ApiTable.ApiParameter> _glassVariables = new()
-{
-new() { Name = "--bzc-glass-bg", Type = "color", Default = "rgba(15, 15, 15, 0.6)", Description = "Background color with transparency" },
-new() { Name = "--bzc-glass-border", Type = "color", Default = "rgba(255, 255, 255, 0.15)", Description = "Border color for glass effect" },
-new() { Name = "--bzc-glass-shadow", Type = "shadow", Default = "0 8px 32px rgba(0, 0, 0, 0.4)", Description = "Box shadow for depth" },
-new() { Name = "--bzc-glass-blur", Type = "length", Default = "12px", Description = "Backdrop blur amount" }
-};
+  private List<ApiTable.ApiParameter> _carouselEffects = new()
+  {
+    new() { Name = "--bzc-hover-scale", Type = "number", Default = "1.05", Description = "Scale on hover" },
+    new() { Name = "--bzc-active-scale", Type = "number", Default = "1.1", Description = "Scale for active slide" },
+    new() { Name = "--bzc-transition-duration", Type = "time", Default = "0.3s", Description = "Animation duration" }
+  };
 
-  // DARK VARIABLES
-  private List<ApiTable.ApiParameter> _darkVariables = new()
-{
-new() { Name = "--bzc-dark-bg", Type = "gradient", Default = "linear-gradient(...)", Description = "Background gradient for dark theme" },
-new() { Name = "--bzc-dark-border", Type = "color", Default = "rgba(255, 255, 255, 0.08)", Description = "Subtle border color" },
-new() { Name = "--bzc-dark-shadow", Type = "shadow", Default = "0 10px 40px rgba(0, 0, 0, 0.6)", Description = "Deep shadow effect" },
-new() { Name = "--bzc-dark-glow", Type = "shadow", Default = "0 0 30px rgba(100, 100, 255, 0.15)", Description = "Subtle glow effect" }
-};
+  private List<ApiTable.ApiParameter> _bentoGrid = new()
+  {
+    new() { Name = "--bzb-max-width", Type = "length", Default = "1200px", Description = "Max grid width" },
+    new() { Name = "--bzb-columns", Type = "number", Default = "4", Description = "Number of columns" },
+    new() { Name = "--bzb-row-height", Type = "length", Default = "160px", Description = "Minimum row height" },
+    new() { Name = "--bzb-gap", Type = "length", Default = "16px", Description = "Gap between items" }
+  };
 
-  // LIGHT VARIABLES
-  private List<ApiTable.ApiParameter> _lightVariables = new()
-{
-new() { Name = "--bzc-light-bg", Type = "color", Default = "rgba(255, 255, 255, 0.98)", Description = "Light background color" },
-new() { Name = "--bzc-light-shadow", Type = "shadow", Default = "0 10px 40px rgba(0, 0, 0, 0.2)", Description = "Soft shadow effect" },
-new() { Name = "--bzc-light-inner", Type = "shadow", Default = "inset 0 1px 0 rgba(255, 255, 255, 1)", Description =
-"Inner highlight" }
-};
+  private List<ApiTable.ApiParameter> _bentoItems = new()
+  {
+    new() { Name = "--bzb-item-radius", Type = "length", Default = "12px", Description = "Item border radius" },
+    new() { Name = "--bzb-item-padding", Type = "length", Default = "20px", Description = "Item internal padding" },
+    new() { Name = "--bzb-item-min-height", Type = "length", Default = "120px", Description = "Minimum item height" }
+  };
 
-  // BREAKPOINTS
+  private List<ApiTable.ApiParameter> _bentoMetric = new()
+  {
+    new() { Name = "--bzb-metric-value-size", Type = "length", Default = "2.5rem", Description = "Metric value font size" },
+    new() { Name = "--bzb-metric-label-size", Type = "length", Default = "0.85rem", Description = "Metric label font size" },
+    new() { Name = "--bzb-metric-trend-up", Type = "color", Default = "#10b981", Description = "Positive trend color" },
+    new() { Name = "--bzb-metric-trend-down", Type = "color", Default = "#ef4444", Description = "Negative trend color" }
+  };
+
   private List<ApiTable.ApiParameter> _breakpoints = new()
-{
-new() { Name = "Desktop", Type = "> 991px", Default = "—", Description = "Full-size slides with maximum effects" },
-new() { Name = "Tablet", Type = "600px - 991px", Default = "—", Description = "Medium-sized slides" },
-new() { Name = "Mobile", Type = "< 600px", Default = "—", Description = "Compact slides optimized for touch" }
-};
+  {
+    new() { Name = "Desktop", Type = "> 991px", Default = "—", Description = "Full layout with all effects" },
+    new() { Name = "Tablet", Type = "600-991px", Default = "—", Description = "2 columns for Bento, smaller slides" },
+    new() { Name = "Mobile", Type = "< 600px", Default = "—", Description = "1 column for Bento, compact slides" }
+  };
 
-  // CODE EXAMPLES
-  private string _overviewExample = @".my-carousel {
+  private string _overviewExample = @"/* Customize Carousel */
+.my-carousel {
     --bzc-slide-width: 200px;
+}
+
+/* Customize Bento */
+.my-bento {
+    --bzb-max-width: 1000px;
+    --bzb-row-height: 180px;
+}";
+
+  private string _carouselExample = @".large-carousel {
+    --bzc-slide-width: 250px;
+    --bzc-swiper-height: 500px;
     --bzc-hover-scale: 1.08;
 }";
 
-  private string _responsiveExample = @"/* Desktop (default) */
---bzc-slide-width: 180px;
---bzc-swiper-height: 400px;
-
-/* Tablet (max-width: 991px) */
---bzc-slide-width: 150px;
---bzc-swiper-height: 300px;
-
-/* Mobile (max-width: 600px) */
---bzc-slide-width: 100px;
---bzc-swiper-height: 250px;";
-
-  private string _glassExample = @"/* More frosted glass effect */
-.frosted-carousel {
-    --bzc-glass-bg: rgba(255, 255, 255, 0.1);
-    --bzc-glass-blur: 20px;
-    --bzc-glass-border: rgba(255, 255, 255, 0.25);
+  private string _bentoExample = @".compact-bento {
+    --bzb-max-width: 900px;
+    --bzb-columns: 3;
+    --bzb-gap: 12px;
+    --bzb-row-height: 140px;
 }";
 
   private string _globalOverride = @":root {
-    --bzc-slide-width: 220px;
-    --bzc-hover-scale: 1.1;
-    --bzc-glass-blur: 16px;
+    --bz-border-radius: 16px;
+    --bzc-hover-scale: 1.08;
+    --bzb-gap: 20px;
 }";
 
-  private string _scopedOverrideRazor = @"<BzCarousel Items=""movies"" CssClass=""large-carousel"" />";
-
-  private string _scopedOverrideCss = @".large-carousel {
-    --bzc-slide-width: 250px;
-    --bzc-swiper-height: 500px;
-    --bzc-image-max-width: 220px;
+  private string _scopedOverride = @".dashboard-section {
+    --bzb-max-width: 100%;
+    --bzb-columns: 5;
 }";
 
-  private string _inlineOverride = @"<div style=""--bzc-slide-width: 200px;"">
-    <BzCarousel Items=""movies"" />
-</div>";
+  private string _cssClassOverride = @"<BzCarousel Items=""@items"" CssClass=""large-carousel"" />
+<BzBento TItem=""object"" CssClass=""compact-bento"">...</BzBento>";
 
-  private string _customResponsive = @"/* Custom tablet breakpoint */
-@media (max-width: 991px) {
-    .my-carousel {
-        --bzc-slide-width: 160px;
-        --bzc-swiper-height: 350px;
+  private string _responsiveExample = @"@media (max-width: 991px) {
+    .my-bento {
+        --bzb-row-height: 140px;
     }
-}
-
-/* Custom mobile breakpoint */
-@media (max-width: 600px) {
     .my-carousel {
-        --bzc-slide-width: 120px;
-        --bzc-swiper-height: 280px;
+        --bzc-swiper-height: 300px;
     }
 }";
 
-  private string _completeReference = @":root {
+  private string _carouselReference = @":root {
     /* Dimensions */
     --bzc-slide-width: 180px;
-    --bzc-image-max-width: 160px;
     --bzc-swiper-height: 400px;
+    --bzc-image-max-width: 160px;
     --bzc-border-radius: 12px;
     --bzc-padding: 24px;
 
@@ -258,24 +208,26 @@ new() { Name = "Mobile", Type = "< 600px", Default = "—", Description = "Compa
     --bzc-hover-scale: 1.05;
     --bzc-active-scale: 1.1;
     --bzc-transition-duration: 0.3s;
+}";
 
-    /* Glass Theme */
-    --bzc-glass-bg: rgba(15, 15, 15, 0.6);
-    --bzc-glass-border: rgba(255, 255, 255, 0.15);
-    --bzc-glass-shadow: 0 8px 32px rgba(0, 0, 0, 0.4);
-    --bzc-glass-blur: 12px;
+  private string _bentoReference = @":root {
+    /* Grid */
+    --bzb-max-width: 1200px;
+    --bzb-row-height: 160px;
+    --bzb-columns: 4;
+    --bzb-gap: 16px;
 
-    /* Dark Theme */
-    --bzc-dark-bg: linear-gradient(135deg,
-        rgba(20, 20, 25, 0.98),
-        rgba(30, 30, 40, 0.98));
-    --bzc-dark-border: rgba(255, 255, 255, 0.08);
-    --bzc-dark-shadow: 0 10px 40px rgba(0, 0, 0, 0.6);
-    --bzc-dark-glow: 0 0 30px rgba(100, 100, 255, 0.15);
+    /* Items */
+    --bzb-item-radius: 12px;
+    --bzb-item-padding: 20px;
+    --bzb-item-min-height: 120px;
 
-    /* Light Theme */
-    --bzc-light-bg: rgba(255, 255, 255, 0.98);
-    --bzc-light-shadow: 0 10px 40px rgba(0, 0, 0, 0.2);
-    --bzc-light-inner: inset 0 1px 0 rgba(255, 255, 255, 1);
+    /* Metric */
+    --bzb-metric-value-size: 2.5rem;
+    --bzb-metric-label-size: 0.85rem;
+
+    /* Feature */
+    --bzb-feature-icon-size: 2.5rem;
+    --bzb-feature-label-size: 0.95rem;
 }";
 }

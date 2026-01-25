@@ -5,7 +5,7 @@
 <PageTitle>Installation - BlazzyMotion</PageTitle>
 
 <PageHeader Title="Installation" Subtitle="Get started with BlazzyMotion in your Blazor project"
-    Version="@AppVersions.Carousel" Framework="@AppVersions.DotNetVersion">
+    Framework="@AppVersions.DotNetVersion">
     <IconContent>@Icons.Package</IconContent>
 </PageHeader>
 
@@ -24,15 +24,18 @@
 <DocSection Title="Install via NuGet">
     <IconContent>@Icons.Download</IconContent>
     <ChildContent>
-        <p>The easiest way to install BlazzyMotion is through NuGet Package Manager.</p>
+        <p>BlazzyMotion offers two component packages. Install the ones you need:</p>
 
-        <h4 class="bz-mt-3">.NET CLI</h4>
-        <CodeBlock Language="bash" Code="@_cliInstall" />
+        <h4 class="bz-mt-3">BzCarousel - 3D Carousel Component</h4>
+        <CodeBlock Language="bash" Code="@_carouselCli" />
 
-        <h4 class="bz-mt-3">Package Manager Console</h4>
-        <CodeBlock Language="powershell" Code="@_pmcInstall" />
+        <h4 class="bz-mt-3">BzBento - Bento Grid Layout</h4>
+        <CodeBlock Language="bash" Code="@_bentoCli" />
 
-        <h4 class="bz-mt-3">PackageReference</h4>
+        <h4 class="bz-mt-3">Or install both</h4>
+        <CodeBlock Language="bash" Code="@_bothCli" />
+
+        <h4 class="bz-mt-3">PackageReference (csproj)</h4>
         <CodeBlock Language="xml" Code="@_packageRef" />
     </ChildContent>
 </DocSection>
@@ -43,7 +46,7 @@
         <p>BlazzyMotion uses Source Generators, so there's <strong>no service registration required!</strong></p>
         <p><strong>CSS is automatically included</strong> - no manual setup needed!</p>
 
-        <p class="bz-mt-2">Just add the using statement to your <code>_Imports.razor</code>:</p>
+        <p class="bz-mt-2">Add the using statements to your <code>_Imports.razor</code>:</p>
         <CodeBlock Language="razor" Code="@_imports" />
     </ChildContent>
 </DocSection>
@@ -57,8 +60,14 @@
   </IconContent>
   <ChildContent>
     <p>Create a simple test to verify everything is working:</p>
-    <CodeBlock Language="razor" Code="@_testCode" />
-    <p class="bz-mt-2">If you see the carousel rendered, you're all set!</p>
+
+    <h4 class="bz-mt-2">Test BzCarousel</h4>
+    <CodeBlock Language="razor" Code="@_testCarousel" />
+
+    <h4 class="bz-mt-3">Test BzBento</h4>
+    <CodeBlock Language="razor" Code="@_testBento" />
+
+    <p class="bz-mt-2">If you see the components rendered correctly, you're all set!</p>
   </ChildContent>
 </DocSection>
 
@@ -75,40 +84,53 @@
         <a href="/docs/quick-start" class="bz-btn bz-btn--primary">
             Quick Start Guide
         </a>
-        <a href="/" class="bz-btn bz-btn--secondary">
-            View Live Demo
+        <a href="/docs/carousel" class="bz-btn bz-btn--secondary">
+            Carousel Docs
+        </a>
+        <a href="/docs/bento" class="bz-btn bz-btn--secondary">
+            Bento Docs
         </a>
     </div>
   </ChildContent>
 </DocSection>
 
 @code {
-    private string _cliInstall = "dotnet add package BlazzyMotion.Carousel";
+    private string _carouselCli = "dotnet add package BlazzyMotion.Carousel";
 
-    private string _pmcInstall = "Install-Package BlazzyMotion.Carousel";
+    private string _bentoCli = "dotnet add package BlazzyMotion.Bento";
 
-    private string _packageRef => $"<PackageReference Include=\"BlazzyMotion.Carousel\" Version=\"{AppVersions.Carousel}\" />";
+    private string _bothCli = @"dotnet add package BlazzyMotion.Carousel
+dotnet add package BlazzyMotion.Bento";
 
-    private string _imports = @"@using BlazzyMotion.Core.Models
-@using BlazzyMotion.Carousel.Components";
+    private string _packageRef => $@"<PackageReference Include=""BlazzyMotion.Carousel"" Version=""{AppVersions.Carousel}"" />
+<PackageReference Include=""BlazzyMotion.Bento"" Version=""{AppVersions.Bento}"" />";
 
-    private string _testCode = @"@page ""/test""
+    private string _imports = @"@* For BzCarousel *@
+@using BlazzyMotion.Core.Models
+@using BlazzyMotion.Carousel.Components
 
-<BzCarousel Items=""@_movies"" />
+@* For BzBento *@
+@using BlazzyMotion.Bento.Components";
+
+    private string _testCarousel = @"<BzCarousel Items=""@_movies"" />
 
 @code {
     private List<Movie> _movies = new()
     {
-        new Movie { ImageUrl = ""/images/movie1.jpg"", Title = ""Test"" }
+        new Movie { ImageUrl = ""/images/movie1.jpg"", Title = ""Movie 1"" },
+        new Movie { ImageUrl = ""/images/movie2.jpg"", Title = ""Movie 2"" }
     };
 
-    // Define your model with [BzImage] attribute
     public class Movie
     {
-        [BzImage]
-        public string ImageUrl { get; set; } = """";
-
+        [BzImage] public string ImageUrl { get; set; } = """";
         public string Title { get; set; } = """";
     }
 }";
+
+    private string _testBento = @"<BzBento TItem=""object"" Theme=""BzTheme.Glass"" Columns=""3"">
+    <BzBentoMetric Value=""100"" Label=""Users"" />
+    <BzBentoMetric Value=""$50K"" Label=""Revenue"" />
+    <BzBentoFeature Label=""Fast"" Description=""60 FPS"" />
+</BzBento>";
 }

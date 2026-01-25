@@ -11,7 +11,7 @@
 <DocSection Title="Built-in Themes">
     <IconContent>@Icons.Masks</IconContent>
     <ChildContent>
-        <p>BlazzyMotion includes 4 professionally designed themes:</p>
+        <p>All BlazzyMotion components share the same 4 themes for a consistent look:</p>
 
         <div class="bz-theme-grid">
             <div class="bz-theme-card bz-theme-card--glass">
@@ -48,48 +48,98 @@
 <DocSection Title="Using Themes">
     <IconContent>@Icons.Lightbulb</IconContent>
     <ChildContent>
-        <CodeBlock Language="razor" Code="@_usageCode" />
+        <p>Apply themes using the <code>Theme</code> parameter:</p>
+
+        <h4>BzCarousel</h4>
+        <CodeBlock Language="razor" Code="@_carouselUsage" />
+
+        <h4 class="bz-mt-3">BzBento</h4>
+        <CodeBlock Language="razor" Code="@_bentoUsage" />
+
+        <p class="bz-mt-2">
+            <strong>Tip:</strong> When nesting components (e.g., BzCarousel inside BzBento),
+            use the same theme for visual consistency.
+        </p>
     </ChildContent>
 </DocSection>
 
-<DocSection Title="CSS Variables">
+<DocSection Title="Theme CSS Variables">
     <IconContent>@Icons.Settings</IconContent>
     <ChildContent>
-        <h4>Glass Theme Variables</h4>
+        <p>Each theme defines these core variables:</p>
+
+        <h4>Glass Theme</h4>
         <CodeBlock Language="css" Code="@_glassVars" />
+
+        <h4 class="bz-mt-3">Dark Theme</h4>
+        <CodeBlock Language="css" Code="@_darkVars" />
+
+        <h4 class="bz-mt-3">Light Theme</h4>
+        <CodeBlock Language="css" Code="@_lightVars" />
     </ChildContent>
 </DocSection>
 
 <DocSection Title="Creating a Custom Theme">
     <IconContent>@Icons.Pen</IconContent>
     <ChildContent>
+        <p>Create custom themes by overriding CSS variables:</p>
+
+        <h4>Neon Theme Example</h4>
         <CodeBlock Language="css" Code="@_customTheme" />
 
-        <p class="bz-mt-2">Apply with <code>CssClass</code>:</p>
+        <h4 class="bz-mt-3">Apply with CssClass</h4>
         <CodeBlock Language="razor" Code="@_customUsage" />
     </ChildContent>
 </DocSection>
 
 @code {
-    private string _usageCode = @"<BzCarousel Items=""@items"" Theme=""BzTheme.Glass"" />
-<BzCarousel Items=""@items"" Theme=""BzTheme.Dark"" />
-<BzCarousel Items=""@items"" Theme=""BzTheme.Light"" />
-<BzCarousel Items=""@items"" Theme=""BzTheme.Minimal"" />";
+    private string _carouselUsage = @"<BzCarousel Items=""@movies"" Theme=""BzTheme.Glass"" />
+<BzCarousel Items=""@movies"" Theme=""BzTheme.Dark"" />
+<BzCarousel Items=""@movies"" Theme=""BzTheme.Light"" />
+<BzCarousel Items=""@movies"" Theme=""BzTheme.Minimal"" />";
+
+    private string _bentoUsage = @"<BzBento TItem=""object"" Theme=""BzTheme.Glass"" Columns=""4"">
+    <BzBentoMetric Value=""1,234"" Label=""Users"" />
+    <BzBentoCard Image=""hero.jpg"" Title=""Featured"" ColSpan=""2"" />
+</BzBento>";
 
     private string _glassVars = @":root {
-    --bzc-glass-bg: rgba(15, 15, 15, 0.6);
-    --bzc-glass-border: rgba(255, 255, 255, 0.15);
-    --bzc-glass-shadow: 0 8px 32px rgba(0, 0, 0, 0.4);
-    --bzc-glass-blur: 12px;
+    --bz-theme-glass-bg: rgba(15, 15, 15, 0.6);
+    --bz-theme-glass-border: rgba(255, 255, 255, 0.15);
+    --bz-theme-glass-blur: 12px;
+    --bz-theme-glass-shadow: 0 8px 32px rgba(0, 0, 0, 0.4);
 }";
 
-    private string _customTheme = @".carousel-neon .bzc-carousel-box {
-    --bzc-glass-bg: rgba(0, 0, 0, 0.8);
-    --bzc-glass-border: rgba(0, 255, 255, 0.3);
-    --bzc-glass-shadow: 0 0 20px rgba(0, 255, 255, 0.2);
+    private string _darkVars = @":root {
+    --bz-theme-dark-bg: linear-gradient(135deg, rgba(20, 20, 25, 0.98), rgba(30, 30, 40, 0.98));
+    --bz-theme-dark-border: rgba(255, 255, 255, 0.08);
+    --bz-theme-dark-shadow: 0 10px 40px rgba(0, 0, 0, 0.6);
+    --bz-theme-dark-glow: 0 0 30px rgba(100, 100, 255, 0.15);
 }";
 
-    private string _customUsage = @"<BzCarousel Items=""@items""
-             Theme=""BzTheme.Glass""
-             CssClass=""carousel-neon"" />";
+    private string _lightVars = @":root {
+    --bz-theme-light-bg: rgba(255, 255, 255, 0.98);
+    --bz-theme-light-border: rgba(0, 0, 0, 0.12);
+    --bz-theme-light-shadow: 0 10px 40px rgba(0, 0, 0, 0.2);
+}";
+
+    private string _customTheme = @".theme-neon {
+    --bz-theme-glass-bg: rgba(0, 0, 0, 0.9);
+    --bz-theme-glass-border: rgba(0, 255, 255, 0.4);
+    --bz-theme-glass-shadow: 0 0 30px rgba(0, 255, 255, 0.3);
+}
+
+.theme-neon .bzb-metric-value,
+.theme-neon .bzb-feature-label {
+    color: #00ffff;
+    text-shadow: 0 0 10px rgba(0, 255, 255, 0.5);
+}";
+
+    private string _customUsage = @"<!-- Carousel with custom theme -->
+<BzCarousel Items=""@items"" Theme=""BzTheme.Glass"" CssClass=""theme-neon"" />
+
+<!-- Bento with custom theme -->
+<BzBento TItem=""object"" Theme=""BzTheme.Glass"" CssClass=""theme-neon"">
+    <BzBentoMetric Value=""99.9%"" Label=""Uptime"" />
+</BzBento>";
 }

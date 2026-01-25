@@ -26,13 +26,13 @@
         <div class="bz-sidebar__group">
             <span class="bz-sidebar__group-title">Get Started</span>
 
-            <NavLink href="docs/installation" class="bz-sidebar__link" Match="NavLinkMatch.All"
+            <NavLink href="/docs/installation" class="bz-sidebar__link" Match="NavLinkMatch.All"
                 @onclick="HandleLinkClick">
                 <span class="bz-sidebar__link-icon">@Icons.Package</span>
                 <span>Installation</span>
             </NavLink>
 
-            <NavLink href="docs/quick-start" class="bz-sidebar__link" Match="NavLinkMatch.All"
+            <NavLink href="/docs/quick-start" class="bz-sidebar__link" Match="NavLinkMatch.All"
                 @onclick="HandleLinkClick">
                 <span class="bz-sidebar__link-icon">@Icons.Rocket</span>
                 <span>Quick Start</span>
@@ -55,7 +55,7 @@
                     </NavLink>
 
                     <!-- Docs Link -->
-                    <NavLink href="@($"docs/{component.Id}")" class="bz-sidebar__link" Match="NavLinkMatch.All"
+                    <NavLink href="@($"/docs/{component.Id}")" class="bz-sidebar__link" Match="NavLinkMatch.All"
                         @onclick="HandleLinkClick">
                         <span class="bz-sidebar__link-icon">@Icons.Book</span>
                         <span>@component.Name Docs</span>
@@ -77,12 +77,12 @@
         <div class="bz-sidebar__group">
             <span class="bz-sidebar__group-title">Customization</span>
 
-            <NavLink href="docs/theming" class="bz-sidebar__link" Match="NavLinkMatch.All" @onclick="HandleLinkClick">
+            <NavLink href="/docs/theming" class="bz-sidebar__link" Match="NavLinkMatch.All" @onclick="HandleLinkClick">
                 <span class="bz-sidebar__link-icon">@Icons.Palette</span>
                 <span>Theming</span>
             </NavLink>
 
-            <NavLink href="docs/css-variables" class="bz-sidebar__link" Match="NavLinkMatch.All"
+            <NavLink href="/docs/css-variables" class="bz-sidebar__link" Match="NavLinkMatch.All"
                 @onclick="HandleLinkClick">
                 <span class="bz-sidebar__link-icon">@Icons.Settings</span>
                 <span>CSS Variables</span>
@@ -93,12 +93,12 @@
         <div class="bz-sidebar__group">
             <span class="bz-sidebar__group-title">Reference</span>
 
-            <NavLink href="docs/api" class="bz-sidebar__link" Match="NavLinkMatch.All" @onclick="HandleLinkClick">
+            <NavLink href="/docs/api" class="bz-sidebar__link" Match="NavLinkMatch.All" @onclick="HandleLinkClick">
                 <span class="bz-sidebar__link-icon">@Icons.Code</span>
                 <span>API Reference</span>
             </NavLink>
 
-            <NavLink href="docs/examples" class="bz-sidebar__link" Match="NavLinkMatch.All" @onclick="HandleLinkClick">
+            <NavLink href="/docs/examples" class="bz-sidebar__link" Match="NavLinkMatch.All" @onclick="HandleLinkClick">
                 <span class="bz-sidebar__link-icon">@Icons.Lightbulb</span>
                 <span>Examples</span>
             </NavLink>

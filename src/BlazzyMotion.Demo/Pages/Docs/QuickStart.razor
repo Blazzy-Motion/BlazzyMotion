@@ -8,16 +8,19 @@
     <IconContent>@Icons.Rocket</IconContent>
 </PageHeader>
 
-<DocSection Title="Zero Configuration Magic">
+<DocSection Title="Two Powerful Components">
     <IconContent>@Icons.Sparkles</IconContent>
     <ChildContent>
-        <p>BlazzyMotion uses <strong>Source Generators</strong> to automatically create item templates from your data models.</p>
-
-        <div class="bz-callout">
-            <strong>How it works:</strong> When you mark a property with <code>[BzImage]</code>, the Source Generator creates a registration function at compile-time.
-        </div>
+        <p>BlazzyMotion provides two components for modern Blazor apps:</p>
+        <ul class="bz-list">
+            <li><strong>BzCarousel</strong> - 3D coverflow carousel with automatic item templates via Source Generators</li>
+            <li><strong>BzBento</strong> - Apple-style Bento grid layout with metrics, cards, and features</li>
+        </ul>
+        <p class="bz-mt-2">Both share the same 4 themes and work together seamlessly.</p>
     </ChildContent>
 </DocSection>
+
+<h2 class="bz-section-title">BzCarousel Quick Start</h2>
 
 <DocSection Title="Step 1: Define Your Model">
     <IconContent>@Icons.CircleOne</IconContent>
@@ -81,7 +84,7 @@
   </ChildContent>
 </DocSection>
 
-<DocSection Title="See It in Action">
+<DocSection Title="Carousel Live Demo">
   <IconContent>
     <svg class="bz-icon" viewBox="0 0 24 24">
       <polygon points="5 3 19 12 5 21 5 3"/>
@@ -89,8 +92,53 @@
   </IconContent>
   <ChildContent>
     <div class="bz-flex bz-gap-2" style="flex-wrap: wrap;">
-        <a href="/" class="bz-btn bz-btn--primary">View Live Demo</a>
-        <a href="/docs/carousel" class="bz-btn bz-btn--secondary">Full Documentation</a>
+        <a href="/" class="bz-btn bz-btn--primary">View Carousel Demo</a>
+        <a href="/docs/carousel" class="bz-btn bz-btn--secondary">Carousel Docs</a>
+    </div>
+  </ChildContent>
+</DocSection>
+
+<h2 class="bz-section-title bz-mt-4">BzBento Quick Start</h2>
+
+<DocSection Title="Composition Mode">
+    <IconContent>@Icons.BentoGrid</IconContent>
+    <ChildContent>
+        <p>Build layouts using helper components - no data model needed:</p>
+        <CodeBlock Language="razor" Code="@_bentoComposition" />
+    </ChildContent>
+</DocSection>
+
+<DocSection Title="Helper Components">
+    <IconContent>@Icons.Wrench</IconContent>
+    <ChildContent>
+        <p>BzBento includes specialized components for common UI patterns:</p>
+        <ul class="bz-list">
+            <li><strong>BzBentoMetric</strong> - KPIs with value, label, and trend indicator</li>
+            <li><strong>BzBentoCard</strong> - Image cards with overlay text</li>
+            <li><strong>BzBentoFeature</strong> - Feature highlights with icon and description</li>
+            <li><strong>BzBentoItem</strong> - Container for custom content (like embedding BzCarousel)</li>
+        </ul>
+    </ChildContent>
+</DocSection>
+
+<DocSection Title="Grid Spanning">
+    <IconContent>@Icons.Layout</IconContent>
+    <ChildContent>
+        <p>Use <code>ColSpan</code> and <code>RowSpan</code> to create varied layouts:</p>
+        <CodeBlock Language="razor" Code="@_bentoSpanning" />
+    </ChildContent>
+</DocSection>
+
+<DocSection Title="Bento Live Demo">
+  <IconContent>
+    <svg class="bz-icon" viewBox="0 0 24 24">
+      <polygon points="5 3 19 12 5 21 5 3"/>
+    </svg>
+  </IconContent>
+  <ChildContent>
+    <div class="bz-flex bz-gap-2" style="flex-wrap: wrap;">
+        <a href="/bento" class="bz-btn bz-btn--primary">View Bento Demo</a>
+        <a href="/docs/bento" class="bz-btn bz-btn--secondary">Bento Docs</a>
     </div>
   </ChildContent>
 </DocSection>
@@ -132,4 +180,29 @@ public class Movie
         Console.WriteLine($""Selected: {movie.Title}"");
     }
 }";
+
+    // Bento examples
+    private string _bentoComposition = @"<BzBento TItem=""object"" Theme=""BzTheme.Glass"" Columns=""4"">
+    <BzBentoMetric Value=""1,234"" Label=""Users"" Trend=""+12%"" />
+    <BzBentoMetric Value=""$48.5K"" Label=""Revenue"" />
+    <BzBentoFeature Label=""Fast"" Description=""60 FPS animations"" />
+    <BzBentoFeature Label=""Responsive"" Description=""Mobile-first"" />
+</BzBento>";
+
+    private string _bentoSpanning = @"<BzBento TItem=""object"" Theme=""BzTheme.Glass"" Columns=""4"">
+    <!-- Hero card: 2 columns wide, 2 rows tall -->
+    <BzBentoCard Image=""hero.jpg""
+                 Title=""Featured""
+                 ColSpan=""2""
+                 RowSpan=""2"" />
+
+    <!-- Metrics: 1x1 each -->
+    <BzBentoMetric Value=""99.9%"" Label=""Uptime"" />
+    <BzBentoMetric Value=""45ms"" Label=""Latency"" />
+
+    <!-- Wide feature: 2 columns -->
+    <BzBentoFeature Label=""Real-time""
+                    Description=""Live updates""
+                    ColSpan=""2"" />
+</BzBento>";
 }
