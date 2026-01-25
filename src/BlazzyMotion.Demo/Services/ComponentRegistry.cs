@@ -1,3 +1,4 @@
+using BlazzyMotion.Demo.Icons;
 using BlazzyMotion.Demo.Models;
 
 namespace BlazzyMotion.Demo.Services;
@@ -14,7 +15,7 @@ public static class ComponentRegistry
         {
             Id = "carousel",
             Name = "Carousel",
-            Icon = "🎠",
+            Icon = Icons.Icons.Carousel,
             Version = AppVersions.Carousel,
             Status = ComponentStatus.Stable,
             Description = "3D coverflow carousel with glassmorphism design",
@@ -25,7 +26,7 @@ public static class ComponentRegistry
         {
             Id = "bento",
             Name = "Bento Grid",
-            Icon = "🍱",
+            Icon = Icons.Icons.BentoGrid,
             Version = AppVersions.Bento,
             Status = ComponentStatus.Stable,
             Description = "Responsive bento grid layout component",

@@ -1,3 +1,5 @@
+using Microsoft.AspNetCore.Components;
+
 namespace BlazzyMotion.Demo.Models;
 
 /// <summary>
@@ -7,7 +9,7 @@ public class ComponentInfo
 {
     public required string Id { get; init; }
     public required string Name { get; init; }
-    public required string Icon { get; init; }
+    public required MarkupString Icon { get; init; }
     public required string Version { get; init; }
     public required ComponentStatus Status { get; init; }
     public required string Description { get; init; }
