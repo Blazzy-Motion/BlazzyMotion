@@ -187,6 +187,29 @@ public partial class BzCarousel<TItem> : BzComponentBase where TItem : class
     [Parameter]
     public BzCarouselOptions? Options { get; set; }
 
+    /// <summary>
+    /// Maximum width of the carousel container.
+    /// Accepts numeric values (treated as pixels) or CSS units (%, rem, vw, etc.).
+    /// </summary>
+    /// <example>
+    /// Width="500" results in "500px"
+    /// Width="80%" results in "80%"
+    /// Width="50vw" results in "50vw"
+    /// </example>
+    [Parameter]
+    public string? Width { get; set; }
+
+    /// <summary>
+    /// Height of the carousel container.
+    /// Accepts numeric values (treated as pixels) or CSS units (%, rem, vh, etc.).
+    /// </summary>
+    /// <example>
+    /// Height="300" results in "300px"
+    /// Height="50vh" results in "50vh"
+    /// </example>
+    [Parameter]
+    public string? Height { get; set; }
+
     #endregion
 
     #region Injected Services
@@ -391,6 +414,32 @@ public partial class BzCarousel<TItem> : BzComponentBase where TItem : class
     #endregion
 
     #region Private Methods
+
+    /// <summary>
+    /// Normalizes size value - adds "px" if numeric, otherwise returns as-is.
+    /// </summary>
+    private static string? NormalizeSize(string? value)
+    {
+        if (string.IsNullOrWhiteSpace(value)) return null;
+        return double.TryParse(value, out _) ? $"{value}px" : value;
+    }
+
+    /// <summary>
+    /// Builds inline style for container with Width/Height overrides.
+    /// </summary>
+    private string? GetContainerStyle()
+    {
+        var width = NormalizeSize(Width);
+        var height = NormalizeSize(Height);
+
+        return (width, height) switch
+        {
+            (null, null) => null,
+            (not null, null) => $"--bz-container-max-width: {width}",
+            (null, not null) => $"--bzc-swiper-height: {height}",
+            _ => $"--bz-container-max-width: {width}; --bzc-swiper-height: {height}"
+        };
+    }
 
     /// <summary>
     /// Builds Swiper configuration options.

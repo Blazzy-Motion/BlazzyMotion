@@ -173,4 +173,121 @@ public class BzCarouselBasicTests : TestBase
         // Assert
         cut.Instance.Loop.Should().BeTrue();
     }
+
+    [Fact]
+    public void BzCarousel_WithNumericWidth_ShouldApplyPxStyle()
+    {
+        // Arrange
+        var items = new List<TestMovie>
+        {
+            new TestMovie { ImageUrl = "test.jpg", Title = "Test Movie" }
+        };
+
+        // Act
+        var cut = RenderComponent<BzCarousel<TestMovie>>(parameters => parameters
+            .Add(p => p.Items, items)
+            .Add(p => p.Width, "500"));
+
+        // Assert
+        var carouselBox = cut.Find(".bzc-carousel-box");
+        carouselBox.GetAttribute("style").Should().Contain("--bz-container-max-width: 500px");
+    }
+
+    [Fact]
+    public void BzCarousel_WithCssUnitWidth_ShouldApplyAsIs()
+    {
+        // Arrange
+        var items = new List<TestMovie>
+        {
+            new TestMovie { ImageUrl = "test.jpg", Title = "Test Movie" }
+        };
+
+        // Act
+        var cut = RenderComponent<BzCarousel<TestMovie>>(parameters => parameters
+            .Add(p => p.Items, items)
+            .Add(p => p.Width, "80%"));
+
+        // Assert
+        var carouselBox = cut.Find(".bzc-carousel-box");
+        carouselBox.GetAttribute("style").Should().Contain("--bz-container-max-width: 80%");
+    }
+
+    [Fact]
+    public void BzCarousel_WithNumericHeight_ShouldApplyPxStyle()
+    {
+        // Arrange
+        var items = new List<TestMovie>
+        {
+            new TestMovie { ImageUrl = "test.jpg", Title = "Test Movie" }
+        };
+
+        // Act
+        var cut = RenderComponent<BzCarousel<TestMovie>>(parameters => parameters
+            .Add(p => p.Items, items)
+            .Add(p => p.Height, "300"));
+
+        // Assert
+        var carouselBox = cut.Find(".bzc-carousel-box");
+        carouselBox.GetAttribute("style").Should().Contain("--bzc-swiper-height: 300px");
+    }
+
+    [Fact]
+    public void BzCarousel_WithCssUnitHeight_ShouldApplyAsIs()
+    {
+        // Arrange
+        var items = new List<TestMovie>
+        {
+            new TestMovie { ImageUrl = "test.jpg", Title = "Test Movie" }
+        };
+
+        // Act
+        var cut = RenderComponent<BzCarousel<TestMovie>>(parameters => parameters
+            .Add(p => p.Items, items)
+            .Add(p => p.Height, "50vh"));
+
+        // Assert
+        var carouselBox = cut.Find(".bzc-carousel-box");
+        carouselBox.GetAttribute("style").Should().Contain("--bzc-swiper-height: 50vh");
+    }
+
+    [Fact]
+    public void BzCarousel_WithWidthAndHeight_ShouldApplyBothStyles()
+    {
+        // Arrange
+        var items = new List<TestMovie>
+        {
+            new TestMovie { ImageUrl = "test.jpg", Title = "Test Movie" }
+        };
+
+        // Act
+        var cut = RenderComponent<BzCarousel<TestMovie>>(parameters => parameters
+            .Add(p => p.Items, items)
+            .Add(p => p.Width, "600")
+            .Add(p => p.Height, "400"));
+
+        // Assert
+        var carouselBox = cut.Find(".bzc-carousel-box");
+        var style = carouselBox.GetAttribute("style");
+        style.Should().Contain("--bz-container-max-width: 600px");
+        style.Should().Contain("--bzc-swiper-height: 400px");
+    }
+
+    [Fact]
+    public void BzCarousel_WithoutWidthAndHeight_ShouldNotHaveStyleAttribute()
+    {
+        // Arrange
+        var items = new List<TestMovie>
+        {
+            new TestMovie { ImageUrl = "test.jpg", Title = "Test Movie" }
+        };
+
+        // Act
+        var cut = RenderComponent<BzCarousel<TestMovie>>(parameters => parameters
+            .Add(p => p.Items, items));
+
+        // Assert
+        var carouselBox = cut.Find(".bzc-carousel-box");
+        var style = carouselBox.GetAttribute("style");
+        (style == null || string.IsNullOrWhiteSpace(style)).Should().BeTrue();
+    }
 }

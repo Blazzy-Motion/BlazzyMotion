@@ -51,6 +51,15 @@
     </ChildContent>
 </DocSection>
 
+<DocSection Title="Sizing">
+    <IconContent>@Icons.Layout</IconContent>
+    <ChildContent>
+        <p>Control carousel dimensions with <code>Width</code> and <code>Height</code> parameters.</p>
+        <p>Numeric values are treated as pixels. CSS units (%, rem, vh, vw) are supported.</p>
+        <CodeBlock Language="razor" Code="@_sizingExample" />
+    </ChildContent>
+</DocSection>
+
 <DocSection Title="CSS Customization">
     <IconContent>@Icons.Pen</IconContent>
     <ChildContent>
@@ -72,6 +81,15 @@
     </ItemTemplate>
 </BzCarousel>";
 
+    private string _sizingExample = @"<!-- Fixed pixel dimensions -->
+<BzCarousel Items=""@_movies"" Width=""500"" Height=""300"" />
+
+<!-- Percentage width -->
+<BzCarousel Items=""@_movies"" Width=""80%"" Height=""350"" />
+
+<!-- Viewport-relative height -->
+<BzCarousel Items=""@_movies"" Height=""50vh"" />";
+
     private string _cssVars = @".my-carousel {
     --bzc-slide-width: 250px;
     --bzc-hover-scale: 1.08;
@@ -89,7 +107,9 @@ new() { Name = "OnItemSelected", Type = "EventCallback<TItem>", Description = "C
 {
 new() { Name = "Theme", Type = "BzTheme", Default = "Glass", Description = "Visual theme" },
 new() { Name = "ShowOverlay", Type = "bool", Default = "true", Description = "Show gradient overlay" },
-new() { Name = "CssClass", Type = "string?", Default = "null", Description = "Additional CSS classes" }
+new() { Name = "CssClass", Type = "string?", Default = "null", Description = "Additional CSS classes" },
+new() { Name = "Width", Type = "string?", Default = "null", Description = "Max width (e.g., \"500\" for 500px, or \"80%\")" },
+new() { Name = "Height", Type = "string?", Default = "null", Description = "Height (e.g., \"300\" for 300px, or \"50vh\")" }
 };
 
     private List<ApiTable.ApiParameter> _behaviorParams = new()

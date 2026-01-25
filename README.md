@@ -256,6 +256,8 @@ The component uses the following priority when selecting a template:
 | `Theme`       | `BzTheme` | `Glass` | Visual theme: `Glass`, `Dark`, `Light`, or `Minimal` |
 | `ShowOverlay` | `bool`    | `true`  | Whether to show gradient overlay on slides           |
 | `CssClass`    | `string?` | `null`  | Additional CSS classes for customization             |
+| `Width`       | `string?` | `null`  | Max width (e.g., "500" for 500px, or "80%")          |
+| `Height`      | `string?` | `null`  | Height (e.g., "300" for 300px, or "50vh")            |
 
 #### Behavior Parameters
 

@@ -83,6 +83,15 @@
   </ChildContent>
 </DocSection>
 
+<!-- CUSTOM SIZING -->
+<DocSection Title="Custom Sizing">
+  <IconContent>@Icons.Layout</IconContent>
+  <ChildContent>
+    <p>Control carousel dimensions with Width and Height parameters. Numbers are treated as pixels.</p>
+    <CodeBlock Language="razor" Code="@_customSizing" />
+  </ChildContent>
+</DocSection>
+
 <!-- CUSTOM LOADING STATE -->
 <DocSection Title="Custom Loading State">
   <IconContent>@Icons.Hourglass</IconContent>
@@ -401,6 +410,19 @@ public class Movie
 @code {
     private BzTheme currentTheme = BzTheme.Glass;
 }";
+
+  // CUSTOM SIZING
+  private string _customSizing = @"<!-- Fixed pixel dimensions -->
+<BzCarousel Items=""@movies"" Width=""500"" Height=""300"" />
+
+<!-- Percentage width with fixed height -->
+<BzCarousel Items=""@movies"" Width=""80%"" Height=""350"" />
+
+<!-- Viewport-relative height -->
+<BzCarousel Items=""@movies"" Height=""50vh"" />
+
+<!-- Responsive: Width adapts, custom height -->
+<BzCarousel Items=""@movies"" Height=""400"" />";
 
   // CUSTOM LOADING
   private string _customLoading = @"<BzCarousel Items=""@asyncMovies"">

@@ -31,7 +31,7 @@ else if (IsEmpty)
 }
 else
 {
-    <div class="@GetCombinedClass("bzc-carousel-box")" @ref="_carouselRef" data-item-count="@ItemCount"
+    <div class="@GetCombinedClass("bzc-carousel-box")" style="@GetContainerStyle()" @ref="_carouselRef" data-item-count="@ItemCount"
         @attributes="AdditionalAttributes">
         <div class="swiper-container bzc-hidden">
             <div class="swiper-wrapper">
