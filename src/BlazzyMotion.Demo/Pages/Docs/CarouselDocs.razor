@@ -1,43 +1,61 @@
-﻿@page "/docs/carousel"
+@page "/docs/carousel"
 @using BlazzyMotion.Demo.Services
+@using BlazzyMotion.Demo.Icons
 
 <PageTitle>Carousel Documentation - BlazzyMotion</PageTitle>
 
-<PageHeader Title="BzCarousel" Icon="🎠" Subtitle="A modern, high-performance 3D carousel component" Version="@AppVersions.Carousel"
-    License="MIT" Framework="@AppVersions.DotNetVersion" />
+<PageHeader Title="BzCarousel" Subtitle="A modern, high-performance 3D carousel component" Version="@AppVersions.Carousel"
+    License="MIT" Framework="@AppVersions.DotNetVersion">
+    <IconContent>@Icons.Carousel</IconContent>
+</PageHeader>
 
-<DocSection Title="Overview" Icon="📖">
-    <p><code>BzCarousel</code> is a feature-rich carousel component powered by Swiper.js.</p>
+<DocSection Title="Overview">
+    <IconContent>@Icons.BookOpen</IconContent>
+    <ChildContent>
+        <p><code>BzCarousel</code> is a feature-rich carousel component powered by Swiper.js.</p>
 
-    <ul class="bz-feature-list">
-        <li><strong>Zero Configuration</strong> - Source Generators handle template creation</li>
-        <li><strong>3D Coverflow Effect</strong> - Stunning visual presentation</li>
-        <li><strong>4 Themes</strong> - Glass, Dark, Light, and Minimal</li>
-        <li><strong>Responsive</strong> - Adapts to all screen sizes</li>
-    </ul>
+        <ul class="bz-feature-list">
+            <li><strong>Zero Configuration</strong> - Source Generators handle template creation</li>
+            <li><strong>3D Coverflow Effect</strong> - Stunning visual presentation</li>
+            <li><strong>4 Themes</strong> - Glass, Dark, Light, and Minimal</li>
+            <li><strong>Responsive</strong> - Adapts to all screen sizes</li>
+        </ul>
+    </ChildContent>
 </DocSection>
 
-<DocSection Title="Basic Usage" Icon="💻">
-    <CodeBlock Language="razor" Code="@_basicUsage" />
+<DocSection Title="Basic Usage">
+    <IconContent>@Icons.Code</IconContent>
+    <ChildContent>
+        <CodeBlock Language="razor" Code="@_basicUsage" />
+    </ChildContent>
 </DocSection>
 
-<DocSection Title="API Reference" Icon="📋">
-    <h4>Data Parameters</h4>
-    <ApiTable Parameters="@_dataParams" />
+<DocSection Title="API Reference">
+    <IconContent>@Icons.Code</IconContent>
+    <ChildContent>
+        <h4>Data Parameters</h4>
+        <ApiTable Parameters="@_dataParams" />
 
-    <h4 class="bz-mt-3">Appearance Parameters</h4>
-    <ApiTable Parameters="@_appearanceParams" />
+        <h4 class="bz-mt-3">Appearance Parameters</h4>
+        <ApiTable Parameters="@_appearanceParams" />
 
-    <h4 class="bz-mt-3">Behavior Parameters</h4>
-    <ApiTable Parameters="@_behaviorParams" />
+        <h4 class="bz-mt-3">Behavior Parameters</h4>
+        <ApiTable Parameters="@_behaviorParams" />
+    </ChildContent>
 </DocSection>
 
-<DocSection Title="Custom Item Template" Icon="🎨">
-    <CodeBlock Language="razor" Code="@_customTemplate" />
+<DocSection Title="Custom Item Template">
+    <IconContent>@Icons.Palette</IconContent>
+    <ChildContent>
+        <CodeBlock Language="razor" Code="@_customTemplate" />
+    </ChildContent>
 </DocSection>
 
-<DocSection Title="CSS Customization" Icon="🖌️">
-    <CodeBlock Language="css" Code="@_cssVars" />
+<DocSection Title="CSS Customization">
+    <IconContent>@Icons.Pen</IconContent>
+    <ChildContent>
+        <CodeBlock Language="css" Code="@_cssVars" />
+    </ChildContent>
 </DocSection>
 
 @code {

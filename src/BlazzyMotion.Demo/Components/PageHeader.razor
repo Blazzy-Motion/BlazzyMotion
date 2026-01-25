@@ -1,7 +1,13 @@
-﻿<header class="bz-page-header">
+@using BlazzyMotion.Demo.Icons
+
+<header class="bz-page-header">
     <div class="bz-page-header__content">
         <h1 class="bz-page-header__title">
-            @if (!string.IsNullOrEmpty(Icon))
+            @if (IconContent != null)
+            {
+                <span class="bz-page-header__icon">@IconContent</span>
+            }
+            else if (!string.IsNullOrEmpty(Icon))
             {
                 <span class="bz-page-header__icon">@Icon</span>
             }
@@ -43,6 +49,9 @@
 
     [Parameter]
     public string? Icon { get; set; }
+
+    [Parameter]
+    public RenderFragment? IconContent { get; set; }
 
     [Parameter]
     public string? Version { get; set; }

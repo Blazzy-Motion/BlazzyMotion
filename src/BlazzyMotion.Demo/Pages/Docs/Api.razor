@@ -1,99 +1,138 @@
 @page "/docs/api"
 @using BlazzyMotion.Demo.Services
+@using BlazzyMotion.Demo.Icons
 
 <PageTitle>API Reference - BlazzyMotion</PageTitle>
 
-<PageHeader Title="API Reference" Icon="📋"
+<PageHeader Title="API Reference"
   Subtitle="Complete reference for BzCarousel component parameters and attributes" Version="@AppVersions.Carousel"
-  Framework="@AppVersions.DotNetVersion" />
+  Framework="@AppVersions.DotNetVersion">
+  <IconContent>@Icons.Code</IconContent>
+</PageHeader>
 
 <!-- COMPONENT PARAMETERS -->
-<DocSection Title="Component Parameters" Icon="⚙️">
-  <p>BzCarousel accepts the following parameters to customize its behavior and appearance.</p>
+<DocSection Title="Component Parameters">
+  <IconContent>@Icons.Settings</IconContent>
+  <ChildContent>
+    <p>BzCarousel accepts the following parameters to customize its behavior and appearance.</p>
+  </ChildContent>
 </DocSection>
 
 <!-- DATA PARAMETERS -->
-<DocSection Title="Data Parameters" Icon="📊">
-  <p>Parameters for binding data and handling events.</p>
-  <ApiTable Parameters="@_dataParameters" />
+<DocSection Title="Data Parameters">
+  <IconContent>@Icons.BarChart</IconContent>
+  <ChildContent>
+    <p>Parameters for binding data and handling events.</p>
+    <ApiTable Parameters="@_dataParameters" />
+  </ChildContent>
 </DocSection>
 
 <!-- APPEARANCE PARAMETERS -->
-<DocSection Title="Appearance Parameters" Icon="🎨">
-  <p>Parameters for visual customization.</p>
-  <ApiTable Parameters="@_appearanceParameters" />
+<DocSection Title="Appearance Parameters">
+  <IconContent>@Icons.Palette</IconContent>
+  <ChildContent>
+    <p>Parameters for visual customization.</p>
+    <ApiTable Parameters="@_appearanceParameters" />
+  </ChildContent>
 </DocSection>
 
 <!-- BEHAVIOR PARAMETERS -->
-<DocSection Title="Behavior Parameters" Icon="🔧">
-  <p>Parameters for controlling carousel behavior.</p>
-  <ApiTable Parameters="@_behaviorParameters" />
+<DocSection Title="Behavior Parameters">
+  <IconContent>@Icons.Wrench</IconContent>
+  <ChildContent>
+    <p>Parameters for controlling carousel behavior.</p>
+    <ApiTable Parameters="@_behaviorParameters" />
+  </ChildContent>
 </DocSection>
 
 <!-- EFFECT PARAMETERS -->
-<DocSection Title="Effect Parameters" Icon="✨">
-  <p>Parameters for 3D coverflow effect customization.</p>
-  <ApiTable Parameters="@_effectParameters" />
+<DocSection Title="Effect Parameters">
+  <IconContent>@Icons.Sparkles</IconContent>
+  <ChildContent>
+    <p>Parameters for 3D coverflow effect customization.</p>
+    <ApiTable Parameters="@_effectParameters" />
+  </ChildContent>
 </DocSection>
 
 <!-- ADVANCED PARAMETERS -->
-<DocSection Title="Advanced Parameters" Icon="🚀">
-  <p>Parameters for advanced configuration and custom templates.</p>
-  <ApiTable Parameters="@_advancedParameters" />
+<DocSection Title="Advanced Parameters">
+  <IconContent>@Icons.Rocket</IconContent>
+  <ChildContent>
+    <p>Parameters for advanced configuration and custom templates.</p>
+    <ApiTable Parameters="@_advancedParameters" />
+  </ChildContent>
 </DocSection>
 
 <!-- ATTRIBUTES -->
-<DocSection Title="Attributes" Icon="🏷️">
-  <p>Use these attributes on your model properties to enable automatic template generation.</p>
+<DocSection Title="Attributes">
+  <IconContent>@Icons.Tag</IconContent>
+  <ChildContent>
+    <p>Use these attributes on your model properties to enable automatic template generation.</p>
+  </ChildContent>
 </DocSection>
 
 <!-- BzImage Attribute -->
-<DocSection Title="[BzImage]" Icon="🖼️">
-  <p>Marks a property as the image source for carousel items. The Source Generator creates a default template using this
-    property.</p>
+<DocSection Title="[BzImage]">
+  <IconContent>@Icons.Image</IconContent>
+  <ChildContent>
+    <p>Marks a property as the image source for carousel items. The Source Generator creates a default template using this
+      property.</p>
 
-  <h4 class="bz-mt-2">Requirements</h4>
-  <ul class="bz-list">
-    <li>Property must be <code>public</code></li>
-    <li>Property must be of type <code>string</code></li>
-    <li>Only one property per class should have this attribute</li>
-  </ul>
+    <h4 class="bz-mt-2">Requirements</h4>
+    <ul class="bz-list">
+      <li>Property must be <code>public</code></li>
+      <li>Property must be of type <code>string</code></li>
+      <li>Only one property per class should have this attribute</li>
+    </ul>
 
-  <h4 class="bz-mt-2">Usage</h4>
-  <CodeBlock Language="csharp" Code="@_bzImageExample" />
+    <h4 class="bz-mt-2">Usage</h4>
+    <CodeBlock Language="csharp" Code="@_bzImageExample" />
+  </ChildContent>
 </DocSection>
 
 <!-- BzTitle Attribute -->
-<DocSection Title="[BzTitle]" Icon="📝">
-  <p>Marks a property as the title/alt text for carousel items. Used for accessibility attributes on generated
-    <code>img</code> elements.</p>
-  <CodeBlock Language="csharp" Code="@_bzTitleExample" />
+<DocSection Title="[BzTitle]">
+  <IconContent>@Icons.Pen</IconContent>
+  <ChildContent>
+    <p>Marks a property as the title/alt text for carousel items. Used for accessibility attributes on generated
+      <code>img</code> elements.</p>
+    <CodeBlock Language="csharp" Code="@_bzTitleExample" />
+  </ChildContent>
 </DocSection>
 
 <!-- BzDescription Attribute -->
-<DocSection Title="[BzDescription]" Icon="📄">
-  <p>Reserved for future use (tooltips, captions, etc.). Currently not used by the default template generator.</p>
-  <CodeBlock Language="csharp" Code="@_bzDescriptionExample" />
+<DocSection Title="[BzDescription]">
+  <IconContent>@Icons.FileText</IconContent>
+  <ChildContent>
+    <p>Reserved for future use (tooltips, captions, etc.). Currently not used by the default template generator.</p>
+    <CodeBlock Language="csharp" Code="@_bzDescriptionExample" />
+  </ChildContent>
 </DocSection>
 
 <!-- TOUCH OPTIONS -->
-<DocSection Title="Touch Options" Icon="👆">
-  <p>BlazzyMotion.Carousel includes mobile-optimized touch settings. Configure via <code>BzCarouselOptions</code>.</p>
-  <ApiTable Parameters="@_touchOptions" />
+<DocSection Title="Touch Options">
+  <IconContent>@Icons.Hand</IconContent>
+  <ChildContent>
+    <p>BlazzyMotion.Carousel includes mobile-optimized touch settings. Configure via <code>BzCarouselOptions</code>.</p>
+    <ApiTable Parameters="@_touchOptions" />
+  </ChildContent>
 </DocSection>
 
 <!-- VALIDATION -->
-<DocSection Title="Validation & Diagnostics" Icon="⚠️">
-  <p>The Source Generator provides compile-time validation with helpful error messages.</p>
+<DocSection Title="Validation & Diagnostics">
+  <IconContent>@Icons.AlertTriangle</IconContent>
+  <ChildContent>
+    <p>The Source Generator provides compile-time validation with helpful error messages.</p>
 
-  <h4 class="bz-mt-2">BZC001: Non-Public Property</h4>
-  <CodeBlock Language="text" Code="Error BZC001: Property 'ImageUrl' with [BzImage] attribute must be public" />
-  <p><strong>Fix:</strong> Change property accessibility to <code>public</code>.</p>
+    <h4 class="bz-mt-2">BZC001: Non-Public Property</h4>
+    <CodeBlock Language="text" Code="Error BZC001: Property 'ImageUrl' with [BzImage] attribute must be public" />
+    <p><strong>Fix:</strong> Change property accessibility to <code>public</code>.</p>
 
-  <h4 class="bz-mt-2">BZC002: Non-String Property</h4>
-  <CodeBlock Language="text"
-    Code="Error BZC002: Property 'ImageData' with [BzImage] attribute must be of type 'string'" />
-  <p><strong>Fix:</strong> Ensure the property is of type <code>string</code> (URL or path).</p>
+    <h4 class="bz-mt-2">BZC002: Non-String Property</h4>
+    <CodeBlock Language="text"
+      Code="Error BZC002: Property 'ImageData' with [BzImage] attribute must be of type 'string'" />
+    <p><strong>Fix:</strong> Ensure the property is of type <code>string</code> (URL or path).</p>
+  </ChildContent>
 </DocSection>
 
 <!-- NEXT STEPS -->
@@ -107,7 +146,7 @@
   <ChildContent>
     <div class="bz-flex bz-gap-2" style="flex-wrap: wrap;">
       <a href="/docs/css-variables" class="bz-btn bz-btn--primary">
-        CSS Variables →
+        CSS Variables
       </a>
       <a href="/docs/examples" class="bz-btn bz-btn--secondary">
         View Examples
@@ -182,7 +221,7 @@ new() { Name = "LongSwipesRatio", Type = "double", Default = "0.3", Description 
 {
     [BzImage]
     public string Poster { get; set; } = """";
-    
+
     public string Title { get; set; } = """";
 }";
 
@@ -190,7 +229,7 @@ new() { Name = "LongSwipesRatio", Type = "double", Default = "0.3", Description 
 {
     [BzImage]
     public string Poster { get; set; } = """";
-    
+
     [BzTitle]  // Used for alt text
     public string Title { get; set; } = """";
 }";
@@ -199,10 +238,10 @@ new() { Name = "LongSwipesRatio", Type = "double", Default = "0.3", Description 
 {
     [BzImage]
     public string Poster { get; set; } = """";
-    
+
     [BzTitle]
     public string Title { get; set; } = """";
-    
+
     [BzDescription]  // Reserved for future use
     public string Synopsis { get; set; } = """";
 }";

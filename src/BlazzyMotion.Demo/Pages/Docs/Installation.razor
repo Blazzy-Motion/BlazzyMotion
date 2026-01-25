@@ -1,39 +1,51 @@
-﻿@page "/docs/installation"
+@page "/docs/installation"
 @using BlazzyMotion.Demo.Services
+@using BlazzyMotion.Demo.Icons
 
 <PageTitle>Installation - BlazzyMotion</PageTitle>
 
-<PageHeader Title="Installation" Icon="📦" Subtitle="Get started with BlazzyMotion in your Blazor project"
-    Version="@AppVersions.Carousel" Framework="@AppVersions.DotNetVersion" />
+<PageHeader Title="Installation" Subtitle="Get started with BlazzyMotion in your Blazor project"
+    Version="@AppVersions.Carousel" Framework="@AppVersions.DotNetVersion">
+    <IconContent>@Icons.Package</IconContent>
+</PageHeader>
 
-<DocSection Title="Prerequisites" Icon="✅">
-    <p>Before installing BlazzyMotion, make sure you have:</p>
-    <ul class="bz-list">
-        <li>.NET 8.0 SDK or later</li>
-        <li>A Blazor WebAssembly or Blazor Server project</li>
-        <li>Visual Studio 2022, VS Code, or JetBrains Rider</li>
-    </ul>
+<DocSection Title="Prerequisites">
+    <IconContent>@Icons.CircleCheck</IconContent>
+    <ChildContent>
+        <p>Before installing BlazzyMotion, make sure you have:</p>
+        <ul class="bz-list">
+            <li>.NET 8.0 SDK or later</li>
+            <li>A Blazor WebAssembly or Blazor Server project</li>
+            <li>Visual Studio 2022, VS Code, or JetBrains Rider</li>
+        </ul>
+    </ChildContent>
 </DocSection>
 
-<DocSection Title="Install via NuGet" Icon="📥">
-    <p>The easiest way to install BlazzyMotion is through NuGet Package Manager.</p>
+<DocSection Title="Install via NuGet">
+    <IconContent>@Icons.Download</IconContent>
+    <ChildContent>
+        <p>The easiest way to install BlazzyMotion is through NuGet Package Manager.</p>
 
-    <h4 class="bz-mt-3">.NET CLI</h4>
-    <CodeBlock Language="bash" Code="@_cliInstall" />
+        <h4 class="bz-mt-3">.NET CLI</h4>
+        <CodeBlock Language="bash" Code="@_cliInstall" />
 
-    <h4 class="bz-mt-3">Package Manager Console</h4>
-    <CodeBlock Language="powershell" Code="@_pmcInstall" />
+        <h4 class="bz-mt-3">Package Manager Console</h4>
+        <CodeBlock Language="powershell" Code="@_pmcInstall" />
 
-    <h4 class="bz-mt-3">PackageReference</h4>
-    <CodeBlock Language="xml" Code="@_packageRef" />
+        <h4 class="bz-mt-3">PackageReference</h4>
+        <CodeBlock Language="xml" Code="@_packageRef" />
+    </ChildContent>
 </DocSection>
 
-<DocSection Title="Configuration" Icon="⚙️">
-    <p>BlazzyMotion uses Source Generators, so there's <strong>no service registration required!</strong></p>
-    <p><strong>CSS is automatically included</strong> - no manual setup needed! ✨</p>
+<DocSection Title="Configuration">
+    <IconContent>@Icons.Settings</IconContent>
+    <ChildContent>
+        <p>BlazzyMotion uses Source Generators, so there's <strong>no service registration required!</strong></p>
+        <p><strong>CSS is automatically included</strong> - no manual setup needed!</p>
 
-    <p class="bz-mt-2">Just add the using statement to your <code>_Imports.razor</code>:</p>
-    <CodeBlock Language="razor" Code="@_imports" />
+        <p class="bz-mt-2">Just add the using statement to your <code>_Imports.razor</code>:</p>
+        <CodeBlock Language="razor" Code="@_imports" />
+    </ChildContent>
 </DocSection>
 
 <DocSection Title="Verify Installation">
@@ -46,7 +58,7 @@
   <ChildContent>
     <p>Create a simple test to verify everything is working:</p>
     <CodeBlock Language="razor" Code="@_testCode" />
-    <p class="bz-mt-2">If you see the carousel rendered, you're all set! 🎉</p>
+    <p class="bz-mt-2">If you see the carousel rendered, you're all set!</p>
   </ChildContent>
 </DocSection>
 
@@ -61,7 +73,7 @@
   <ChildContent>
     <div class="bz-flex bz-gap-2" style="flex-wrap: wrap;">
         <a href="/docs/quick-start" class="bz-btn bz-btn--primary">
-            Quick Start Guide →
+            Quick Start Guide
         </a>
         <a href="/" class="bz-btn bz-btn--secondary">
             View Live Demo

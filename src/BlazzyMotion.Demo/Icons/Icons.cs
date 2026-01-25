@@ -91,6 +91,74 @@ public static class Icons
 
     #endregion
 
+    #region Theme Icons
+
+    public static MarkupString Sun => new(@"<svg xmlns=""http://www.w3.org/2000/svg"" width=""18"" height=""18"" viewBox=""0 0 24 24"" fill=""none"" stroke=""currentColor"" stroke-width=""2"" stroke-linecap=""round"" stroke-linejoin=""round""><circle cx=""12"" cy=""12"" r=""4""/><path d=""M12 2v2""/><path d=""M12 20v2""/><path d=""m4.93 4.93 1.41 1.41""/><path d=""m17.66 17.66 1.41 1.41""/><path d=""M2 12h2""/><path d=""M20 12h2""/><path d=""m6.34 17.66-1.41 1.41""/><path d=""m19.07 4.93-1.41 1.41""/></svg>");
+
+    public static MarkupString Moon => new(@"<svg xmlns=""http://www.w3.org/2000/svg"" width=""18"" height=""18"" viewBox=""0 0 24 24"" fill=""none"" stroke=""currentColor"" stroke-width=""2"" stroke-linecap=""round"" stroke-linejoin=""round""><path d=""M12 3a6 6 0 0 0 9 9 9 9 0 1 1-9-9Z""/></svg>");
+
+    public static MarkupString Crystal => new(@"<svg xmlns=""http://www.w3.org/2000/svg"" width=""18"" height=""18"" viewBox=""0 0 24 24"" fill=""none"" stroke=""currentColor"" stroke-width=""2"" stroke-linecap=""round"" stroke-linejoin=""round""><path d=""M12 2 2 7l10 5 10-5-10-5Z""/><path d=""m2 17 10 5 10-5""/><path d=""m2 12 10 5 10-5""/></svg>");
+
+    public static MarkupString Minus => new(@"<svg xmlns=""http://www.w3.org/2000/svg"" width=""18"" height=""18"" viewBox=""0 0 24 24"" fill=""none"" stroke=""currentColor"" stroke-width=""2"" stroke-linecap=""round"" stroke-linejoin=""round""><path d=""M5 12h14""/></svg>");
+
+    #endregion
+
+    #region Doc Section Icons
+
+    public static MarkupString Sparkles => new(@"<svg xmlns=""http://www.w3.org/2000/svg"" width=""18"" height=""18"" viewBox=""0 0 24 24"" fill=""none"" stroke=""currentColor"" stroke-width=""2"" stroke-linecap=""round"" stroke-linejoin=""round""><path d=""m12 3-1.912 5.813a2 2 0 0 1-1.275 1.275L3 12l5.813 1.912a2 2 0 0 1 1.275 1.275L12 21l1.912-5.813a2 2 0 0 1 1.275-1.275L21 12l-5.813-1.912a2 2 0 0 1-1.275-1.275L12 3Z""/><path d=""M5 3v4""/><path d=""M19 17v4""/><path d=""M3 5h4""/><path d=""M17 19h4""/></svg>");
+
+    public static MarkupString Target => new(@"<svg xmlns=""http://www.w3.org/2000/svg"" width=""18"" height=""18"" viewBox=""0 0 24 24"" fill=""none"" stroke=""currentColor"" stroke-width=""2"" stroke-linecap=""round"" stroke-linejoin=""round""><circle cx=""12"" cy=""12"" r=""10""/><circle cx=""12"" cy=""12"" r=""6""/><circle cx=""12"" cy=""12"" r=""2""/></svg>");
+
+    public static MarkupString Film => new(@"<svg xmlns=""http://www.w3.org/2000/svg"" width=""18"" height=""18"" viewBox=""0 0 24 24"" fill=""none"" stroke=""currentColor"" stroke-width=""2"" stroke-linecap=""round"" stroke-linejoin=""round""><rect width=""18"" height=""18"" x=""3"" y=""3"" rx=""2""/><path d=""M7 3v18""/><path d=""M3 7.5h4""/><path d=""M3 12h18""/><path d=""M3 16.5h4""/><path d=""M17 3v18""/><path d=""M17 7.5h4""/><path d=""M17 16.5h4""/></svg>");
+
+    public static MarkupString ShoppingBag => new(@"<svg xmlns=""http://www.w3.org/2000/svg"" width=""18"" height=""18"" viewBox=""0 0 24 24"" fill=""none"" stroke=""currentColor"" stroke-width=""2"" stroke-linecap=""round"" stroke-linejoin=""round""><path d=""M6 2 3 6v14a2 2 0 0 0 2 2h14a2 2 0 0 0 2-2V6l-3-4Z""/><path d=""M3 6h18""/><path d=""M16 10a4 4 0 0 1-8 0""/></svg>");
+
+    public static MarkupString Eye => new(@"<svg xmlns=""http://www.w3.org/2000/svg"" width=""18"" height=""18"" viewBox=""0 0 24 24"" fill=""none"" stroke=""currentColor"" stroke-width=""2"" stroke-linecap=""round"" stroke-linejoin=""round""><path d=""M2 12s3-7 10-7 10 7 10 7-3 7-10 7-10-7-10-7Z""/><circle cx=""12"" cy=""12"" r=""3""/></svg>");
+
+    public static MarkupString Masks => new(@"<svg xmlns=""http://www.w3.org/2000/svg"" width=""18"" height=""18"" viewBox=""0 0 24 24"" fill=""none"" stroke=""currentColor"" stroke-width=""2"" stroke-linecap=""round"" stroke-linejoin=""round""><path d=""M2 12a5 5 0 0 0 5 5 8 8 0 0 1 5 2 8 8 0 0 1 5-2 5 5 0 0 0 5-5V7h-5a8 8 0 0 0-5 2 8 8 0 0 0-5-2H2Z""/><path d=""M6 11c1.5 0 3 .5 3 2-2 0-3 0-3-2Z""/><path d=""M18 11c-1.5 0-3 .5-3 2 2 0 3 0 3-2Z""/></svg>");
+
+    public static MarkupString Hourglass => new(@"<svg xmlns=""http://www.w3.org/2000/svg"" width=""18"" height=""18"" viewBox=""0 0 24 24"" fill=""none"" stroke=""currentColor"" stroke-width=""2"" stroke-linecap=""round"" stroke-linejoin=""round""><path d=""M5 22h14""/><path d=""M5 2h14""/><path d=""M17 22v-4.172a2 2 0 0 0-.586-1.414L12 12l-4.414 4.414A2 2 0 0 0 7 17.828V22""/><path d=""M7 2v4.172a2 2 0 0 0 .586 1.414L12 12l4.414-4.414A2 2 0 0 0 17 6.172V2""/></svg>");
+
+    public static MarkupString MailboxEmpty => new(@"<svg xmlns=""http://www.w3.org/2000/svg"" width=""18"" height=""18"" viewBox=""0 0 24 24"" fill=""none"" stroke=""currentColor"" stroke-width=""2"" stroke-linecap=""round"" stroke-linejoin=""round""><path d=""M22 17a2 2 0 0 1-2 2H4a2 2 0 0 1-2-2V9.5C2 7 4 5 6.5 5H18c2.2 0 4 1.8 4 4v8Z""/><polyline points=""15,9 18,9 18,11""/><path d=""M6.5 5C9 5 11 7 11 9.5V17a2 2 0 0 1-2 2""/><line x1=""6"" x2=""7"" y1=""10"" y2=""10""/></svg>");
+
+    public static MarkupString Smartphone => new(@"<svg xmlns=""http://www.w3.org/2000/svg"" width=""18"" height=""18"" viewBox=""0 0 24 24"" fill=""none"" stroke=""currentColor"" stroke-width=""2"" stroke-linecap=""round"" stroke-linejoin=""round""><rect width=""14"" height=""20"" x=""5"" y=""2"" rx=""2"" ry=""2""/><path d=""M12 18h.01""/></svg>");
+
+    public static MarkupString UsersGroup => new(@"<svg xmlns=""http://www.w3.org/2000/svg"" width=""18"" height=""18"" viewBox=""0 0 24 24"" fill=""none"" stroke=""currentColor"" stroke-width=""2"" stroke-linecap=""round"" stroke-linejoin=""round""><path d=""M16 21v-2a4 4 0 0 0-4-4H6a4 4 0 0 0-4 4v2""/><circle cx=""9"" cy=""7"" r=""4""/><path d=""M22 21v-2a4 4 0 0 0-3-3.87""/><path d=""M16 3.13a4 4 0 0 1 0 7.75""/></svg>");
+
+    public static MarkupString CircleCheck => new(@"<svg xmlns=""http://www.w3.org/2000/svg"" width=""18"" height=""18"" viewBox=""0 0 24 24"" fill=""none"" stroke=""currentColor"" stroke-width=""2"" stroke-linecap=""round"" stroke-linejoin=""round""><circle cx=""12"" cy=""12"" r=""10""/><path d=""m9 12 2 2 4-4""/></svg>");
+
+    public static MarkupString Download => new(@"<svg xmlns=""http://www.w3.org/2000/svg"" width=""18"" height=""18"" viewBox=""0 0 24 24"" fill=""none"" stroke=""currentColor"" stroke-width=""2"" stroke-linecap=""round"" stroke-linejoin=""round""><path d=""M21 15v4a2 2 0 0 1-2 2H5a2 2 0 0 1-2-2v-4""/><polyline points=""7 10 12 15 17 10""/><line x1=""12"" x2=""12"" y1=""15"" y2=""3""/></svg>");
+
+    public static MarkupString Tag => new(@"<svg xmlns=""http://www.w3.org/2000/svg"" width=""18"" height=""18"" viewBox=""0 0 24 24"" fill=""none"" stroke=""currentColor"" stroke-width=""2"" stroke-linecap=""round"" stroke-linejoin=""round""><path d=""M12.586 2.586A2 2 0 0 0 11.172 2H4a2 2 0 0 0-2 2v7.172a2 2 0 0 0 .586 1.414l8.704 8.704a2.426 2.426 0 0 0 3.42 0l6.58-6.58a2.426 2.426 0 0 0 0-3.42z""/><circle cx=""7.5"" cy=""7.5"" r="".5"" fill=""currentColor""/></svg>");
+
+    public static MarkupString Image => new(@"<svg xmlns=""http://www.w3.org/2000/svg"" width=""18"" height=""18"" viewBox=""0 0 24 24"" fill=""none"" stroke=""currentColor"" stroke-width=""2"" stroke-linecap=""round"" stroke-linejoin=""round""><rect width=""18"" height=""18"" x=""3"" y=""3"" rx=""2"" ry=""2""/><circle cx=""9"" cy=""9"" r=""2""/><path d=""m21 15-3.086-3.086a2 2 0 0 0-2.828 0L6 21""/></svg>");
+
+    public static MarkupString Pen => new(@"<svg xmlns=""http://www.w3.org/2000/svg"" width=""18"" height=""18"" viewBox=""0 0 24 24"" fill=""none"" stroke=""currentColor"" stroke-width=""2"" stroke-linecap=""round"" stroke-linejoin=""round""><path d=""M17 3a2.85 2.83 0 1 1 4 4L7.5 20.5 2 22l1.5-5.5Z""/></svg>");
+
+    public static MarkupString FileText => new(@"<svg xmlns=""http://www.w3.org/2000/svg"" width=""18"" height=""18"" viewBox=""0 0 24 24"" fill=""none"" stroke=""currentColor"" stroke-width=""2"" stroke-linecap=""round"" stroke-linejoin=""round""><path d=""M15 2H6a2 2 0 0 0-2 2v16a2 2 0 0 0 2 2h12a2 2 0 0 0 2-2V7Z""/><path d=""M14 2v4a2 2 0 0 0 2 2h4""/><path d=""M10 9H8""/><path d=""M16 13H8""/><path d=""M16 17H8""/></svg>");
+
+    public static MarkupString Hand => new(@"<svg xmlns=""http://www.w3.org/2000/svg"" width=""18"" height=""18"" viewBox=""0 0 24 24"" fill=""none"" stroke=""currentColor"" stroke-width=""2"" stroke-linecap=""round"" stroke-linejoin=""round""><path d=""M18 11V6a2 2 0 0 0-2-2 2 2 0 0 0-2 2""/><path d=""M14 10V4a2 2 0 0 0-2-2 2 2 0 0 0-2 2v2""/><path d=""M10 10.5V6a2 2 0 0 0-2-2 2 2 0 0 0-2 2v8""/><path d=""M18 8a2 2 0 1 1 4 0v6a8 8 0 0 1-8 8h-2c-2.8 0-4.5-.86-5.99-2.34l-3.6-3.6a2 2 0 0 1 2.83-2.82L7 15""/></svg>");
+
+    public static MarkupString AlertTriangle => new(@"<svg xmlns=""http://www.w3.org/2000/svg"" width=""18"" height=""18"" viewBox=""0 0 24 24"" fill=""none"" stroke=""currentColor"" stroke-width=""2"" stroke-linecap=""round"" stroke-linejoin=""round""><path d=""m21.73 18-8-14a2 2 0 0 0-3.48 0l-8 14A2 2 0 0 0 4 21h16a2 2 0 0 0 1.73-3Z""/><path d=""M12 9v4""/><path d=""M12 17h.01""/></svg>");
+
+    public static MarkupString Ruler => new(@"<svg xmlns=""http://www.w3.org/2000/svg"" width=""18"" height=""18"" viewBox=""0 0 24 24"" fill=""none"" stroke=""currentColor"" stroke-width=""2"" stroke-linecap=""round"" stroke-linejoin=""round""><path d=""M21.3 15.3a2.4 2.4 0 0 1 0 3.4l-2.6 2.6a2.4 2.4 0 0 1-3.4 0L2.7 8.7a2.41 2.41 0 0 1 0-3.4l2.6-2.6a2.41 2.41 0 0 1 3.4 0Z""/><path d=""m14.5 12.5 2-2""/><path d=""m11.5 9.5 2-2""/><path d=""m8.5 6.5 2-2""/><path d=""m17.5 15.5 2-2""/></svg>");
+
+    public static MarkupString BookOpen => new(@"<svg xmlns=""http://www.w3.org/2000/svg"" width=""18"" height=""18"" viewBox=""0 0 24 24"" fill=""none"" stroke=""currentColor"" stroke-width=""2"" stroke-linecap=""round"" stroke-linejoin=""round""><path d=""M2 3h6a4 4 0 0 1 4 4v14a3 3 0 0 0-3-3H2z""/><path d=""M22 3h-6a4 4 0 0 0-4 4v14a3 3 0 0 1 3-3h7z""/></svg>");
+
+    public static MarkupString Library => new(@"<svg xmlns=""http://www.w3.org/2000/svg"" width=""18"" height=""18"" viewBox=""0 0 24 24"" fill=""none"" stroke=""currentColor"" stroke-width=""2"" stroke-linecap=""round"" stroke-linejoin=""round""><path d=""m16 6 4 14""/><path d=""M12 6v14""/><path d=""M8 8v12""/><path d=""M4 4v16""/></svg>");
+
+    public static MarkupString BarChart => new(@"<svg xmlns=""http://www.w3.org/2000/svg"" width=""18"" height=""18"" viewBox=""0 0 24 24"" fill=""none"" stroke=""currentColor"" stroke-width=""2"" stroke-linecap=""round"" stroke-linejoin=""round""><line x1=""12"" x2=""12"" y1=""20"" y2=""10""/><line x1=""18"" x2=""18"" y1=""20"" y2=""4""/><line x1=""6"" x2=""6"" y1=""20"" y2=""16""/></svg>");
+
+    public static MarkupString Wrench => new(@"<svg xmlns=""http://www.w3.org/2000/svg"" width=""18"" height=""18"" viewBox=""0 0 24 24"" fill=""none"" stroke=""currentColor"" stroke-width=""2"" stroke-linecap=""round"" stroke-linejoin=""round""><path d=""M14.7 6.3a1 1 0 0 0 0 1.4l1.6 1.6a1 1 0 0 0 1.4 0l3.77-3.77a6 6 0 0 1-7.94 7.94l-6.91 6.91a2.12 2.12 0 0 1-3-3l6.91-6.91a6 6 0 0 1 7.94-7.94l-3.76 3.76z""/></svg>");
+
+    public static MarkupString CircleOne => new(@"<svg xmlns=""http://www.w3.org/2000/svg"" width=""18"" height=""18"" viewBox=""0 0 24 24"" fill=""none"" stroke=""currentColor"" stroke-width=""2"" stroke-linecap=""round"" stroke-linejoin=""round""><circle cx=""12"" cy=""12"" r=""10""/><path d=""M12 8v8""/><path d=""M10 10h2""/></svg>");
+
+    public static MarkupString CircleTwo => new(@"<svg xmlns=""http://www.w3.org/2000/svg"" width=""18"" height=""18"" viewBox=""0 0 24 24"" fill=""none"" stroke=""currentColor"" stroke-width=""2"" stroke-linecap=""round"" stroke-linejoin=""round""><circle cx=""12"" cy=""12"" r=""10""/><path d=""M10 8h3a1 1 0 0 1 1 1v1a1 1 0 0 1-1 1h-2a1 1 0 0 0-1 1v1a1 1 0 0 0 1 1h3""/></svg>");
+
+    public static MarkupString CircleThree => new(@"<svg xmlns=""http://www.w3.org/2000/svg"" width=""18"" height=""18"" viewBox=""0 0 24 24"" fill=""none"" stroke=""currentColor"" stroke-width=""2"" stroke-linecap=""round"" stroke-linejoin=""round""><circle cx=""12"" cy=""12"" r=""10""/><path d=""M10 8h3a1 1 0 0 1 1 1v1a1 1 0 0 1-1 1h-2""/><path d=""M11 12h2a1 1 0 0 1 1 1v1a1 1 0 0 1-1 1h-3""/></svg>");
+
+    #endregion
+
     #region Helper Methods
 
     /// <summary>

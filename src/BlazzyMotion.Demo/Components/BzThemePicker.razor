@@ -1,21 +1,22 @@
 @using BlazzyMotion.Core.Models
+@using BlazzyMotion.Demo.Icons
 
 <div class="bz-theme-pills">
     <button class="bz-pill @(CurrentTheme == BzTheme.Glass ? "active" : "")"
             @onclick="() => SetTheme(BzTheme.Glass)">
-        🔮 Glass
+        <span class="bz-pill__icon">@Icons.Crystal</span> Glass
     </button>
     <button class="bz-pill @(CurrentTheme == BzTheme.Dark ? "active" : "")"
             @onclick="() => SetTheme(BzTheme.Dark)">
-        🌙 Dark
+        <span class="bz-pill__icon">@Icons.Moon</span> Dark
     </button>
     <button class="bz-pill @(CurrentTheme == BzTheme.Light ? "active" : "")"
             @onclick="() => SetTheme(BzTheme.Light)">
-        ☀️ Light
+        <span class="bz-pill__icon">@Icons.Sun</span> Light
     </button>
     <button class="bz-pill @(CurrentTheme == BzTheme.Minimal ? "active" : "")"
             @onclick="() => SetTheme(BzTheme.Minimal)">
-        〰️ Minimal
+        <span class="bz-pill__icon">@Icons.Minus</span> Minimal
     </button>
 </div>
 

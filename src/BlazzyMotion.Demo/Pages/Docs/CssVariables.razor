@@ -1,86 +1,116 @@
 @page "/docs/css-variables"
 @using BlazzyMotion.Demo.Services
+@using BlazzyMotion.Demo.Icons
 
 <PageTitle>CSS Variables - BlazzyMotion</PageTitle>
 
-<PageHeader Title="CSS Variables" Icon="⚙️" Subtitle="Customize BlazzyMotion components using CSS custom properties"
-  Version="@AppVersions.Carousel" Framework="@AppVersions.DotNetVersion" />
+<PageHeader Title="CSS Variables" Subtitle="Customize BlazzyMotion components using CSS custom properties"
+  Version="@AppVersions.Carousel" Framework="@AppVersions.DotNetVersion">
+  <IconContent>@Icons.Settings</IconContent>
+</PageHeader>
 
 <!-- OVERVIEW -->
-<DocSection Title="Overview" Icon="📖">
-  <p>BlazzyMotion uses CSS custom properties (variables) for easy customization. Override these in your app's CSS to
-    match your design system.</p>
-  <CodeBlock Language="css" Code="@_overviewExample" />
+<DocSection Title="Overview">
+  <IconContent>@Icons.BookOpen</IconContent>
+  <ChildContent>
+    <p>BlazzyMotion uses CSS custom properties (variables) for easy customization. Override these in your app's CSS to
+      match your design system.</p>
+    <CodeBlock Language="css" Code="@_overviewExample" />
+  </ChildContent>
 </DocSection>
 
 <!-- DIMENSIONS -->
-<DocSection Title="Dimension Variables" Icon="📐">
-  <p>Control the size of carousel elements.</p>
-  <ApiTable Parameters="@_dimensionVariables" />
+<DocSection Title="Dimension Variables">
+  <IconContent>@Icons.Ruler</IconContent>
+  <ChildContent>
+    <p>Control the size of carousel elements.</p>
+    <ApiTable Parameters="@_dimensionVariables" />
 
-  <h4 class="bz-mt-2">Responsive Defaults</h4>
-  <p>These variables automatically adjust at different breakpoints:</p>
-  <CodeBlock Language="css" Code="@_responsiveExample" />
+    <h4 class="bz-mt-2">Responsive Defaults</h4>
+    <p>These variables automatically adjust at different breakpoints:</p>
+    <CodeBlock Language="css" Code="@_responsiveExample" />
+  </ChildContent>
 </DocSection>
 
 <!-- EFFECT VARIABLES -->
-<DocSection Title="Effect Variables" Icon="✨">
-  <p>Control hover effects and transitions.</p>
-  <ApiTable Parameters="@_effectVariables" />
+<DocSection Title="Effect Variables">
+  <IconContent>@Icons.Sparkles</IconContent>
+  <ChildContent>
+    <p>Control hover effects and transitions.</p>
+    <ApiTable Parameters="@_effectVariables" />
+  </ChildContent>
 </DocSection>
 
 <!-- GLASS THEME VARIABLES -->
-<DocSection Title="Glass Theme Variables" Icon="🔮">
-  <p>Customize the glassmorphism effect for the Glass theme.</p>
-  <ApiTable Parameters="@_glassVariables" />
+<DocSection Title="Glass Theme Variables">
+  <IconContent>@Icons.Crystal</IconContent>
+  <ChildContent>
+    <p>Customize the glassmorphism effect for the Glass theme.</p>
+    <ApiTable Parameters="@_glassVariables" />
 
-  <h4 class="bz-mt-2">Example: Custom Glass Effect</h4>
-  <CodeBlock Language="css" Code="@_glassExample" />
+    <h4 class="bz-mt-2">Example: Custom Glass Effect</h4>
+    <CodeBlock Language="css" Code="@_glassExample" />
+  </ChildContent>
 </DocSection>
 
 <!-- DARK THEME VARIABLES -->
-<DocSection Title="Dark Theme Variables" Icon="🌙">
-  <p>Customize the Dark theme appearance.</p>
-  <ApiTable Parameters="@_darkVariables" />
+<DocSection Title="Dark Theme Variables">
+  <IconContent>@Icons.Moon</IconContent>
+  <ChildContent>
+    <p>Customize the Dark theme appearance.</p>
+    <ApiTable Parameters="@_darkVariables" />
+  </ChildContent>
 </DocSection>
 
 <!-- LIGHT THEME VARIABLES -->
-<DocSection Title="Light Theme Variables" Icon="☀️">
-  <p>Customize the Light theme appearance.</p>
-  <ApiTable Parameters="@_lightVariables" />
+<DocSection Title="Light Theme Variables">
+  <IconContent>@Icons.Sun</IconContent>
+  <ChildContent>
+    <p>Customize the Light theme appearance.</p>
+    <ApiTable Parameters="@_lightVariables" />
+  </ChildContent>
 </DocSection>
 
 <!-- HOW TO OVERRIDE -->
-<DocSection Title="How to Override" Icon="🎯">
-  <p>There are several ways to override CSS variables:</p>
+<DocSection Title="How to Override">
+  <IconContent>@Icons.Target</IconContent>
+  <ChildContent>
+    <p>There are several ways to override CSS variables:</p>
 
-  <h4 class="bz-mt-2">Method 1: Global Override</h4>
-  <p>Override in your <code>app.css</code> or global stylesheet:</p>
-  <CodeBlock Language="css" Code="@_globalOverride" />
+    <h4 class="bz-mt-2">Method 1: Global Override</h4>
+    <p>Override in your <code>app.css</code> or global stylesheet:</p>
+    <CodeBlock Language="css" Code="@_globalOverride" />
 
-  <h4 class="bz-mt-2">Method 2: Scoped Override</h4>
-  <p>Override for a specific carousel using <code>CssClass</code>:</p>
-  <CodeBlock Language="razor" Code="@_scopedOverrideRazor" />
-  <CodeBlock Language="css" Code="@_scopedOverrideCss" />
+    <h4 class="bz-mt-2">Method 2: Scoped Override</h4>
+    <p>Override for a specific carousel using <code>CssClass</code>:</p>
+    <CodeBlock Language="razor" Code="@_scopedOverrideRazor" />
+    <CodeBlock Language="css" Code="@_scopedOverrideCss" />
 
-  <h4 class="bz-mt-2">Method 3: Inline Style</h4>
-  <p>For quick adjustments:</p>
-  <CodeBlock Language="razor" Code="@_inlineOverride" />
+    <h4 class="bz-mt-2">Method 3: Inline Style</h4>
+    <p>For quick adjustments:</p>
+    <CodeBlock Language="razor" Code="@_inlineOverride" />
+  </ChildContent>
 </DocSection>
 
 <!-- RESPONSIVE BREAKPOINTS -->
-<DocSection Title="Responsive Breakpoints" Icon="📱">
-  <p>BlazzyMotion automatically adapts to different screen sizes using these breakpoints:</p>
-  <ApiTable Parameters="@_breakpoints" />
+<DocSection Title="Responsive Breakpoints">
+  <IconContent>@Icons.Smartphone</IconContent>
+  <ChildContent>
+    <p>BlazzyMotion automatically adapts to different screen sizes using these breakpoints:</p>
+    <ApiTable Parameters="@_breakpoints" />
 
-  <h4 class="bz-mt-2">Custom Responsive Values</h4>
-  <CodeBlock Language="css" Code="@_customResponsive" />
+    <h4 class="bz-mt-2">Custom Responsive Values</h4>
+    <CodeBlock Language="css" Code="@_customResponsive" />
+  </ChildContent>
 </DocSection>
 
 <!-- COMPLETE REFERENCE -->
-<DocSection Title="Complete Variable Reference" Icon="📚">
-  <p>Copy this block to your CSS for full customization:</p>
-  <CodeBlock Language="css" Code="@_completeReference" />
+<DocSection Title="Complete Variable Reference">
+  <IconContent>@Icons.Library</IconContent>
+  <ChildContent>
+    <p>Copy this block to your CSS for full customization:</p>
+    <CodeBlock Language="css" Code="@_completeReference" />
+  </ChildContent>
 </DocSection>
 
 <!-- NEXT STEPS -->
@@ -94,7 +124,7 @@
   <ChildContent>
     <div class="bz-flex bz-gap-2" style="flex-wrap: wrap;">
       <a href="/docs/examples" class="bz-btn bz-btn--primary">
-        View Examples →
+        View Examples
       </a>
       <a href="/docs/theming" class="bz-btn bz-btn--secondary">
         Theming Guide
@@ -236,8 +266,8 @@ new() { Name = "Mobile", Type = "< 600px", Default = "—", Description = "Compa
     --bzc-glass-blur: 12px;
 
     /* Dark Theme */
-    --bzc-dark-bg: linear-gradient(135deg, 
-        rgba(20, 20, 25, 0.98), 
+    --bzc-dark-bg: linear-gradient(135deg,
+        rgba(20, 20, 25, 0.98),
         rgba(30, 30, 40, 0.98));
     --bzc-dark-border: rgba(255, 255, 255, 0.08);
     --bzc-dark-shadow: 0 10px 40px rgba(0, 0, 0, 0.6);

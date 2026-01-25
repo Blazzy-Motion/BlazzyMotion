@@ -1,59 +1,73 @@
-﻿@page "/docs/theming"
+@page "/docs/theming"
+@using BlazzyMotion.Demo.Icons
 
 <PageTitle>Theming - BlazzyMotion</PageTitle>
 
 <PageHeader Title="Theming"
-            Icon="🎨"
-            Subtitle="Customize the look and feel of BlazzyMotion components" />
+            Subtitle="Customize the look and feel of BlazzyMotion components">
+    <IconContent>@Icons.Palette</IconContent>
+</PageHeader>
 
-<DocSection Title="Built-in Themes" Icon="🎭">
-    <p>BlazzyMotion includes 4 professionally designed themes:</p>
+<DocSection Title="Built-in Themes">
+    <IconContent>@Icons.Masks</IconContent>
+    <ChildContent>
+        <p>BlazzyMotion includes 4 professionally designed themes:</p>
 
-    <div class="bz-theme-grid">
-        <div class="bz-theme-card bz-theme-card--glass">
-            <div class="bz-theme-card__preview"></div>
-            <h4>Glass</h4>
-            <p>Glassmorphism with backdrop blur</p>
-            <code>BzTheme.Glass</code>
+        <div class="bz-theme-grid">
+            <div class="bz-theme-card bz-theme-card--glass">
+                <div class="bz-theme-card__preview"></div>
+                <h4>Glass</h4>
+                <p>Glassmorphism with backdrop blur</p>
+                <code>BzTheme.Glass</code>
+            </div>
+
+            <div class="bz-theme-card bz-theme-card--dark">
+                <div class="bz-theme-card__preview"></div>
+                <h4>Dark</h4>
+                <p>Solid dark gradient with glow</p>
+                <code>BzTheme.Dark</code>
+            </div>
+
+            <div class="bz-theme-card bz-theme-card--light">
+                <div class="bz-theme-card__preview"></div>
+                <h4>Light</h4>
+                <p>Clean light theme</p>
+                <code>BzTheme.Light</code>
+            </div>
+
+            <div class="bz-theme-card bz-theme-card--minimal">
+                <div class="bz-theme-card__preview"></div>
+                <h4>Minimal</h4>
+                <p>No background container</p>
+                <code>BzTheme.Minimal</code>
+            </div>
         </div>
-
-        <div class="bz-theme-card bz-theme-card--dark">
-            <div class="bz-theme-card__preview"></div>
-            <h4>Dark</h4>
-            <p>Solid dark gradient with glow</p>
-            <code>BzTheme.Dark</code>
-        </div>
-
-        <div class="bz-theme-card bz-theme-card--light">
-            <div class="bz-theme-card__preview"></div>
-            <h4>Light</h4>
-            <p>Clean light theme</p>
-            <code>BzTheme.Light</code>
-        </div>
-
-        <div class="bz-theme-card bz-theme-card--minimal">
-            <div class="bz-theme-card__preview"></div>
-            <h4>Minimal</h4>
-            <p>No background container</p>
-            <code>BzTheme.Minimal</code>
-        </div>
-    </div>
+    </ChildContent>
 </DocSection>
 
-<DocSection Title="Using Themes" Icon="💡">
-    <CodeBlock Language="razor" Code="@_usageCode" />
+<DocSection Title="Using Themes">
+    <IconContent>@Icons.Lightbulb</IconContent>
+    <ChildContent>
+        <CodeBlock Language="razor" Code="@_usageCode" />
+    </ChildContent>
 </DocSection>
 
-<DocSection Title="CSS Variables" Icon="⚙️">
-    <h4>Glass Theme Variables</h4>
-    <CodeBlock Language="css" Code="@_glassVars" />
+<DocSection Title="CSS Variables">
+    <IconContent>@Icons.Settings</IconContent>
+    <ChildContent>
+        <h4>Glass Theme Variables</h4>
+        <CodeBlock Language="css" Code="@_glassVars" />
+    </ChildContent>
 </DocSection>
 
-<DocSection Title="Creating a Custom Theme" Icon="🖌️">
-    <CodeBlock Language="css" Code="@_customTheme" />
+<DocSection Title="Creating a Custom Theme">
+    <IconContent>@Icons.Pen</IconContent>
+    <ChildContent>
+        <CodeBlock Language="css" Code="@_customTheme" />
 
-    <p class="bz-mt-2">Apply with <code>CssClass</code>:</p>
-    <CodeBlock Language="razor" Code="@_customUsage" />
+        <p class="bz-mt-2">Apply with <code>CssClass</code>:</p>
+        <CodeBlock Language="razor" Code="@_customUsage" />
+    </ChildContent>
 </DocSection>
 
 @code {

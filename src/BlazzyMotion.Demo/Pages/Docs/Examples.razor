@@ -3,96 +3,132 @@
 @using BlazzyMotion.Carousel.Components
 @using BlazzyMotion.Demo.Model
 @using BlazzyMotion.Demo.Services
+@using BlazzyMotion.Demo.Icons
 
 <PageTitle>Examples - BlazzyMotion</PageTitle>
 
-<PageHeader Title="Examples" Icon="💡" Subtitle="Copy-paste examples for common use cases" Version="@AppVersions.Carousel"
-  Framework="@AppVersions.DotNetVersion" />
+<PageHeader Title="Examples" Subtitle="Copy-paste examples for common use cases" Version="@AppVersions.Carousel"
+  Framework="@AppVersions.DotNetVersion">
+  <IconContent>@Icons.Lightbulb</IconContent>
+</PageHeader>
 
 <!-- BASIC USAGE -->
-<DocSection Title="Basic Usage" Icon="🎯">
-  <p>The simplest way to use BzCarousel with automatic template generation.</p>
+<DocSection Title="Basic Usage">
+  <IconContent>@Icons.Target</IconContent>
+  <ChildContent>
+    <p>The simplest way to use BzCarousel with automatic template generation.</p>
 
-  <h4 class="bz-mt-2">Model</h4>
-  <CodeBlock Language="csharp" Code="@_basicModel" />
+    <h4 class="bz-mt-2">Model</h4>
+    <CodeBlock Language="csharp" Code="@_basicModel" />
 
-  <h4 class="bz-mt-2">Component</h4>
-  <CodeBlock Language="razor" Code="@_basicUsage" />
+    <h4 class="bz-mt-2">Component</h4>
+    <CodeBlock Language="razor" Code="@_basicUsage" />
+  </ChildContent>
 </DocSection>
 
 <!-- MOVIE GALLERY -->
-<DocSection Title="Movie Gallery" Icon="🎬">
-  <p>A complete movie gallery with selection handling.</p>
+<DocSection Title="Movie Gallery">
+  <IconContent>@Icons.Film</IconContent>
+  <ChildContent>
+    <p>A complete movie gallery with selection handling.</p>
 
-  <h4 class="bz-mt-2">Model</h4>
-  <CodeBlock Language="csharp" Code="@_movieModel" />
+    <h4 class="bz-mt-2">Model</h4>
+    <CodeBlock Language="csharp" Code="@_movieModel" />
 
-  <h4 class="bz-mt-2">Component</h4>
-  <CodeBlock Language="razor" Code="@_movieGallery" />
+    <h4 class="bz-mt-2">Component</h4>
+    <CodeBlock Language="razor" Code="@_movieGallery" />
+  </ChildContent>
 </DocSection>
 
 <!-- PRODUCT SHOWCASE -->
-<DocSection Title="Product Showcase" Icon="🛍️">
-  <p>E-commerce product carousel with Light theme.</p>
+<DocSection Title="Product Showcase">
+  <IconContent>@Icons.ShoppingBag</IconContent>
+  <ChildContent>
+    <p>E-commerce product carousel with Light theme.</p>
 
-  <h4 class="bz-mt-2">Model</h4>
-  <CodeBlock Language="csharp" Code="@_productModel" />
+    <h4 class="bz-mt-2">Model</h4>
+    <CodeBlock Language="csharp" Code="@_productModel" />
 
-  <h4 class="bz-mt-2">Component</h4>
-  <CodeBlock Language="razor" Code="@_productShowcase" />
+    <h4 class="bz-mt-2">Component</h4>
+    <CodeBlock Language="razor" Code="@_productShowcase" />
+  </ChildContent>
 </DocSection>
 
 <!-- CUSTOM ITEM TEMPLATE -->
-<DocSection Title="Custom Item Template" Icon="🎨">
-  <p>Full control over slide rendering with custom templates.</p>
-  <CodeBlock Language="razor" Code="@_customTemplate" />
+<DocSection Title="Custom Item Template">
+  <IconContent>@Icons.Palette</IconContent>
+  <ChildContent>
+    <p>Full control over slide rendering with custom templates.</p>
+    <CodeBlock Language="razor" Code="@_customTemplate" />
+  </ChildContent>
 </DocSection>
 
 <!-- PREVIEW PANEL PATTERN -->
-<DocSection Title="Preview Panel Pattern" Icon="👁️">
-  <p>Show details while browsing, navigate only on click.</p>
-  <CodeBlock Language="razor" Code="@_previewPanel" />
+<DocSection Title="Preview Panel Pattern">
+  <IconContent>@Icons.Eye</IconContent>
+  <ChildContent>
+    <p>Show details while browsing, navigate only on click.</p>
+    <CodeBlock Language="razor" Code="@_previewPanel" />
+  </ChildContent>
 </DocSection>
 
 <!-- THEME SWITCHING -->
-<DocSection Title="Theme Switching" Icon="🎭">
-  <p>Allow users to switch between themes dynamically.</p>
-  <CodeBlock Language="razor" Code="@_themeSwitching" />
+<DocSection Title="Theme Switching">
+  <IconContent>@Icons.Masks</IconContent>
+  <ChildContent>
+    <p>Allow users to switch between themes dynamically.</p>
+    <CodeBlock Language="razor" Code="@_themeSwitching" />
+  </ChildContent>
 </DocSection>
 
 <!-- CUSTOM LOADING STATE -->
-<DocSection Title="Custom Loading State" Icon="⏳">
-  <p>Provide custom loading UI while data is being fetched.</p>
-  <CodeBlock Language="razor" Code="@_customLoading" />
+<DocSection Title="Custom Loading State">
+  <IconContent>@Icons.Hourglass</IconContent>
+  <ChildContent>
+    <p>Provide custom loading UI while data is being fetched.</p>
+    <CodeBlock Language="razor" Code="@_customLoading" />
+  </ChildContent>
 </DocSection>
 
 <!-- CUSTOM EMPTY STATE -->
-<DocSection Title="Custom Empty State" Icon="📭">
-  <p>Handle empty data gracefully with custom messaging.</p>
-  <CodeBlock Language="razor" Code="@_customEmpty" />
+<DocSection Title="Custom Empty State">
+  <IconContent>@Icons.MailboxEmpty</IconContent>
+  <ChildContent>
+    <p>Handle empty data gracefully with custom messaging.</p>
+    <CodeBlock Language="razor" Code="@_customEmpty" />
+  </ChildContent>
 </DocSection>
 
 <!-- ADVANCED CONFIGURATION -->
-<DocSection Title="Advanced Configuration" Icon="⚙️">
-  <p>Fine-grained control using BzCarouselOptions.</p>
-  <CodeBlock Language="razor" Code="@_advancedConfig" />
+<DocSection Title="Advanced Configuration">
+  <IconContent>@Icons.Settings</IconContent>
+  <ChildContent>
+    <p>Fine-grained control using BzCarouselOptions.</p>
+    <CodeBlock Language="razor" Code="@_advancedConfig" />
+  </ChildContent>
 </DocSection>
 
 <!-- MOBILE OPTIMIZATION -->
-<DocSection Title="Mobile Optimization" Icon="📱">
-  <p>Customize touch behavior for better mobile experience.</p>
-  <CodeBlock Language="razor" Code="@_mobileOptimization" />
+<DocSection Title="Mobile Optimization">
+  <IconContent>@Icons.Smartphone</IconContent>
+  <ChildContent>
+    <p>Customize touch behavior for better mobile experience.</p>
+    <CodeBlock Language="razor" Code="@_mobileOptimization" />
+  </ChildContent>
 </DocSection>
 
 <!-- TEAM MEMBERS -->
-<DocSection Title="Team Members" Icon="👥">
-  <p>Display team members with minimal styling.</p>
+<DocSection Title="Team Members">
+  <IconContent>@Icons.UsersGroup</IconContent>
+  <ChildContent>
+    <p>Display team members with minimal styling.</p>
 
-  <h4 class="bz-mt-2">Model</h4>
-  <CodeBlock Language="csharp" Code="@_teamModel" />
+    <h4 class="bz-mt-2">Model</h4>
+    <CodeBlock Language="csharp" Code="@_teamModel" />
 
-  <h4 class="bz-mt-2">Component</h4>
-  <CodeBlock Language="razor" Code="@_teamCarousel" />
+    <h4 class="bz-mt-2">Component</h4>
+    <CodeBlock Language="razor" Code="@_teamCarousel" />
+  </ChildContent>
 </DocSection>
 
 <!-- NEXT STEPS -->
@@ -107,7 +143,7 @@
   <ChildContent>
     <div class="bz-flex bz-gap-2" style="flex-wrap: wrap;">
       <a href="/docs/api" class="bz-btn bz-btn--primary">
-        API Reference →
+        API Reference
       </a>
       <a href="/" class="bz-btn bz-btn--secondary">
         Live Demo
@@ -127,7 +163,7 @@ public class Movie
 {
     [BzImage]
     public string Poster { get; set; } = """";
-    
+
     [BzTitle]
     public string Title { get; set; } = """";
 }";
@@ -150,10 +186,10 @@ public class Movie
 {
     [BzImage]
     public string Poster { get; set; } = """";
-    
+
     [BzTitle]
     public string Title { get; set; } = """";
-    
+
     public int Year { get; set; }
     public string Director { get; set; } = """";
 }";
@@ -171,7 +207,7 @@ public class Movie
 
 @code {
     private Movie? selectedMovie;
-    
+
     private void HandleMovieClick(Movie movie)
     {
         selectedMovie = movie;
@@ -183,10 +219,10 @@ public class Movie
 {
     [BzImage]
     public string ImageUrl { get; set; } = """";
-    
+
     [BzTitle]
     public string Name { get; set; } = """";
-    
+
     public decimal Price { get; set; }
     public string Category { get; set; } = """";
 }";
@@ -247,7 +283,7 @@ public class Movie
                 SelectOnScroll=""false""
                 OnItemSelected=""NavigateToMovie""
                 OnActiveItemChanged=""ShowPreview"" />
-    
+
     <div class=""preview-panel"">
         @if (previewMovie != null)
         {
@@ -263,12 +299,12 @@ public class Movie
 
 @code {
     private Movie? previewMovie;
-    
+
     private void ShowPreview(Movie movie)
     {
         previewMovie = movie;  // Updates on every scroll
     }
-    
+
     private void NavigateToMovie(Movie movie)
     {
         // Only fires on click
@@ -278,10 +314,10 @@ public class Movie
 
   // THEME SWITCHING
   private string _themeSwitching = @"<div class=""theme-buttons"">
-    <button @onclick=""() => currentTheme = BzTheme.Glass"">🔮 Glass</button>
-    <button @onclick=""() => currentTheme = BzTheme.Dark"">🌙 Dark</button>
-    <button @onclick=""() => currentTheme = BzTheme.Light"">☀️ Light</button>
-    <button @onclick=""() => currentTheme = BzTheme.Minimal"">〰️ Minimal</button>
+    <button @onclick=""() => currentTheme = BzTheme.Glass"">Glass</button>
+    <button @onclick=""() => currentTheme = BzTheme.Dark"">Dark</button>
+    <button @onclick=""() => currentTheme = BzTheme.Light"">Light</button>
+    <button @onclick=""() => currentTheme = BzTheme.Minimal"">Minimal</button>
 </div>
 
 <BzCarousel Items=""@movies"" Theme=""@currentTheme"" />
@@ -302,7 +338,7 @@ public class Movie
 
 @code {
     private List<Movie>? asyncMovies;
-    
+
     protected override async Task OnInitializedAsync()
     {
         // Simulate API call
@@ -315,7 +351,7 @@ public class Movie
   private string _customEmpty = @"<BzCarousel Items=""@filteredMovies"">
     <EmptyTemplate>
         <div class=""empty-state"">
-            <span class=""icon"">🎬</span>
+            <span class=""icon"">No results</span>
             <h3>No movies found</h3>
             <p>Try adjusting your filters or search terms.</p>
             <button @onclick=""ClearFilters"">Clear Filters</button>
@@ -349,13 +385,13 @@ public class Movie
     {
         // More deliberate swipe required
         Threshold = 15,
-        
+
         // Disable quick flicks for stability
         ShortSwipes = false,
-        
+
         // Lighter edge resistance
         ResistanceRatio = 0.75,
-        
+
         // Need to swipe 40% to advance
         LongSwipesRatio = 0.4
     };
@@ -366,10 +402,10 @@ public class Movie
 {
     [BzImage]
     public string Photo { get; set; } = """";
-    
+
     [BzTitle]
     public string Name { get; set; } = """";
-    
+
     public string Position { get; set; } = """";
     public string LinkedIn { get; set; } = """";
 }";

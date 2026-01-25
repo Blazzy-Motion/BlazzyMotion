@@ -1,58 +1,72 @@
-﻿@page "/docs/quick-start"
+@page "/docs/quick-start"
+@using BlazzyMotion.Demo.Icons
 
 <PageTitle>Quick Start - BlazzyMotion</PageTitle>
 
 <PageHeader Title="Quick Start"
-            Icon="🚀"
-            Subtitle="Get up and running with BlazzyMotion in 5 minutes" />
+            Subtitle="Get up and running with BlazzyMotion in 5 minutes">
+    <IconContent>@Icons.Rocket</IconContent>
+</PageHeader>
 
-<DocSection Title="Zero Configuration Magic" Icon="✨">
-    <p>BlazzyMotion uses <strong>Source Generators</strong> to automatically create item templates from your data models.</p>
+<DocSection Title="Zero Configuration Magic">
+    <IconContent>@Icons.Sparkles</IconContent>
+    <ChildContent>
+        <p>BlazzyMotion uses <strong>Source Generators</strong> to automatically create item templates from your data models.</p>
 
-    <div class="bz-callout">
-        <strong>How it works:</strong> When you mark a property with <code>[BzImage]</code>, the Source Generator creates a registration function at compile-time.
-    </div>
+        <div class="bz-callout">
+            <strong>How it works:</strong> When you mark a property with <code>[BzImage]</code>, the Source Generator creates a registration function at compile-time.
+        </div>
+    </ChildContent>
 </DocSection>
 
-<DocSection Title="Step 1: Define Your Model" Icon="1️⃣">
-    <p>Create a model class and mark the image property with <code>[BzImage]</code>:</p>
+<DocSection Title="Step 1: Define Your Model">
+    <IconContent>@Icons.CircleOne</IconContent>
+    <ChildContent>
+        <p>Create a model class and mark the image property with <code>[BzImage]</code>:</p>
 
-    <CodeBlock Language="csharp" Code="@_step1Code" />
+        <CodeBlock Language="csharp" Code="@_step1Code" />
+    </ChildContent>
 </DocSection>
 
-<DocSection Title="Step 2: Use the Component" Icon="2️⃣">
-    <p>Just pass your items to the component:</p>
+<DocSection Title="Step 2: Use the Component">
+    <IconContent>@Icons.CircleTwo</IconContent>
+    <ChildContent>
+        <p>Just pass your items to the component:</p>
 
-    <CodeBlock Language="razor" Code="@_step2Code" />
+        <CodeBlock Language="razor" Code="@_step2Code" />
+    </ChildContent>
 </DocSection>
 
-<DocSection Title="Step 3: Choose a Theme" Icon="3️⃣">
-    <p>BlazzyMotion includes 4 beautiful themes:</p>
+<DocSection Title="Step 3: Choose a Theme">
+    <IconContent>@Icons.CircleThree</IconContent>
+    <ChildContent>
+        <p>BlazzyMotion includes 4 beautiful themes:</p>
 
-    <div class="bz-theme-grid">
-        <div class="bz-theme-card">
-            <span class="bz-theme-card__icon">🔮</span>
-            <span class="bz-theme-card__name">Glass</span>
-            <span class="bz-theme-card__desc">Glassmorphism with blur</span>
+        <div class="bz-theme-grid">
+            <div class="bz-theme-card">
+                <span class="bz-theme-card__icon">@Icons.Crystal</span>
+                <span class="bz-theme-card__name">Glass</span>
+                <span class="bz-theme-card__desc">Glassmorphism with blur</span>
+            </div>
+            <div class="bz-theme-card">
+                <span class="bz-theme-card__icon">@Icons.Moon</span>
+                <span class="bz-theme-card__name">Dark</span>
+                <span class="bz-theme-card__desc">Solid dark gradient</span>
+            </div>
+            <div class="bz-theme-card">
+                <span class="bz-theme-card__icon">@Icons.Sun</span>
+                <span class="bz-theme-card__name">Light</span>
+                <span class="bz-theme-card__desc">Clean light theme</span>
+            </div>
+            <div class="bz-theme-card">
+                <span class="bz-theme-card__icon">@Icons.Minus</span>
+                <span class="bz-theme-card__name">Minimal</span>
+                <span class="bz-theme-card__desc">No background</span>
+            </div>
         </div>
-        <div class="bz-theme-card">
-            <span class="bz-theme-card__icon">🌙</span>
-            <span class="bz-theme-card__name">Dark</span>
-            <span class="bz-theme-card__desc">Solid dark gradient</span>
-        </div>
-        <div class="bz-theme-card">
-            <span class="bz-theme-card__icon">☀️</span>
-            <span class="bz-theme-card__name">Light</span>
-            <span class="bz-theme-card__desc">Clean light theme</span>
-        </div>
-        <div class="bz-theme-card">
-            <span class="bz-theme-card__icon">〰️</span>
-            <span class="bz-theme-card__name">Minimal</span>
-            <span class="bz-theme-card__desc">No background</span>
-        </div>
-    </div>
 
-    <CodeBlock Language="razor" Code="@_themeCode" />
+        <CodeBlock Language="razor" Code="@_themeCode" />
+    </ChildContent>
 </DocSection>
 
 <DocSection Title="Handle Item Selection">
@@ -75,7 +89,7 @@
   </IconContent>
   <ChildContent>
     <div class="bz-flex bz-gap-2" style="flex-wrap: wrap;">
-        <a href="/" class="bz-btn bz-btn--primary">View Live Demo →</a>
+        <a href="/" class="bz-btn bz-btn--primary">View Live Demo</a>
         <a href="/docs/carousel" class="bz-btn bz-btn--secondary">Full Documentation</a>
     </div>
   </ChildContent>
