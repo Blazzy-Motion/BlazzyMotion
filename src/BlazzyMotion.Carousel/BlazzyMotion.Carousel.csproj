@@ -6,7 +6,7 @@
     <PackageVersion>$(BlazzyCarouselVersion)</PackageVersion>
     <PackageId>BlazzyMotion.Carousel</PackageId>
     <Title>BlazzyMotion 3D Carousel</Title>
-    <Description>A beautiful 3D carousel component for Blazor with Glassmorphism design and Coverflow effect. Features zero-config setup with [BzImage] attribute and automatic template generation via Source Generator. Live demo: https://blazzy-motion.github.io/BlazzyMotion/</Description>
+    <Description>A beautiful 3D carousel component for Blazor with Glassmorphism design and Coverflow effect. Features zero-config setup with [BzImage] attribute and automatic template generation via Source Generator. Live demo: https://blazzymotion.com/</Description>
     <PackageTags>blazor;carousel;3d;swiper;coverflow;ui;component;glassmorphism;source-generator</PackageTags>
     <PackageIcon>icon.png</PackageIcon>
     <PackageReadmeFile>README.md</PackageReadmeFile>

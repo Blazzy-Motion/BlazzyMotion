@@ -56,7 +56,7 @@ public partial class MyCustomComponent<TItem> : BzComponentBase
 
 For complete documentation, examples, and live demos, visit:
 
-- [Documentation & Live Demo](https://blazzy-motion.github.io/BlazzyMotion/)
+- [Documentation & Live Demo](https://blazzymotion.com/)
 - [GitHub Repository](https://github.com/Blazzy-Motion/BlazzyMotion)
 
 ## License
