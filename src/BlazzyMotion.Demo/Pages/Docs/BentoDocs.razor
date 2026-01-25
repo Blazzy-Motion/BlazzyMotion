@@ -84,6 +84,26 @@
     </ChildContent>
 </DocSection>
 
+<DocSection Title="API Reference - BzBentoQuote">
+    <IconContent>@Icons.Quote</IconContent>
+    <ChildContent>
+        <p>Testimonials and quotes with author info:</p>
+        <CodeBlock Language="razor" Code="@_quoteExample" />
+        <h4 class="bz-mt-3">Parameters</h4>
+        <ApiTable Parameters="@_quoteParams" />
+    </ChildContent>
+</DocSection>
+
+<DocSection Title="API Reference - BzBentoItem">
+    <IconContent>@Icons.Layout</IconContent>
+    <ChildContent>
+        <p>Generic container for custom content (embed BzCarousel, charts, etc.):</p>
+        <CodeBlock Language="razor" Code="@_itemExample" />
+        <h4 class="bz-mt-3">Parameters</h4>
+        <p>Inherits all Common Item Parameters (ColSpan, RowSpan, Order, CssClass, OnClick).</p>
+    </ChildContent>
+</DocSection>
+
 <DocSection Title="Common Item Parameters">
     <IconContent>@Icons.Wrench</IconContent>
     <ChildContent>
@@ -110,11 +130,9 @@
 @code {
     private string _itemsMode = @"<BzBento TItem=""Movie""
          Items=""@_movies""
-         Theme=""BzTheme.Glass""
-         Columns=""4""
          OnItemSelected=""HandleSelection"" />";
 
-    private string _compositionMode = @"<BzBento TItem=""object"" Theme=""BzTheme.Glass"" Columns=""4"">
+    private string _compositionMode = @"<BzBento TItem=""object"">
     <BzBentoCard Image=""hero.jpg"" Title=""Featured"" ColSpan=""2"" RowSpan=""2"" />
     <BzBentoMetric Value=""1,234"" Label=""Users"">
         <Icon><i class=""bi bi-people""></i></Icon>
@@ -142,6 +160,17 @@
     <Icon><i class=""bi bi-broadcast""></i></Icon>
 </BzBentoFeature>";
 
+    private string _quoteExample = @"<BzBentoQuote Text=""BlazzyMotion transformed our dashboard!""
+              Author=""Jane Doe""
+              Role=""CTO, TechCorp""
+              Avatar=""images/avatar.jpg""
+              ColSpan=""2"" />";
+
+    private string _itemExample = @"<BzBentoItem ColSpan=""2"" RowSpan=""2"">
+    <!-- Embed any content: charts, carousels, custom HTML -->
+    <BzCarousel TItem=""Movie"" Items=""@_movies"" />
+</BzBentoItem>";
+
     private string _cssVars = @":root {
     /* Grid sizing */
     --bzb-max-width: 1200px;
@@ -162,11 +191,10 @@
     --bzb-feature-label-size: 0.95rem;
 }";
 
-    private string _carouselEmbed = @"<BzBento TItem=""object"" Theme=""BzTheme.Glass"" Columns=""4"">
+    private string _carouselEmbed = @"<BzBento TItem=""object"">
     <BzBentoItem ColSpan=""2"" RowSpan=""2"">
         <BzCarousel TItem=""Company""
                     Items=""@_companies""
-                    Theme=""BzTheme.Glass""
                     OnItemSelected=""HandleCompanyChange"" />
     </BzBentoItem>
     <BzBentoMetric Value=""@_activeCompany.Revenue"" Label=""Revenue"" />
@@ -216,6 +244,15 @@
         new() { Name = "Description", Type = "string?", Description = "Feature description" },
         new() { Name = "Icon", Type = "RenderFragment?", Description = "Icon content" },
         new() { Name = "IconText", Type = "string?", Description = "Simple emoji/text icon" }
+    };
+
+    private List<ApiTable.ApiParameter> _quoteParams = new()
+    {
+        new() { Name = "Item", Type = "TItem?", Description = "Item to display (auto-mapped with attributes)" },
+        new() { Name = "Text", Type = "string?", Description = "Override quote text" },
+        new() { Name = "Author", Type = "string?", Description = "Override author name" },
+        new() { Name = "Role", Type = "string?", Description = "Author's role or title" },
+        new() { Name = "Avatar", Type = "string?", Description = "Override avatar URL" }
     };
 
     private List<ApiTable.ApiParameter> _commonItemParams = new()

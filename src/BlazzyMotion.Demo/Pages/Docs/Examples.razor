@@ -172,6 +172,15 @@
   </ChildContent>
 </DocSection>
 
+<!-- TESTIMONIALS -->
+<DocSection Title="Testimonials Grid">
+  <IconContent>@Icons.Quote</IconContent>
+  <ChildContent>
+    <p>Display customer testimonials with author info.</p>
+    <CodeBlock Language="razor" Code="@_bentoTestimonials" />
+  </ChildContent>
+</DocSection>
+
 <!-- CAROUSEL IN BENTO -->
 <DocSection Title="Carousel in Bento">
   <IconContent>@Icons.Carousel</IconContent>
@@ -494,7 +503,7 @@ public class Movie
   // BENTO EXAMPLES
   private string _bentoBasic = @"@using BlazzyMotion.Bento.Components
 
-<BzBento TItem=""object"" Theme=""BzTheme.Glass"" Columns=""4"">
+<BzBento TItem=""object"">
     <BzBentoCard Image=""hero.jpg"" Title=""Featured"" ColSpan=""2"" RowSpan=""2"" />
     <BzBentoMetric Value=""1,234"" Label=""Users"" />
     <BzBentoMetric Value=""$48.5K"" Label=""Revenue"" Trend=""+12%"" />
@@ -502,7 +511,7 @@ public class Movie
     <BzBentoFeature Label=""Responsive"" Description=""Mobile-first design"" />
 </BzBento>";
 
-  private string _bentoDashboard = @"<BzBento TItem=""object"" Theme=""BzTheme.Dark"" Columns=""4"" Gap=""20"">
+  private string _bentoDashboard = @"<BzBento TItem=""object"" Theme=""BzTheme.Dark"" Gap=""20"">
     <BzBentoMetric Value=""99.9%"" Label=""Uptime"" Trend=""+0.1%"" ColSpan=""2"">
         <Icon><i class=""bi bi-check-circle""></i></Icon>
     </BzBentoMetric>
@@ -513,7 +522,7 @@ public class Movie
     <BzBentoMetric Value=""98%"" Label=""Satisfaction"" />
 </BzBento>";
 
-  private string _bentoFeatures = @"<BzBento TItem=""object"" Theme=""BzTheme.Glass"" Columns=""3"">
+  private string _bentoFeatures = @"<BzBento TItem=""object"" Columns=""3"">
     <BzBentoFeature Label=""Lightning Fast""
                     Description=""Optimized for 60 FPS animations""
                     ColSpan=""1"">
@@ -531,7 +540,7 @@ public class Movie
     </BzBentoFeature>
 </BzBento>";
 
-  private string _bentoMixed = @"<BzBento TItem=""object"" Theme=""BzTheme.Glass"" Columns=""4"">
+  private string _bentoMixed = @"<BzBento TItem=""object"">
     <!-- Hero card spanning 2x2 -->
     <BzBentoCard Image=""images/hero.webp""
                  Title=""Featured Project""
@@ -548,12 +557,26 @@ public class Movie
                     ColSpan=""2"" />
 </BzBento>";
 
-  private string _bentoWithCarousel = @"<BzBento TItem=""object"" Theme=""BzTheme.Glass"" Columns=""4"">
+  private string _bentoTestimonials = @"<BzBento TItem=""object"" Columns=""3"">
+    <BzBentoQuote Text=""BlazzyMotion transformed our dashboard!""
+                  Author=""Jane Doe""
+                  Role=""CTO, TechCorp""
+                  Avatar=""images/avatar1.jpg"" />
+    <BzBentoQuote Text=""Best Blazor component library we've used.""
+                  Author=""John Smith""
+                  Role=""Lead Developer""
+                  Avatar=""images/avatar2.jpg"" />
+    <BzBentoQuote Text=""Easy to use, beautiful results.""
+                  Author=""Alice Johnson""
+                  Role=""Product Designer""
+                  Avatar=""images/avatar3.jpg"" />
+</BzBento>";
+
+  private string _bentoWithCarousel = @"<BzBento TItem=""object"">
     <!-- Carousel spanning 2 columns and 2 rows -->
     <BzBentoItem ColSpan=""2"" RowSpan=""2"">
         <BzCarousel TItem=""Movie""
                     Items=""@movies""
-                    Theme=""BzTheme.Glass""
                     OnItemSelected=""HandleMovieChange"" />
     </BzBentoItem>
 
@@ -585,8 +608,6 @@ public class Movie
 
   private string _bentoItemsMode = @"<BzBento TItem=""BentoItem""
          Items=""@items""
-         Theme=""BzTheme.Glass""
-         Columns=""4""
          OnItemSelected=""HandleSelection"">
     <ItemTemplate Context=""item"">
         <div class=""custom-bento-item"">
