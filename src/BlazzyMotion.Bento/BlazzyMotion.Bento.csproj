@@ -23,20 +23,8 @@
     <PackageReference Include="Microsoft.AspNetCore.Components.Web" Version="8.0.0" />
   </ItemGroup>
 
-  <!-- Reference to Core for shared infrastructure -->
   <ItemGroup>
     <ProjectReference Include="..\BlazzyMotion.Core\BlazzyMotion.Core.csproj" />
-    <ProjectReference Include="..\BlazzyMotion.SourceGen\BlazzyMotion.SourceGen.csproj"
-                      OutputItemType="Analyzer"
-                      ReferenceOutputAssembly="false" />
-  </ItemGroup>
-
-  <!-- Include Source Generator DLL in package -->
-  <ItemGroup>
-    <None Include="..\BlazzyMotion.SourceGen\bin\$(Configuration)\netstandard2.0\BlazzyMotion.SourceGen.dll"
-          Pack="true"
-          PackagePath="analyzers/dotnet/cs"
-          Visible="false" />
   </ItemGroup>
 
   <!-- Package assets -->
