@@ -1,0 +1,341 @@
+@page "/bento"
+@using BlazzyMotion.Core.Models
+@using BlazzyMotion.Bento.Components
+@using BlazzyMotion.Carousel.Components
+@using Playground.Models
+
+<PageTitle>BzBento Demo - BlazzyMotion</PageTitle>
+
+<div class="bz-home">
+
+    <section style="min-height: auto; padding: 60px 20px; text-align: center;">
+        <h1 style="color: white; font-size: 2.5rem; margin-bottom: 10px;">BzBento Demo</h1>
+        <p style="color: rgba(255,255,255,0.7);">
+            Testing Carousel + Bento packages together
+        </p>
+    </section>
+
+    @* ==================== ITEMS MODE ==================== *@
+    <section class="bzb-presentation">
+
+        <span class="bzb-presentation__label">Items Mode - Zero Config</span>
+
+        <h3 class="bzb-presentation__title">Uniform Grid Layout</h3>
+
+        <div class="bzb-presentation__stage">
+            <BzBento TItem="BentoItem"
+                     Items="@_bentoItems"
+                     Theme="@_currentTheme"
+                     Columns="4"
+                     Gap="16"
+                     OnItemSelected="@OnItemSelected" />
+        </div>
+
+        @if (_selectedItem != null)
+        {
+            <h4 class="bz-selected-title">Selected: @_selectedItem.Title</h4>
+        }
+
+    </section>
+
+    @* ==================== INTERACTIVE DASHBOARD ==================== *@
+    <section class="bzb-presentation" style="padding-top: 40px;">
+
+        <span class="bzb-presentation__label">Interactive Dashboard</span>
+
+        <h3 class="bzb-presentation__title">Swipe to Explore Companies</h3>
+        <p style="color: rgba(255,255,255,0.7); text-align: center; margin-bottom: 30px;">
+            All metrics update in real-time as you browse
+        </p>
+
+        <div class="bzb-presentation__stage">
+            <BzBento TItem="object" Theme="@_currentTheme" Columns="4" Gap="16">
+
+                @* Company Carousel - 2x2 *@
+                <BzBentoItem ColSpan="2" RowSpan="2">
+                    <BzCarousel TItem="CompanyData"
+                                Items="@_companies"
+                                Theme="@_currentTheme"
+                                OnItemSelected="@OnCompanyChanged" />
+                </BzBentoItem>
+
+                @* Dynamic Company Name - shows company logo *@
+                <BzBentoMetric Value="@(_activeCompany?.Name ?? "Swipe")"
+                               Label="Company">
+                    <Icon>@Icons.GetCompanyLogo(_activeCompany?.Name)</Icon>
+                </BzBentoMetric>
+
+                @* Dynamic Revenue *@
+                <BzBentoMetric Value="@(_activeCompany?.Revenue ?? "$0")"
+                               Label="Revenue"
+                               Trend="@(_activeCompany?.RevenueTrend ?? "")">
+                    <Icon>@Icons.Revenue</Icon>
+                </BzBentoMetric>
+
+                @* Dynamic Users *@
+                <BzBentoMetric Value="@(_activeCompany?.Users ?? "0")"
+                               Label="Users"
+                               Trend="@(_activeCompany?.UsersTrend ?? "")">
+                    <Icon>@Icons.Users</Icon>
+                </BzBentoMetric>
+
+                @* Dynamic Growth *@
+                <BzBentoMetric Value="@(_activeCompany?.Growth ?? "0%")"
+                               Label="Growth"
+                               Trend="@(_activeCompany?.GrowthTrend ?? "")">
+                    <Icon>@Icons.Growth</Icon>
+                </BzBentoMetric>
+
+                @* Company Description - shows company logo *@
+                <BzBentoFeature ColSpan="2"
+                                Label="@(_activeCompany?.Name ?? "Select Company")"
+                                Description="@(_activeCompany?.Description ?? "Swipe the carousel to see company details")">
+                    <Icon>@Icons.GetCompanyLogo(_activeCompany?.Name)</Icon>
+                </BzBentoFeature>
+
+                @* Dynamic Rating *@
+                <BzBentoMetric Value="@(_activeCompany?.Rating ?? "0")"
+                               Label="Rating">
+                    <Icon>@Icons.Rating</Icon>
+                </BzBentoMetric>
+
+                @* Dynamic Market Cap *@
+                <BzBentoMetric Value="@(_activeCompany?.MarketCap ?? "$0")"
+                               Label="Market Cap">
+                    <Icon>@Icons.MarketCap</Icon>
+                </BzBentoMetric>
+
+            </BzBento>
+        </div>
+
+    </section>
+
+    @* ==================== COMPOSITION MODE - Manual Layout ==================== *@
+    <section class="bzb-presentation" style="padding-top: 40px;">
+
+        <h3 class="bzb-presentation__title">Composition Mode</h3>
+        <p style="color: rgba(255,255,255,0.7); text-align: center; margin-bottom: 30px;">
+            Use ChildContent with BzBentoCard, BzBentoMetric, BzBentoFeature for complete control
+        </p>
+
+        <div class="bzb-presentation__stage">
+            <BzBento TItem="object" Theme="@_currentTheme" Columns="4" Gap="16">
+                <BzBentoCard TItem="object"
+                             ColSpan="2" RowSpan="2"
+                             Image="images/joker.webp"
+                             Title="Featured"
+                             Description="Hero card with 2x2 span" />
+
+                <BzBentoMetric Value="8" Label="Movies">
+                    <Icon>@Icons.Movies</Icon>
+                </BzBentoMetric>
+
+                <BzBentoMetric Value="4" Label="Themes">
+                    <Icon>@Icons.Themes</Icon>
+                </BzBentoMetric>
+
+                <BzBentoCard TItem="object"
+                             Image="images/venom.webp"
+                             Title="Venom" />
+
+                <BzBentoCard TItem="object"
+                             Image="images/wild-robot.webp"
+                             Title="Wild Robot" />
+
+                <BzBentoQuote TItem="object"
+                              Text="Amazing UI components!"
+                              Author="Dev Community"
+                              Role="GitHub Stars"
+                              Avatar="images/avatar.webp" />
+
+                <BzBentoMetric Value="60" Label="FPS">
+                    <Icon>@Icons.FPS</Icon>
+                </BzBentoMetric>
+
+                <BzBentoFeature ColSpan="2"
+                                Label="Wide Card (2x1)"
+                                Description="Perfect for CTAs or descriptions">
+                    <Icon>@Icons.Layout</Icon>
+                </BzBentoFeature>
+
+                <BzBentoMetric Value="99.9" Label="Uptime" Trend="+2%">
+                    <Icon>@Icons.Uptime</Icon>
+                </BzBentoMetric>
+
+                <BzBentoMetric Value="24/7" Label="Support">
+                    <Icon>@Icons.Support</Icon>
+                </BzBentoMetric>
+
+                <BzBentoMetric Value="50+" Label="Components">
+                    <Icon>@Icons.Components</Icon>
+                </BzBentoMetric>
+
+                <BzBentoMetric Value="0" Label="Dependencies">
+                    <Icon>@Icons.Dependencies</Icon>
+                </BzBentoMetric>
+            </BzBento>
+        </div>
+
+    </section>
+
+</div>
+
+@code {
+    private BzTheme _currentTheme = BzTheme.Glass;
+    private BentoItem? _selectedItem;
+    private CompanyData? _activeCompany;
+
+    protected override void OnInitialized()
+    {
+        // Set initial company so metrics show data on load
+        _activeCompany = _companies.FirstOrDefault();
+    }
+
+    // Static mode items (movies)
+    private List<BentoItem> _bentoItems = new()
+    {
+        new() { Title = "Despicable Me 4", ImageUrl = "images/despicableme.webp" },
+        new() { Title = "Joker", ImageUrl = "images/joker.webp" },
+        new() { Title = "The Platform 2", ImageUrl = "images/the-platform.webp" },
+        new() { Title = "The Substance", ImageUrl = "images/thesubstance.webp" },
+        new() { Title = "Venom", ImageUrl = "images/venom.webp" },
+        new() { Title = "Survive", ImageUrl = "images/survive.webp" },
+        new() { Title = "The Wild Robot", ImageUrl = "images/wild-robot.webp" },
+        new() { Title = "Deadpool & Wolverine", ImageUrl = "images/wolwerine.webp" }
+    };
+
+    // Company data for interactive dashboard - using numeric IDs (more reliable)
+    private List<CompanyData> _companies = new()
+    {
+        new()
+        {
+            Name = "Apple",
+            ImageUrl = "images/companies/apple.webp",
+            Revenue = "$394B",
+            RevenueTrend = "+8%",
+            Users = "2.2B",
+            UsersTrend = "+12%",
+            Growth = "15%",
+            GrowthTrend = "+3%",
+            Rating = "4.8",
+            MarketCap = "$3.0T",
+            Description = "Technology company known for iPhone, Mac",
+            Icon = "🍎"
+        },
+        new()
+        {
+            Name = "Microsoft",
+            ImageUrl = "images/companies/microsoft.webp",
+            Revenue = "$211B",
+            RevenueTrend = "+12%",
+            Users = "1.4B",
+            UsersTrend = "+18%",
+            Growth = "22%",
+            GrowthTrend = "+5%",
+            Rating = "4.6",
+            MarketCap = "$2.8T",
+            Description = "Cloud computing, AI, and enterprise software leader",
+            Icon = "🪟"
+        },
+        new()
+        {
+            Name = "Google",
+            ImageUrl = "images/companies/google.webp",
+            Revenue = "$307B",
+            RevenueTrend = "+10%",
+            Users = "4.3B",
+            UsersTrend = "+5%",
+            Growth = "18%",
+            GrowthTrend = "+2%",
+            Rating = "4.5",
+            MarketCap = "$1.9T",
+            Description = "Search, advertising, and cloud platform giant",
+            Icon = "🔍"
+        },
+        new()
+        {
+            Name = "Amazon",
+            ImageUrl = "images/companies/amazon.webp",
+            Revenue = "$574B",
+            RevenueTrend = "+11%",
+            Users = "310M",
+            UsersTrend = "+8%",
+            Growth = "12%",
+            GrowthTrend = "+4%",
+            Rating = "4.4",
+            MarketCap = "$1.8T",
+            Description = "E-commerce and cloud computing powerhouse",
+            Icon = "📦"
+        },
+        new()
+        {
+            Name = "Tesla",
+            ImageUrl = "images/companies/tesla.webp",
+            Revenue = "$96B",
+            RevenueTrend = "+19%",
+            Users = "5M",
+            UsersTrend = "+35%",
+            Growth = "40%",
+            GrowthTrend = "+15%",
+            Rating = "4.2",
+            MarketCap = "$780B",
+            Description = "Electric vehicles and clean energy innovation",
+            Icon = "⚡"
+        },
+        new()
+        {
+            Name = "Meta",
+            ImageUrl = "images/companies/meta.webp",
+            Revenue = "$134B",
+            RevenueTrend = "+16%",
+            Users = "3.9B",
+            UsersTrend = "+7%",
+            Growth = "21%",
+            GrowthTrend = "+8%",
+            Rating = "4.1",
+            MarketCap = "$1.2T",
+            Description = "Social media and metaverse technology pioneer",
+            Icon = "📱"
+        },
+        new()
+        {
+            Name = "Nvidia",
+            ImageUrl = "images/companies/nvidia.webp",
+            Revenue = "$61B",
+            RevenueTrend = "+126%",
+            Users = "50M",
+            UsersTrend = "+45%",
+            Growth = "85%",
+            GrowthTrend = "+40%",
+            Rating = "4.7",
+            MarketCap = "$1.4T",
+            Description = "AI chips and graphics processing leader",
+            Icon = "🎮"
+        },
+        new()
+        {
+            Name = "Netflix",
+            ImageUrl = "images/companies/netflix.webp",
+            Revenue = "$33B",
+            RevenueTrend = "+7%",
+            Users = "260M",
+            UsersTrend = "+13%",
+            Growth = "9%",
+            GrowthTrend = "+2%",
+            Rating = "4.3",
+            MarketCap = "$250B",
+            Description = "Streaming entertainment and content production",
+            Icon = "🎬"
+        }
+    };
+
+    private void OnItemSelected(BentoItem item)
+    {
+        _selectedItem = item;
+    }
+
+    private void OnCompanyChanged(CompanyData company)
+    {
+        _activeCompany = company;
+    }
+}
