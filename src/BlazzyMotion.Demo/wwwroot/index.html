@@ -1,4 +1,4 @@
-<!DOCTYPE html>
+<!doctype html>
 <html lang="en">
   <head>
     <meta charset="utf-8" />
@@ -59,11 +59,6 @@
       rel="stylesheet"
     />
 
-    <!-- Core CSS from BlazzyMotion.Core library -->
-    <link
-      rel="stylesheet"
-      href="_content/BlazzyMotion.Core/css/blazzy-core.css"
-    />
     <link rel="stylesheet" href="css/app.css" />
     <link href="BlazzyMotion.Demo.styles.css" rel="stylesheet" />
 
@@ -87,7 +82,9 @@
         justify-content: center;
         background: #0f172a;
         z-index: 9999;
-        transition: opacity 0.5s ease-out, visibility 0.5s ease-out;
+        transition:
+          opacity 0.5s ease-out,
+          visibility 0.5s ease-out;
       }
 
       .bz-splash--hidden {
@@ -99,7 +96,8 @@
       .bz-splash__logo {
         width: 120px;
         height: 120px;
-        animation: splash-pulse 2s ease-in-out infinite,
+        animation:
+          splash-pulse 2s ease-in-out infinite,
           splash-glow 2s ease-in-out infinite;
       }
 
@@ -216,7 +214,7 @@
             height: 100vh;
             background: #0f172a;
             color: white;
-            font-family: 'Outfit', sans-serif;
+            font-family: &quot;Outfit&quot;, sans-serif;
             text-align: center;
             padding: 2rem;
           "
