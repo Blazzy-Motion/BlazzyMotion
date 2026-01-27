@@ -1,8 +1,183 @@
 ﻿@page "/"
+@using BlazzyMotion.Core.Models
+@using BlazzyMotion.Carousel.Components
+@using Playground.Models
 
-<PageTitle>Home</PageTitle>
+<PageTitle>BlazzyMotion Playground - Beautiful Blazor UI Components</PageTitle>
 
-<h1>Hello, world!</h1>
+<div class="bz-home">
 
-Welcome to your new app.
+    <section class="bz-hero">
+        <div class="bz-hero__content">
+
+            <h1 class="bz-hero__brand">BlazzyMotion Playground</h1>
+
+            <h2 class="bz-hero__title">Build Beautiful Blazor Interfaces</h2>
+
+            <p class="bz-hero__subtitle">
+                High-performance components with glassmorphism design.
+            </p>
+
+            <div class="bz-hero__actions">
+                <a href="https://github.com/nenad0707/BlazzyMotion" target="_blank" rel="noopener noreferrer" class="bz-btn bz-btn--primary">
+                    @Icons.GitHub
+                    View on GitHub
+                </a>
+                <a href="https://www.nuget.org/packages?q=BlazzyMotion" target="_blank" rel="noopener noreferrer" class="bz-btn bz-btn--secondary">
+                    @Icons.Package
+                    NuGet Packages
+                </a>
+            </div>
+
+            <button class="bz-scroll-indicator" @onclick="ScrollToDemo">
+                <span>View Demo</span>
+                <svg xmlns="http://www.w3.org/2000/svg" width="20" height="20" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2" stroke-linecap="round" stroke-linejoin="round">
+                    <polyline points="6 9 12 15 18 9"></polyline>
+                </svg>
+            </button>
+
+        </div>
+    </section>
+
+    <section class="bz-demo" id="demo">
+
+        <span class="bz-demo__label">Live Preview</span>
+
+        <h3 class="bz-demo__title"><span class="bz-demo__title-icon">@Icons.Carousel</span> BzCarousel</h3>
+
+        <div class="bz-theme-pills">
+            <button class="bz-pill @(_currentTheme == BzTheme.Glass ? "active" : "")"
+                    @onclick="() => ChangeTheme(BzTheme.Glass)">
+                <span class="bz-pill__icon">@Icons.Crystal</span> Glass
+            </button>
+            <button class="bz-pill @(_currentTheme == BzTheme.Dark ? "active" : "")"
+                    @onclick="() => ChangeTheme(BzTheme.Dark)">
+                <span class="bz-pill__icon">@Icons.Moon</span> Dark
+            </button>
+            <button class="bz-pill @(_currentTheme == BzTheme.Light ? "active" : "")"
+                    @onclick="() => ChangeTheme(BzTheme.Light)">
+                <span class="bz-pill__icon">@Icons.Sun</span> Light
+            </button>
+            <button class="bz-pill @(_currentTheme == BzTheme.Minimal ? "active" : "")"
+                    @onclick="() => ChangeTheme(BzTheme.Minimal)">
+                <span class="bz-pill__icon">@Icons.Minus</span> Minimal
+            </button>
+        </div>
+
+        <div class="bz-demo__stage">
+            <BzCarousel TItem="Photo"
+                        Items="@_photos"
+                        Theme="@_currentTheme"
+                        OnItemSelected="@OnItemSelected" />
+        </div>
+
+        @if (_selectedPhoto != null)
+        {
+            <h4 class="bz-selected-title">@_selectedPhoto.Title</h4>
+        }
+
+    </section>
+
+    <section class="bz-features">
+
+        <h3 class="bz-features__heading">Why BlazzyMotion?</h3>
+
+        <div class="bz-features__grid">
+
+            <div class="bz-feature-card">
+                <div class="bz-feature__icon">
+                    <svg xmlns="http://www.w3.org/2000/svg" width="48" height="48" viewBox="0 0 24 24" fill="none" stroke="url(#gradient1)" stroke-width="1.5" stroke-linecap="round" stroke-linejoin="round">
+                        <defs>
+                            <linearGradient id="gradient1" x1="0%" y1="0%" x2="100%" y2="100%">
+                                <stop offset="0%" stop-color="#8b5cf6" />
+                                <stop offset="100%" stop-color="#22d3ee" />
+                            </linearGradient>
+                        </defs>
+                        <polygon points="12 2 2 7 12 12 22 7 12 2"></polygon>
+                        <polyline points="2 17 12 22 22 17"></polyline>
+                        <polyline points="2 12 12 17 22 12"></polyline>
+                    </svg>
+                </div>
+                <h4 class="bz-feature__title">Source Generators</h4>
+                <p class="bz-feature__desc">
+                    Compile-time template generation. No reflection, no runtime overhead.
+                </p>
+            </div>
+
+            <div class="bz-feature-card">
+                <div class="bz-feature__icon">
+                    <svg xmlns="http://www.w3.org/2000/svg" width="48" height="48" viewBox="0 0 24 24" fill="none" stroke="url(#gradient2)" stroke-width="1.5" stroke-linecap="round" stroke-linejoin="round">
+                        <defs>
+                            <linearGradient id="gradient2" x1="0%" y1="0%" x2="100%" y2="100%">
+                                <stop offset="0%" stop-color="#8b5cf6" />
+                                <stop offset="100%" stop-color="#22d3ee" />
+                            </linearGradient>
+                        </defs>
+                        <polygon points="13 2 3 14 12 14 11 22 21 10 12 10 13 2"></polygon>
+                    </svg>
+                </div>
+                <h4 class="bz-feature__title">Zero Config</h4>
+                <p class="bz-feature__desc">
+                    Just add attributes to your model. That's it.
+                </p>
+            </div>
+
+            <div class="bz-feature-card">
+                <div class="bz-feature__icon">
+                    <svg xmlns="http://www.w3.org/2000/svg" width="48" height="48" viewBox="0 0 24 24" fill="none" stroke="url(#gradient3)" stroke-width="1.5" stroke-linecap="round" stroke-linejoin="round">
+                        <defs>
+                            <linearGradient id="gradient3" x1="0%" y1="0%" x2="100%" y2="100%">
+                                <stop offset="0%" stop-color="#8b5cf6" />
+                                <stop offset="100%" stop-color="#22d3ee" />
+                            </linearGradient>
+                        </defs>
+                        <circle cx="12" cy="12" r="10"></circle>
+                        <polyline points="12 6 12 12 16 14"></polyline>
+                    </svg>
+                </div>
+                <h4 class="bz-feature__title">High Performance</h4>
+                <p class="bz-feature__desc">
+                    Hardware-accelerated 3D animations running at smooth 60 FPS.
+                </p>
+            </div>
+
+        </div>
+
+    </section>
+
+</div>
+
+@code {
+    [Inject] private IJSRuntime JS { get; set; } = default!;
+
+    private BzTheme _currentTheme = BzTheme.Glass;
+    private Photo? _selectedPhoto;
+
+    private List<Photo> _photos = new()
+    {
+        new Photo { Id = 1, Title = "Mountain", Url = "https://picsum.photos/800/600?random=1" },
+        new Photo { Id = 2, Title = "Ocean", Url = "https://picsum.photos/800/600?random=2" },
+        new Photo { Id = 3, Title = "Forest", Url = "https://picsum.photos/800/600?random=3" },
+        new Photo { Id = 4, Title = "City", Url = "https://picsum.photos/800/600?random=4" },
+        new Photo { Id = 5, Title = "Desert", Url = "https://picsum.photos/800/600?random=5" },
+        new Photo { Id = 6, Title = "Lake", Url = "https://picsum.photos/800/600?random=6" },
+        new Photo { Id = 7, Title = "Valley", Url = "https://picsum.photos/800/600?random=7" },
+        new Photo { Id = 8, Title = "Beach", Url = "https://picsum.photos/800/600?random=8" }
+    };
+
+    private void OnItemSelected(Photo selectedItem)
+    {
+        _selectedPhoto = selectedItem;
+    }
+
+    private void ChangeTheme(BzTheme newTheme)
+    {
+        _currentTheme = newTheme;
+    }
+
+    private async Task ScrollToDemo()
+    {
+        await JS.InvokeVoidAsync("eval", "document.getElementById('demo').scrollIntoView({ behavior: 'smooth' })");
+    }
+}
 

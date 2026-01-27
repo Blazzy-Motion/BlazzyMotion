@@ -4,6 +4,8 @@ namespace Playground.Models;
 
 public class Photo
 {
+    public int Id { get; set; }
+
     [BzImage]
     public string Url { get; set; } = "";
 

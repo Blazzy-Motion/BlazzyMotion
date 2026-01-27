@@ -1,87 +1,412 @@
 @page "/lab"
-@using BlazzyMotion.Carousel.Models
+@using BlazzyMotion.Core.Models
+@using BlazzyMotion.Carousel.Components
+@using BlazzyMotion.Bento.Components
+@using Playground.Models
+@using Playground.Services
 
-<PageTitle>Carousel Lab</PageTitle>
+<PageTitle>Component Lab - BlazzyMotion Playground</PageTitle>
 
-<div class="container-fluid">
-    <div class="row">
-        <div class="col-md-3">
-            <div class="card">
-                <div class="card-header">Controls</div>
-                <div class="card-body">
-                    <div class="mb-3">
-                        <label>Theme</label>
-                        <select class="form-select" @bind="theme">
-                            <option value="@BzTheme.Glass">Glass</option>
-                            <option value="@BzTheme.Dark">Dark</option>
-                            <option value="@BzTheme.Light">Light</option>
-                            <option value="@BzTheme.Minimal">Minimal</option>
-                        </select>
+<div class="bz-lab">
+
+    <!-- Mobile Overlay -->
+    <div class="bz-lab__overlay @(!sidebarCollapsed ? "bz-lab__overlay--visible" : "")" @onclick="CloseSidebar"></div>
+
+    <div class="bz-lab__sidebar @(sidebarCollapsed ? "bz-lab__sidebar--collapsed" : "")">
+
+        <!-- Toggle Button on Sidebar Edge -->
+        <button class="bz-lab__sidebar-toggle" @onclick="ToggleSidebar" title="@(sidebarCollapsed ? "Show Controls" : "Hide Controls")">
+            @if (sidebarCollapsed)
+            {
+                <svg xmlns="http://www.w3.org/2000/svg" width="20" height="20" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2" stroke-linecap="round" stroke-linejoin="round">
+                    <polyline points="9 18 15 12 9 6"></polyline>
+                </svg>
+            }
+            else
+            {
+                <svg xmlns="http://www.w3.org/2000/svg" width="20" height="20" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2" stroke-linecap="round" stroke-linejoin="round">
+                    <polyline points="15 18 9 12 15 6"></polyline>
+                </svg>
+            }
+        </button>
+
+        <div class="bz-lab__panel">
+
+            <!-- Component Selector -->
+            <div class="bz-lab__group">
+                <h3 class="bz-lab__panel-title">
+                    @Icons.Wrench Component Selector
+                </h3>
+                <select class="bz-lab__select" @bind="selectedComponentId" @bind:after="OnComponentChanged">
+                    @foreach (var component in availableComponents)
+                    {
+                        <option value="@component.Id">@component.Name</option>
+                    }
+                </select>
+                @if (selectedComponent != null)
+                {
+                    <p class="bz-lab__description">@selectedComponent.Description</p>
+                }
+            </div>
+
+            <div class="bz-lab__divider"></div>
+
+            <!-- Dynamic Parameter Controls -->
+            @if (selectedComponent != null)
+            {
+                <h3 class="bz-lab__panel-title">
+                    @Icons.Settings Parameter Controls
+                </h3>
+
+                @foreach (var param in selectedComponent.Parameters)
+                {
+                    <div class="bz-lab__group">
+                        @if (param.Type == ParameterType.Range)
+                        {
+                            var step = GetStepForParameter(param.Name);
+                            <label class="bz-lab__label">
+                                @param.DisplayName:
+                                <strong>@parameterValues[param.Name]@param.Unit</strong>
+                            </label>
+                            <input type="range"
+                                   class="bz-lab__range"
+                                   min="@param.MinValue"
+                                   max="@param.MaxValue"
+                                   step="@step"
+                                   value="@parameterValues[param.Name]"
+                                   @onchange="@(e => UpdateParameter(param.Name, e.Value))"
+                                   @oninput="@(e => UpdateParameterPreview(param.Name, e.Value))" />
+                            <div class="bz-lab__range-info">
+                                <span>@param.MinValue@param.Unit</span>
+                                <span>@param.MaxValue@param.Unit</span>
+                            </div>
+                        }
+                        else if (param.Type == ParameterType.Boolean)
+                        {
+                            <label class="bz-lab__checkbox">
+                                <input type="checkbox"
+                                       checked="@((bool)parameterValues[param.Name]!)"
+                                       @onchange="@(e => UpdateParameter(param.Name, e.Value))" />
+                                <span class="bz-lab__checkbox-label">@param.DisplayName</span>
+                            </label>
+                        }
+                        else if (param.Type == ParameterType.Select)
+                        {
+                            <label class="bz-lab__label">@param.DisplayName</label>
+                            <select class="bz-lab__select"
+                                    value="@parameterValues[param.Name]"
+                                    @onchange="@(e => UpdateParameter(param.Name, e.Value))">
+                                @if (param.Options != null)
+                                {
+                                    @foreach (var option in param.Options)
+                                    {
+                                        <option value="@option.Value">@option.Label</option>
+                                    }
+                                }
+                            </select>
+                        }
+                        else if (param.Type == ParameterType.Text)
+                        {
+                            <label class="bz-lab__label">@param.DisplayName</label>
+                            <input type="text"
+                                   class="bz-lab__input"
+                                   value="@parameterValues[param.Name]"
+                                   placeholder="@param.Description"
+                                   @onchange="@(e => UpdateParameter(param.Name, e.Value))" />
+                        }
+                    </div>
+                }
+
+                @if (selectedComponentId == "carousel")
+                {
+                    <div class="bz-lab__divider"></div>
+
+                    <div class="bz-lab__group">
+                        <label class="bz-lab__label">Add Custom Image</label>
+                        <input type="text" class="bz-lab__input" @bind="newImageUrl" placeholder="https://picsum.photos/800/600" />
+                        <button class="bz-btn bz-btn--primary bz-btn--sm" @onclick="AddImage">Add Image</button>
                     </div>
 
-                    <div class="mb-3">
-                        <label>Rotate Degree (@rotate)</label>
-                        <input type="range" class="form-range" min="0" max="180" @bind="rotate" />
+                    <div class="bz-lab__info">
+                        <span class="bz-lab__info-icon">@Icons.Image</span>
+                        <span>Total Images: <strong>@photos.Count</strong></span>
                     </div>
+                }
+            }
+        </div>
+    </div>
 
-                    <div class="mb-3">
-                        <label>Depth (@depth)</label>
-                        <input type="range" class="form-range" min="0" max="500" @bind="depth" />
-                    </div>
+    <div class="bz-lab__stage">
+        <div class="bz-lab__content">
 
-                    <div class="form-check mb-3">
-                        <input class="form-check-input" type="checkbox" @bind="showOverlay" id="overlayCheck">
-                        <label class="form-check-label" for="overlayCheck">Show Overlay</label>
-                    </div>
+            <!-- Component Preview -->
+            <div class="bz-lab__preview">
+                @if (selectedComponentId == "carousel")
+                {
+                    <BzCarousel TItem="Photo"
+                                Items="photos"
+                                Theme="@GetThemeValue()"
+                                RotateDegree="@GetIntValue("RotateDegree")"
+                                Depth="@GetIntValue("Depth")"
+                                ShowOverlay="@GetBoolValue("ShowOverlay")"
+                                Loop="@GetBoolValue("Loop")"
+                                Width="@GetStringValue("Width")"
+                                Height="@GetStringValue("Height")" />
+                }
+                else if (selectedComponentId == "bento")
+                {
+                    <BzBento TItem="object"
+                             Theme="@GetThemeValue()"
+                             Columns="@GetIntValue("Columns")"
+                             Gap="@GetIntValue("Gap")"
+                             AnimationEnabled="@GetBoolValue("AnimationEnabled")"
+                             StaggerDelay="@GetIntValue("StaggerDelay")">
 
-                    <div class="form-check mb-3">
-                        <input class="form-check-input" type="checkbox" @bind="loop" id="loopCheck">
-                        <label class="form-check-label" for="loopCheck">Loop</label>
-                    </div>
+                        @* Company Carousel - 2x2 *@
+                        <BzBentoItem ColSpan="2" RowSpan="2">
+                            <BzCarousel TItem="CompanyData"
+                                        Items="@companies"
+                                        Theme="@GetThemeValue()"
+                                        OnItemSelected="@OnCompanyChanged" />
+                        </BzBentoItem>
 
-                    <hr />
+                        @* Dynamic Company Name *@
+                        <BzBentoMetric Value="@(activeCompany?.Name ?? "Swipe")"
+                                       Label="Company">
+                            <Icon>@Icons.Company</Icon>
+                        </BzBentoMetric>
 
-                    <div class="mb-3">
-                        <label>Add Image URL</label>
-                        <input type="text" class="form-control" @bind="newImageUrl" placeholder="Enter image URL" />
-                        <button class="btn btn-primary btn-sm mt-2" @onclick="AddImage">Add Image</button>
-                    </div>
+                        @* Dynamic Revenue *@
+                        <BzBentoMetric Value="@(activeCompany?.Revenue ?? "$0")"
+                                       Label="Revenue"
+                                       Trend="@(activeCompany?.RevenueTrend ?? "")">
+                            <Icon>@Icons.Revenue</Icon>
+                        </BzBentoMetric>
 
-                    <div class="mb-3">
-                        <label>Total Images: @photos.Count</label>
+                        @* Dynamic Users *@
+                        <BzBentoMetric Value="@(activeCompany?.Users ?? "0")"
+                                       Label="Users"
+                                       Trend="@(activeCompany?.UsersTrend ?? "")">
+                            <Icon>@Icons.Users</Icon>
+                        </BzBentoMetric>
+
+                        @* Dynamic Growth *@
+                        <BzBentoMetric Value="@(activeCompany?.Growth ?? "0%")"
+                                       Label="Growth"
+                                       Trend="@(activeCompany?.GrowthTrend ?? "")">
+                            <Icon>@Icons.Growth</Icon>
+                        </BzBentoMetric>
+
+                        @* Company Description *@
+                        <BzBentoFeature ColSpan="2"
+                                        Label="@(activeCompany?.Name ?? "Select Company")"
+                                        Description="@(activeCompany?.Description ?? "Swipe the carousel to see company details")">
+                            <Icon>@Icons.Lightbulb</Icon>
+                        </BzBentoFeature>
+
+                        @* Dynamic Rating *@
+                        <BzBentoMetric Value="@(activeCompany?.Rating ?? "0")"
+                                       Label="Rating">
+                            <Icon>@Icons.Rating</Icon>
+                        </BzBentoMetric>
+
+                        @* Dynamic Market Cap *@
+                        <BzBentoMetric Value="@(activeCompany?.MarketCap ?? "$0")"
+                                       Label="Market Cap">
+                            <Icon>@Icons.MarketCap</Icon>
+                        </BzBentoMetric>
+
+                    </BzBento>
+                }
+            </div>
+
+            <!-- Code Snippet Panel -->
+            <div class="bz-lab__code-panel">
+                <div class="bz-lab__code-header">
+                    <span class="bz-lab__code-title">
+                        @Icons.Code Generated Code
+                    </span>
+                    <div style="position: relative;">
+                        <button class="bz-lab__copy-btn" @onclick="CopyCodeToClipboard" title="Copy to clipboard">
+                            @if (codeCopied)
+                            {
+                                <svg xmlns="http://www.w3.org/2000/svg" width="18" height="18" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2" stroke-linecap="round" stroke-linejoin="round">
+                                    <polyline points="20 6 9 17 4 12"></polyline>
+                                </svg>
+                            }
+                            else
+                            {
+                                <svg xmlns="http://www.w3.org/2000/svg" width="18" height="18" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2" stroke-linecap="round" stroke-linejoin="round">
+                                    <rect x="9" y="9" width="13" height="13" rx="2" ry="2"></rect>
+                                    <path d="M5 15H4a2 2 0 0 1-2-2V4a2 2 0 0 1 2-2h9a2 2 0 0 1 2 2v1"></path>
+                                </svg>
+                            }
+                        </button>
+                        @if (codeCopied)
+                        {
+                            <span class="bz-lab__copy-tooltip">Copied!</span>
+                        }
                     </div>
                 </div>
+                <pre class="bz-lab__code-content"><code>@GenerateCodeSnippet()</code></pre>
             </div>
-        </div>
 
-        <div class="col-md-9">
-            <div style="height: 600px;">
-                <BzCarousel Items="photos" Theme="@theme" RotateDegree="@rotate" Depth="@depth"
-                    ShowOverlay="@showOverlay" Loop="@loop" />
-            </div>
         </div>
     </div>
 </div>
 
 @code {
+    [Inject] private IJSRuntime JS { get; set; } = default!;
+
+    private List<ComponentMetadata> availableComponents = new();
+    private ComponentMetadata? selectedComponent;
+    private string selectedComponentId = "carousel";
+    private Dictionary<string, object?> parameterValues = new();
+
+    // Carousel-specific data
     private List<Photo> photos = new();
-    private BzTheme theme = BzTheme.Glass;
-    private int rotate = 50;
-    private int depth = 150;
-    private bool showOverlay = true;
-    private bool loop = true;
     private string newImageUrl = "";
+
+    // Bento-specific data
+    private List<CompanyData> companies = new();
+    private CompanyData? activeCompany;
+
+    // UI state
+    private bool codeCopied = false;
+    private bool sidebarCollapsed = false;
 
     protected override void OnInitialized()
     {
-        for (int i = 1; i <= 10; i++)
+        availableComponents = ComponentRegistry.GetAllComponents();
+        LoadComponent(selectedComponentId);
+        InitializeCarouselData();
+        InitializeBentoData();
+    }
+
+    // Auto-collapse removed - causes JS disposal issues
+    // Mobile users can use toggle button to open/close sidebar
+
+    private void LoadComponent(string componentId)
+    {
+        selectedComponent = ComponentRegistry.GetComponentById(componentId);
+
+        if (selectedComponent == null) return;
+
+        // Initialize parameter values with defaults
+        parameterValues.Clear();
+        foreach (var param in selectedComponent.Parameters)
         {
-            photos.Add(new Photo
-            {
-                Url = $"images/gallery-{i}.jpg",
-                Title = $"Lab Photo {i}"
-            });
+            parameterValues[param.Name] = param.DefaultValue;
         }
+    }
+
+    private void OnComponentChanged()
+    {
+        LoadComponent(selectedComponentId);
+        StateHasChanged();
+    }
+
+    private void UpdateParameter(string paramName, object? value)
+    {
+        if (value is string strValue)
+        {
+            // Try to parse based on parameter type
+            var param = selectedComponent?.Parameters.FirstOrDefault(p => p.Name == paramName);
+            if (param != null)
+            {
+                if (param.Type == ParameterType.Range)
+                {
+                    if (int.TryParse(strValue, out int intValue))
+                        parameterValues[paramName] = intValue;
+                }
+                else if (param.Type == ParameterType.Boolean)
+                {
+                    if (bool.TryParse(strValue, out bool boolValue))
+                        parameterValues[paramName] = boolValue;
+                }
+                else
+                {
+                    parameterValues[paramName] = strValue;
+                }
+            }
+        }
+        else
+        {
+            parameterValues[paramName] = value;
+        }
+
+        codeCopied = false;
+        StateHasChanged();
+    }
+
+    private void UpdateParameterPreview(string paramName, object? value)
+    {
+        // Update the label value during drag without re-rendering component
+        if (value is string strValue && int.TryParse(strValue, out int intValue))
+        {
+            parameterValues[paramName] = intValue;
+            StateHasChanged();
+        }
+    }
+
+    private int GetStepForParameter(string paramName)
+    {
+        // Use step of 10 for most parameters except rotation which needs finer control
+        return paramName == "RotateDegree" ? 1 : 10;
+    }
+
+    // Helper methods to get typed values
+    private BzTheme GetThemeValue()
+    {
+        if (parameterValues.TryGetValue("Theme", out var value) && value != null)
+        {
+            return Enum.Parse<BzTheme>(value.ToString()!);
+        }
+        return BzTheme.Glass;
+    }
+
+    private int GetIntValue(string paramName)
+    {
+        if (parameterValues.TryGetValue(paramName, out var value) && value != null)
+        {
+            return Convert.ToInt32(value);
+        }
+        return 0;
+    }
+
+    private bool GetBoolValue(string paramName)
+    {
+        if (parameterValues.TryGetValue(paramName, out var value) && value != null)
+        {
+            return Convert.ToBoolean(value);
+        }
+        return false;
+    }
+
+    private string? GetStringValue(string paramName)
+    {
+        if (parameterValues.TryGetValue(paramName, out var value) && value != null)
+        {
+            var strValue = value.ToString();
+            return string.IsNullOrWhiteSpace(strValue) ? null : strValue;
+        }
+        return null;
+    }
+
+    // Carousel-specific methods
+    private void InitializeCarouselData()
+    {
+        photos = new List<Photo>
+        {
+            new Photo { Id = 1, Title = "Despicable Me", Url = "images/despicableme.webp" },
+            new Photo { Id = 2, Title = "Joker", Url = "images/joker.webp" },
+            new Photo { Id = 3, Title = "Survive", Url = "images/survive.webp" },
+            new Photo { Id = 4, Title = "The Platform", Url = "images/the-platform.webp" },
+            new Photo { Id = 5, Title = "The Substance", Url = "images/thesubstance.webp" },
+            new Photo { Id = 6, Title = "Venom", Url = "images/venom.webp" },
+            new Photo { Id = 7, Title = "Wild Robot", Url = "images/wild-robot.webp" },
+            new Photo { Id = 8, Title = "Wolverine", Url = "images/wolwerine.webp" }
+        };
     }
 
     private void AddImage()
@@ -90,10 +415,268 @@
         {
             photos.Add(new Photo
             {
+                Id = photos.Count + 1,
                 Url = newImageUrl,
                 Title = $"Custom Image {photos.Count + 1}"
             });
             newImageUrl = "";
         }
+    }
+
+    // Bento-specific methods
+    private void InitializeBentoData()
+    {
+        companies = new List<CompanyData>
+        {
+            new()
+            {
+                Name = "Apple",
+                ImageUrl = "images/companies/apple.webp",
+                Revenue = "$394B",
+                RevenueTrend = "+8%",
+                Users = "2.2B",
+                UsersTrend = "+12%",
+                Growth = "15%",
+                GrowthTrend = "+3%",
+                Rating = "4.8",
+                MarketCap = "$3.0T",
+                Description = "Technology company known for iPhone, Mac",
+                Icon = "🍎"
+            },
+            new()
+            {
+                Name = "Microsoft",
+                ImageUrl = "images/companies/microsoft.webp",
+                Revenue = "$211B",
+                RevenueTrend = "+12%",
+                Users = "1.4B",
+                UsersTrend = "+18%",
+                Growth = "22%",
+                GrowthTrend = "+5%",
+                Rating = "4.6",
+                MarketCap = "$2.8T",
+                Description = "Cloud computing, AI, and enterprise software leader",
+                Icon = "🪟"
+            },
+            new()
+            {
+                Name = "Google",
+                ImageUrl = "images/companies/google.webp",
+                Revenue = "$307B",
+                RevenueTrend = "+10%",
+                Users = "4.3B",
+                UsersTrend = "+5%",
+                Growth = "18%",
+                GrowthTrend = "+2%",
+                Rating = "4.5",
+                MarketCap = "$1.9T",
+                Description = "Search, advertising, and cloud platform giant",
+                Icon = "🔍"
+            },
+            new()
+            {
+                Name = "Amazon",
+                ImageUrl = "images/companies/amazon.webp",
+                Revenue = "$574B",
+                RevenueTrend = "+11%",
+                Users = "310M",
+                UsersTrend = "+8%",
+                Growth = "12%",
+                GrowthTrend = "+4%",
+                Rating = "4.4",
+                MarketCap = "$1.8T",
+                Description = "E-commerce and cloud computing powerhouse",
+                Icon = "📦"
+            },
+            new()
+            {
+                Name = "Tesla",
+                ImageUrl = "images/companies/tesla.webp",
+                Revenue = "$96B",
+                RevenueTrend = "+19%",
+                Users = "5M",
+                UsersTrend = "+35%",
+                Growth = "40%",
+                GrowthTrend = "+15%",
+                Rating = "4.2",
+                MarketCap = "$780B",
+                Description = "Electric vehicles and clean energy innovation",
+                Icon = "⚡"
+            },
+            new()
+            {
+                Name = "Meta",
+                ImageUrl = "images/companies/meta.webp",
+                Revenue = "$134B",
+                RevenueTrend = "+16%",
+                Users = "3.9B",
+                UsersTrend = "+7%",
+                Growth = "21%",
+                GrowthTrend = "+8%",
+                Rating = "4.1",
+                MarketCap = "$1.2T",
+                Description = "Social media and metaverse technology pioneer",
+                Icon = "📱"
+            },
+            new()
+            {
+                Name = "Nvidia",
+                ImageUrl = "images/companies/nvidia.webp",
+                Revenue = "$61B",
+                RevenueTrend = "+126%",
+                Users = "50M",
+                UsersTrend = "+45%",
+                Growth = "85%",
+                GrowthTrend = "+40%",
+                Rating = "4.7",
+                MarketCap = "$1.4T",
+                Description = "AI chips and graphics processing leader",
+                Icon = "🎮"
+            },
+            new()
+            {
+                Name = "Netflix",
+                ImageUrl = "images/companies/netflix.webp",
+                Revenue = "$33B",
+                RevenueTrend = "+7%",
+                Users = "260M",
+                UsersTrend = "+13%",
+                Growth = "9%",
+                GrowthTrend = "+2%",
+                Rating = "4.3",
+                MarketCap = "$250B",
+                Description = "Streaming entertainment and content production",
+                Icon = "🎬"
+            }
+        };
+
+        // Set initial company so metrics show data on load
+        activeCompany = companies.FirstOrDefault();
+    }
+
+    private void OnCompanyChanged(CompanyData company)
+    {
+        activeCompany = company;
+    }
+
+    // Code generation
+    private string GenerateCodeSnippet()
+    {
+        if (selectedComponent == null) return "";
+
+        var code = new System.Text.StringBuilder();
+
+        if (selectedComponentId == "carousel")
+        {
+            code.AppendLine($"<BzCarousel TItem=\"Photo\"");
+            code.AppendLine($"            Items=\"@photos\"");
+
+            foreach (var param in selectedComponent.Parameters)
+            {
+                if (parameterValues.TryGetValue(param.Name, out var value))
+                {
+                    if (param.Type == ParameterType.Select)
+                    {
+                        code.AppendLine($"            {param.Name}=\"@BzTheme.{value}\"");
+                    }
+                    else if (param.Type == ParameterType.Boolean)
+                    {
+                        var boolStr = value?.ToString()?.ToLower() ?? "false";
+                        code.AppendLine($"            {param.Name}=\"@{boolStr}\"");
+                    }
+                    else if (param.Type == ParameterType.Text)
+                    {
+                        var strValue = value?.ToString() ?? "";
+                        if (!string.IsNullOrWhiteSpace(strValue))
+                        {
+                            code.AppendLine($"            {param.Name}=\"{strValue}\"");
+                        }
+                    }
+                    else
+                    {
+                        code.AppendLine($"            {param.Name}=\"@{value}\"");
+                    }
+                }
+            }
+
+            code.AppendLine($"            OnItemSelected=\"@OnItemSelected\" />");
+        }
+        else if (selectedComponentId == "bento")
+        {
+            code.AppendLine($"<BzBento TItem=\"object\"");
+
+            // Add Theme first
+            if (parameterValues.TryGetValue("Theme", out var themeValue))
+            {
+                code.AppendLine($"         Theme=\"@BzTheme.{themeValue}\"");
+            }
+
+            // Add other parameters
+            foreach (var param in selectedComponent.Parameters.Where(p => p.Name != "Theme"))
+            {
+                if (parameterValues.TryGetValue(param.Name, out var value))
+                {
+                    if (param.Type == ParameterType.Boolean)
+                    {
+                        var boolStr = value?.ToString()?.ToLower() ?? "false";
+                        code.AppendLine($"         {param.Name}=\"@{boolStr}\"");
+                    }
+                    else
+                    {
+                        code.AppendLine($"         {param.Name}=\"@{value}\"");
+                    }
+                }
+            }
+
+            code.AppendLine($"         >");
+            code.AppendLine($"");
+            code.AppendLine($"    <!-- Company Carousel - 2x2 -->");
+            code.AppendLine($"    <BzBentoItem ColSpan=\"2\" RowSpan=\"2\">");
+            code.AppendLine($"        <BzCarousel TItem=\"CompanyData\"");
+            code.AppendLine($"                    Items=\"@companies\"");
+            code.AppendLine($"                    Theme=\"@BzTheme.{themeValue}\"");
+            code.AppendLine($"                    OnItemSelected=\"@OnCompanyChanged\" />");
+            code.AppendLine($"    </BzBentoItem>");
+            code.AppendLine($"");
+            code.AppendLine($"    <!-- Metrics update based on selected company -->");
+            code.AppendLine($"    <BzBentoMetric Value=\"@(activeCompany?.Name ?? \\\"Swipe\\\")\" Label=\"Company\">");
+            code.AppendLine($"        <Icon>@Icons.Company</Icon>");
+            code.AppendLine($"    </BzBentoMetric>");
+            code.AppendLine($"");
+            code.AppendLine($"    <BzBentoMetric Value=\"@(activeCompany?.Revenue ?? \\\"$0\\\")\"");
+            code.AppendLine($"                   Label=\"Revenue\"");
+            code.AppendLine($"                   Trend=\"@(activeCompany?.RevenueTrend ?? \\\"\\\")\">");
+            code.AppendLine($"        <Icon>@Icons.Revenue</Icon>");
+            code.AppendLine($"    </BzBentoMetric>");
+            code.AppendLine($"");
+            code.AppendLine($"    <!-- Add more metrics... -->");
+            code.AppendLine($"");
+            code.AppendLine($"</BzBento>");
+        }
+
+        return code.ToString();
+    }
+
+    private async Task CopyCodeToClipboard()
+    {
+        var code = GenerateCodeSnippet();
+        await JS.InvokeVoidAsync("navigator.clipboard.writeText", code);
+        codeCopied = true;
+        StateHasChanged(); // Immediately update UI
+
+        // Reset after 2 seconds
+        await Task.Delay(2000);
+        codeCopied = false;
+        StateHasChanged();
+    }
+
+    private void ToggleSidebar()
+    {
+        sidebarCollapsed = !sidebarCollapsed;
+    }
+
+    private void CloseSidebar()
+    {
+        sidebarCollapsed = true;
     }
 }

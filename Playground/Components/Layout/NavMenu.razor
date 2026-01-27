@@ -1,35 +1,90 @@
-<div class="top-row ps-3 navbar navbar-dark">
-    <div class="container-fluid">
-        <a class="navbar-brand" href="">Playground</a>
-    </div>
-</div>
+<aside class="bz-sidebar @(IsOpen ? "bz-sidebar--open" : "")">
 
-<div class="nav-scrollable">
-    <nav class="flex-column">
-        <div class="nav-item px-3">
-            <NavLink class="nav-link" href="" Match="NavLinkMatch.All">
-                <span class="bi bi-house-door-fill-nav-menu" aria-hidden="true"></span> Home
+    <header class="bz-sidebar__header">
+        <button class="bz-sidebar__close" @onclick="HandleLinkClick" aria-label="Close menu">
+            <svg xmlns="http://www.w3.org/2000/svg" width="20" height="20" viewBox="0 0 24 24" fill="none"
+                stroke="currentColor" stroke-width="2" stroke-linecap="round" stroke-linejoin="round">
+                <line x1="18" y1="6" x2="6" y2="18"></line>
+                <line x1="6" y1="6" x2="18" y2="18"></line>
+            </svg>
+        </button>
+
+        <a href="/" class="bz-sidebar__logo" @onclick="HandleLinkClick">
+            <img src="images/bm-logo.png" alt="BlazzyMotion Logo" class="bz-sidebar__logo-img" />
+            <span class="bz-sidebar__logo-text">BlazzyMotion</span>
+        </a>
+    </header>
+
+    <nav class="bz-sidebar__nav">
+
+        <!-- PLAYGROUND -->
+        <div class="bz-sidebar__group">
+            <span class="bz-sidebar__group-title">Playground</span>
+
+            <NavLink href="/" class="bz-sidebar__link" Match="NavLinkMatch.All"
+                @onclick="HandleLinkClick">
+                <span class="bz-sidebar__link-icon">@Icons.Rocket</span>
+                <span>Home</span>
+            </NavLink>
+
+            <NavLink href="/gallery" class="bz-sidebar__link" Match="NavLinkMatch.All"
+                @onclick="HandleLinkClick">
+                <span class="bz-sidebar__link-icon">@Icons.Carousel</span>
+                <span>Carousel Gallery</span>
+            </NavLink>
+
+            <NavLink href="/bentodemo" class="bz-sidebar__link" Match="NavLinkMatch.All"
+                @onclick="HandleLinkClick">
+                <span class="bz-sidebar__link-icon">@Icons.BentoGrid</span>
+                <span>Bento Demo</span>
             </NavLink>
         </div>
-        <div class="nav-item px-3">
-            <NavLink class="nav-link" href="gallery">
-                <span class="bi bi-images" aria-hidden="true"></span> Gallery
+
+        <!-- TESTING -->
+        <div class="bz-sidebar__group">
+            <span class="bz-sidebar__group-title">Testing</span>
+
+            <NavLink href="/lab" class="bz-sidebar__link" Match="NavLinkMatch.All" @onclick="HandleLinkClick">
+                <span class="bz-sidebar__link-icon">@Icons.Wrench</span>
+                <span>Lab</span>
             </NavLink>
         </div>
-        <div class="nav-item px-3">
-            <NavLink class="nav-link" href="products">
-                <span class="bi bi-bag-fill" aria-hidden="true"></span> Products
-            </NavLink>
-        </div>
-        <div class="nav-item px-3">
-            <NavLink class="nav-link" href="team">
-                <span class="bi bi-people-fill" aria-hidden="true"></span> Team
-            </NavLink>
-        </div>
-        <div class="nav-item px-3">
-            <NavLink class="nav-link" href="lab">
-                <span class="bi bi-sliders" aria-hidden="true"></span> Lab
-            </NavLink>
-        </div>
+
     </nav>
-</div>
+
+    <footer class="bz-sidebar__footer">
+
+        <div class="bz-sidebar__version">
+            <span class="bz-badge bz-badge--purple">v1.4.0</span>
+            <span class="bz-badge">.NET 8</span>
+        </div>
+
+        <div class="bz-sidebar__external">
+            <a href="https://github.com/nenad0707/BlazzyMotion" target="_blank" rel="noopener noreferrer"
+                class="bz-sidebar__external-link">
+                @Icons.GitHub
+                <span>GitHub</span>
+            </a>
+
+            <a href="https://www.nuget.org/packages?q=BlazzyMotion" target="_blank" rel="noopener noreferrer"
+                class="bz-sidebar__external-link">
+                @Icons.Package
+                <span>NuGet</span>
+            </a>
+        </div>
+    </footer>
+
+</aside>
+
+@code {
+    [Parameter]
+    public bool IsOpen { get; set; }
+
+    [Parameter]
+    public EventCallback OnLinkClick { get; set; }
+
+    private async Task HandleLinkClick()
+    {
+        await OnLinkClick.InvokeAsync();
+    }
+}

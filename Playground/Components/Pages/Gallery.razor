@@ -1,27 +1,82 @@
 @page "/gallery"
-@using BlazzyMotion.Carousel.Models
+@using BlazzyMotion.Core.Models
+@using BlazzyMotion.Carousel.Components
+@using Playground.Models
 
-<PageTitle>Photo Gallery</PageTitle>
+<PageTitle>Carousel Gallery - BlazzyMotion Playground</PageTitle>
 
-<h1>Photo Gallery</h1>
-<p>Simple gallery using <code>[BzImage]</code> attribute and Glass theme.</p>
+<div class="bz-gallery">
 
-<div style="height: 500px; margin-top: 2rem;">
-    <BzCarousel Items="photos" Theme="BzTheme.Glass" />
+    <section class="bz-gallery__header">
+        <span class="bz-gallery__label">Gallery</span>
+        <h1 class="bz-gallery__title">Carousel Gallery</h1>
+        <p class="bz-gallery__subtitle">Explore different themes and styles</p>
+    </section>
+
+    <section class="bz-gallery__demo">
+
+        <div class="bz-theme-pills">
+            <button class="bz-pill @(currentTheme == BzTheme.Glass ? "active" : "")"
+                    @onclick="() => ChangeTheme(BzTheme.Glass)">
+                <span class="bz-pill__icon">@Icons.Crystal</span> Glass
+            </button>
+            <button class="bz-pill @(currentTheme == BzTheme.Dark ? "active" : "")"
+                    @onclick="() => ChangeTheme(BzTheme.Dark)">
+                <span class="bz-pill__icon">@Icons.Moon</span> Dark
+            </button>
+            <button class="bz-pill @(currentTheme == BzTheme.Light ? "active" : "")"
+                    @onclick="() => ChangeTheme(BzTheme.Light)">
+                <span class="bz-pill__icon">@Icons.Sun</span> Light
+            </button>
+            <button class="bz-pill @(currentTheme == BzTheme.Minimal ? "active" : "")"
+                    @onclick="() => ChangeTheme(BzTheme.Minimal)">
+                <span class="bz-pill__icon">@Icons.Minus</span> Minimal
+            </button>
+        </div>
+
+        <div class="bz-gallery__stage">
+            <BzCarousel TItem="Photo"
+                        Items="photos"
+                        Theme="@currentTheme"
+                        OnItemSelected="@OnItemSelected" />
+        </div>
+
+        @if (selectedPhoto != null)
+        {
+            <h4 class="bz-selected-title">@selectedPhoto.Title</h4>
+        }
+
+    </section>
+
 </div>
 
 @code {
+    private BzTheme currentTheme = BzTheme.Glass;
+    private Photo? selectedPhoto;
     private List<Photo> photos = new();
 
     protected override void OnInitialized()
     {
-        for (int i = 1; i <= 10; i++)
+        photos = new List<Photo>
         {
-            photos.Add(new Photo
-            {
-                Url = $"images/gallery-{i}.jpg",
-                Title = $"Photo {i}"
-            });
-        }
+            new Photo { Id = 1, Title = "Despicable Me", Url = "images/despicableme.webp" },
+            new Photo { Id = 2, Title = "Joker", Url = "images/joker.webp" },
+            new Photo { Id = 3, Title = "Survive", Url = "images/survive.webp" },
+            new Photo { Id = 4, Title = "The Platform", Url = "images/the-platform.webp" },
+            new Photo { Id = 5, Title = "The Substance", Url = "images/thesubstance.webp" },
+            new Photo { Id = 6, Title = "Venom", Url = "images/venom.webp" },
+            new Photo { Id = 7, Title = "Wild Robot", Url = "images/wild-robot.webp" },
+            new Photo { Id = 8, Title = "Wolverine", Url = "images/wolwerine.webp" }
+        };
+    }
+
+    private void ChangeTheme(BzTheme newTheme)
+    {
+        currentTheme = newTheme;
+    }
+
+    private void OnItemSelected(Photo selected)
+    {
+        selectedPhoto = selected;
     }
 }
