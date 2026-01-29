@@ -18,7 +18,7 @@ Experience BlazzyMotion components in action: **[View Live Demo](https://blazzym
 | Package                                                      | Description                                          | NuGet                                                                                                                       |
 | ------------------------------------------------------------ | ---------------------------------------------------- | --------------------------------------------------------------------------------------------------------------------------- |
 | [BlazzyMotion.Carousel](src/BlazzyMotion.Carousel/README.md) | 3D coverflow carousel powered by Swiper.js           | [![NuGet](https://img.shields.io/nuget/v/BlazzyMotion.Carousel.svg)](https://www.nuget.org/packages/BlazzyMotion.Carousel/) |
-| [BlazzyMotion.Bento](src/BlazzyMotion.Bento/README.md)       | CSS Grid-based Bento layout with built-in components | [![NuGet](https://img.shields.io/nuget/v/BlazzyMotion.Bento.svg)](https://www.nuget.org/packages/BlazzyMotion.Bento/)       |
+| [BlazzyMotion.Bento](src/BlazzyMotion.Bento/README.md)       | Bento Grid with Composition Mode for dashboards      | [![NuGet](https://img.shields.io/nuget/v/BlazzyMotion.Bento.svg)](https://www.nuget.org/packages/BlazzyMotion.Bento/)       |
 | BlazzyMotion.Core                                            | Shared infrastructure (attributes, themes, registry) | [![NuGet](https://img.shields.io/nuget/v/BlazzyMotion.Core.svg)](https://www.nuget.org/packages/BlazzyMotion.Core/)         |
 
 ## Key Features
@@ -69,19 +69,27 @@ public class Movie
             Theme="BzTheme.Glass" />
 ```
 
-**Bento Grid:**
+**Bento Grid (Composition Mode):**
 
 ```razor
 @using BlazzyMotion.Bento.Components
 @using BlazzyMotion.Core.Models
 
-<BzBento TItem="Movie"
-         Items="movies"
-         Theme="BzTheme.Glass"
-         Columns="4" />
+<BzBento TItem="object" Theme="BzTheme.Glass" Columns="4">
+
+    <BzBentoCard ColSpan="2" RowSpan="2"
+                 Image="images/hero.jpg"
+                 Title="Featured" />
+
+    <BzBentoMetric Value="1,234" Label="Users" Trend="+12%" />
+    <BzBentoMetric Value="99.9%" Label="Uptime" />
+
+    <BzBentoFeature ColSpan="2" IconText="⚡" Label="Fast" Description="Built for speed" />
+
+</BzBento>
 ```
 
-**Note:** `TItem` can be omitted for simple usage without event callbacks, but is required when using `OnItemSelected` or other `EventCallback<TItem>` parameters.
+**Note:** Use Composition Mode to build dashboards with metrics, cards, and embedded components. See [Bento README](src/BlazzyMotion.Bento/README.md) for full documentation.
 
 ## How It Works
 

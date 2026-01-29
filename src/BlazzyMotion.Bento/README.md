@@ -13,6 +13,7 @@ A modern Bento Grid component for Blazor with **Composition Mode** for building 
 
 - [Features](#features)
 - [Live Demo](#live-demo)
+- [Perfect For](#perfect-for)
 - [Quick Start](#quick-start)
 - [Composition Mode](#composition-mode)
 - [Built-in Components](#built-in-components)
@@ -44,6 +45,14 @@ A modern Bento Grid component for Blazor with **Composition Mode** for building 
 ## Live Demo
 
 Experience BlazzyMotion.Bento in action: **[View Live Demo](https://blazzymotion.com/bento)**
+
+## Perfect For
+
+- **SaaS Dashboards** - Display metrics, KPIs, and status indicators
+- **Landing Pages** - Apple-style feature showcases with mixed content
+- **Admin Panels** - Combine charts, stats, and data tables in one view
+- **Portfolio Sites** - Showcase projects with varying sizes and emphasis
+- **Product Pages** - Mix product images, reviews, and specifications
 
 ## Quick Start
 
@@ -164,50 +173,99 @@ Use `BzBentoItem` to embed any Blazor component inside the grid:
 
 ## Built-in Components
 
-| Component        | Description                           | Key Parameters                          |
-| ---------------- | ------------------------------------- | --------------------------------------- |
-| `BzBentoItem`    | Base container for custom content     | `ColSpan`, `RowSpan`, `ChildContent`    |
-| `BzBentoCard`    | Image card with title and description | `Image`, `Title`, `Description`, `Item` |
-| `BzBentoMetric`  | Metric display with trend indicator   | `Value`, `Label`, `Trend`, `Icon`       |
-| `BzBentoFeature` | Feature highlight with icon           | `Label`, `Description`, `Icon`          |
-| `BzBentoQuote`   | Testimonial display                   | `Text`, `Author`, `Role`, `Avatar`      |
+All components support `ColSpan` (1-4), `RowSpan` (1-4), and `OnClick` for grid spanning and interaction.
 
-All components support `ColSpan` (1-4) and `RowSpan` (1-4) for grid spanning.
+### BzBentoItem
+
+Base container for embedding any content:
+
+```razor
+<BzBentoItem ColSpan="2" RowSpan="2">
+    <BzCarousel TItem="Product" Items="products" />
+</BzBentoItem>
+```
+
+### BzBentoCard
+
+Image card with overlay text:
+
+```razor
+<BzBentoCard ColSpan="2" RowSpan="2"
+             Image="images/hero.jpg"
+             Title="Featured"
+             Description="Our flagship product" />
+```
+
+| Parameter     | Type      | Description                    |
+| ------------- | --------- | ------------------------------ |
+| `Image`       | `string?` | Image URL                      |
+| `Title`       | `string?` | Card title (overlay)           |
+| `Description` | `string?` | Card description (overlay)     |
+| `Item`        | `TItem?`  | Auto-map via [BzImage] attrs   |
+
+### BzBentoMetric
+
+KPI/statistic display with trend indicator:
+
+```razor
+<BzBentoMetric Value="12,847" Label="Active Users" Trend="+23%" IconText="👥" />
+```
+
+| Parameter  | Type              | Required | Description                              |
+| ---------- | ----------------- | -------- | ---------------------------------------- |
+| `Value`    | `string`          | Yes      | The metric value (e.g., "1,234", "$48K") |
+| `Label`    | `string`          | Yes      | Description of the metric                |
+| `Trend`    | `string?`         | No       | Trend indicator (+green, -red)           |
+| `IconText` | `string?`         | No       | Emoji icon (e.g., "📈")                  |
+| `Icon`     | `RenderFragment?` | No       | Custom icon component                    |
+
+### BzBentoFeature
+
+Feature showcase with icon:
+
+```razor
+<BzBentoFeature ColSpan="2"
+                IconText="⚡"
+                Label="Lightning Fast"
+                Description="Built for performance" />
+```
+
+| Parameter     | Type              | Required | Description             |
+| ------------- | ----------------- | -------- | ----------------------- |
+| `Label`       | `string`          | Yes      | Feature name            |
+| `Description` | `string?`         | No       | Feature description     |
+| `IconText`    | `string?`         | No       | Emoji icon              |
+| `Icon`        | `RenderFragment?` | No       | Custom icon (SVG, etc.) |
+
+### BzBentoQuote
+
+Testimonial/quote display:
+
+```razor
+<BzBentoQuote ColSpan="2"
+              Text="This component saved us weeks!"
+              Author="Jane Doe"
+              Role="Tech Lead"
+              Avatar="images/jane.jpg" />
+```
+
+| Parameter | Type      | Description                        |
+| --------- | --------- | ---------------------------------- |
+| `Text`    | `string?` | Quote text                         |
+| `Author`  | `string?` | Author name                        |
+| `Role`    | `string?` | Author's role/title                |
+| `Avatar`  | `string?` | Author's avatar URL                |
+| `Item`    | `TItem?`  | Auto-map via [BzDescription] attrs |
 
 ## Items Mode
 
-Items Mode provides a simple way to render uniform image grids. Best for **image galleries** where all items have the same 1x1 layout.
+For simple **uniform image grids**, you can use Items Mode with the `Items` parameter. Mark your model with `[BzImage]` and `[BzTitle]` attributes, and the Source Generator creates the template automatically.
 
 ```razor
-@using BlazzyMotion.Bento.Components
-@using BlazzyMotion.Core.Attributes
-
-<BzBento TItem="Product"
-         Items="products"
-         Theme="BzTheme.Glass"
-         Columns="4"
-         OnItemSelected="HandleClick" />
-
-@code {
-    private List<Product> products = new();
-    private void HandleClick(Product p) => Console.WriteLine(p.Name);
-}
+<BzBento TItem="Product" Items="products" Columns="4" OnItemSelected="HandleClick" />
 ```
 
-**Define your model with attributes:**
-
-```csharp
-public class Product
-{
-    [BzImage]
-    public string ImageUrl { get; set; } = "";
-
-    [BzTitle]
-    public string Name { get; set; } = "";
-}
-```
-
-The Source Generator automatically creates the template at compile-time.
+See [Composition Mode](#composition-mode) for full layout control with metrics, features, and embedded components.
 
 ## API Reference
 
