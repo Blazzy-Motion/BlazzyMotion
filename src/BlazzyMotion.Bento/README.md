@@ -1,20 +1,45 @@
 # BlazzyMotion.Bento
 
-A modern Bento Grid component for Blazor with zero-configuration support through Source Generators and glassmorphism design.
+A modern Bento Grid component for Blazor with **Composition Mode** for building rich dashboard layouts. Combine metrics, features, cards, quotes, and embed other components like BzCarousel.
 
 [![NuGet](https://img.shields.io/nuget/v/BlazzyMotion.Bento.svg)](https://www.nuget.org/packages/BlazzyMotion.Bento/)
 [![NuGet Downloads](https://img.shields.io/nuget/dt/BlazzyMotion.Bento.svg)](https://www.nuget.org/packages/BlazzyMotion.Bento/)
 [![License: MIT](https://img.shields.io/badge/License-MIT-blue.svg)](LICENSE.txt)
+[![Quality Gate Status](https://sonarcloud.io/api/project_badges/measure?project=Blazzy-Motion_BlazzyMotion&metric=alert_status)](https://sonarcloud.io/summary/new_code?id=Blazzy-Motion_BlazzyMotion)
+[![Coverage](https://sonarcloud.io/api/project_badges/measure?project=Blazzy-Motion_BlazzyMotion&metric=coverage)](https://sonarcloud.io/summary/new_code?id=Blazzy-Motion_BlazzyMotion)
+[![Reliability Rating](https://sonarcloud.io/api/project_badges/measure?project=Blazzy-Motion_BlazzyMotion&metric=reliability_rating)](https://sonarcloud.io/summary/new_code?id=Blazzy-Motion_BlazzyMotion)
+
+## Table of Contents
+
+- [Features](#features)
+- [Live Demo](#live-demo)
+- [Quick Start](#quick-start)
+- [Composition Mode](#composition-mode)
+- [Built-in Components](#built-in-components)
+- [Items Mode](#items-mode)
+- [API Reference](#api-reference)
+- [Themes](#themes)
+- [Responsive Behavior](#responsive-behavior)
+- [CSS Customization](#css-customization)
+- [How It Works](#how-it-works)
+- [Performance](#performance)
+- [Troubleshooting](#troubleshooting)
+- [Browser Support](#browser-support)
+- [Contributing](#contributing)
+- [License](#license)
+- [Author](#author)
 
 ## Features
 
-- **Zero Configuration** - Source Generators create item templates from your models at compile-time
-- **Composition Mode** - Embed any content including BzCarousel and other BlazzyMotion components
-- **Built-in Components** - BzBentoCard, BzBentoMetric, BzBentoFeature, and BzBentoQuote
+- **Composition Mode** - Build complex layouts with metrics, features, cards, and quotes
+- **Embed Any Component** - Nest BzCarousel, charts, or any Blazor component inside grid cells
+- **5 Built-in Components** - BzBentoItem, BzBentoCard, BzBentoMetric, BzBentoFeature, BzBentoQuote
+- **Flexible Grid Spanning** - ColSpan and RowSpan (1-4) for each item
 - **Staggered Animations** - Intersection Observer-powered entrance animations
 - **Multiple Themes** - Glass, Dark, Light, and Minimal themes
-- **CSS Grid Powered** - Native CSS Grid with flexible column and row spanning
-- **Responsive Design** - Automatic column reduction on tablet and mobile devices
+- **CSS Grid Powered** - Native CSS Grid with `grid-auto-flow: dense` for gap-free layouts
+- **Responsive Design** - Automatic column reduction on tablet and mobile
+- **Items Mode** - Simple image gallery with zero configuration (for basic use cases)
 
 ## Live Demo
 
@@ -28,72 +53,111 @@ Experience BlazzyMotion.Bento in action: **[View Live Demo](https://blazzymotion
 dotnet add package BlazzyMotion.Bento
 ```
 
-### Basic Usage
+Or via Package Manager Console:
 
-**1. Define Your Model:**
-
-```csharp
-using BlazzyMotion.Core.Attributes;
-
-public class Product
-{
-    [BzImage]
-    public string ImageUrl { get; set; } = "";
-
-    [BzTitle]
-    public string Name { get; set; } = "";
-}
+```powershell
+Install-Package BlazzyMotion.Bento
 ```
 
-**2. Use the Component:**
+### Basic Composition Mode
+
+The primary way to use BzBento is **Composition Mode** - building layouts with built-in components:
 
 ```razor
 @using BlazzyMotion.Bento.Components
 @using BlazzyMotion.Core.Models
 
-<BzBento TItem="Product"
-         Items="products"
-         Theme="BzTheme.Glass"
-         Columns="4" />
+<BzBento TItem="object" Theme="BzTheme.Glass" Columns="4">
+
+    <BzBentoCard ColSpan="2" RowSpan="2"
+                 Image="images/hero.jpg"
+                 Title="Featured Product"
+                 Description="Our flagship offering" />
+
+    <BzBentoMetric Value="12,847" Label="Active Users" Trend="+23%" />
+    <BzBentoMetric Value="99.9%" Label="Uptime" />
+
+    <BzBentoFeature ColSpan="2"
+                    IconText="⚡"
+                    Label="Lightning Fast"
+                    Description="Built for performance" />
+
+    <BzBentoQuote Text="This component saved us weeks of development!"
+                  Author="Jane Doe"
+                  Role="Tech Lead" />
+
+</BzBento>
 ```
 
-**Note:** `TItem` is required when using `EventCallback<TItem>` parameters like `OnItemSelected`.
+## Composition Mode
 
-The Source Generator automatically creates the template at compile-time.
+Composition Mode is the **recommended approach** for BzBento. It gives you complete control over the layout by combining built-in components.
 
-## Usage Modes
+### Dashboard Example
 
-### Items Mode
-
-Provide a collection of items for uniform grid rendering:
-
-```razor
-<BzBento TItem="Product"
-         Items="products"
-         Theme="BzTheme.Glass"
-         Columns="4"
-         OnItemSelected="HandleClick" />
-```
-
-### Composition Mode
-
-Use built-in components for complete layout control:
+Build interactive dashboards by combining metrics, features, and embedded components:
 
 ```razor
 <BzBento TItem="object" Theme="BzTheme.Glass" Columns="4">
 
-    <BzBentoCard TItem="object"
-                 ColSpan="2" RowSpan="2"
-                 Image="images/hero.jpg"
-                 Title="Featured" />
+    <!-- Hero card spanning 2x2 -->
+    <BzBentoItem ColSpan="2" RowSpan="2">
+        <BzCarousel TItem="Company"
+                    Items="companies"
+                    OnItemSelected="OnCompanyChanged" />
+    </BzBentoItem>
 
-    <BzBentoMetric Value="1,234" Label="Users" Trend="+12%" />
+    <!-- Dynamic metrics that update based on carousel selection -->
+    <BzBentoMetric Value="@company?.Revenue" Label="Revenue" Trend="+23%" />
+    <BzBentoMetric Value="@company?.Users" Label="Users" Trend="+12%" />
+    <BzBentoMetric Value="99.9%" Label="Uptime" />
+    <BzBentoMetric Value="24ms" Label="Response Time" />
 
-    <BzBentoFeature ColSpan="2" Label="Fast" Description="Built for speed" />
+    <!-- Feature spanning 2 columns -->
+    <BzBentoFeature ColSpan="2"
+                    IconText="📊"
+                    Label="Q4 Report Ready"
+                    Description="Revenue exceeded targets by 15%" />
 
-    <BzBentoQuote TItem="object"
-                  Text="Amazing components!"
-                  Author="Developer" />
+    <!-- Testimonial -->
+    <BzBentoQuote ColSpan="2"
+                  Text="The best Blazor component library we've used."
+                  Author="John Smith"
+                  Role="CTO at TechCorp" />
+
+</BzBento>
+
+@code {
+    private List<Company> companies = new();
+    private Company? company;
+
+    private void OnCompanyChanged(Company c) => company = c;
+}
+```
+
+### Embedding Components
+
+Use `BzBentoItem` to embed any Blazor component inside the grid:
+
+```razor
+<BzBento TItem="object" Columns="3">
+
+    <!-- Embed a carousel -->
+    <BzBentoItem ColSpan="2" RowSpan="2">
+        <BzCarousel TItem="Product" Items="products" />
+    </BzBentoItem>
+
+    <!-- Embed a chart component -->
+    <BzBentoItem ColSpan="1" RowSpan="2">
+        <MyChartComponent Data="chartData" />
+    </BzBentoItem>
+
+    <!-- Embed any custom content -->
+    <BzBentoItem ColSpan="3">
+        <div class="custom-footer">
+            <p>Custom HTML content goes here</p>
+        </div>
+    </BzBentoItem>
 
 </BzBento>
 ```
@@ -109,6 +173,41 @@ Use built-in components for complete layout control:
 | `BzBentoQuote`   | Testimonial display                   | `Text`, `Author`, `Role`, `Avatar`      |
 
 All components support `ColSpan` (1-4) and `RowSpan` (1-4) for grid spanning.
+
+## Items Mode
+
+Items Mode provides a simple way to render uniform image grids. Best for **image galleries** where all items have the same 1x1 layout.
+
+```razor
+@using BlazzyMotion.Bento.Components
+@using BlazzyMotion.Core.Attributes
+
+<BzBento TItem="Product"
+         Items="products"
+         Theme="BzTheme.Glass"
+         Columns="4"
+         OnItemSelected="HandleClick" />
+
+@code {
+    private List<Product> products = new();
+    private void HandleClick(Product p) => Console.WriteLine(p.Name);
+}
+```
+
+**Define your model with attributes:**
+
+```csharp
+public class Product
+{
+    [BzImage]
+    public string ImageUrl { get; set; } = "";
+
+    [BzTitle]
+    public string Name { get; set; } = "";
+}
+```
+
+The Source Generator automatically creates the template at compile-time.
 
 ## API Reference
 
@@ -162,29 +261,46 @@ Override CSS variables for custom styling:
 <BzBento Items="items" CssClass="my-bento" />
 ```
 
-## Example: Dashboard
+## How It Works
 
-```razor
-<BzBento TItem="object" Theme="BzTheme.Glass" Columns="4">
+### Source Generator Magic
 
-    <BzBentoItem ColSpan="2" RowSpan="2">
-        <BzCarousel TItem="Company" Items="companies" OnItemSelected="OnCompanyChanged" />
-    </BzBentoItem>
+When you mark a property with `[BzImage]`, the BlazzyMotion Source Generator automatically creates a registration function during compilation:
 
-    <BzBentoMetric Value="@company?.Revenue" Label="Revenue" Trend="+23%" />
-    <BzBentoMetric Value="@company?.Users" Label="Users" Trend="+12%" />
-    <BzBentoMetric Value="99.9%" Label="Uptime" />
-    <BzBentoMetric Value="24ms" Label="Response" />
-
-    <BzBentoFeature ColSpan="2" Label="Q4 Report" Description="Revenue exceeded targets" />
-
-</BzBento>
-
-@code {
-    private Company? company;
-    private void OnCompanyChanged(Company c) => company = c;
+```csharp
+// Auto-generated at compile-time
+internal static class BzMappingRegistration_Product
+{
+    [ModuleInitializer]
+    internal static void Register()
+    {
+        BzRegistry.Register<Product>(item => new BzItem
+        {
+            ImageUrl = item.ImageUrl,
+            Title = item.Name,
+            OriginalItem = item
+        });
+    }
 }
 ```
+
+The `[ModuleInitializer]` attribute ensures registration runs automatically at application startup - **zero reflection, zero configuration**.
+
+### Composition Mode Rendering
+
+In Composition Mode, BzBento uses CSS Grid with `grid-auto-flow: dense` to automatically fill gaps:
+
+1. Each `BzBentoItem`, `BzBentoCard`, etc. becomes a grid item
+2. `ColSpan` and `RowSpan` control `grid-column` and `grid-row` CSS properties
+3. The `dense` algorithm places items efficiently without leaving gaps
+
+## Performance
+
+- **Zero Runtime Overhead** - Mapping functions generated at compile-time
+- **Zero Reflection** - Uses `[ModuleInitializer]` for automatic registration
+- **GPU Accelerated** - Animations use `will-change: transform, opacity`
+- **Intersection Observer** - Only animates items when they enter viewport
+- **CSS Grid Native** - Browser-optimized layout engine
 
 ## Troubleshooting
 
@@ -212,6 +328,17 @@ Override CSS variables for custom styling:
 | Firefox | 78+     |
 | Safari  | 14+     |
 | Edge    | 88+     |
+
+## Contributing
+
+Contributions are welcome! Please feel free to submit issues or pull requests.
+
+```bash
+git clone https://github.com/Blazzy-Motion/BlazzyMotion.git
+cd BlazzyMotion
+dotnet build
+dotnet test
+```
 
 ## License
 
