@@ -46,6 +46,8 @@ A modern Bento Grid component for Blazor with **Composition Mode** for building 
 
 Experience BlazzyMotion.Bento in action: **[View Live Demo](https://blazzymotion.com/bento)**
 
+![BlazzyMotion.Bento Demo](https://raw.githubusercontent.com/Blazzy-Motion/BlazzyMotion/main/docs/images/bento.webp)
+
 ## Perfect For
 
 - **SaaS Dashboards** - Display metrics, KPIs, and status indicators

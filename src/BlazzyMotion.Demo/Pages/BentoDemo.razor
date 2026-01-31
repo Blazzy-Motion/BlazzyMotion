@@ -48,8 +48,6 @@
             <BzBento TItem="BentoItem"
                      Items="@_bentoItems"
                      Theme="@_currentTheme"
-                     Columns="4"
-                     Gap="16"
                      OnItemSelected="@OnItemSelected" />
         </div>
 
@@ -71,7 +69,7 @@
         </p>
 
         <div class="bzb-presentation__stage">
-            <BzBento TItem="object" Theme="@_currentTheme" Columns="4" Gap="16">
+            <BzBento TItem="object" Theme="@_currentTheme">
 
                 @* Company Carousel - 2x2 *@
                 <BzBentoItem ColSpan="2" RowSpan="2">
@@ -141,7 +139,7 @@
         </p>
 
         <div class="bzb-presentation__stage">
-            <BzBento TItem="object" Theme="@_currentTheme" Columns="4" Gap="16">
+            <BzBento TItem="object" Theme="@_currentTheme">
                 <BzBentoCard TItem="object"
                              ColSpan="2" RowSpan="2"
                              Image="images/joker.webp"
