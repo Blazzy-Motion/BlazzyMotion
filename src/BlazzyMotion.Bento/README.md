@@ -29,6 +29,7 @@ A modern Bento Grid component for Blazor with **Composition Mode** for building 
 - [Contributing](#contributing)
 - [License](#license)
 - [Author](#author)
+- [Support](#support)
 
 ## Features
 
@@ -408,6 +409,16 @@ MIT License - see [LICENSE](LICENSE.txt) for details.
 
 - GitHub: [@nenad0707](https://github.com/nenad0707)
 - LinkedIn: [Nenad Ristic](https://www.linkedin.com/in/nenad-risti%C4%87-27459958/)
+
+## Support
+
+If you find BlazzyMotion.Bento useful, please consider:
+
+- Giving it a star on GitHub
+- Sharing it with other Blazor developers
+- Reporting bugs or suggesting features via GitHub Issues
+
+For questions or support, please open an issue on GitHub.
 
 ---
 
