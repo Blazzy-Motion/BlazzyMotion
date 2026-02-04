@@ -281,8 +281,14 @@ export async function initializeBento(element, optionsJson, dotNetRef = null) {
 function initializeBentoStatic(element, options, dotNetRef) {
     const items = element.querySelectorAll('.bzb-item');
 
+    requestAnimationFrame(() => {
+        requestAnimationFrame(() => {
+            element.classList.remove('bzb-hidden');
+            element.classList.add('bzb-visible');
+        });
+    });
+
     if (items.length === 0) {
-        console.warn('[BlazzyMotion] No .bzb-item found in Bento grid');
         return;
     }
 

@@ -3,6 +3,10 @@
 @typeparam TItem where TItem : class
 @inherits BlazzyMotion.Core.Abstractions.BzComponentBase
 
+<HeadContent>
+    <link rel="stylesheet" href="_content/BlazzyMotion.Core/css/blazzy-core.css" />
+</HeadContent>
+
 @if (IsLoading)
 {
     <div class="bz-loading" @attributes="AdditionalAttributes">
@@ -32,8 +36,7 @@ else if (IsEmpty && ChildContent == null)
 }
 else if (ChildContent != null)
 {
-    @* COMPOSITION MODE - User provides BzBentoCard, BzBentoMetric, etc. *@
-    <div class="@GetCombinedClass("bzb-grid")"
+    <div class="@GetCombinedClass(GridClass)"
          @ref="_gridRef"
          style="@GetGridStyle()"
          @attributes="AdditionalAttributes">
@@ -42,8 +45,7 @@ else if (ChildContent != null)
 }
 else
 {
-    @* ITEMS MODE - Auto-generated grid from Items collection *@
-    <div class="@GetCombinedClass("bzb-grid")"
+    <div class="@GetCombinedClass(GridClass)"
          @ref="_gridRef"
          style="@GetGridStyle()"
          @attributes="AdditionalAttributes">

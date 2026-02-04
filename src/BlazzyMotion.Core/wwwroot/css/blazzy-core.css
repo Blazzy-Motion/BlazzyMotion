@@ -192,14 +192,16 @@
 /* Visibility utilities */
 
 .bz-hidden,
-.bzc-hidden {
+.bzc-hidden,
+.bzb-hidden {
     opacity: 0 !important;
     visibility: hidden !important;
     transition: opacity 0.4s ease-in, visibility 0.4s;
 }
 
 .bz-visible,
-.bzc-visible {
+.bzc-visible,
+.bzb-visible {
     opacity: 1;
     visibility: visible;
     transition: opacity 0.4s ease-in, visibility 0.4s;

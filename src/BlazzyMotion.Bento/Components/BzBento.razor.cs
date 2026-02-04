@@ -195,6 +195,7 @@ public partial class BzBento<TItem> : BzComponentBase where TItem : class
     private bool IsLoading => Items == null && ChildContent == null;
     private bool IsEmpty => Items != null && !Items.Any();
     private int ItemCount => Items?.Count() ?? 0;
+    private string GridClass => _initialized ? "bzb-grid" : "bzb-grid bzb-hidden";
 
     #endregion
 
