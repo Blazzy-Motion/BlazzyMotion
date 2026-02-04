@@ -820,40 +820,10 @@
     background: rgba(185, 28, 28, 0.12);
 }
 
-/* Bento presentation wrapper */
 /* ENHANCED STAT CARDS */
 
 .bzb-stat {
     background: linear-gradient(135deg, rgba(139, 92, 246, 0.05), rgba(34, 211, 238, 0.05));
-}
-
-.bzb-presentation {
-    padding: 4rem 2rem;
-    text-align: center;
-    max-width: 100%;
-}
-
-.bzb-presentation__label {
-    display: inline-block;
-    font-size: 0.75rem;
-    font-weight: 600;
-    text-transform: uppercase;
-    letter-spacing: 0.15em;
-    color: rgba(255, 255, 255, 0.4);
-    margin-bottom: 1rem;
-}
-
-.bzb-presentation__title {
-    font-size: 1.75rem;
-    font-weight: 600;
-    color: rgba(255, 255, 255, 0.95);
-    margin-bottom: 2rem;
-}
-
-.bzb-presentation__stage {
-    max-width: 1200px;
-    margin: 0 auto;
-    padding: 2rem 0;
 }
 
 /* Responsive - Tablet */

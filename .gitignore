@@ -366,4 +366,4 @@ FodyWeavers.xsd
 *_output.txt
 TestResults/
 .vs/
-.vscode/settings.json
+.vscode/
