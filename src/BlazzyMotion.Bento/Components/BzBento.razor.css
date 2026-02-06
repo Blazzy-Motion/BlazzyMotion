@@ -14,117 +14,11 @@
     padding: 10px;
 }
 
-/* Item hover effects */
+/* Item interaction */
 ::deep .bzb-item {
     cursor: pointer;
     position: relative;
     overflow: hidden;
-}
-
-::deep .bzb-item:focus-visible {
-    outline: 2px solid rgba(255, 255, 255, 0.8);
-    outline-offset: 4px;
-}
-
-/* Basic item image (auto-generated from BzTemplateFactory) */
-::deep .bzb-item-image {
-    width: 100%;
-    height: 100%;
-    object-fit: cover;
-    position: absolute;
-    top: 0;
-    left: 0;
-    border-radius: inherit;
-}
-
-/* Basic item title overlay */
-::deep .bzb-item-title {
-    position: absolute;
-    bottom: 0;
-    left: 0;
-    right: 0;
-    padding: 12px 16px;
-    background: linear-gradient(to top, rgba(0, 0, 0, 0.8) 0%, transparent 100%);
-    color: white;
-    font-size: 0.95rem;
-    font-weight: 500;
-    margin: 0;
-}
-
-::deep .bzb-item-description {
-    position: absolute;
-    bottom: 36px;
-    left: 0;
-    right: 0;
-    padding: 0 16px;
-    color: rgba(255, 255, 255, 0.8);
-    font-size: 0.85rem;
-    margin: 0;
-}
-
-/* Card styles */
-::deep .bzb-card {
-    position: relative;
-    width: 100%;
-    height: 100%;
-    min-height: 200px;
-    overflow: hidden;
-    border-radius: inherit;
-}
-
-::deep .bzb-card-image {
-    width: 100%;
-    height: 100%;
-    object-fit: cover;
-    position: absolute;
-    top: 0;
-    left: 0;
-}
-
-::deep .bzb-card-overlay {
-    position: absolute;
-    bottom: 0;
-    left: 0;
-    right: 0;
-    padding: 20px;
-    background: linear-gradient(to top, rgba(0, 0, 0, 0.8) 0%, transparent 100%);
-    color: white;
-}
-
-::deep .bzb-card-title {
-    font-size: 1.2rem;
-    font-weight: 600;
-    margin: 0 0 4px 0;
-}
-
-::deep .bzb-card-description {
-    font-size: 0.9rem;
-    opacity: 0.9;
-    margin: 0;
-}
-
-/* Stat/Metric styles */
-::deep .bzb-stat {
-    display: flex;
-    flex-direction: column;
-    align-items: center;
-    justify-content: center;
-    text-align: center;
-    height: 100%;
-    gap: 8px;
-}
-
-::deep .bzb-stat-value {
-    font-size: 2rem;
-    font-weight: 700;
-    line-height: 1;
-}
-
-::deep .bzb-stat-label {
-    font-size: 0.85rem;
-    opacity: 0.7;
-    text-transform: uppercase;
-    letter-spacing: 0.5px;
 }
 
 /* Empty item placeholder */
@@ -138,23 +32,7 @@
     font-style: italic;
 }
 
-/* Light theme adjustments - using unified bzc-theme-* classes */
-::deep .bzc-theme-light .bzb-stat-value,
-::deep .bzc-theme-light .bzb-stat-label,
-::deep .bzc-theme-light .bzb-item-title,
-::deep .bzc-theme-light .bzb-item-description {
-    color: rgba(0, 0, 0, 0.87);
-}
-
-::deep .bzc-theme-light .bzb-item-empty {
-    color: rgba(0, 0, 0, 0.4);
-}
-
-::deep .bzc-theme-light .bzb-item:focus-visible {
-    outline-color: rgba(0, 0, 0, 0.6);
-}
-
-/* Responsive adjustments for card */
+/* Responsive adjustments */
 @media (max-width: 600px) {
     ::deep .bzb-card {
         min-height: 150px;

@@ -1,5 +1,7 @@
 let swiperLoaded = false;
+let coreStylesLoaded = false;
 const swiperInstances = new Map();
+const bentoInstances = new Map();
 
 // script/stylesheet loaders
 
@@ -66,14 +68,22 @@ function loadStylesheet(href) {
 }
 
 
-// swper loading
+// Core styles loading (shared by all components)
+
+export async function ensureCoreStylesLoaded() {
+    if (coreStylesLoaded) return;
+    await loadStylesheet("_content/BlazzyMotion.Core/css/blazzy-core.css");
+    coreStylesLoaded = true;
+}
+
+// Swiper loading
 
 export async function ensureSwiperLoaded() {
     if (swiperLoaded) return;
 
     await Promise.all([
         loadStylesheet("_content/BlazzyMotion.Core/css/swiper-bundle.min.css"),
-        loadStylesheet("_content/BlazzyMotion.Core/css/blazzy-core.css"),
+        ensureCoreStylesLoaded(),
     ]);
 
     await loadScript("_content/BlazzyMotion.Core/js/swiper-bundle.min.js");
@@ -260,10 +270,12 @@ export function slidePrev(element, speed = 300) {
  */
 export async function initializeBento(element, optionsJson, dotNetRef = null) {
     try {
+        await ensureCoreStylesLoaded();
+
         const options = optionsJson ? JSON.parse(optionsJson) : {};
 
         // Destroy existing instance if present
-        if (swiperInstances.has(element)) {
+        if (bentoInstances.has(element)) {
             destroyBento(element);
         }
 
@@ -318,7 +330,7 @@ function initializeBentoStatic(element, options, dotNetRef) {
         // Observe all items individually
         items.forEach(item => observer.observe(item));
 
-        swiperInstances.set(element, {
+        bentoInstances.set(element, {
             type: 'bento-static',
             observer: observer,
             dotNetRef: dotNetRef
@@ -343,8 +355,8 @@ function initializeBentoStatic(element, options, dotNetRef) {
  * Destroy Bento Grid instance
  */
 export function destroyBento(element) {
-    if (swiperInstances.has(element)) {
-        const instance = swiperInstances.get(element);
+    if (bentoInstances.has(element)) {
+        const instance = bentoInstances.get(element);
 
         if (instance.type === 'bento-static' && instance.observer) {
             instance.observer.disconnect();
@@ -353,7 +365,7 @@ export function destroyBento(element) {
             instance.destroy(true, true);
         }
 
-        swiperInstances.delete(element);
+        bentoInstances.delete(element);
     }
 }
 
@@ -361,8 +373,8 @@ export function destroyBento(element) {
  * Refresh Bento Grid (re-trigger animations)
  */
 export function refreshBento(element) {
-    if (swiperInstances.has(element)) {
-        const instance = swiperInstances.get(element);
+    if (bentoInstances.has(element)) {
+        const instance = bentoInstances.get(element);
 
         if (instance.type === 'bento-static') {
             // Re-animate all items

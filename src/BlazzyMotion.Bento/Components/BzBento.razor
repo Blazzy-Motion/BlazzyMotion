@@ -3,10 +3,6 @@
 @typeparam TItem where TItem : class
 @inherits BlazzyMotion.Core.Abstractions.BzComponentBase
 
-<HeadContent>
-    <link rel="stylesheet" href="_content/BlazzyMotion.Core/css/blazzy-core.css" />
-</HeadContent>
-
 @if (IsLoading)
 {
     <div class="bz-loading" @attributes="AdditionalAttributes">
@@ -36,7 +32,7 @@ else if (IsEmpty && ChildContent == null)
 }
 else if (ChildContent != null)
 {
-    <div class="@GetCombinedClass(GridClass)"
+    <div class="@GetCombinedClass("bzb-grid bzb-hidden")"
          @ref="_gridRef"
          style="@GetGridStyle()"
          @attributes="AdditionalAttributes">
@@ -45,7 +41,7 @@ else if (ChildContent != null)
 }
 else
 {
-    <div class="@GetCombinedClass(GridClass)"
+    <div class="@GetCombinedClass("bzb-grid bzb-hidden")"
          @ref="_gridRef"
          style="@GetGridStyle()"
          @attributes="AdditionalAttributes">

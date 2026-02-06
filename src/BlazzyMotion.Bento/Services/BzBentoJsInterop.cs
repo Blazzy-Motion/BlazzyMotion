@@ -25,6 +25,7 @@ public class BzBentoJsInterop : IAsyncDisposable
     private readonly Lazy<Task<IJSObjectReference>> _moduleTask;
     private ElementReference? _element;
     private bool _initialized;
+    private bool _coreStylesLoaded;
 
     /// <summary>
     /// Initializes a new instance of the BzBentoJsInterop class.
@@ -49,6 +50,12 @@ public class BzBentoJsInterop : IAsyncDisposable
     {
         _element = element;
         var module = await _moduleTask.Value;
+
+        if (!_coreStylesLoaded)
+        {
+            await module.InvokeVoidAsync("ensureCoreStylesLoaded");
+            _coreStylesLoaded = true;
+        }
 
         var optionsJson = JsonSerializer.Serialize(options, new JsonSerializerOptions
         {
