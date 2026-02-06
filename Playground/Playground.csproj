@@ -9,9 +9,8 @@
   </PropertyGroup>
 
   <ItemGroup>
-    <PackageReference Include="BlazzyMotion.Core" Version="1.4.0-preview1" />
-    <PackageReference Include="BlazzyMotion.Carousel" Version="1.4.0-preview1" />
-    <PackageReference Include="BlazzyMotion.Bento" Version="1.4.0-preview1" />
+    <PackageReference Include="BlazzyMotion.Carousel" Version="1.4.0" />
+    <PackageReference Include="BlazzyMotion.Bento" Version="1.0.0" />
   </ItemGroup>
 
 </Project>
