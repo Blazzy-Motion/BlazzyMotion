@@ -1373,6 +1373,43 @@ ul.bz-feature-list li::before {
     line-height: 1.6;
 }
 
+/* Demo Section */
+.bz-demo {
+    padding: 4rem 2rem;
+    text-align: center;
+}
+
+.bz-demo__label {
+    display: inline-block;
+    font-size: 0.75rem;
+    font-weight: 600;
+    text-transform: uppercase;
+    letter-spacing: 0.15em;
+    color: var(--bz-text-muted, rgba(255, 255, 255, 0.4));
+    margin-bottom: 1rem;
+}
+
+.bz-demo__title {
+    font-size: 1.75rem;
+    font-weight: 600;
+    color: var(--bz-text-primary, rgba(255, 255, 255, 0.95));
+    margin-bottom: 2rem;
+}
+
+.bz-demo__stage {
+    max-width: 1000px;
+    margin: 0 auto;
+    padding: 2rem 0;
+}
+
+.bz-demo__description {
+    font-size: 1.125rem;
+    color: var(--bz-text-secondary, rgba(255, 255, 255, 0.7));
+    max-width: 600px;
+    margin: 0 auto 2rem;
+    line-height: 1.6;
+}
+
 /* Theme Pills Mobile */
 @media (max-width: 768px) {
     .bz-hero__title {
@@ -1399,6 +1436,18 @@ ul.bz-feature-list li::before {
 
     .bz-selected-title {
         font-size: 1.5rem;
+    }
+
+    .bz-demo {
+        padding: 3rem 1rem;
+    }
+
+    .bz-demo__title {
+        font-size: 1.5rem;
+    }
+
+    .bz-demo__description {
+        font-size: 1rem;
     }
 }
 

@@ -1,6 +1,4 @@
 @page "/bentodemo"
-@* @using BlazzyMotion.Core.Models *@
-@* @using BlazzyMotion.Bento.Components *@
 @using BlazzyMotion.Carousel.Components
 @using Playground.Models
 
@@ -8,18 +6,18 @@
 
 <div class="bz-home">
 
-    <section style="min-height: auto; padding: 60px 20px; text-align: center;">
-        <h1 style="color: white; font-size: 2.5rem; margin-bottom: 10px;">BzBento Demo</h1>
-        <p style="color: rgba(255,255,255,0.7);">
-            Testing Carousel + Bento packages together
-        </p>
+    <section class="bz-hero" style="min-height: auto; padding: 4rem 2rem;">
+        <div class="bz-hero__content">
+            <h1 class="bz-hero__brand">BzBento Demo</h1>
+            <h2 class="bz-hero__title">Bento Grid Layouts</h2>
+            <p class="bz-hero__subtitle">Testing Carousel + Bento packages together</p>
+        </div>
     </section>
 
-    @* ==================== ITEMS MODE ==================== *@
-    <section class="bzb-presentation">
-        <span class="bzb-presentation__label">Items Mode - Zero Config</span>
-        <h3 class="bzb-presentation__title">Uniform Grid Layout</h3>
-        <div class="bzb-presentation__stage">
+    <section class="bz-demo">
+        <span class="bz-demo__label">Items Mode - Zero Config</span>
+        <h3 class="bz-demo__title">Uniform Grid Layout</h3>
+        <div class="bz-demo__stage">
             <BzBento TItem="BentoItem"
                      Items="@_bentoItems"
                      Theme="@_currentTheme"
@@ -33,20 +31,14 @@
         }
     </section>
 
-    @* ==================== INTERACTIVE DASHBOARD ==================== *@
-    <section class="bzb-presentation" style="padding-top: 40px;">
+    <section class="bz-demo">
+        <span class="bz-demo__label">Interactive Dashboard</span>
+        <h3 class="bz-demo__title">Swipe to Explore Companies</h3>
+        <p class="bz-demo__description">All metrics update in real-time as you browse</p>
 
-        <span class="bzb-presentation__label" style="display: block; text-align: center;">Interactive Dashboard</span>
-
-        <h3 class="bzb-presentation__title" style="text-align: center;">Swipe to Explore Companies</h3>
-        <p style="color: rgba(255,255,255,0.7); text-align: center; margin-bottom: 30px;">
-            All metrics update in real-time as you browse
-        </p>
-
-        <div class="bzb-presentation__stage">
+        <div class="bz-demo__stage">
             <BzBento TItem="object" Theme="@_currentTheme" Columns="4" Gap="16">
 
-                @* Company Carousel - 2x2 *@
                 <BzBentoItem ColSpan="2" RowSpan="2">
                     <BzCarousel TItem="CompanyData"
                                 Items="@_companies"
@@ -54,47 +46,40 @@
                                 OnItemSelected="@OnCompanyChanged" />
                 </BzBentoItem>
 
-                @* Dynamic Company Name - shows company logo *@
                 <BzBentoMetric Value="@(_activeCompany?.Name ?? "Swipe")"
                                Label="Company">
                     <Icon>@Icons.GetCompanyLogo(_activeCompany?.Name)</Icon>
                 </BzBentoMetric>
 
-                @* Dynamic Revenue *@
                 <BzBentoMetric Value="@(_activeCompany?.Revenue ?? "$0")"
                                Label="Revenue"
                                Trend="@(_activeCompany?.RevenueTrend ?? "")">
                     <Icon>@Icons.Revenue</Icon>
                 </BzBentoMetric>
 
-                @* Dynamic Users *@
                 <BzBentoMetric Value="@(_activeCompany?.Users ?? "0")"
                                Label="Users"
                                Trend="@(_activeCompany?.UsersTrend ?? "")">
                     <Icon>@Icons.Users</Icon>
                 </BzBentoMetric>
 
-                @* Dynamic Growth *@
                 <BzBentoMetric Value="@(_activeCompany?.Growth ?? "0%")"
                                Label="Growth"
                                Trend="@(_activeCompany?.GrowthTrend ?? "")">
                     <Icon>@Icons.Growth</Icon>
                 </BzBentoMetric>
 
-                @* Company Description - shows company logo *@
                 <BzBentoFeature ColSpan="2"
                                 Label="@(_activeCompany?.Name ?? "Select Company")"
                                 Description="@(_activeCompany?.Description ?? "Swipe the carousel to see company details")">
                     <Icon>@Icons.GetCompanyLogo(_activeCompany?.Name)</Icon>
                 </BzBentoFeature>
 
-                @* Dynamic Rating *@
                 <BzBentoMetric Value="@(_activeCompany?.Rating ?? "0")"
                                Label="Rating">
                     <Icon>@Icons.Rating</Icon>
                 </BzBentoMetric>
 
-                @* Dynamic Market Cap *@
                 <BzBentoMetric Value="@(_activeCompany?.MarketCap ?? "$0")"
                                Label="Market Cap">
                     <Icon>@Icons.MarketCap</Icon>
@@ -102,18 +87,14 @@
 
             </BzBento>
         </div>
-
     </section>
 
-    @* ==================== COMPOSITION MODE - Manual Layout ==================== *@
-    <section class="bzb-presentation" style="padding-top: 40px;">
+    <section class="bz-demo">
+        <span class="bz-demo__label">Composition Mode</span>
+        <h3 class="bz-demo__title">Manual Layout Control</h3>
+        <p class="bz-demo__description">Use ChildContent with BzBentoCard, BzBentoMetric, BzBentoFeature for complete control</p>
 
-        <h3 class="bzb-presentation__title">Composition Mode</h3>
-        <p style="color: rgba(255,255,255,0.7); text-align: center; margin-bottom: 30px;">
-            Use ChildContent with BzBentoCard, BzBentoMetric, BzBentoFeature for complete control
-        </p>
-
-        <div class="bzb-presentation__stage">
+        <div class="bz-demo__stage">
             <BzBento TItem="object" Theme="@_currentTheme" Columns="4" Gap="16">
                 <BzBentoCard TItem="object"
                              ColSpan="2" RowSpan="2"
@@ -170,7 +151,6 @@
                 </BzBentoMetric>
             </BzBento>
         </div>
-
     </section>
 
 </div>
@@ -182,11 +162,9 @@
 
     protected override void OnInitialized()
     {
-        // Set initial company so metrics show data on load
         _activeCompany = _companies.FirstOrDefault();
     }
 
-    // Static mode items (movies)
     private List<BentoItem> _bentoItems = new()
     {
         new() { Title = "Despicable Me 4", ImageUrl = "images/despicableme.webp" },
@@ -199,7 +177,6 @@
         new() { Title = "Deadpool & Wolverine", ImageUrl = "images/wolwerine.webp" }
     };
 
-    // Company data for interactive dashboard - using numeric IDs (more reliable)
     private List<CompanyData> _companies = new()
     {
         new()
