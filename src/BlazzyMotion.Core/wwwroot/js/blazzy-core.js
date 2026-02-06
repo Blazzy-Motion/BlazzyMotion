@@ -295,6 +295,8 @@ function initializeBentoStatic(element, options, dotNetRef) {
 
     requestAnimationFrame(() => {
         requestAnimationFrame(() => {
+            element.style.removeProperty('opacity');
+            element.style.removeProperty('visibility');
             element.classList.remove('bzb-hidden');
             element.classList.add('bzb-visible');
         });

@@ -320,7 +320,11 @@ public partial class BzBento<TItem> : BzComponentBase where TItem : class
     /// </summary>
     private string GetGridStyle()
     {
-        var styles = new List<string>();
+        var styles = new List<string>
+        {
+            "opacity:0",
+            "visibility:hidden"
+        };
 
         if (Columns != 4)
             styles.Add($"--bzb-columns: {Columns}");
