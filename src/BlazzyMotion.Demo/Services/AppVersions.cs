@@ -8,7 +8,7 @@ public static class AppVersions
 {
     public const string Carousel = "1.4.0";
     public const string Core = "1.3.0";
-    public const string Bento = "1.0.0";
+    public const string Bento = "1.0.1";
     public const string DotNetVersion = ".NET 8";
 
     public static string GetBadgeText(string componentName) => componentName switch
