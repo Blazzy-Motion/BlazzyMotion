@@ -195,6 +195,7 @@ public partial class BzBento<TItem> : BzComponentBase where TItem : class
     private bool IsLoading => Items == null && ChildContent == null;
     private bool IsEmpty => Items != null && !Items.Any();
     private int ItemCount => Items?.Count() ?? 0;
+    private string GridClass => _initialized ? "bzb-grid" : "bzb-grid bzb-hidden";
 
     #endregion
 
@@ -266,10 +267,9 @@ public partial class BzBento<TItem> : BzComponentBase where TItem : class
     /// <param name="itemCount">Number of items in the grid</param>
     [JSInvokable]
     [ExcludeFromCodeCoverage(Justification = "JS callback")]
-    public Task OnBentoInitializedFromJS(int itemCount)
+    public async Task OnBentoInitializedFromJS(int itemCount)
     {
-        // Optional: Handle initialization complete
-        return Task.CompletedTask;
+        await InvokeAsync(StateHasChanged);
     }
 
     #endregion
@@ -320,11 +320,13 @@ public partial class BzBento<TItem> : BzComponentBase where TItem : class
     /// </summary>
     private string GetGridStyle()
     {
-        var styles = new List<string>
+        var styles = new List<string>();
+
+        if (!_initialized)
         {
-            "opacity:0",
-            "visibility:hidden"
-        };
+            styles.Add("opacity:0");
+            styles.Add("visibility:hidden");
+        }
 
         if (Columns != 4)
             styles.Add($"--bzb-columns: {Columns}");

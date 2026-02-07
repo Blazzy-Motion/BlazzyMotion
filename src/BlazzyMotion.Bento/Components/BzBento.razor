@@ -32,7 +32,7 @@ else if (IsEmpty && ChildContent == null)
 }
 else if (ChildContent != null)
 {
-    <div class="@GetCombinedClass("bzb-grid bzb-hidden")"
+    <div class="@GetCombinedClass(GridClass)"
          @ref="_gridRef"
          style="@GetGridStyle()"
          @attributes="AdditionalAttributes">
@@ -41,7 +41,7 @@ else if (ChildContent != null)
 }
 else
 {
-    <div class="@GetCombinedClass("bzb-grid bzb-hidden")"
+    <div class="@GetCombinedClass(GridClass)"
          @ref="_gridRef"
          style="@GetGridStyle()"
          @attributes="AdditionalAttributes">
