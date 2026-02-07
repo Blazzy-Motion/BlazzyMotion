@@ -17,6 +17,26 @@
     <section class="bz-demo">
         <span class="bz-demo__label">Items Mode - Zero Config</span>
         <h3 class="bz-demo__title">Uniform Grid Layout</h3>
+
+        <div class="bz-theme-pills">
+            <button class="bz-pill @(_currentTheme == BzTheme.Glass ? "active" : "")"
+                    @onclick="() => ChangeTheme(BzTheme.Glass)">
+                <span class="bz-pill__icon">@Icons.Crystal</span> Glass
+            </button>
+            <button class="bz-pill @(_currentTheme == BzTheme.Dark ? "active" : "")"
+                    @onclick="() => ChangeTheme(BzTheme.Dark)">
+                <span class="bz-pill__icon">@Icons.Moon</span> Dark
+            </button>
+            <button class="bz-pill @(_currentTheme == BzTheme.Light ? "active" : "")"
+                    @onclick="() => ChangeTheme(BzTheme.Light)">
+                <span class="bz-pill__icon">@Icons.Sun</span> Light
+            </button>
+            <button class="bz-pill @(_currentTheme == BzTheme.Minimal ? "active" : "")"
+                    @onclick="() => ChangeTheme(BzTheme.Minimal)">
+                <span class="bz-pill__icon">@Icons.Minus</span> Minimal
+            </button>
+        </div>
+
         <div class="bz-demo__stage">
             <BzBento TItem="BentoItem"
                      Items="@_bentoItems"
@@ -309,5 +329,10 @@
     private void OnCompanyChanged(CompanyData company)
     {
         _activeCompany = company;
+    }
+
+    private void ChangeTheme(BzTheme newTheme)
+    {
+        _currentTheme = newTheme;
     }
 }

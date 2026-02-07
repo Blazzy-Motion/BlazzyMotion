@@ -111,6 +111,21 @@ public static class ComponentRegistry
                 {
                     new ComponentParameter
                     {
+                        Name = "Theme",
+                        DisplayName = "Theme",
+                        Type = ParameterType.Select,
+                        DefaultValue = BzTheme.Glass,
+                        Description = "Visual theme of the grid",
+                        Options = new List<ParameterOption>
+                        {
+                            new() { Label = "Glass", Value = "Glass" },
+                            new() { Label = "Dark", Value = "Dark" },
+                            new() { Label = "Light", Value = "Light" },
+                            new() { Label = "Minimal", Value = "Minimal" }
+                        }
+                    },
+                    new ComponentParameter
+                    {
                         Name = "Columns",
                         DisplayName = "Columns",
                         Type = ParameterType.Range,
