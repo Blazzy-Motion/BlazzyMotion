@@ -73,6 +73,14 @@ public sealed class BzGalleryJsInterop : BzJsInteropBase
     }
 
     /// <summary>
+    /// Locks grid height before filter re-render to prevent layout jump.
+    /// </summary>
+    public async ValueTask PrepareFilterAsync(ElementReference element)
+    {
+        await SafeInvokeVoidAsync("prepareFilter", element);
+    }
+
+    /// <summary>
     /// Filters gallery items by category.
     /// </summary>
     public async ValueTask FilterAsync(ElementReference element, string? category)

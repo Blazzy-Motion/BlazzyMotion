@@ -179,8 +179,12 @@ public class BzGalleryFilterTests : TestBase
         var natureButton = cut.FindAll(".bzg-filter-btn").First(b => b.TextContent.Trim() == "Nature");
         natureButton.Click();
 
-        // Assert - only Nature items should be shown (2 out of 5)
-        var visibleItems = cut.FindAll(".bzg-item");
+        // Assert - all items in DOM, but only Nature items visible (2 out of 5)
+        var allItems = cut.FindAll(".bzg-item");
+        allItems.Should().HaveCount(5);
+        var hiddenItems = cut.FindAll(".bzg-item-hidden");
+        hiddenItems.Should().HaveCount(3);
+        var visibleItems = allItems.Where(i => !i.ClassList.Contains("bzg-item-hidden")).ToList();
         visibleItems.Should().HaveCount(2);
     }
 

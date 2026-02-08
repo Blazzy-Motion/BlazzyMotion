@@ -263,17 +263,29 @@ public partial class BzGallery<TItem> : BzComponentBase where TItem : class
 
     private async Task OnItemClick(int index)
     {
+        if (MappedItems == null || index >= MappedItems.Count) return;
+
+        var item = MappedItems[index];
+
+        // Ignore clicks on hidden (filtered out) items
+        if (!string.IsNullOrEmpty(_activeCategory) && GetItemCategory(item) != _activeCategory)
+            return;
+
         if (EnableLightbox)
         {
-            _lightboxIndex = index;
+            // Map MappedItems index to FilteredItems index for lightbox navigation
+            var filteredIndex = FilteredItems?.IndexOf(item) ?? -1;
+            if (filteredIndex < 0) return;
+
+            _lightboxIndex = filteredIndex;
             _lightboxOpen = true;
             _lightboxJustOpened = true;
             if (_jsInterop != null) await _jsInterop.LockBodyScrollAsync();
             StateHasChanged();
         }
-        else if (OnItemSelected.HasDelegate && FilteredItems != null && index < FilteredItems.Count)
+        else if (OnItemSelected.HasDelegate)
         {
-            var original = FilteredItems[index].GetOriginal<TItem>();
+            var original = item.GetOriginal<TItem>();
             if (original != null)
             {
                 await OnItemSelected.InvokeAsync(original);
@@ -300,6 +312,12 @@ public partial class BzGallery<TItem> : BzComponentBase where TItem : class
 
     private async Task SetFilter(string? category)
     {
+        // Lock grid height before re-render to prevent layout jump
+        if (_jsInterop != null)
+        {
+            await _jsInterop.PrepareFilterAsync(_galleryRef);
+        }
+
         _activeCategory = category;
         StateHasChanged();
 

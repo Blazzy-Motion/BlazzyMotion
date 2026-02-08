@@ -1689,6 +1689,11 @@ ul.bz-feature-list li::before {
     }
 }
 
+.bzg-demo-control--disabled {
+    opacity: 0.3;
+    pointer-events: none;
+}
+
 /* Gallery Demo - Component Override (demo site only) */
 
 .bzg-demo-gallery {

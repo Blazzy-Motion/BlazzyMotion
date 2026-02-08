@@ -58,12 +58,12 @@ else
         <div class="@GetGridClass()"
              style="@GetGridStyle()">
 
-            @if (FilteredItems != null)
+            @if (MappedItems != null)
             {
-                @for (var i = 0; i < FilteredItems.Count; i++)
+                @for (var i = 0; i < MappedItems.Count; i++)
                 {
                     var index = i;
-                    var item = FilteredItems[i];
+                    var item = MappedItems[i];
                     <div class="@GetItemClass(item)"
                          data-category="@GetItemCategory(item)"
                          @onclick="() => OnItemClick(index)">

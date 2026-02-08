@@ -191,26 +191,97 @@ export function focusLightbox() {
 /* Filtering */
 
 /**
- * Filter gallery items by category with animation
+ * Lock grid height before Blazor re-render to prevent layout jump
+ */
+export function prepareFilter(element) {
+    if (!galleryInstances.has(element)) return;
+
+    const instance = galleryInstances.get(element);
+    const grid = instance.grid;
+    if (!grid) return;
+
+    // Cancel any pending filter cleanup
+    if (instance.filterCleanupTimer) {
+        clearTimeout(instance.filterCleanupTimer);
+        instance.filterCleanupTimer = null;
+    }
+
+    // Lock current height to prevent jump during Blazor re-render
+    grid.style.height = grid.offsetHeight + 'px';
+    grid.style.overflow = 'hidden';
+}
+
+/**
+ * Filter gallery items by category with smooth animation
  */
 export function filterGallery(element, category) {
     if (!galleryInstances.has(element)) return;
 
     const instance = galleryInstances.get(element);
-    const items = instance.grid.querySelectorAll('.bzg-item');
+    const grid = instance.grid;
+    const items = grid.querySelectorAll('.bzg-item');
 
-    // Items are shown/hidden via Blazor CSS class toggle
-    // JS just handles re-animation of visible items
+    // Cancel any pending filter cleanup
+    if (instance.filterCleanupTimer) {
+        clearTimeout(instance.filterCleanupTimer);
+        instance.filterCleanupTimer = null;
+    }
+
     requestAnimationFrame(() => {
+        // Phase 1: Set all visible items to invisible
+        // Must disable CSS animation (bz-fade-in forwards keeps opacity:1) so inline styles take effect
         let visibleIndex = 0;
         items.forEach(item => {
             if (!item.classList.contains('bzg-item-hidden')) {
-                item.style.animationDelay = `${visibleIndex * 30}ms`;
-                item.classList.remove('bzg-animate');
-                void item.offsetWidth; // Trigger reflow
-                item.classList.add('bzg-animate');
+                item.style.animation = 'none';
+                item.style.transition = 'none';
+                item.style.opacity = '0';
+                item.style.transform = 'scale(0.95)';
                 visibleIndex++;
             }
+        });
+
+        // Force reflow to commit the opacity:0 state
+        void grid.offsetWidth;
+
+        // Phase 2: Fade in visible items with staggered delays
+        let staggerIndex = 0;
+        items.forEach(item => {
+            if (!item.classList.contains('bzg-item-hidden')) {
+                item.style.transition = 'opacity 0.35s ease, transform 0.35s ease';
+                item.style.transitionDelay = `${staggerIndex * 30}ms`;
+                item.style.opacity = '1';
+                item.style.transform = 'scale(1)';
+                staggerIndex++;
+            }
+        });
+
+        // Phase 3: Smooth height transition
+        requestAnimationFrame(() => {
+            const lockedHeight = parseInt(grid.style.height);
+            grid.style.height = 'auto';
+            const newHeight = grid.offsetHeight;
+
+            if (lockedHeight && lockedHeight !== newHeight) {
+                grid.style.height = lockedHeight + 'px';
+                grid.style.transition = 'height 0.35s cubic-bezier(0.4, 0, 0.2, 1)';
+                void grid.offsetHeight;
+                grid.style.height = newHeight + 'px';
+            }
+
+            // Clean up transition styles after completion
+            // Keep animation:none + opacity:1 inline to prevent flash
+            const maxDelay = staggerIndex * 30;
+            instance.filterCleanupTimer = setTimeout(() => {
+                grid.style.height = '';
+                grid.style.transition = '';
+                grid.style.overflow = '';
+                items.forEach(item => {
+                    item.style.transition = '';
+                    item.style.transitionDelay = '';
+                });
+                instance.filterCleanupTimer = null;
+            }, maxDelay + 400);
         });
     });
 }
@@ -220,14 +291,11 @@ export function filterGallery(element, category) {
  */
 export function recalculateMasonry(element) {
     // CSS columns handle masonry automatically
-    // This function exists for future JS-based masonry if needed
+    // Force a gentle reflow without display:none to avoid breaking height transitions
     if (!galleryInstances.has(element)) return;
 
     const instance = galleryInstances.get(element);
-    // Force reflow for masonry recalculation
-    instance.grid.style.display = 'none';
     void instance.grid.offsetHeight;
-    instance.grid.style.display = '';
 }
 
 /* Body Scroll Lock */
