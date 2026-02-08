@@ -23,6 +23,11 @@ global using BlazzyMotion.Carousel.Models;
 global using BlazzyMotion.Carousel.Services;
 global using CarouselAttributes = BlazzyMotion.Carousel.Attributes;
 
+// BlazzyMotion.Gallery
+global using BlazzyMotion.Gallery.Components;
+global using BlazzyMotion.Gallery.Models;
+global using BlazzyMotion.Gallery.Services;
+
 // Source Generator Testing
 global using Microsoft.CodeAnalysis;
 global using Microsoft.CodeAnalysis.CSharp;
