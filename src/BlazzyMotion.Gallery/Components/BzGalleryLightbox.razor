@@ -1,0 +1,93 @@
+@namespace BlazzyMotion.Gallery.Components
+@using BlazzyMotion.Core.Models
+
+@if (IsOpen)
+{
+    <div class="bzg-lightbox bzg-lightbox-open"
+         @onclick="OnBackdropClick"
+         @onkeydown="OnKeyDown"
+         tabindex="0"
+         role="dialog"
+         aria-modal="true"
+         aria-label="Image lightbox">
+
+        <div class="bzg-lightbox-backdrop"></div>
+
+        <button class="bzg-lightbox-close"
+                @onclick="RequestClose"
+                @onclick:stopPropagation="true"
+                aria-label="Close lightbox">
+            <svg width="24" height="24" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2">
+                <line x1="18" y1="6" x2="6" y2="18"></line>
+                <line x1="6" y1="6" x2="18" y2="18"></line>
+            </svg>
+        </button>
+
+        @if (Items != null && Items.Count > 1)
+        {
+            <div class="bzg-lightbox-counter">
+                @(CurrentIndex + 1) / @Items.Count
+            </div>
+
+            <button class="bzg-lightbox-nav bzg-lightbox-prev"
+                    @onclick="GoPrev"
+                    @onclick:stopPropagation="true"
+                    aria-label="Previous image">
+                <svg width="24" height="24" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2">
+                    <polyline points="15 18 9 12 15 6"></polyline>
+                </svg>
+            </button>
+
+            <button class="bzg-lightbox-nav bzg-lightbox-next"
+                    @onclick="GoNext"
+                    @onclick:stopPropagation="true"
+                    aria-label="Next image">
+                <svg width="24" height="24" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2">
+                    <polyline points="9 18 15 12 9 6"></polyline>
+                </svg>
+            </button>
+        }
+
+        <div class="bzg-lightbox-content" @onclick:stopPropagation="true">
+            @if (CurrentItem != null)
+            {
+                <img class="bzg-lightbox-image"
+                     src="@CurrentItem.ImageUrl"
+                     alt="@(CurrentItem.HasTitle ? CurrentItem.Title : "Gallery image")"
+                     loading="eager" />
+
+                @if (CurrentItem.HasTitle || !string.IsNullOrWhiteSpace(CurrentItem.Description))
+                {
+                    <div class="bzg-lightbox-caption">
+                        @if (CurrentItem.HasTitle)
+                        {
+                            <h3 class="bzg-lightbox-title">@CurrentItem.Title</h3>
+                        }
+                        @if (!string.IsNullOrWhiteSpace(CurrentItem.Description))
+                        {
+                            <p class="bzg-lightbox-description">@CurrentItem.Description</p>
+                        }
+                    </div>
+                }
+            }
+        </div>
+
+        @if (Items != null && Items.Count > 1)
+        {
+            <div class="bzg-lightbox-thumbs" @onclick:stopPropagation="true">
+                @for (var i = 0; i < Items.Count; i++)
+                {
+                    var thumbIndex = i;
+                    var item = Items[i];
+                    <button class="bzg-lightbox-thumb @(thumbIndex == CurrentIndex ? "bzg-lightbox-thumb-active" : "")"
+                            @onclick="() => GoToIndex(thumbIndex)"
+                            aria-label="Go to image @(thumbIndex + 1)">
+                        <img src="@item.ImageUrl"
+                             alt=""
+                             loading="lazy" />
+                    </button>
+                }
+            </div>
+        }
+    </div>
+}
