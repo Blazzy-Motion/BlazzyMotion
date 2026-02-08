@@ -1587,3 +1587,118 @@ ul.bz-feature-list li::before {
         padding: 1rem 0;
     }
 }
+
+/* Gallery Demo Controls */
+
+.bzg-demo-controls {
+    display: flex;
+    flex-wrap: wrap;
+    gap: 20px;
+    justify-content: center;
+    max-width: 900px;
+    margin: 0 auto 2rem;
+    padding: 24px;
+    background: rgba(255, 255, 255, 0.04);
+    border: 1px solid rgba(255, 255, 255, 0.08);
+    border-radius: 16px;
+}
+
+.bzg-demo-control {
+    display: flex;
+    flex-direction: column;
+    gap: 8px;
+    min-width: 120px;
+}
+
+.bzg-demo-control label {
+    font-size: 0.8rem;
+    font-weight: 500;
+    color: rgba(255, 255, 255, 0.5);
+    text-transform: uppercase;
+    letter-spacing: 0.05em;
+}
+
+.bzg-demo-control input[type="range"] {
+    -webkit-appearance: none;
+    appearance: none;
+    width: 100%;
+    height: 6px;
+    border-radius: 3px;
+    background: rgba(255, 255, 255, 0.1);
+    outline: none;
+    cursor: pointer;
+}
+
+.bzg-demo-control input[type="range"]::-webkit-slider-thumb {
+    -webkit-appearance: none;
+    appearance: none;
+    width: 18px;
+    height: 18px;
+    border-radius: 50%;
+    background: var(--bz-accent-purple);
+    border: 2px solid rgba(255, 255, 255, 0.3);
+    cursor: pointer;
+}
+
+.bzg-demo-control input[type="range"]::-moz-range-thumb {
+    width: 18px;
+    height: 18px;
+    border-radius: 50%;
+    background: var(--bz-accent-purple);
+    border: 2px solid rgba(255, 255, 255, 0.3);
+    cursor: pointer;
+}
+
+.bzg-demo-pills {
+    display: flex;
+    gap: 4px;
+}
+
+.bzg-demo-pill {
+    padding: 6px 14px;
+    border: 1px solid rgba(255, 255, 255, 0.1);
+    border-radius: 20px;
+    background: transparent;
+    color: rgba(255, 255, 255, 0.6);
+    font-size: 0.8rem;
+    font-weight: 500;
+    cursor: pointer;
+    transition: all 0.2s ease;
+    white-space: nowrap;
+}
+
+.bzg-demo-pill:hover {
+    background: rgba(255, 255, 255, 0.06);
+    color: rgba(255, 255, 255, 0.85);
+}
+
+.bzg-demo-pill.active {
+    background: rgba(139, 92, 246, 0.2);
+    border-color: rgba(139, 92, 246, 0.4);
+    color: #c4b5fd;
+}
+
+@media (max-width: 768px) {
+    .bzg-demo-controls {
+        padding: 16px;
+        gap: 16px;
+    }
+
+    .bzg-demo-control {
+        min-width: 100px;
+    }
+}
+
+/* Gallery Demo - Component Override (demo site only) */
+
+.bzg-demo-gallery {
+    --bzg-max-width: 900px;
+    --bzg-list-image-width: 220px;
+    --bzg-list-image-width-tablet: 180px;
+}
+
+@media (max-width: 768px) {
+    .bzg-demo-pill--masonry {
+        display: none;
+    }
+}
