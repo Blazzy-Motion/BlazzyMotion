@@ -8,15 +8,16 @@
     <IconContent>@Icons.Rocket</IconContent>
 </PageHeader>
 
-<DocSection Title="Two Powerful Components">
+<DocSection Title="Three Powerful Components">
     <IconContent>@Icons.Sparkles</IconContent>
     <ChildContent>
-        <p>BlazzyMotion provides two components for modern Blazor apps:</p>
+        <p>BlazzyMotion provides three components for modern Blazor apps:</p>
         <ul class="bz-list">
             <li><strong>BzCarousel</strong> - 3D coverflow carousel with automatic item templates via Source Generators</li>
             <li><strong>BzBento</strong> - Apple-style Bento grid layout with metrics, cards, and features</li>
+            <li><strong>BzGallery</strong> - Image gallery with Grid, Masonry, and List layouts plus built-in lightbox</li>
         </ul>
-        <p class="bz-mt-2">Both share the same 4 themes and work together seamlessly.</p>
+        <p class="bz-mt-2">All share the same 4 themes and work together seamlessly.</p>
     </ChildContent>
 </DocSection>
 
@@ -143,6 +144,59 @@
   </ChildContent>
 </DocSection>
 
+<h2 class="bz-section-title bz-mt-4">BzGallery Quick Start</h2>
+
+<DocSection Title="Define Your Model">
+    <IconContent>@Icons.CircleOne</IconContent>
+    <ChildContent>
+        <p>Create a model with <code>[BzImage]</code>, <code>[BzTitle]</code>, and optionally a category property:</p>
+        <CodeBlock Language="csharp" Code="@_galleryModel" />
+    </ChildContent>
+</DocSection>
+
+<DocSection Title="Use the Component">
+    <IconContent>@Icons.CircleTwo</IconContent>
+    <ChildContent>
+        <p>Pass your items and choose a layout:</p>
+        <CodeBlock Language="razor" Code="@_galleryUsage" />
+    </ChildContent>
+</DocSection>
+
+<DocSection Title="Layout Modes">
+    <IconContent>@Icons.Layout</IconContent>
+    <ChildContent>
+        <p>BzGallery supports three layout modes:</p>
+        <ul class="bz-list">
+            <li><strong>Grid</strong> - Uniform grid with configurable aspect ratio</li>
+            <li><strong>Masonry</strong> - Pinterest-style layout preserving original ratios</li>
+            <li><strong>List</strong> - Horizontal list with image and text side by side</li>
+        </ul>
+        <CodeBlock Language="razor" Code="@_galleryLayouts" />
+    </ChildContent>
+</DocSection>
+
+<DocSection Title="Category Filter">
+    <IconContent>@Icons.Target</IconContent>
+    <ChildContent>
+        <p>Enable category filtering with a single parameter:</p>
+        <CodeBlock Language="razor" Code="@_galleryFilter" />
+    </ChildContent>
+</DocSection>
+
+<DocSection Title="Gallery Live Demo">
+  <IconContent>
+    <svg class="bz-icon" viewBox="0 0 24 24">
+      <polygon points="5 3 19 12 5 21 5 3"/>
+    </svg>
+  </IconContent>
+  <ChildContent>
+    <div class="bz-flex bz-gap-2" style="flex-wrap: wrap;">
+        <a href="/gallery" class="bz-btn bz-btn--primary">View Gallery Demo</a>
+        <a href="/docs/gallery" class="bz-btn bz-btn--secondary">Gallery Docs</a>
+    </div>
+  </ChildContent>
+</DocSection>
+
 @code {
     private string _step1Code = @"using BlazzyMotion.Core.Attributes;
 
@@ -205,4 +259,47 @@ public class Movie
                     Description=""Live updates""
                     ColSpan=""2"" />
 </BzBento>";
+
+    // Gallery examples
+    private string _galleryModel = @"using BlazzyMotion.Core.Attributes;
+
+public class Photo
+{
+    [BzImage]
+    public string Url { get; set; } = """";
+
+    [BzTitle]
+    public string Title { get; set; } = """";
+
+    [BzDescription]
+    public string Description { get; set; } = """";
+
+    public string Category { get; set; } = """";
+}";
+
+    private string _galleryUsage = @"<BzGallery Items=""@_photos""
+           Layout=""BzGalleryLayout.Masonry""
+           Columns=""3"" />
+
+@code {
+    private List<Photo> _photos = new()
+    {
+        new() { Url = ""/images/nature1.jpg"", Title = ""Mountain Lake"", Category = ""Nature"" },
+        new() { Url = ""/images/city1.jpg"", Title = ""City Sunset"", Category = ""Urban"" }
+    };
+}";
+
+    private string _galleryLayouts = @"<!-- Grid with fixed aspect ratio -->
+<BzGallery Items=""@_photos"" Layout=""BzGalleryLayout.Grid"" AspectRatio=""4/3"" />
+
+<!-- Masonry with natural ratios -->
+<BzGallery Items=""@_photos"" Layout=""BzGalleryLayout.Masonry"" />
+
+<!-- List with descriptions -->
+<BzGallery Items=""@_photos"" Layout=""BzGalleryLayout.List"" />";
+
+    private string _galleryFilter = @"<BzGallery Items=""@_photos""
+           EnableFilter=""true""
+           CategorySelector=""p => p.Category""
+           Layout=""BzGalleryLayout.Masonry"" />";
 }

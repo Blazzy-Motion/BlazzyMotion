@@ -24,7 +24,7 @@
 <DocSection Title="Install via NuGet">
     <IconContent>@Icons.Download</IconContent>
     <ChildContent>
-        <p>BlazzyMotion offers two component packages. Install the ones you need:</p>
+        <p>BlazzyMotion offers three component packages. Install the ones you need:</p>
 
         <h4 class="bz-mt-3">BzCarousel - 3D Carousel Component</h4>
         <CodeBlock Language="bash" Code="@_carouselCli" />
@@ -32,8 +32,11 @@
         <h4 class="bz-mt-3">BzBento - Bento Grid Layout</h4>
         <CodeBlock Language="bash" Code="@_bentoCli" />
 
-        <h4 class="bz-mt-3">Or install both</h4>
-        <CodeBlock Language="bash" Code="@_bothCli" />
+        <h4 class="bz-mt-3">BzGallery - Image Gallery</h4>
+        <CodeBlock Language="bash" Code="@_galleryCli" />
+
+        <h4 class="bz-mt-3">Or install all</h4>
+        <CodeBlock Language="bash" Code="@_allCli" />
 
         <h4 class="bz-mt-3">PackageReference (csproj)</h4>
         <CodeBlock Language="xml" Code="@_packageRef" />
@@ -67,6 +70,9 @@
     <h4 class="bz-mt-3">Test BzBento</h4>
     <CodeBlock Language="razor" Code="@_testBento" />
 
+    <h4 class="bz-mt-3">Test BzGallery</h4>
+    <CodeBlock Language="razor" Code="@_testGallery" />
+
     <p class="bz-mt-2">If you see the components rendered correctly, you're all set!</p>
   </ChildContent>
 </DocSection>
@@ -90,6 +96,9 @@
         <a href="/docs/bento" class="bz-btn bz-btn--secondary">
             Bento Docs
         </a>
+        <a href="/docs/gallery" class="bz-btn bz-btn--secondary">
+            Gallery Docs
+        </a>
     </div>
   </ChildContent>
 </DocSection>
@@ -99,18 +108,26 @@
 
     private string _bentoCli = "dotnet add package BlazzyMotion.Bento";
 
-    private string _bothCli = @"dotnet add package BlazzyMotion.Carousel
-dotnet add package BlazzyMotion.Bento";
+    private string _galleryCli = "dotnet add package BlazzyMotion.Gallery";
+
+    private string _allCli = @"dotnet add package BlazzyMotion.Carousel
+dotnet add package BlazzyMotion.Bento
+dotnet add package BlazzyMotion.Gallery";
 
     private string _packageRef => $@"<PackageReference Include=""BlazzyMotion.Carousel"" Version=""{AppVersions.Carousel}"" />
-<PackageReference Include=""BlazzyMotion.Bento"" Version=""{AppVersions.Bento}"" />";
+<PackageReference Include=""BlazzyMotion.Bento"" Version=""{AppVersions.Bento}"" />
+<PackageReference Include=""BlazzyMotion.Gallery"" Version=""{AppVersions.Gallery}"" />";
 
     private string _imports = @"@* For BzCarousel *@
 @using BlazzyMotion.Core.Models
 @using BlazzyMotion.Carousel.Components
 
 @* For BzBento *@
-@using BlazzyMotion.Bento.Components";
+@using BlazzyMotion.Bento.Components
+
+@* For BzGallery *@
+@using BlazzyMotion.Gallery.Components
+@using BlazzyMotion.Gallery.Models";
 
     private string _testCarousel = @"<BzCarousel Items=""@_movies"" />
 
@@ -133,4 +150,20 @@ dotnet add package BlazzyMotion.Bento";
     <BzBentoMetric Value=""$50K"" Label=""Revenue"" />
     <BzBentoFeature Label=""Fast"" Description=""60 FPS"" />
 </BzBento>";
+
+    private string _testGallery = @"<BzGallery Items=""@_photos"" />
+
+@code {
+    private List<Photo> _photos = new()
+    {
+        new Photo { ImageUrl = ""/images/photo1.jpg"", Title = ""Photo 1"" },
+        new Photo { ImageUrl = ""/images/photo2.jpg"", Title = ""Photo 2"" }
+    };
+
+    public class Photo
+    {
+        [BzImage] public string ImageUrl { get; set; } = """";
+        [BzTitle] public string Title { get; set; } = """";
+    }
+}";
 }

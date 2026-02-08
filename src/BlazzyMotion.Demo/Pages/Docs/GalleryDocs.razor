@@ -1,0 +1,191 @@
+@page "/docs/gallery"
+@using BlazzyMotion.Demo.Services
+@using BlazzyMotion.Demo.Icons
+
+<PageTitle>Gallery Documentation - BlazzyMotion</PageTitle>
+
+<PageHeader Title="BzGallery" Subtitle="A premium image gallery with Grid, Masonry, and List layouts" Version="@AppVersions.Gallery"
+    License="MIT" Framework="@AppVersions.DotNetVersion">
+    <IconContent>@Icons.Image</IconContent>
+</PageHeader>
+
+<DocSection Title="Overview">
+    <IconContent>@Icons.BookOpen</IconContent>
+    <ChildContent>
+        <p><code>BzGallery</code> is a feature-rich image gallery component with multiple layout modes and a built-in lightbox.</p>
+
+        <ul class="bz-feature-list">
+            <li><strong>3 Layout Modes</strong> - Grid, Masonry, and List layouts</li>
+            <li><strong>Built-in Lightbox</strong> - Fullscreen viewer with keyboard navigation and thumbnails</li>
+            <li><strong>Category Filter</strong> - Filter items by category with animated transitions</li>
+            <li><strong>4 Themes</strong> - Glass, Dark, Light, and Minimal</li>
+            <li><strong>Responsive</strong> - Adapts columns and layout to all screen sizes</li>
+            <li><strong>Staggered Animations</strong> - Items fade in sequentially on load</li>
+        </ul>
+    </ChildContent>
+</DocSection>
+
+<DocSection Title="Basic Usage">
+    <IconContent>@Icons.Code</IconContent>
+    <ChildContent>
+        <CodeBlock Language="razor" Code="@_basicUsage" />
+    </ChildContent>
+</DocSection>
+
+<DocSection Title="Layouts">
+    <IconContent>@Icons.Layout</IconContent>
+    <ChildContent>
+        <p>BzGallery supports three layout modes:</p>
+
+        <h4 class="bz-mt-2">Grid (Default)</h4>
+        <p>Uniform grid with configurable columns and aspect ratio.</p>
+        <CodeBlock Language="razor" Code="@_gridLayout" />
+
+        <h4 class="bz-mt-3">Masonry</h4>
+        <p>Pinterest-style layout that preserves original image aspect ratios.</p>
+        <CodeBlock Language="razor" Code="@_masonryLayout" />
+
+        <h4 class="bz-mt-3">List</h4>
+        <p>Horizontal list with image thumbnails and text descriptions side by side.</p>
+        <CodeBlock Language="razor" Code="@_listLayout" />
+    </ChildContent>
+</DocSection>
+
+<DocSection Title="Category Filter">
+    <IconContent>@Icons.Target</IconContent>
+    <ChildContent>
+        <p>Enable category filtering with animated transitions. Categories are extracted from your items automatically.</p>
+        <CodeBlock Language="razor" Code="@_filterExample" />
+        <p class="bz-mt-2">If no <code>CategorySelector</code> is provided, the <code>[BzDescription]</code> property is used as the category fallback.</p>
+    </ChildContent>
+</DocSection>
+
+<DocSection Title="Lightbox">
+    <IconContent>@Icons.Eye</IconContent>
+    <ChildContent>
+        <p>The built-in lightbox is enabled by default. It supports:</p>
+        <ul class="bz-list">
+            <li>Keyboard navigation (Arrow keys, Escape)</li>
+            <li>Thumbnail strip for quick navigation</li>
+            <li>Image counter and captions</li>
+            <li>Click-outside-to-close</li>
+            <li>Body scroll lock while open</li>
+        </ul>
+        <CodeBlock Language="razor" Code="@_lightboxExample" />
+    </ChildContent>
+</DocSection>
+
+<DocSection Title="Custom Item Template">
+    <IconContent>@Icons.Palette</IconContent>
+    <ChildContent>
+        <p>Override the default rendering with a custom template:</p>
+        <CodeBlock Language="razor" Code="@_customTemplate" />
+    </ChildContent>
+</DocSection>
+
+<DocSection Title="API Reference">
+    <IconContent>@Icons.Settings</IconContent>
+    <ChildContent>
+        <h4>Data Parameters</h4>
+        <ApiTable Parameters="@_dataParams" />
+
+        <h4 class="bz-mt-3">Layout Parameters</h4>
+        <ApiTable Parameters="@_layoutParams" />
+
+        <h4 class="bz-mt-3">Feature Parameters</h4>
+        <ApiTable Parameters="@_featureParams" />
+    </ChildContent>
+</DocSection>
+
+<DocSection Title="CSS Customization">
+    <IconContent>@Icons.Pen</IconContent>
+    <ChildContent>
+        <CodeBlock Language="css" Code="@_cssVars" />
+    </ChildContent>
+</DocSection>
+
+@code {
+    private string _basicUsage = @"<BzGallery Items=""@_photos""
+           OnItemSelected=""HandleSelection"" />";
+
+    private string _gridLayout = @"<BzGallery Items=""@_photos""
+           Layout=""BzGalleryLayout.Grid""
+           Columns=""4""
+           AspectRatio=""16/9"" />";
+
+    private string _masonryLayout = @"<BzGallery Items=""@_photos""
+           Layout=""BzGalleryLayout.Masonry""
+           Columns=""3""
+           Gap=""12"" />";
+
+    private string _listLayout = @"<BzGallery Items=""@_photos""
+           Layout=""BzGalleryLayout.List"" />";
+
+    private string _filterExample = @"<BzGallery Items=""@_photos""
+           EnableFilter=""true""
+           CategorySelector=""p => p.Category"" />
+
+@code {
+    public class Photo
+    {
+        [BzImage] public string Url { get; set; } = """";
+        [BzTitle] public string Title { get; set; } = """";
+        public string Category { get; set; } = """";
+    }
+}";
+
+    private string _lightboxExample = @"@* Lightbox enabled (default) *@
+<BzGallery Items=""@_photos"" EnableLightbox=""true"" />
+
+@* Lightbox disabled - use OnItemSelected instead *@
+<BzGallery Items=""@_photos""
+           EnableLightbox=""false""
+           OnItemSelected=""HandleClick"" />";
+
+    private string _customTemplate = @"<BzGallery Items=""@_photos"" EnableLightbox=""false"">
+    <ItemTemplate Context=""photo"">
+        <div class=""custom-card"">
+            <img src=""@photo.Url"" alt=""@photo.Title"" />
+            <div class=""card-info"">
+                <h4>@photo.Title</h4>
+                <span class=""badge"">@photo.Category</span>
+            </div>
+        </div>
+    </ItemTemplate>
+</BzGallery>";
+
+    private string _cssVars = @".my-gallery {
+    --bzg-columns: 4;
+    --bzg-gap: 20px;
+    --bzg-item-radius: 12px;
+    --bzg-aspect-ratio: 1/1;
+    --bzg-overlay-title-size: 1.1rem;
+}";
+
+    private List<ApiTable.ApiParameter> _dataParams = new()
+    {
+        new() { Name = "Items", Type = "IEnumerable<TItem>?", Description = "Collection of items to display", Required = true },
+        new() { Name = "ItemTemplate", Type = "RenderFragment<TItem>?", Default = "null", Description = "Custom template for each item" },
+        new() { Name = "OnItemSelected", Type = "EventCallback<TItem>", Description = "Click callback (when lightbox is disabled)" },
+        new() { Name = "LoadingTemplate", Type = "RenderFragment?", Default = "null", Description = "Custom loading state" },
+        new() { Name = "EmptyTemplate", Type = "RenderFragment?", Default = "null", Description = "Custom empty state" }
+    };
+
+    private List<ApiTable.ApiParameter> _layoutParams = new()
+    {
+        new() { Name = "Layout", Type = "BzGalleryLayout", Default = "Grid", Description = "Layout mode: Grid, Masonry, or List" },
+        new() { Name = "Columns", Type = "int", Default = "3", Description = "Number of columns (1-6)" },
+        new() { Name = "Gap", Type = "int", Default = "16", Description = "Gap between items (px)" },
+        new() { Name = "AspectRatio", Type = "string?", Default = "null", Description = "Image aspect ratio for Grid mode (e.g. \"4/3\", \"1/1\")" },
+        new() { Name = "Theme", Type = "BzTheme", Default = "Glass", Description = "Visual theme: Glass, Dark, Light, or Minimal" },
+        new() { Name = "CssClass", Type = "string?", Default = "null", Description = "Additional CSS classes" },
+        new() { Name = "AnimationEnabled", Type = "bool", Default = "true", Description = "Enable staggered entry animations" }
+    };
+
+    private List<ApiTable.ApiParameter> _featureParams = new()
+    {
+        new() { Name = "EnableLightbox", Type = "bool", Default = "true", Description = "Show fullscreen lightbox on click" },
+        new() { Name = "EnableFilter", Type = "bool", Default = "false", Description = "Show category filter bar" },
+        new() { Name = "CategorySelector", Type = "Func<TItem, string>?", Default = "null", Description = "Function to extract category from item" }
+    };
+}

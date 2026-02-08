@@ -213,6 +213,68 @@
   </ChildContent>
 </DocSection>
 
+<!-- GALLERY SECTION HEADER -->
+<h2 class="bz-section-title bz-mt-4">Gallery Examples</h2>
+
+<!-- BASIC GALLERY -->
+<DocSection Title="Basic Gallery">
+  <IconContent>@Icons.Image</IconContent>
+  <ChildContent>
+    <p>The simplest way to use BzGallery with a grid layout.</p>
+
+    <h4 class="bz-mt-2">Model</h4>
+    <CodeBlock Language="csharp" Code="@_galleryModel" />
+
+    <h4 class="bz-mt-2">Component</h4>
+    <CodeBlock Language="razor" Code="@_galleryBasic" />
+  </ChildContent>
+</DocSection>
+
+<!-- GALLERY WITH FILTER -->
+<DocSection Title="Photo Gallery with Filter">
+  <IconContent>@Icons.Target</IconContent>
+  <ChildContent>
+    <p>Enable category filtering with animated transitions.</p>
+    <CodeBlock Language="razor" Code="@_galleryFilter" />
+  </ChildContent>
+</DocSection>
+
+<!-- MASONRY LAYOUT -->
+<DocSection Title="Masonry Layout">
+  <IconContent>@Icons.Layout</IconContent>
+  <ChildContent>
+    <p>Pinterest-style layout that preserves original image aspect ratios.</p>
+    <CodeBlock Language="razor" Code="@_galleryMasonry" />
+  </ChildContent>
+</DocSection>
+
+<!-- LIST LAYOUT -->
+<DocSection Title="List Layout">
+  <IconContent>@Icons.FileText</IconContent>
+  <ChildContent>
+    <p>Horizontal list with thumbnails and descriptions side by side.</p>
+    <CodeBlock Language="razor" Code="@_galleryList" />
+  </ChildContent>
+</DocSection>
+
+<!-- CUSTOM GALLERY TEMPLATE -->
+<DocSection Title="Custom Gallery Template">
+  <IconContent>@Icons.Palette</IconContent>
+  <ChildContent>
+    <p>Full control over item rendering with custom templates.</p>
+    <CodeBlock Language="razor" Code="@_galleryCustom" />
+  </ChildContent>
+</DocSection>
+
+<!-- GALLERY WITHOUT LIGHTBOX -->
+<DocSection Title="Gallery without Lightbox">
+  <IconContent>@Icons.Eye</IconContent>
+  <ChildContent>
+    <p>Disable the lightbox and handle clicks with a custom callback.</p>
+    <CodeBlock Language="razor" Code="@_galleryNoLightbox" />
+  </ChildContent>
+</DocSection>
+
 <!-- NEXT STEPS -->
 <DocSection Title="Need More Help?">
   <IconContent>
@@ -229,6 +291,9 @@
       </a>
       <a href="/docs/bento" class="bz-btn bz-btn--primary">
         Bento Docs
+      </a>
+      <a href="/docs/gallery" class="bz-btn bz-btn--primary">
+        Gallery Docs
       </a>
       <a href="/" class="bz-btn bz-btn--secondary">
         Live Demo
@@ -650,6 +715,109 @@ public class Movie
     private void HandleSelection(BentoItem item)
     {
         Console.WriteLine($""Selected: {item.Title}"");
+    }
+}";
+
+  // GALLERY EXAMPLES
+  private string _galleryModel = @"using BlazzyMotion.Core.Attributes;
+
+public class Photo
+{
+    [BzImage]
+    public string Url { get; set; } = """";
+
+    [BzTitle]
+    public string Title { get; set; } = """";
+
+    [BzDescription]
+    public string Description { get; set; } = """";
+
+    public string Category { get; set; } = """";
+}";
+
+  private string _galleryBasic = @"<BzGallery Items=""@_photos""
+           Columns=""3""
+           AspectRatio=""4/3"" />
+
+@code {
+    private List<Photo> _photos = new()
+    {
+        new() { Url = ""/images/nature1.jpg"", Title = ""Mountain Lake"", Category = ""Nature"" },
+        new() { Url = ""/images/city1.jpg"", Title = ""City Sunset"", Category = ""Urban"" },
+        new() { Url = ""/images/nature2.jpg"", Title = ""Forest Path"", Category = ""Nature"" }
+    };
+}";
+
+  private string _galleryFilter = @"<BzGallery Items=""@_photos""
+           EnableFilter=""true""
+           CategorySelector=""p => p.Category""
+           Layout=""BzGalleryLayout.Grid""
+           Columns=""3"" />
+
+@code {
+    private List<Photo> _photos = new()
+    {
+        new() { Url = ""/images/lake.jpg"", Title = ""Mountain Lake"", Category = ""Nature"" },
+        new() { Url = ""/images/city.jpg"", Title = ""City Lights"", Category = ""Urban"" },
+        new() { Url = ""/images/forest.jpg"", Title = ""Forest Path"", Category = ""Nature"" },
+        new() { Url = ""/images/bridge.jpg"", Title = ""Old Bridge"", Category = ""Urban"" }
+    };
+}";
+
+  private string _galleryMasonry = @"<BzGallery Items=""@_photos""
+           Layout=""BzGalleryLayout.Masonry""
+           Columns=""3""
+           Gap=""12""
+           Theme=""BzTheme.Dark"" />";
+
+  private string _galleryList = @"<BzGallery Items=""@_photos""
+           Layout=""BzGalleryLayout.List""
+           Theme=""BzTheme.Glass"" />";
+
+  private string _galleryCustom = @"<BzGallery Items=""@_photos"" EnableLightbox=""false"">
+    <ItemTemplate Context=""photo"">
+        <div class=""photo-card"">
+            <img src=""@photo.Url"" alt=""@photo.Title"" />
+            <div class=""photo-info"">
+                <h4>@photo.Title</h4>
+                <span class=""badge"">@photo.Category</span>
+            </div>
+        </div>
+    </ItemTemplate>
+</BzGallery>
+
+<style>
+    .photo-card {
+        position: relative;
+        border-radius: 12px;
+        overflow: hidden;
+    }
+    .photo-info {
+        position: absolute;
+        bottom: 0;
+        left: 0;
+        right: 0;
+        padding: 1rem;
+        background: linear-gradient(transparent, rgba(0,0,0,0.8));
+        color: white;
+    }
+    .badge {
+        font-size: 0.75rem;
+        padding: 2px 8px;
+        border-radius: 12px;
+        background: rgba(255,255,255,0.2);
+    }
+</style>";
+
+  private string _galleryNoLightbox = @"<BzGallery Items=""@_photos""
+           EnableLightbox=""false""
+           OnItemSelected=""HandlePhotoClick"" />
+
+@code {
+    private void HandlePhotoClick(Photo photo)
+    {
+        Console.WriteLine($""Clicked: {photo.Title}"");
+        // Navigate, show details panel, etc.
     }
 }";
 }

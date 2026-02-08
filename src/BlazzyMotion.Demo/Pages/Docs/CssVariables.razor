@@ -17,6 +17,7 @@
       <li><code>--bz-*</code> - Shared/Core variables (themes, colors)</li>
       <li><code>--bzc-*</code> - Carousel-specific variables</li>
       <li><code>--bzb-*</code> - Bento-specific variables</li>
+      <li><code>--bzg-*</code> - Gallery-specific variables</li>
     </ul>
     <CodeBlock Language="css" Code="@_overviewExample" />
   </ChildContent>
@@ -61,6 +62,29 @@
   </ChildContent>
 </DocSection>
 
+<DocSection Title="Gallery Variables">
+  <IconContent>@Icons.Image</IconContent>
+  <ChildContent>
+    <h4>Grid & Layout</h4>
+    <ApiTable Parameters="@_galleryGrid" />
+
+    <h4 class="bz-mt-3">Overlay</h4>
+    <ApiTable Parameters="@_galleryOverlay" />
+
+    <h4 class="bz-mt-3">Filter Bar</h4>
+    <ApiTable Parameters="@_galleryFilter" />
+
+    <h4 class="bz-mt-3">Lightbox</h4>
+    <ApiTable Parameters="@_galleryLightbox" />
+
+    <h4 class="bz-mt-3">List Layout</h4>
+    <ApiTable Parameters="@_galleryList" />
+
+    <h4 class="bz-mt-3">Example</h4>
+    <CodeBlock Language="css" Code="@_galleryExample" />
+  </ChildContent>
+</DocSection>
+
 <DocSection Title="How to Override">
   <IconContent>@Icons.Target</IconContent>
   <ChildContent>
@@ -92,6 +116,9 @@
 
     <h4 class="bz-mt-3">All Bento Variables</h4>
     <CodeBlock Language="css" Code="@_bentoReference" />
+
+    <h4 class="bz-mt-3">All Gallery Variables</h4>
+    <CodeBlock Language="css" Code="@_galleryReference" />
   </ChildContent>
 </DocSection>
 
@@ -145,8 +172,8 @@
   private List<ApiTable.ApiParameter> _breakpoints = new()
   {
     new() { Name = "Desktop", Type = "> 991px", Default = "—", Description = "Full layout with all effects" },
-    new() { Name = "Tablet", Type = "600-991px", Default = "—", Description = "2 columns for Bento, smaller slides" },
-    new() { Name = "Mobile", Type = "< 600px", Default = "—", Description = "1 column for Bento, compact slides" }
+    new() { Name = "Tablet", Type = "600-991px", Default = "—", Description = "2 columns for Bento/Gallery, smaller slides" },
+    new() { Name = "Mobile", Type = "< 600px", Default = "—", Description = "1 column for Bento/Gallery, compact slides" }
   };
 
   private string _overviewExample = @"/* Customize Carousel */
@@ -158,6 +185,13 @@
 .my-bento {
     --bzb-max-width: 1000px;
     --bzb-row-height: 180px;
+}
+
+/* Customize Gallery */
+.my-gallery {
+    --bzg-columns: 4;
+    --bzg-gap: 20px;
+    --bzg-item-radius: 12px;
 }";
 
   private string _carouselExample = @".large-carousel {
@@ -185,7 +219,8 @@
 }";
 
   private string _cssClassOverride = @"<BzCarousel Items=""@items"" CssClass=""large-carousel"" />
-<BzBento TItem=""object"" CssClass=""compact-bento"">...</BzBento>";
+<BzBento TItem=""object"" CssClass=""compact-bento"">...</BzBento>
+<BzGallery Items=""@photos"" CssClass=""wide-gallery"" />";
 
   private string _responsiveExample = @"@media (max-width: 991px) {
     .my-bento {
@@ -229,5 +264,99 @@
     /* Feature */
     --bzb-feature-icon-size: 2.5rem;
     --bzb-feature-label-size: 0.95rem;
+}";
+
+  // Gallery variables
+  private List<ApiTable.ApiParameter> _galleryGrid = new()
+  {
+    new() { Name = "--bzg-columns", Type = "number", Default = "3", Description = "Number of columns" },
+    new() { Name = "--bzg-columns-tablet", Type = "number", Default = "2", Description = "Columns on tablet" },
+    new() { Name = "--bzg-columns-mobile", Type = "number", Default = "1", Description = "Columns on mobile" },
+    new() { Name = "--bzg-gap", Type = "length", Default = "16px", Description = "Gap between items" },
+    new() { Name = "--bzg-gap-tablet", Type = "length", Default = "12px", Description = "Gap on tablet" },
+    new() { Name = "--bzg-gap-mobile", Type = "length", Default = "8px", Description = "Gap on mobile" },
+    new() { Name = "--bzg-aspect-ratio", Type = "ratio", Default = "4/3", Description = "Image aspect ratio (Grid mode)" },
+    new() { Name = "--bzg-max-width", Type = "length", Default = "1200px", Description = "Max container width" },
+    new() { Name = "--bzg-item-radius", Type = "length", Default = "8px", Description = "Item border radius" },
+    new() { Name = "--bzg-border-radius", Type = "length", Default = "12px", Description = "Container border radius" }
+  };
+
+  private List<ApiTable.ApiParameter> _galleryOverlay = new()
+  {
+    new() { Name = "--bzg-overlay-bg", Type = "gradient", Default = "linear-gradient(...)", Description = "Overlay background gradient" },
+    new() { Name = "--bzg-overlay-title-size", Type = "length", Default = "1rem", Description = "Overlay title font size" },
+    new() { Name = "--bzg-overlay-desc-size", Type = "length", Default = "0.85rem", Description = "Overlay description font size" },
+    new() { Name = "--bzg-overlay-icon-size", Type = "length", Default = "40px", Description = "Overlay icon size" }
+  };
+
+  private List<ApiTable.ApiParameter> _galleryFilter = new()
+  {
+    new() { Name = "--bzg-filter-height", Type = "length", Default = "44px", Description = "Filter button height" },
+    new() { Name = "--bzg-filter-font-size", Type = "length", Default = "0.85rem", Description = "Filter button font size" },
+    new() { Name = "--bzg-filter-radius", Type = "length", Default = "22px", Description = "Filter button border radius" },
+    new() { Name = "--bzg-filter-gap", Type = "length", Default = "8px", Description = "Gap between filter buttons" }
+  };
+
+  private List<ApiTable.ApiParameter> _galleryLightbox = new()
+  {
+    new() { Name = "--bzg-lightbox-bg", Type = "color", Default = "rgba(0, 0, 0, 0.92)", Description = "Lightbox backdrop color" },
+    new() { Name = "--bzg-lightbox-blur", Type = "length", Default = "20px", Description = "Lightbox backdrop blur" },
+    new() { Name = "--bzg-lightbox-caption-size", Type = "length", Default = "1.1rem", Description = "Lightbox caption font size" },
+    new() { Name = "--bzg-lightbox-desc-size", Type = "length", Default = "0.9rem", Description = "Lightbox description font size" },
+    new() { Name = "--bzg-lightbox-nav-size", Type = "length", Default = "48px", Description = "Navigation button size" },
+    new() { Name = "--bzg-lightbox-z-index", Type = "number", Default = "10000", Description = "Lightbox z-index" }
+  };
+
+  private List<ApiTable.ApiParameter> _galleryList = new()
+  {
+    new() { Name = "--bzg-list-image-width", Type = "length", Default = "300px", Description = "Image width in list mode" },
+    new() { Name = "--bzg-list-image-width-tablet", Type = "length", Default = "240px", Description = "Image width on tablet" },
+    new() { Name = "--bzg-list-image-width-mobile", Type = "length", Default = "100%", Description = "Image width on mobile" },
+    new() { Name = "--bzg-list-title-size", Type = "length", Default = "1.15rem", Description = "List title font size" },
+    new() { Name = "--bzg-list-desc-size", Type = "length", Default = "0.9rem", Description = "List description font size" }
+  };
+
+  private string _galleryExample = @".custom-gallery {
+    --bzg-columns: 4;
+    --bzg-gap: 20px;
+    --bzg-item-radius: 12px;
+    --bzg-aspect-ratio: 1/1;
+    --bzg-overlay-title-size: 1.1rem;
+}";
+
+  private string _galleryReference = @":root {
+    /* Grid & Layout */
+    --bzg-columns: 3;
+    --bzg-columns-tablet: 2;
+    --bzg-columns-mobile: 1;
+    --bzg-gap: 16px;
+    --bzg-gap-tablet: 12px;
+    --bzg-gap-mobile: 8px;
+    --bzg-aspect-ratio: 4/3;
+    --bzg-max-width: 1200px;
+    --bzg-item-radius: 8px;
+    --bzg-border-radius: 12px;
+
+    /* Overlay */
+    --bzg-overlay-bg: linear-gradient(...);
+    --bzg-overlay-title-size: 1rem;
+    --bzg-overlay-icon-size: 40px;
+
+    /* Filter Bar */
+    --bzg-filter-height: 44px;
+    --bzg-filter-font-size: 0.85rem;
+    --bzg-filter-radius: 22px;
+
+    /* Lightbox */
+    --bzg-lightbox-bg: rgba(0, 0, 0, 0.92);
+    --bzg-lightbox-blur: 20px;
+    --bzg-lightbox-caption-size: 1.1rem;
+    --bzg-lightbox-nav-size: 48px;
+    --bzg-lightbox-z-index: 10000;
+
+    /* List Layout */
+    --bzg-list-image-width: 300px;
+    --bzg-list-title-size: 1.15rem;
+    --bzg-list-desc-size: 0.9rem;
 }";
 }
