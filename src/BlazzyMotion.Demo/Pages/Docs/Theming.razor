@@ -56,6 +56,9 @@
         <h4 class="bz-mt-3">BzBento</h4>
         <CodeBlock Language="razor" Code="@_bentoUsage" />
 
+        <h4 class="bz-mt-3">BzGallery</h4>
+        <CodeBlock Language="razor" Code="@_galleryUsage" />
+
         <p class="bz-mt-2">
             <strong>Tip:</strong> When nesting components (e.g., BzCarousel inside BzBento),
             use the same theme for visual consistency.
@@ -135,11 +138,19 @@
     text-shadow: 0 0 10px rgba(0, 255, 255, 0.5);
 }";
 
+    private string _galleryUsage = @"<BzGallery Items=""@photos"" Theme=""BzTheme.Glass"" />
+<BzGallery Items=""@photos"" Theme=""BzTheme.Dark"" />
+<BzGallery Items=""@photos"" Theme=""BzTheme.Light"" />
+<BzGallery Items=""@photos"" Theme=""BzTheme.Minimal"" />";
+
     private string _customUsage = @"<!-- Carousel with custom theme -->
 <BzCarousel Items=""@items"" Theme=""BzTheme.Glass"" CssClass=""theme-neon"" />
 
 <!-- Bento with custom theme -->
 <BzBento TItem=""object"" Theme=""BzTheme.Glass"" CssClass=""theme-neon"">
     <BzBentoMetric Value=""99.9%"" Label=""Uptime"" />
-</BzBento>";
+</BzBento>
+
+<!-- Gallery with custom theme -->
+<BzGallery Items=""@photos"" Theme=""BzTheme.Glass"" CssClass=""theme-neon"" />";
 }
