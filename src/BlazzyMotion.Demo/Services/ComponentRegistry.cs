@@ -32,6 +32,17 @@ public static class ComponentRegistry
             Description = "Responsive bento grid layout component",
             DocsUrl = "/docs/bento",
             NuGetPackage = "BlazzyMotion.Bento"
+        },
+        new()
+        {
+            Id = "gallery",
+            Name = "Gallery",
+            Icon = Icons.Icons.Image,
+            Version = AppVersions.Gallery,
+            Status = ComponentStatus.Stable,
+            Description = "Image gallery with Grid, Masonry, and List layouts",
+            DocsUrl = "/docs/gallery",
+            NuGetPackage = "BlazzyMotion.Gallery"
         }
     };
     
