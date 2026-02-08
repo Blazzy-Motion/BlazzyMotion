@@ -165,6 +165,93 @@ public static class ComponentRegistry
                         Unit = "ms"
                     }
                 }
+            },
+
+            // BzGallery Component
+            new ComponentMetadata
+            {
+                Id = "gallery",
+                Name = "BzGallery",
+                Description = "Image gallery with Grid, Masonry, and List layouts plus lightbox and filtering",
+                Icon = Icons.Image,
+                ComponentTypeName = "BzGallery",
+                Parameters = new List<ComponentParameter>
+                {
+                    new ComponentParameter
+                    {
+                        Name = "Theme",
+                        DisplayName = "Theme",
+                        Type = ParameterType.Select,
+                        DefaultValue = BzTheme.Glass,
+                        Description = "Visual theme of the gallery",
+                        Options = new List<ParameterOption>
+                        {
+                            new() { Label = "Glass", Value = "Glass" },
+                            new() { Label = "Dark", Value = "Dark" },
+                            new() { Label = "Light", Value = "Light" },
+                            new() { Label = "Minimal", Value = "Minimal" }
+                        }
+                    },
+                    new ComponentParameter
+                    {
+                        Name = "Layout",
+                        DisplayName = "Layout",
+                        Type = ParameterType.Select,
+                        DefaultValue = "Grid",
+                        Description = "Gallery layout mode",
+                        Options = new List<ParameterOption>
+                        {
+                            new() { Label = "Grid", Value = "Grid" },
+                            new() { Label = "Masonry", Value = "Masonry" },
+                            new() { Label = "List", Value = "List" }
+                        }
+                    },
+                    new ComponentParameter
+                    {
+                        Name = "Columns",
+                        DisplayName = "Columns",
+                        Type = ParameterType.Range,
+                        DefaultValue = 3,
+                        MinValue = 1,
+                        MaxValue = 6,
+                        Description = "Number of columns in the grid"
+                    },
+                    new ComponentParameter
+                    {
+                        Name = "Gap",
+                        DisplayName = "Gap",
+                        Type = ParameterType.Range,
+                        DefaultValue = 16,
+                        MinValue = 0,
+                        MaxValue = 48,
+                        Description = "Space between gallery items",
+                        Unit = "px"
+                    },
+                    new ComponentParameter
+                    {
+                        Name = "EnableLightbox",
+                        DisplayName = "Enable Lightbox",
+                        Type = ParameterType.Boolean,
+                        DefaultValue = true,
+                        Description = "Enable fullscreen lightbox on click"
+                    },
+                    new ComponentParameter
+                    {
+                        Name = "EnableFilter",
+                        DisplayName = "Enable Filter",
+                        Type = ParameterType.Boolean,
+                        DefaultValue = true,
+                        Description = "Show category filter bar"
+                    },
+                    new ComponentParameter
+                    {
+                        Name = "AnimationEnabled",
+                        DisplayName = "Enable Animations",
+                        Type = ParameterType.Boolean,
+                        DefaultValue = true,
+                        Description = "Enable staggered entry animations"
+                    }
+                }
             }
         };
 

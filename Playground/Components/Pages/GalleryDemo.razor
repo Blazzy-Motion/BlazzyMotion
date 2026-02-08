@@ -1,0 +1,90 @@
+@page "/gallerydemo"
+@using BlazzyMotion.Core.Models
+@using BlazzyMotion.Gallery.Components
+@using BlazzyMotion.Gallery.Models
+@using Playground.Models
+
+<PageTitle>Gallery Demo - BlazzyMotion Playground</PageTitle>
+
+<div class="bz-gallery">
+
+    <section class="bz-gallery__header">
+        <span class="bz-gallery__label">Gallery</span>
+        <h1 class="bz-gallery__title">Image Gallery</h1>
+        <p class="bz-gallery__subtitle">Grid, Masonry, and List layouts with lightbox and filtering</p>
+    </section>
+
+    <section class="bz-gallery__demo">
+
+        <div class="bz-theme-pills">
+            <button class="bz-pill @(_currentTheme == BzTheme.Glass ? "active" : "")"
+                    @onclick="() => ChangeTheme(BzTheme.Glass)">
+                <span class="bz-pill__icon">@Icons.Crystal</span> Glass
+            </button>
+            <button class="bz-pill @(_currentTheme == BzTheme.Dark ? "active" : "")"
+                    @onclick="() => ChangeTheme(BzTheme.Dark)">
+                <span class="bz-pill__icon">@Icons.Moon</span> Dark
+            </button>
+            <button class="bz-pill @(_currentTheme == BzTheme.Light ? "active" : "")"
+                    @onclick="() => ChangeTheme(BzTheme.Light)">
+                <span class="bz-pill__icon">@Icons.Sun</span> Light
+            </button>
+            <button class="bz-pill @(_currentTheme == BzTheme.Minimal ? "active" : "")"
+                    @onclick="() => ChangeTheme(BzTheme.Minimal)">
+                <span class="bz-pill__icon">@Icons.Minus</span> Minimal
+            </button>
+        </div>
+
+        <div class="bz-theme-pills" style="margin-top: 12px;">
+            <button class="bz-pill @(_layout == BzGalleryLayout.Grid ? "active" : "")"
+                    @onclick="() => _layout = BzGalleryLayout.Grid">
+                @Icons.Layout Grid
+            </button>
+            <button class="bz-pill @(_layout == BzGalleryLayout.Masonry ? "active" : "")"
+                    @onclick="() => _layout = BzGalleryLayout.Masonry">
+                @Icons.Layout Masonry
+            </button>
+            <button class="bz-pill @(_layout == BzGalleryLayout.List ? "active" : "")"
+                    @onclick="() => _layout = BzGalleryLayout.List">
+                @Icons.FileText List
+            </button>
+        </div>
+
+        <div class="bz-gallery__stage" style="margin-top: 24px;">
+            <BzGallery TItem="GalleryPhoto"
+                       Items="@_photos"
+                       Layout="@_layout"
+                       Theme="@_currentTheme"
+                       Columns="3"
+                       Gap="16"
+                       EnableLightbox="true"
+                       EnableFilter="true"
+                       CategorySelector="@(p => p.Category)" />
+        </div>
+
+    </section>
+
+</div>
+
+@code {
+    private BzTheme _currentTheme = BzTheme.Glass;
+    private BzGalleryLayout _layout = BzGalleryLayout.Grid;
+
+    private List<GalleryPhoto> _photos = new()
+    {
+        new() { Title = "Mountain Lake Reflection", Description = "Crystal clear waters mirroring the peaks", Category = "Nature", ImageUrl = "images/gallery/mountain-lake-reflection.webp" },
+        new() { Title = "City Sunset Avenue", Description = "Golden hour lighting a bustling street", Category = "Urban", ImageUrl = "images/gallery/city-sunset-avenue.webp" },
+        new() { Title = "Foggy Woods", Description = "Mist weaving through ancient treetops", Category = "Nature", ImageUrl = "images/gallery/foggy-woods-top.webp" },
+        new() { Title = "Foggy Sunset Landscape", Description = "Warm light fading into evening mist", Category = "Nature", ImageUrl = "images/gallery/foggy-sunset-landscape.webp" },
+        new() { Title = "Rainy Cobblestone Street", Description = "Glistening stones under city lights", Category = "Urban", ImageUrl = "images/gallery/rainy-cobblestone-street.webp" },
+        new() { Title = "Mountain Lake Pier", Description = "Peaceful dock on a mountain lake", Category = "Nature", ImageUrl = "images/gallery/mountain-lake-pier.webp" },
+        new() { Title = "Abandoned Industrial Hall", Description = "Weathered architecture with raw character", Category = "Urban", ImageUrl = "images/gallery/abandoned-industrial-hall.webp" },
+        new() { Title = "Looking Up Trees", Description = "Sunlight filtering through a forest canopy", Category = "Nature", ImageUrl = "images/gallery/looking-up-trees.webp" },
+        new() { Title = "Yellow Wall Bicycle", Description = "Vibrant colors in an urban corner", Category = "Urban", ImageUrl = "images/gallery/yellow-wall-bicycle.webp" }
+    };
+
+    private void ChangeTheme(BzTheme newTheme)
+    {
+        _currentTheme = newTheme;
+    }
+}
