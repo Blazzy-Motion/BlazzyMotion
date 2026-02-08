@@ -1,0 +1,36 @@
+<Project Sdk="Microsoft.NET.Sdk.Razor">
+
+  <PropertyGroup>
+    <TargetFramework>net8.0</TargetFramework>
+    <Version>$(BlazzyGalleryVersion)</Version>
+    <PackageVersion>$(BlazzyGalleryVersion)</PackageVersion>
+    <PackageId>BlazzyMotion.Gallery</PackageId>
+    <Title>BlazzyMotion Gallery</Title>
+    <Description>A modern image gallery component for Blazor with Grid, Masonry, and List layouts. Features glassmorphism themes, category filtering, fullscreen lightbox with keyboard navigation, and staggered animations. Zero-config setup with [BzImage] attribute. Live demo: https://blazzymotion.com/</Description>
+    <PackageTags>blazor;gallery;image;masonry;grid;lightbox;ui;component;glassmorphism;source-generator</PackageTags>
+    <PackageIcon>icon.png</PackageIcon>
+    <PackageReadmeFile>README.md</PackageReadmeFile>
+
+    <EmitCompilerGeneratedFiles>true</EmitCompilerGeneratedFiles>
+    <CompilerGeneratedFilesOutputPath>$(BaseIntermediateOutputPath)Generated</CompilerGeneratedFilesOutputPath>
+  </PropertyGroup>
+
+  <ItemGroup>
+    <SupportedPlatform Include="browser" />
+  </ItemGroup>
+
+  <ItemGroup>
+    <PackageReference Include="Microsoft.AspNetCore.Components.Web" Version="8.0.0" />
+  </ItemGroup>
+
+  <ItemGroup>
+    <ProjectReference Include="..\BlazzyMotion.Core\BlazzyMotion.Core.csproj" />
+  </ItemGroup>
+
+  <!-- Package assets -->
+  <ItemGroup>
+    <None Include="icon.png" Pack="true" PackagePath="\" Condition="Exists('icon.png')" />
+    <None Include="README.md" Pack="true" PackagePath="\" />
+  </ItemGroup>
+
+</Project>
