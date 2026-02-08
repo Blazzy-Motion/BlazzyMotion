@@ -1,0 +1,10 @@
+::deep .bzg-container {
+    opacity: 0;
+    visibility: hidden;
+}
+
+::deep .bzg-container.bzg-ready {
+    opacity: 1;
+    visibility: visible;
+    transition: opacity 0.3s ease;
+}

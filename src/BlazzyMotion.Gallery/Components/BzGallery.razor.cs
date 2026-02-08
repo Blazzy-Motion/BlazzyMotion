@@ -354,6 +354,16 @@ public partial class BzGallery<TItem> : BzComponentBase where TItem : class
         return GetCombinedClass(baseClass);
     }
 
+    private string GetContainerStyle()
+    {
+        if (!_isInitialized)
+        {
+            return "opacity:0; visibility:hidden";
+        }
+
+        return string.Empty;
+    }
+
     private string GetGridClass()
     {
         var classes = $"bzg-grid bzg-layout-{LayoutClass}";

@@ -1,8 +1,3 @@
-/**
- * BlazzyMotion Gallery - JavaScript Module
- * Grid/Masonry layout, staggered animations, lightbox, filtering
- */
-
 let galleryLoaded = false;
 const galleryInstances = new Map();
 
@@ -92,7 +87,7 @@ export async function initializeGallery(element, optionsJson, dotNetRef = null) 
             });
         }
 
-        // Touch swipe for lightbox (delegated)
+        // Touch swipe for lightbox
         let touchStartX = 0;
         let touchStartY = 0;
 
@@ -108,7 +103,6 @@ export async function initializeGallery(element, optionsJson, dotNetRef = null) 
             const deltaX = e.changedTouches[0].clientX - touchStartX;
             const deltaY = e.changedTouches[0].clientY - touchStartY;
 
-            // Only handle horizontal swipes (not vertical scroll)
             if (Math.abs(deltaX) > Math.abs(deltaY) && Math.abs(deltaX) > 50) {
                 if (deltaX > 0) {
                     // Swipe right → previous
@@ -125,9 +119,11 @@ export async function initializeGallery(element, optionsJson, dotNetRef = null) 
         document.addEventListener('touchstart', handleTouchStart, { passive: true });
         document.addEventListener('touchend', handleTouchEnd, { passive: true });
 
-        // Show gallery with smooth fade-in
+        // Reveal gallery
         requestAnimationFrame(() => {
             requestAnimationFrame(() => {
+                element.style.removeProperty('opacity');
+                element.style.removeProperty('visibility');
                 element.classList.add('bzg-ready');
             });
         });
