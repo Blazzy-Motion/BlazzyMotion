@@ -155,7 +155,7 @@ Horizontal cards with image on the left and text on the right. Stacks vertically
 | `Layout`      | `BzGalleryLayout` | `Grid`  | Layout mode: Grid, Masonry, or List            |
 | `Columns`     | `int`             | `3`     | Number of columns (1-6)                        |
 | `Gap`         | `int`             | `16`    | Gap between items in pixels                    |
-| `AspectRatio` | `string?`         | `"4/3"` | Image aspect ratio for Grid mode               |
+| `AspectRatio` | `string?`         | `null`  | Image aspect ratio for Grid mode (CSS default: `4/3`) |
 | `Theme`       | `BzTheme`         | `Glass` | Visual theme: Glass, Dark, Light, or Minimal   |
 | `CssClass`    | `string?`         | `null`  | Additional CSS classes for customization       |
 
