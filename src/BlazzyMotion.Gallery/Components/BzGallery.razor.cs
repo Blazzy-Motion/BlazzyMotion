@@ -149,6 +149,9 @@ public partial class BzGallery<TItem> : BzComponentBase where TItem : class
         }
     }
 
+    private bool HasNoFilterResults =>
+        !string.IsNullOrEmpty(_activeCategory) && FilteredItems is { Count: 0 };
+
     #endregion
 
     #region Lifecycle
@@ -163,7 +166,7 @@ public partial class BzGallery<TItem> : BzComponentBase where TItem : class
         if (Items != null)
         {
             var itemsList = Items.ToList();
-            MappedItems = BzRegistry.ToBzItems(Items).ToList();
+            MappedItems = BzRegistry.ToBzItems(itemsList).ToList();
 
             if (EnableFilter && CategorySelector != null && MappedItems.Count > 0)
             {

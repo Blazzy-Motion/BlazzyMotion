@@ -349,6 +349,14 @@
     padding: 0 !important;
 }
 
+.bzg-no-results {
+    text-align: center;
+    padding: 48px 16px;
+    color: rgba(255, 255, 255, 0.45);
+    font-size: 0.95rem;
+    margin: 0;
+}
+
 /* Lightbox */
 
 .bzg-lightbox {
@@ -710,6 +718,10 @@
 
 .bzg-container.bzc-theme-light .bzg-list-desc {
     color: rgba(0, 0, 0, 0.6);
+}
+
+.bzg-container.bzc-theme-light .bzg-no-results {
+    color: rgba(0, 0, 0, 0.38);
 }
 
 /* Minimal Theme */

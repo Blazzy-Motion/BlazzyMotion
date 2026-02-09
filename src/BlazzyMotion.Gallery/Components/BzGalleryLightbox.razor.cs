@@ -33,7 +33,6 @@ public partial class BzGalleryLightbox : ComponentBase
         if (Items == null || Items.Count <= 1) return;
 
         var newIndex = CurrentIndex <= 0 ? Items.Count - 1 : CurrentIndex - 1;
-        CurrentIndex = newIndex;
         await OnIndexChanged.InvokeAsync(newIndex);
     }
 
@@ -42,7 +41,6 @@ public partial class BzGalleryLightbox : ComponentBase
         if (Items == null || Items.Count <= 1) return;
 
         var newIndex = CurrentIndex >= Items.Count - 1 ? 0 : CurrentIndex + 1;
-        CurrentIndex = newIndex;
         await OnIndexChanged.InvokeAsync(newIndex);
     }
 
@@ -60,7 +58,6 @@ public partial class BzGalleryLightbox : ComponentBase
     {
         if (Items == null || index < 0 || index >= Items.Count || index == CurrentIndex) return;
 
-        CurrentIndex = index;
         await OnIndexChanged.InvokeAsync(index);
     }
 
