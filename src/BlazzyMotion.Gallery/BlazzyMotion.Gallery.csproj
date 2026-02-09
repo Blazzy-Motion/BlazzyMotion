@@ -7,7 +7,7 @@
     <PackageId>BlazzyMotion.Gallery</PackageId>
     <Title>BlazzyMotion Gallery</Title>
     <Description>A modern image gallery component for Blazor with Grid, Masonry, and List layouts. Features glassmorphism themes, category filtering, fullscreen lightbox with keyboard navigation, and staggered animations. Zero-config setup with [BzImage] attribute. Live demo: https://blazzymotion.com/</Description>
-    <PackageTags>blazor;gallery;image;masonry;grid;lightbox;ui;component;glassmorphism;source-generator</PackageTags>
+    <PackageTags>blazor;gallery;image;photo;photo-gallery;masonry;pinterest;grid;lightbox;filter;responsive;animation;thumbnail;ui;component;glassmorphism;source-generator;blazor-component</PackageTags>
     <PackageIcon>icon.png</PackageIcon>
     <PackageReadmeFile>README.md</PackageReadmeFile>
 
