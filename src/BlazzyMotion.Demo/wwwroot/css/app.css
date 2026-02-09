@@ -1592,9 +1592,8 @@ ul.bz-feature-list li::before {
 
 .bzg-demo-controls {
     display: flex;
-    flex-wrap: wrap;
-    gap: 20px;
-    justify-content: center;
+    flex-direction: column;
+    gap: 16px;
     max-width: 900px;
     margin: 0 auto 2rem;
     padding: 24px;
@@ -1603,11 +1602,42 @@ ul.bz-feature-list li::before {
     border-radius: 16px;
 }
 
+.bzg-demo-controls__row {
+    display: flex;
+    flex-wrap: wrap;
+    gap: 20px;
+    justify-content: center;
+    align-items: flex-start;
+}
+
 .bzg-demo-control {
     display: flex;
     flex-direction: column;
     gap: 8px;
     min-width: 120px;
+}
+
+.bzg-demo-control--aspect {
+    overflow: hidden;
+    white-space: nowrap;
+    transition: max-width 0.35s cubic-bezier(0.4, 0, 0.2, 1),
+                min-width 0.35s cubic-bezier(0.4, 0, 0.2, 1),
+                opacity 0.25s cubic-bezier(0.4, 0, 0.2, 1),
+                margin 0.35s cubic-bezier(0.4, 0, 0.2, 1);
+}
+
+.bzg-demo-control--visible {
+    max-width: 300px;
+    min-width: 120px;
+    opacity: 1;
+}
+
+.bzg-demo-control--hidden {
+    max-width: 0;
+    min-width: 0;
+    opacity: 0;
+    margin: 0;
+    pointer-events: none;
 }
 
 .bzg-demo-control label {
@@ -1681,11 +1711,19 @@ ul.bz-feature-list li::before {
 @media (max-width: 768px) {
     .bzg-demo-controls {
         padding: 16px;
+        gap: 12px;
+    }
+
+    .bzg-demo-controls__row {
         gap: 16px;
     }
 
     .bzg-demo-control {
         min-width: 100px;
+    }
+
+    .bzg-demo-control--visible {
+        max-width: 260px;
     }
 }
 

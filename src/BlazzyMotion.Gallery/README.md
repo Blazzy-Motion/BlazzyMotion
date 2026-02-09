@@ -45,6 +45,8 @@ A premium image gallery component for Blazor with Grid, Masonry, and List layout
 
 Experience BlazzyMotion.Gallery in action: **[View Live Demo](https://blazzymotion.com/gallery)**
 
+![BlazzyMotion.Gallery Demo](https://raw.githubusercontent.com/Blazzy-Motion/BlazzyMotion/main/docs/images/gallery.gif)
+
 ## Quick Start
 
 ### Installation

@@ -45,31 +45,32 @@
         <BzThemePicker @bind-CurrentTheme="_currentTheme" />
 
         <div class="bzg-demo-controls">
-            <div class="bzg-demo-control">
-                <label>Layout</label>
-                <div class="bzg-demo-pills">
-                    <button class="bzg-demo-pill @(_layout == BzGalleryLayout.Grid ? "active" : "")"
-                            @onclick="@(() => _layout = BzGalleryLayout.Grid)">Grid</button>
-                    <button class="bzg-demo-pill bzg-demo-pill--masonry @(_layout == BzGalleryLayout.Masonry ? "active" : "")"
-                            @onclick="@(() => _layout = BzGalleryLayout.Masonry)">Masonry</button>
-                    <button class="bzg-demo-pill @(_layout == BzGalleryLayout.List ? "active" : "")"
-                            @onclick="@(() => _layout = BzGalleryLayout.List)">List</button>
+            <div class="bzg-demo-controls__row bzg-demo-controls__row--primary">
+                <div class="bzg-demo-control">
+                    <label>Layout</label>
+                    <div class="bzg-demo-pills">
+                        <button class="bzg-demo-pill @(_layout == BzGalleryLayout.Grid ? "active" : "")"
+                                @onclick="@(() => _layout = BzGalleryLayout.Grid)">Grid</button>
+                        <button class="bzg-demo-pill bzg-demo-pill--masonry @(_layout == BzGalleryLayout.Masonry ? "active" : "")"
+                                @onclick="@(() => _layout = BzGalleryLayout.Masonry)">Masonry</button>
+                        <button class="bzg-demo-pill @(_layout == BzGalleryLayout.List ? "active" : "")"
+                                @onclick="@(() => _layout = BzGalleryLayout.List)">List</button>
+                    </div>
+                </div>
+
+                <div class="bzg-demo-control">
+                    <label>Columns: @_columns</label>
+                    <input type="range" min="1" max="5" @bind="_columns" @bind:event="oninput" />
+                </div>
+
+                <div class="bzg-demo-control">
+                    <label>Gap: @(_gap)px</label>
+                    <input type="range" min="4" max="32" step="4" @bind="_gap" @bind:event="oninput" />
                 </div>
             </div>
 
-            <div class="bzg-demo-control">
-                <label>Columns: @_columns</label>
-                <input type="range" min="1" max="5" @bind="_columns" @bind:event="oninput" />
-            </div>
-
-            <div class="bzg-demo-control">
-                <label>Gap: @(_gap)px</label>
-                <input type="range" min="4" max="32" step="4" @bind="_gap" @bind:event="oninput" />
-            </div>
-
-            @if (_layout == BzGalleryLayout.Grid)
-            {
-                <div class="bzg-demo-control">
+            <div class="bzg-demo-controls__row bzg-demo-controls__row--secondary">
+                <div class="bzg-demo-control bzg-demo-control--aspect @(_layout == BzGalleryLayout.Grid ? "bzg-demo-control--visible" : "bzg-demo-control--hidden")">
                     <label>Aspect Ratio</label>
                     <div class="bzg-demo-pills">
                         <button class="bzg-demo-pill @(_aspectRatio == "1/1" ? "active" : "")"
@@ -82,25 +83,25 @@
                                 @onclick="@(() => _aspectRatio = "3/4")">3:4</button>
                     </div>
                 </div>
-            }
 
-            <div class="bzg-demo-control">
-                <label>Lightbox</label>
-                <div class="bzg-demo-pills">
-                    <button class="bzg-demo-pill @(_enableLightbox ? "active" : "")"
-                            @onclick="@(() => _enableLightbox = true)">On</button>
-                    <button class="bzg-demo-pill @(!_enableLightbox ? "active" : "")"
-                            @onclick="@(() => _enableLightbox = false)">Off</button>
+                <div class="bzg-demo-control">
+                    <label>Lightbox</label>
+                    <div class="bzg-demo-pills">
+                        <button class="bzg-demo-pill @(_enableLightbox ? "active" : "")"
+                                @onclick="@(() => _enableLightbox = true)">On</button>
+                        <button class="bzg-demo-pill @(!_enableLightbox ? "active" : "")"
+                                @onclick="@(() => _enableLightbox = false)">Off</button>
+                    </div>
                 </div>
-            </div>
 
-            <div class="bzg-demo-control">
-                <label>Filter</label>
-                <div class="bzg-demo-pills">
-                    <button class="bzg-demo-pill @(_enableFilter ? "active" : "")"
-                            @onclick="@(() => _enableFilter = true)">On</button>
-                    <button class="bzg-demo-pill @(!_enableFilter ? "active" : "")"
-                            @onclick="@(() => _enableFilter = false)">Off</button>
+                <div class="bzg-demo-control">
+                    <label>Filter</label>
+                    <div class="bzg-demo-pills">
+                        <button class="bzg-demo-pill @(_enableFilter ? "active" : "")"
+                                @onclick="@(() => _enableFilter = true)">On</button>
+                        <button class="bzg-demo-pill @(!_enableFilter ? "active" : "")"
+                                @onclick="@(() => _enableFilter = false)">Off</button>
+                    </div>
                 </div>
             </div>
         </div>
