@@ -1,4 +1,4 @@
-﻿
+
 // Test Frameworks
 global using Xunit;
 global using FluentAssertions;
@@ -34,3 +34,6 @@ global using Microsoft.CodeAnalysis.CSharp;
 
 // Test Helpers
 global using BlazzyMotion.Tests.Helpers;
+
+// Disable parallel test execution to prevent BzRegistry static state conflicts
+[assembly: CollectionBehavior(DisableTestParallelization = true)]

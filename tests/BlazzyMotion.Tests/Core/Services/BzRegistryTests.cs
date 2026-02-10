@@ -62,7 +62,7 @@ public class BzRegistryTests : IDisposable
     // Assert
     BzRegistry.HasMapper<TestMovie>().Should().BeTrue();
     BzRegistry.HasMapper<TestBook>().Should().BeTrue();
-    BzRegistry.MapperCount.Should().BeGreaterThanOrEqualTo(2);
+    BzRegistry.MapperCount.Should().Be(2);
   }
 
   #endregion
@@ -360,7 +360,7 @@ public class BzRegistryTests : IDisposable
     BzRegistry.Register<TestAlbum>(a => new BzItem());
 
     // Assert
-    BzRegistry.MapperCount.Should().BeGreaterThanOrEqualTo(3);
+    BzRegistry.MapperCount.Should().Be(3);
   }
 
   #endregion
