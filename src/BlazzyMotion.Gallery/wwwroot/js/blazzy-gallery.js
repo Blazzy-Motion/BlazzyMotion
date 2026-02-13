@@ -1,6 +1,9 @@
 let galleryLoaded = false;
 const galleryInstances = new Map();
 
+/* Lightbox swipe state (singleton — one lightbox at a time) */
+let swipeState = null;
+
 /* CSS/Resource Loading */
 
 function loadStylesheet(href) {
@@ -87,38 +90,6 @@ export async function initializeGallery(element, optionsJson, dotNetRef = null) 
             });
         }
 
-        // Touch swipe for lightbox
-        let touchStartX = 0;
-        let touchStartY = 0;
-
-        const handleTouchStart = (e) => {
-            touchStartX = e.touches[0].clientX;
-            touchStartY = e.touches[0].clientY;
-        };
-
-        const handleTouchEnd = (e) => {
-            const lightbox = document.querySelector('.bzg-lightbox-open');
-            if (!lightbox) return;
-
-            const deltaX = e.changedTouches[0].clientX - touchStartX;
-            const deltaY = e.changedTouches[0].clientY - touchStartY;
-
-            if (Math.abs(deltaX) > Math.abs(deltaY) && Math.abs(deltaX) > 50) {
-                if (deltaX > 0) {
-                    // Swipe right → previous
-                    const prevBtn = lightbox.querySelector('.bzg-lightbox-prev');
-                    if (prevBtn) prevBtn.click();
-                } else {
-                    // Swipe left → next
-                    const nextBtn = lightbox.querySelector('.bzg-lightbox-next');
-                    if (nextBtn) nextBtn.click();
-                }
-            }
-        };
-
-        document.addEventListener('touchstart', handleTouchStart, { passive: true });
-        document.addEventListener('touchend', handleTouchEnd, { passive: true });
-
         // Reveal gallery
         requestAnimationFrame(() => {
             requestAnimationFrame(() => {
@@ -133,8 +104,7 @@ export async function initializeGallery(element, optionsJson, dotNetRef = null) 
             grid: grid,
             observer: observer,
             options: options,
-            dotNetRef: dotNetRef,
-            touchHandlers: { handleTouchStart, handleTouchEnd }
+            dotNetRef: dotNetRef
         });
 
         // Callback to Blazor
@@ -150,6 +120,107 @@ export async function initializeGallery(element, optionsJson, dotNetRef = null) 
     } catch (err) {
         console.error("[BlazzyMotion] Gallery initialization error:", err);
     }
+}
+
+/* Lightbox Swipe */
+
+/**
+ * Initialize touch swipe on the lightbox element.
+ * Listens only on the lightbox, uses direct Blazor callback (no .click()),
+ * and includes a cooldown guard to prevent double-firing.
+ * @param {object} dotNetRef - .NET object reference with SwipePrev/SwipeNext methods
+ */
+export function initializeLightboxSwipe(dotNetRef) {
+    // Clean up any previous swipe listeners
+    destroyLightboxSwipe();
+
+    let startX = 0;
+    let startY = 0;
+    let isSwiping = false;
+    let cooldown = false;
+
+    const onTouchStart = (e) => {
+        startX = e.touches[0].clientX;
+        startY = e.touches[0].clientY;
+        isSwiping = false;
+    };
+
+    const onTouchMove = (e) => {
+        if (cooldown) return;
+
+        const dx = Math.abs(e.touches[0].clientX - startX);
+        const dy = Math.abs(e.touches[0].clientY - startY);
+
+        // Horizontal movement dominates → mark as swipe and prevent scroll
+        if (dx > dy && dx > 10) {
+            isSwiping = true;
+            e.preventDefault();
+        }
+    };
+
+    const onTouchEnd = (e) => {
+        if (!isSwiping || cooldown) {
+            isSwiping = false;
+            return;
+        }
+
+        const deltaX = e.changedTouches[0].clientX - startX;
+        isSwiping = false;
+
+        if (Math.abs(deltaX) < 50) return;
+
+        // Cooldown guard — prevent double-firing
+        cooldown = true;
+
+        const method = deltaX > 0 ? 'SwipePrev' : 'SwipeNext';
+        dotNetRef.invokeMethodAsync(method).catch(err => {
+            if (!err.message?.includes('disposed')) {
+                console.warn('[BlazzyMotion] Swipe callback error:', err);
+            }
+        });
+
+        setTimeout(() => { cooldown = false; }, 300);
+    };
+
+    // Listen on document but only act when lightbox is open
+    // Using document because Blazor re-renders the lightbox element on each image change
+    const wrappedTouchStart = (e) => {
+        if (!document.querySelector('.bzg-lightbox-open')) return;
+        onTouchStart(e);
+    };
+
+    const wrappedTouchMove = (e) => {
+        if (!document.querySelector('.bzg-lightbox-open')) return;
+        onTouchMove(e);
+    };
+
+    const wrappedTouchEnd = (e) => {
+        if (!document.querySelector('.bzg-lightbox-open')) return;
+        onTouchEnd(e);
+    };
+
+    document.addEventListener('touchstart', wrappedTouchStart, { passive: true });
+    document.addEventListener('touchmove', wrappedTouchMove, { passive: false });
+    document.addEventListener('touchend', wrappedTouchEnd, { passive: true });
+
+    swipeState = {
+        dotNetRef,
+        handlers: { wrappedTouchStart, wrappedTouchMove, wrappedTouchEnd }
+    };
+}
+
+/**
+ * Remove lightbox swipe listeners
+ */
+export function destroyLightboxSwipe() {
+    if (!swipeState) return;
+
+    const { handlers } = swipeState;
+    document.removeEventListener('touchstart', handlers.wrappedTouchStart);
+    document.removeEventListener('touchmove', handlers.wrappedTouchMove);
+    document.removeEventListener('touchend', handlers.wrappedTouchEnd);
+
+    swipeState = null;
 }
 
 /* Lightbox Control */
@@ -181,6 +252,88 @@ export function focusLightbox() {
     requestAnimationFrame(() => {
         const lightbox = document.querySelector('.bzg-lightbox');
         if (lightbox) lightbox.focus();
+    });
+}
+
+/* Focus Trap */
+
+/**
+ * Trap Tab focus inside the lightbox so it cannot escape to background content.
+ * Called once when lightbox opens; cleaned up via destroyFocusTrap.
+ */
+let focusTrapHandler = null;
+
+export function trapFocus() {
+    // Remove any existing trap
+    destroyFocusTrap();
+
+    const lightboxElement = document.querySelector('.bzg-lightbox');
+    if (!lightboxElement) return;
+
+    const focusableSelector = 'button:not([disabled]), [href], [tabindex]:not([tabindex="-1"])';
+
+    focusTrapHandler = (e) => {
+        if (e.key !== 'Tab') return;
+
+        // Filter to only elements actually in the Tab order (tabIndex >= 0).
+        // Buttons with tabindex="-1" match the selector but are not tabbable.
+        const focusables = Array.from(lightboxElement.querySelectorAll(focusableSelector))
+            .filter(el => el.tabIndex >= 0);
+        if (focusables.length === 0) return;
+
+        const first = focusables[0];
+        const last = focusables[focusables.length - 1];
+        const active = document.activeElement;
+
+        // When focus is on the lightbox container itself (not on a child button),
+        // move focus into the first or last focusable child
+        if (!focusables.includes(active)) {
+            e.preventDefault();
+            (e.shiftKey ? last : first).focus();
+            return;
+        }
+
+        if (e.shiftKey && active === first) {
+            e.preventDefault();
+            last.focus();
+        } else if (!e.shiftKey && active === last) {
+            e.preventDefault();
+            first.focus();
+        }
+    };
+
+    lightboxElement.addEventListener('keydown', focusTrapHandler);
+}
+
+/**
+ * Remove focus trap keydown listener
+ */
+export function destroyFocusTrap() {
+    if (!focusTrapHandler) return;
+
+    const lightbox = document.querySelector('.bzg-lightbox');
+    if (lightbox) {
+        lightbox.removeEventListener('keydown', focusTrapHandler);
+    }
+
+    focusTrapHandler = null;
+}
+
+/* Focus Restore */
+
+/**
+ * Restore focus to the gallery item that opened the lightbox.
+ * @param {HTMLElement} galleryElement - The gallery container
+ * @param {number} itemIndex - Zero-based index of the item to focus
+ */
+export function restoreFocus(galleryElement, itemIndex) {
+    if (!galleryElement) return;
+
+    requestAnimationFrame(() => {
+        const items = galleryElement.querySelectorAll('.bzg-item:not(.bzg-item-hidden)');
+        if (itemIndex >= 0 && itemIndex < items.length) {
+            items[itemIndex].focus();
+        }
     });
 }
 
@@ -318,15 +471,13 @@ export function destroyGallery(element) {
             instance.observer.disconnect();
         }
 
-        // Remove touch handlers
-        if (instance.touchHandlers) {
-            document.removeEventListener('touchstart', instance.touchHandlers.handleTouchStart);
-            document.removeEventListener('touchend', instance.touchHandlers.handleTouchEnd);
-        }
-
         // Remove ready class
         element.classList.remove('bzg-ready');
 
         galleryInstances.delete(element);
     }
+
+    // Also clean up lightbox-related listeners
+    destroyLightboxSwipe();
+    destroyFocusTrap();
 }

@@ -103,7 +103,7 @@ public class BzGalleryLightboxTests : TestBase
 
         // Assert
         var lightbox = cut.Find(".bzg-lightbox");
-        lightbox.GetAttribute("aria-label").Should().Be("Image lightbox");
+        lightbox.GetAttribute("aria-label").Should().Be("Photo 1, image 1 of 3");
     }
 
     [Fact]
@@ -321,8 +321,9 @@ public class BzGalleryLightboxTests : TestBase
             .Add(p => p.Items, items)
             .Add(p => p.CurrentIndex, 0));
 
-        // Assert
-        cut.FindAll(".bzg-lightbox-caption").Should().BeEmpty();
+        // Assert — caption container exists for aria-live but has no title/description content
+        cut.FindAll(".bzg-lightbox-title").Should().BeEmpty();
+        cut.FindAll(".bzg-lightbox-description").Should().BeEmpty();
     }
 
     #endregion
@@ -426,9 +427,9 @@ public class BzGalleryLightboxTests : TestBase
 
         // Assert
         var thumbs = cut.FindAll(".bzg-lightbox-thumb");
-        thumbs[0].GetAttribute("aria-label").Should().Be("Go to image 1");
-        thumbs[1].GetAttribute("aria-label").Should().Be("Go to image 2");
-        thumbs[2].GetAttribute("aria-label").Should().Be("Go to image 3");
+        thumbs[0].GetAttribute("aria-label").Should().Be("Go to image 1, Photo 1");
+        thumbs[1].GetAttribute("aria-label").Should().Be("Go to image 2, Photo 2");
+        thumbs[2].GetAttribute("aria-label").Should().Be("Go to image 3, Photo 3");
     }
 
     [Fact]

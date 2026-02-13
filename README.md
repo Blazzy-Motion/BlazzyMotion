@@ -15,11 +15,12 @@ Experience BlazzyMotion components in action: **[View Live Demo](https://blazzym
 
 ## Components
 
-| Package                                                      | Description                                          | NuGet                                                                                                                       |
-| ------------------------------------------------------------ | ---------------------------------------------------- | --------------------------------------------------------------------------------------------------------------------------- |
-| [BlazzyMotion.Carousel](src/BlazzyMotion.Carousel/README.md) | 3D coverflow carousel powered by Swiper.js           | [![NuGet](https://img.shields.io/nuget/v/BlazzyMotion.Carousel.svg)](https://www.nuget.org/packages/BlazzyMotion.Carousel/) |
-| [BlazzyMotion.Bento](src/BlazzyMotion.Bento/README.md)       | Bento Grid with Composition Mode for dashboards      | [![NuGet](https://img.shields.io/nuget/v/BlazzyMotion.Bento.svg)](https://www.nuget.org/packages/BlazzyMotion.Bento/)       |
-| BlazzyMotion.Core                                            | Shared infrastructure (attributes, themes, registry) | [![NuGet](https://img.shields.io/nuget/v/BlazzyMotion.Core.svg)](https://www.nuget.org/packages/BlazzyMotion.Core/)         |
+| Package                                                      | Description                                              | NuGet                                                                                                                       |
+| ------------------------------------------------------------ | -------------------------------------------------------- | --------------------------------------------------------------------------------------------------------------------------- |
+| [BlazzyMotion.Carousel](src/BlazzyMotion.Carousel/README.md) | 3D coverflow carousel powered by Swiper.js               | [![NuGet](https://img.shields.io/nuget/v/BlazzyMotion.Carousel.svg)](https://www.nuget.org/packages/BlazzyMotion.Carousel/) |
+| [BlazzyMotion.Gallery](src/BlazzyMotion.Gallery/README.md)   | Photo gallery with lightbox, filtering, and masonry grid | [![NuGet](https://img.shields.io/nuget/v/BlazzyMotion.Gallery.svg)](https://www.nuget.org/packages/BlazzyMotion.Gallery/)   |
+| [BlazzyMotion.Bento](src/BlazzyMotion.Bento/README.md)       | Bento Grid with Composition Mode for dashboards          | [![NuGet](https://img.shields.io/nuget/v/BlazzyMotion.Bento.svg)](https://www.nuget.org/packages/BlazzyMotion.Bento/)       |
+| BlazzyMotion.Core                                            | Shared infrastructure (attributes, themes, registry)     | [![NuGet](https://img.shields.io/nuget/v/BlazzyMotion.Core.svg)](https://www.nuget.org/packages/BlazzyMotion.Core/)         |
 
 ## Key Features
 
@@ -36,6 +37,9 @@ Experience BlazzyMotion components in action: **[View Live Demo](https://blazzym
 ```bash
 # For 3D Carousel
 dotnet add package BlazzyMotion.Carousel
+
+# For Photo Gallery
+dotnet add package BlazzyMotion.Gallery
 
 # For Bento Grid
 dotnet add package BlazzyMotion.Bento
@@ -90,6 +94,22 @@ public class Movie
 ```
 
 **Note:** Use Composition Mode to build dashboards with metrics, cards, and embedded components. See [Bento README](src/BlazzyMotion.Bento/README.md) for full documentation.
+
+**Gallery:**
+
+```razor
+@using BlazzyMotion.Gallery.Components
+@using BlazzyMotion.Core.Models
+
+<BzGallery TItem="Photo"
+           Items="photos"
+           Theme="BzTheme.Glass"
+           Layout="BzGalleryLayout.Masonry"
+           EnableLightbox="true"
+           EnableFilter="true" />
+```
+
+**Note:** Gallery supports grid, masonry, and columns layouts with built-in lightbox, category filtering, and full keyboard/screen reader accessibility. See [Gallery README](src/BlazzyMotion.Gallery/README.md) for full documentation.
 
 ## How It Works
 

@@ -19,6 +19,7 @@ A premium image gallery component for Blazor with Grid, Masonry, and List layout
 - [Themes](#themes)
 - [Category Filtering](#category-filtering)
 - [Lightbox](#lightbox)
+- [Accessibility](#accessibility)
 - [Responsive Behavior](#responsive-behavior)
 - [CSS Customization](#css-customization)
 - [How It Works](#how-it-works)
@@ -39,7 +40,7 @@ A premium image gallery component for Blazor with Grid, Masonry, and List layout
 - **Multiple Themes** - Glass, Dark, Light, and Minimal themes included out of the box
 - **Staggered Animations** - Intersection Observer-powered entrance animations per item
 - **Mobile Optimized** - Touch swipe in lightbox, no backdrop-filter on mobile for performance
-- **Accessible** - Focus-visible states, keyboard navigation, `prefers-reduced-motion` support
+- **Fully Accessible** - WCAG 2.1 AA compliant with screen reader support, focus trap, keyboard navigation, and `prefers-reduced-motion`
 
 ## Live Demo
 
@@ -237,19 +238,27 @@ When no `CategorySelector` is provided, the `[BzDescription]` attribute value is
 
 The fullscreen lightbox is enabled by default. It supports:
 
-- **Keyboard Navigation** - Left/Right arrows to navigate, Escape to close
-- **Touch Swipe** - Swipe left/right on mobile to navigate
+- **Keyboard Navigation** - Arrow keys, Home/End, Escape, Tab cycling
+- **Touch Swipe** - Swipe left/right on mobile with cooldown guard
+- **Focus Trap** - Tab key stays within the lightbox modal
+- **Focus Restore** - Focus returns to the gallery item that opened the lightbox
+- **Screen Reader** - Live region announcements, dynamic ARIA labels
 - **Zoom-in Animation** - Smooth scale animation when opening
 - **Image Counter** - Shows current position (e.g., "3 / 12")
 - **Caption Display** - Shows title and description below the image
 
 ### Keyboard Shortcuts
 
-| Key   | Action         |
-| ----- | -------------- |
-| `←`   | Previous image |
-| `→`   | Next image     |
-| `Esc` | Close lightbox |
+| Key          | Action                   |
+| ------------ | ------------------------ |
+| `←`          | Previous image           |
+| `→`          | Next image               |
+| `Home`       | First image              |
+| `End`        | Last image               |
+| `Esc`        | Close lightbox           |
+| `Tab`        | Cycle through controls   |
+| `Shift+Tab`  | Cycle backwards          |
+| `Enter/Space`| Open lightbox from grid  |
 
 ### Disabling Lightbox
 
@@ -268,6 +277,55 @@ Use `OnItemSelected` instead for custom click handling:
     }
 }
 ```
+
+## Accessibility
+
+BlazzyMotion.Gallery is built with WCAG 2.1 AA compliance in mind, ensuring usability for screen readers, keyboard-only users, and users with motion sensitivities.
+
+### Screen Reader Support
+
+- Lightbox uses `role="dialog"` with `aria-modal="true"` and `aria-roledescription="Image gallery lightbox"`
+- Dynamic `aria-label` announces image title and position (e.g., "Sunset, image 3 of 9")
+- Caption region uses `aria-live="polite"` with `aria-atomic="true"` for automatic announcements on image change
+- Hidden `.bzg-sr-only` text provides "Image X of Y" context for assistive technology
+- Thumbnail strip uses `role="tablist"` with `role="tab"` and `aria-selected` on each thumbnail
+- Gallery items use `role="button"` with descriptive `aria-label` including action hints
+- Decorative elements are hidden with `aria-hidden="true"`
+
+### Keyboard Navigation
+
+- **Gallery grid**: `Tab` to focus items, `Enter` or `Space` to open lightbox
+- **Lightbox**: `←`/`→` navigate images, `Home`/`End` jump to first/last, `Escape` closes
+- **Focus trap**: `Tab`/`Shift+Tab` cycle through lightbox controls without escaping
+- **Focus restore**: When lightbox closes, focus returns to the gallery item that opened it
+
+### Focus Indicators
+
+All interactive elements display a visible `2px solid` outline with `2px offset` on `:focus-visible`, meeting WCAG 2.4.7 requirements.
+
+### Category Filter Bar
+
+- Filter toolbar uses `role="toolbar"` with `aria-label="Filter by category"`
+- Each filter button uses `aria-pressed` to indicate active state
+- "No items match" message uses `role="status"` with `aria-live="polite"`
+
+### Reduced Motion
+
+When `prefers-reduced-motion: reduce` is enabled in the user's operating system:
+
+- All staggered entry animations are disabled
+- Image hover transitions are removed
+- Lightbox zoom animation is turned off
+- Content displays immediately without any motion
+
+### Tested Screen Readers
+
+| Screen Reader | Platform    | Status    |
+| ------------- | ----------- | --------- |
+| NVDA          | Windows     | Supported |
+| JAWS          | Windows     | Supported |
+| Narrator      | Windows     | Supported |
+| VoiceOver     | macOS / iOS | Supported |
 
 ## Responsive Behavior
 

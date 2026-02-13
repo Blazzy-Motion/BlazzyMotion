@@ -40,8 +40,9 @@ else
 
         @if (EnableFilter && _categories.Count > 1)
         {
-            <div class="bzg-filter-bar">
+            <div class="bzg-filter-bar" role="toolbar" aria-label="Filter by category">
                 <button class="bzg-filter-btn @(_activeCategory == null ? "bzg-filter-active" : "")"
+                        aria-pressed="@(_activeCategory == null ? "true" : "false")"
                         @onclick="() => SetFilter(null)">
                     All
                 </button>
@@ -49,6 +50,7 @@ else
                 {
                     var cat = category;
                     <button class="bzg-filter-btn @(_activeCategory == cat ? "bzg-filter-active" : "")"
+                            aria-pressed="@(_activeCategory == cat ? "true" : "false")"
                             @onclick="() => SetFilter(cat)">
                         @cat
                     </button>
@@ -67,7 +69,11 @@ else
                     var item = MappedItems[i];
                     <div class="@GetItemClass(item)"
                          data-category="@GetItemCategory(item)"
-                         @onclick="() => OnItemClick(index)">
+                         tabindex="0"
+                         role="button"
+                         aria-label="@GetItemAriaLabel(item, index)"
+                         @onclick="() => OnItemClick(index)"
+                         @onkeydown="@(e => OnItemKeyDown(e, index))">
 
                         @if (ItemTemplate != null)
                         {
@@ -84,7 +90,7 @@ else
                                          loading="lazy"
                                          draggable="false" />
 
-                                    <div class="bzg-overlay">
+                                    <div class="bzg-overlay" aria-hidden="true">
                                         @if (EnableLightbox)
                                         {
                                             <div class="bzg-overlay-icon">
@@ -131,7 +137,7 @@ else
 
         @if (HasNoFilterResults)
         {
-            <p class="bzg-no-results">No items match this filter</p>
+            <p class="bzg-no-results" role="status" aria-live="polite">No items match this filter</p>
         }
     </div>
 

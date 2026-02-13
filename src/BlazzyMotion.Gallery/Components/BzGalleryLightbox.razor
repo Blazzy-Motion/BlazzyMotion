@@ -6,10 +6,12 @@
     <div class="bzg-lightbox bzg-lightbox-open"
          @onclick="OnBackdropClick"
          @onkeydown="OnKeyDown"
+         @onkeydown:preventDefault="ShouldPreventDefault"
          tabindex="0"
          role="dialog"
          aria-modal="true"
-         aria-label="Image lightbox">
+         aria-roledescription="Image gallery lightbox"
+         aria-label="@GetLightboxAriaLabel()">
 
         <div class="bzg-lightbox-backdrop"></div>
 
@@ -25,7 +27,7 @@
 
         @if (Items != null && Items.Count > 1)
         {
-            <div class="bzg-lightbox-counter">
+            <div class="bzg-lightbox-counter" aria-hidden="true">
                 @(CurrentIndex + 1) / @Items.Count
             </div>
 
@@ -56,32 +58,36 @@
                      alt="@(CurrentItem.HasTitle ? CurrentItem.Title : "Gallery image")"
                      loading="eager" />
 
-                @if (CurrentItem.HasTitle || !string.IsNullOrWhiteSpace(CurrentItem.Description))
-                {
-                    <div class="bzg-lightbox-caption">
-                        @if (CurrentItem.HasTitle)
-                        {
-                            <h3 class="bzg-lightbox-title">@CurrentItem.Title</h3>
-                        }
-                        @if (!string.IsNullOrWhiteSpace(CurrentItem.Description))
-                        {
-                            <p class="bzg-lightbox-description">@CurrentItem.Description</p>
-                        }
-                    </div>
-                }
+                <div class="bzg-lightbox-caption" aria-live="polite" aria-atomic="true">
+                    @if (CurrentItem.HasTitle)
+                    {
+                        <h3 class="bzg-lightbox-title">@CurrentItem.Title</h3>
+                    }
+                    @if (!string.IsNullOrWhiteSpace(CurrentItem.Description))
+                    {
+                        <p class="bzg-lightbox-description">@CurrentItem.Description</p>
+                    }
+                    @if (Items != null && Items.Count > 1)
+                    {
+                        <span class="bzg-sr-only">Image @(CurrentIndex + 1) of @Items.Count</span>
+                    }
+                </div>
             }
         </div>
 
         @if (Items != null && Items.Count > 1)
         {
-            <div class="bzg-lightbox-thumbs" @onclick:stopPropagation="true">
+            <div class="bzg-lightbox-thumbs" @onclick:stopPropagation="true" role="tablist" aria-label="Image thumbnails">
                 @for (var i = 0; i < Items.Count; i++)
                 {
                     var thumbIndex = i;
                     var item = Items[i];
                     <button class="bzg-lightbox-thumb @(thumbIndex == CurrentIndex ? "bzg-lightbox-thumb-active" : "")"
                             @onclick="() => GoToIndex(thumbIndex)"
-                            aria-label="Go to image @(thumbIndex + 1)">
+                            role="tab"
+                            tabindex="@(thumbIndex == CurrentIndex ? 0 : -1)"
+                            aria-selected="@(thumbIndex == CurrentIndex ? "true" : "false")"
+                            aria-label="@GetThumbAriaLabel(thumbIndex, item)">
                         <img src="@item.ImageUrl"
                              alt=""
                              loading="lazy" />

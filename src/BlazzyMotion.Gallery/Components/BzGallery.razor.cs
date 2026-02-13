@@ -4,6 +4,7 @@ using BlazzyMotion.Core.Services;
 using BlazzyMotion.Gallery.Models;
 using BlazzyMotion.Gallery.Services;
 using Microsoft.AspNetCore.Components;
+using Microsoft.AspNetCore.Components.Web;
 using Microsoft.JSInterop;
 
 namespace BlazzyMotion.Gallery.Components;
@@ -116,6 +117,7 @@ public partial class BzGallery<TItem> : BzComponentBase where TItem : class
     private bool _lightboxOpen;
     private bool _lightboxJustOpened;
     private int _lightboxIndex;
+    private int _lastFocusedItemIndex;
 
     private string? _activeCategory;
     private List<string> _categories = new();
@@ -229,6 +231,8 @@ public partial class BzGallery<TItem> : BzComponentBase where TItem : class
         {
             _lightboxJustOpened = false;
             await _jsInterop.FocusLightboxAsync();
+            await _jsInterop.TrapFocusAsync();
+            await _jsInterop.InitializeLightboxSwipeAsync(_dotNetRef!);
         }
     }
 
@@ -260,6 +264,42 @@ public partial class BzGallery<TItem> : BzComponentBase where TItem : class
         await InvokeStateHasChangedAsync();
     }
 
+    /// <summary>
+    /// Called from JS when user swipes right (previous image).
+    /// </summary>
+    [JSInvokable]
+    public async Task SwipePrev()
+    {
+        if (IsDisposed || !_lightboxOpen || FilteredItems == null || FilteredItems.Count <= 1) return;
+
+        _lightboxIndex = _lightboxIndex <= 0 ? FilteredItems.Count - 1 : _lightboxIndex - 1;
+        await InvokeStateHasChangedAsync();
+    }
+
+    /// <summary>
+    /// Called from JS when user swipes left (next image).
+    /// </summary>
+    [JSInvokable]
+    public async Task SwipeNext()
+    {
+        if (IsDisposed || !_lightboxOpen || FilteredItems == null || FilteredItems.Count <= 1) return;
+
+        _lightboxIndex = _lightboxIndex >= FilteredItems.Count - 1 ? 0 : _lightboxIndex + 1;
+        await InvokeStateHasChangedAsync();
+    }
+
+    #endregion
+
+    #region Keyboard Navigation
+
+    private async Task OnItemKeyDown(KeyboardEventArgs e, int index)
+    {
+        if (e.Key is "Enter" or " ")
+        {
+            await OnItemClick(index);
+        }
+    }
+
     #endregion
 
     #region Lightbox
@@ -280,6 +320,7 @@ public partial class BzGallery<TItem> : BzComponentBase where TItem : class
             var filteredIndex = FilteredItems?.IndexOf(item) ?? -1;
             if (filteredIndex < 0) return;
 
+            _lastFocusedItemIndex = filteredIndex;
             _lightboxIndex = filteredIndex;
             _lightboxOpen = true;
             _lightboxJustOpened = true;
@@ -299,7 +340,15 @@ public partial class BzGallery<TItem> : BzComponentBase where TItem : class
     private async Task CloseLightbox()
     {
         _lightboxOpen = false;
-        if (_jsInterop != null) await _jsInterop.UnlockBodyScrollAsync();
+
+        if (_jsInterop != null)
+        {
+            await _jsInterop.DestroyFocusTrapAsync();
+            await _jsInterop.DestroyLightboxSwipeAsync();
+            await _jsInterop.UnlockBodyScrollAsync();
+            await _jsInterop.RestoreFocusAsync(_galleryRef, _lastFocusedItemIndex);
+        }
+
         StateHasChanged();
     }
 
@@ -349,7 +398,7 @@ public partial class BzGallery<TItem> : BzComponentBase where TItem : class
 
     #endregion
 
-    #region CSS Helpers
+    #region CSS & ARIA Helpers
 
     private string GetContainerClass()
     {
@@ -406,6 +455,18 @@ public partial class BzGallery<TItem> : BzComponentBase where TItem : class
         return string.Join("; ", styles);
     }
 
+    private string GetItemAriaLabel(BzItem item, int index)
+    {
+        var label = item.HasTitle ? item.Title : $"Gallery image {index + 1}";
+
+        if (EnableLightbox)
+        {
+            label += ", press Enter to open lightbox";
+        }
+
+        return label!;
+    }
+
     #endregion
 
     #region Disposal
@@ -414,6 +475,8 @@ public partial class BzGallery<TItem> : BzComponentBase where TItem : class
     {
         if (_lightboxOpen && _jsInterop != null)
         {
+            await _jsInterop.DestroyFocusTrapAsync();
+            await _jsInterop.DestroyLightboxSwipeAsync();
             await _jsInterop.UnlockBodyScrollAsync();
         }
 

@@ -1,24 +1,38 @@
 <Project>
   <PropertyGroup>
-    <BlazzyCoreVersion Condition="'$(BlazzyCoreVersion)' == ''">1.3.0</BlazzyCoreVersion>
-    <BlazzyCarouselVersion Condition="'$(BlazzyCarouselVersion)' == ''">1.4.0</BlazzyCarouselVersion>
-    <BlazzyBentoVersion Condition="'$(BlazzyBentoVersion)' == ''">1.0.0</BlazzyBentoVersion>
+    <BlazzyCoreVersion Condition="'$(BlazzyCoreVersion)' == ''">1.3.1</BlazzyCoreVersion>
+    <BlazzyCarouselVersion Condition="'$(BlazzyCarouselVersion)' == ''">1.4.1</BlazzyCarouselVersion>
+    <BlazzyBentoVersion Condition="'$(BlazzyBentoVersion)' == ''">1.0.2</BlazzyBentoVersion>
     <BlazzyGalleryVersion Condition="'$(BlazzyGalleryVersion)' == ''">1.0.0</BlazzyGalleryVersion>
   </PropertyGroup>
 
   <PropertyGroup>
-    <Authors>Nenad Ristić</Authors>
+    <Authors>Nenad Risti&#263;</Authors>
     <Company>BlazzyMotion</Company>
-    <Copyright>Copyright © 2026 BlazzyMotion</Copyright>
+    <Copyright>Copyright &#169; 2026 BlazzyMotion</Copyright>
     <PackageLicenseExpression>MIT</PackageLicenseExpression>
     <PackageProjectUrl>https://blazzymotion.com/</PackageProjectUrl>
     <RepositoryUrl>https://github.com/Blazzy-Motion/BlazzyMotion</RepositoryUrl>
     <RepositoryType>git</RepositoryType>
   </PropertyGroup>
 
+  <!-- SourceLink & deterministic builds -->
+  <PropertyGroup>
+    <PublishRepositoryUrl>true</PublishRepositoryUrl>
+    <EmbedUntrackedSources>true</EmbedUntrackedSources>
+    <IncludeSymbols>true</IncludeSymbols>
+    <SymbolPackageFormat>snupkg</SymbolPackageFormat>
+    <Deterministic>true</Deterministic>
+    <ContinuousIntegrationBuild Condition="'$(CI)' == 'true'">true</ContinuousIntegrationBuild>
+  </PropertyGroup>
+
   <PropertyGroup>
     <Nullable>enable</Nullable>
     <ImplicitUsings>enable</ImplicitUsings>
   </PropertyGroup>
+
+  <ItemGroup>
+    <PackageReference Include="Microsoft.SourceLink.GitHub" Version="8.0.0" PrivateAssets="All" />
+  </ItemGroup>
 
 </Project>

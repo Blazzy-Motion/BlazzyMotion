@@ -105,6 +105,47 @@ public sealed class BzGalleryJsInterop : BzJsInteropBase
     }
 
     /// <summary>
+    /// Initializes touch swipe on the lightbox with direct Blazor callbacks.
+    /// </summary>
+    public async ValueTask InitializeLightboxSwipeAsync<TComponent>(
+        DotNetObjectReference<TComponent> dotNetRef) where TComponent : class
+    {
+        await SafeInvokeVoidAsync("initializeLightboxSwipe", dotNetRef);
+    }
+
+    /// <summary>
+    /// Removes lightbox swipe listeners.
+    /// </summary>
+    public async ValueTask DestroyLightboxSwipeAsync()
+    {
+        await SafeInvokeVoidAsync("destroyLightboxSwipe");
+    }
+
+    /// <summary>
+    /// Traps Tab focus inside the lightbox element.
+    /// </summary>
+    public async ValueTask TrapFocusAsync()
+    {
+        await SafeInvokeVoidAsync("trapFocus");
+    }
+
+    /// <summary>
+    /// Removes focus trap from the lightbox.
+    /// </summary>
+    public async ValueTask DestroyFocusTrapAsync()
+    {
+        await SafeInvokeVoidAsync("destroyFocusTrap");
+    }
+
+    /// <summary>
+    /// Restores focus to the gallery item that opened the lightbox.
+    /// </summary>
+    public async ValueTask RestoreFocusAsync(ElementReference element, int itemIndex)
+    {
+        await SafeInvokeVoidAsync("restoreFocus", element, itemIndex);
+    }
+
+    /// <summary>
     /// Locks body scroll when lightbox opens.
     /// </summary>
     public async ValueTask LockBodyScrollAsync()
