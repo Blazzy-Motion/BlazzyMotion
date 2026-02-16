@@ -1,8 +1,5 @@
 namespace BlazzyMotion.Tests.Gallery.Components;
 
-/// <summary>
-/// Tests for BzGallery events, callbacks, and disposal.
-/// </summary>
 public class BzGalleryEventTests : TestBase
 {
     private static List<TestGalleryPhoto> CreateTestPhotos(int count = 3) =>

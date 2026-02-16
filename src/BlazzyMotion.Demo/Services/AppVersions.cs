@@ -6,9 +6,9 @@ namespace BlazzyMotion.Demo.Services;
 /// </summary>
 public static class AppVersions
 {
-    public const string Carousel = "1.4.0";
-    public const string Core = "1.3.0";
-    public const string Bento = "1.0.1";
+    public const string Carousel = "1.4.1";
+    public const string Core = "1.3.1";
+    public const string Bento = "1.0.2";
     public const string Gallery = "1.0.0";
     public const string DotNetVersion = ".NET 8";
 

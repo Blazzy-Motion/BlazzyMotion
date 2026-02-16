@@ -1,8 +1,5 @@
 namespace BlazzyMotion.Tests.Gallery.Components;
 
-/// <summary>
-/// Tests for BzGallery layout modes and CSS class generation.
-/// </summary>
 public class BzGalleryLayoutTests : TestBase
 {
     private static List<TestGalleryPhoto> CreateTestPhotos(int count = 3) =>

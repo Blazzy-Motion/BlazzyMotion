@@ -61,6 +61,12 @@ public abstract class TestBase : TestContext
     GalleryModule.SetupVoid("unlockBodyScroll", _ => true);
     GalleryModule.SetupVoid("openLightbox", _ => true);
     GalleryModule.SetupVoid("closeLightbox", _ => true);
+    GalleryModule.SetupVoid("destroyFocusTrap", _ => true);
+    GalleryModule.SetupVoid("destroyLightboxSwipe", _ => true);
+    GalleryModule.SetupVoid("restoreFocus", _ => true);
+    GalleryModule.SetupVoid("trapFocus", _ => true);
+    GalleryModule.SetupVoid("initializeLightboxSwipe", _ => true);
+    GalleryModule.SetupVoid("prepareFilter", _ => true);
   }
 
   // Legacy property for backward compatibility with existing tests

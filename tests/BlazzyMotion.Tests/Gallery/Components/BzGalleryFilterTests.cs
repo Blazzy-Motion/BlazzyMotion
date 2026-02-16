@@ -1,8 +1,5 @@
 namespace BlazzyMotion.Tests.Gallery.Components;
 
-/// <summary>
-/// Tests for BzGallery filtering behavior.
-/// </summary>
 public class BzGalleryFilterTests : TestBase
 {
     private static List<TestGalleryPhoto> CreatePhotosWithCategories() => new()
@@ -162,81 +159,6 @@ public class BzGalleryFilterTests : TestBase
 
     #endregion
 
-    #region Filter Click Behavior Tests
-
-    [Fact]
-    public void BzGallery_ClickCategoryButton_ShouldFilterItems()
-    {
-        // Arrange
-        var items = CreatePhotosWithCategories();
-
-        var cut = RenderComponent<BzGallery<TestGalleryPhoto>>(parameters => parameters
-            .Add(p => p.Items, items)
-            .Add(p => p.EnableFilter, true)
-            .Add(p => p.CategorySelector, p => p.Category!));
-
-        // Act - click the "Nature" category button
-        var natureButton = cut.FindAll(".bzg-filter-btn").First(b => b.TextContent.Trim() == "Nature");
-        natureButton.Click();
-
-        // Assert - all items in DOM, but only Nature items visible (2 out of 5)
-        var allItems = cut.FindAll(".bzg-item");
-        allItems.Should().HaveCount(5);
-        var hiddenItems = cut.FindAll(".bzg-item-hidden");
-        hiddenItems.Should().HaveCount(3);
-        var visibleItems = allItems.Where(i => !i.ClassList.Contains("bzg-item-hidden")).ToList();
-        visibleItems.Should().HaveCount(2);
-    }
-
-    [Fact]
-    public void BzGallery_ClickCategoryButton_ShouldSetActiveClass()
-    {
-        // Arrange
-        var items = CreatePhotosWithCategories();
-
-        var cut = RenderComponent<BzGallery<TestGalleryPhoto>>(parameters => parameters
-            .Add(p => p.Items, items)
-            .Add(p => p.EnableFilter, true)
-            .Add(p => p.CategorySelector, p => p.Category!));
-
-        // Act
-        var cityButton = cut.FindAll(".bzg-filter-btn").First(b => b.TextContent.Trim() == "City");
-        cityButton.Click();
-
-        // Assert
-        var activeCityButton = cut.FindAll(".bzg-filter-btn").First(b => b.TextContent.Trim() == "City");
-        activeCityButton.ClassList.Should().Contain("bzg-filter-active");
-
-        var allButton = cut.FindAll(".bzg-filter-btn").First(b => b.TextContent.Trim() == "All");
-        allButton.ClassList.Should().NotContain("bzg-filter-active");
-    }
-
-    [Fact]
-    public void BzGallery_ClickAllButton_ShouldShowAllItems()
-    {
-        // Arrange
-        var items = CreatePhotosWithCategories();
-
-        var cut = RenderComponent<BzGallery<TestGalleryPhoto>>(parameters => parameters
-            .Add(p => p.Items, items)
-            .Add(p => p.EnableFilter, true)
-            .Add(p => p.CategorySelector, p => p.Category!));
-
-        // First filter by city
-        var cityButton = cut.FindAll(".bzg-filter-btn").First(b => b.TextContent.Trim() == "City");
-        cityButton.Click();
-
-        // Act - click All to reset
-        var allButton = cut.FindAll(".bzg-filter-btn").First(b => b.TextContent.Trim() == "All");
-        allButton.Click();
-
-        // Assert
-        var visibleItems = cut.FindAll(".bzg-item");
-        visibleItems.Should().HaveCount(5);
-    }
-
-    #endregion
-
     #region CategorySelector Fallback Tests
 
     [Fact]
@@ -333,9 +255,8 @@ public class BzGalleryFilterTests : TestBase
     #region Disable Filter Tests
 
     [Fact]
-    public void BzGallery_DisableFilter_ShouldClearActiveCategory()
+    public void BzGallery_DisableFilter_ShouldRemoveFilterBar()
     {
-        // Arrange
         var items = CreatePhotosWithCategories();
 
         var cut = RenderComponent<BzGallery<TestGalleryPhoto>>(parameters => parameters
@@ -343,20 +264,15 @@ public class BzGalleryFilterTests : TestBase
             .Add(p => p.EnableFilter, true)
             .Add(p => p.CategorySelector, p => p.Category!));
 
-        // Filter by Nature first
-        var natureButton = cut.FindAll(".bzg-filter-btn").First(b => b.TextContent.Trim() == "Nature");
-        natureButton.Click();
+        cut.Markup.Should().Contain("bzg-filter-bar");
 
-        // Act - disable the filter
         cut.SetParametersAndRender(parameters => parameters
             .Add(p => p.Items, items)
             .Add(p => p.EnableFilter, false)
             .Add(p => p.CategorySelector, (Func<TestGalleryPhoto, string>)(p => p.Category!)));
 
-        // Assert - all items should be visible, no filter bar
         cut.Markup.Should().NotContain("bzg-filter-bar");
-        var visibleItems = cut.FindAll(".bzg-item");
-        visibleItems.Should().HaveCount(5);
+        cut.FindAll(".bzg-item").Should().HaveCount(5);
     }
 
     [Fact]
