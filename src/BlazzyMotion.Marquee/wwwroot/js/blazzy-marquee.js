@@ -51,20 +51,17 @@ export async function initializeMarquee(element, optionsJson, dotNetRef = null) 
 
         if (!track || !content) return;
 
-        element.setAttribute('data-direction', options.direction || 'left');
-
         // Clone content for seamless loop
         const clone = content.cloneNode(true);
         clone.setAttribute('aria-hidden', 'true');
         clone.classList.add('bzm-clone');
         track.appendChild(clone);
 
-        // Calculate animation duration based on content size and speed
+        // Calculate animation duration based on content width and speed
         const speed = options.speed || 50;
-        const isVertical = options.vertical || false;
 
         const calculateDuration = () => {
-            const contentSize = isVertical ? content.scrollHeight : content.scrollWidth;
+            const contentSize = content.scrollWidth;
             const duration = contentSize / speed;
             track.style.setProperty('--bzm-duration', `${duration}s`);
         };
@@ -75,13 +72,6 @@ export async function initializeMarquee(element, optionsJson, dotNetRef = null) 
             calculateDuration();
         });
         resizeObserver.observe(content);
-
-        // Reveal marquee
-        requestAnimationFrame(() => {
-            requestAnimationFrame(() => {
-                element.classList.add('bzm-ready');
-            });
-        });
 
         marqueeInstances.set(element, {
             track,
@@ -122,7 +112,6 @@ export function destroyMarquee(element) {
         instance.clone.parentNode.removeChild(instance.clone);
     }
 
-    element.classList.remove('bzm-ready');
     marqueeInstances.delete(element);
 }
 

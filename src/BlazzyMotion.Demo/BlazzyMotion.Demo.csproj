@@ -16,6 +16,7 @@
     <ProjectReference Include="..\BlazzyMotion.Carousel\BlazzyMotion.Carousel.csproj" />
     <ProjectReference Include="..\BlazzyMotion.Core\BlazzyMotion.Core.csproj" />
     <ProjectReference Include="..\BlazzyMotion.Gallery\BlazzyMotion.Gallery.csproj" />
+    <ProjectReference Include="..\BlazzyMotion.Marquee\BlazzyMotion.Marquee.csproj" />
     <ProjectReference Include="..\BlazzyMotion.SourceGen\BlazzyMotion.SourceGen.csproj" OutputItemType="Analyzer" ReferenceOutputAssembly="false" />
   </ItemGroup>
 

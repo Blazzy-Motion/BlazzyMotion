@@ -1,0 +1,279 @@
+@page "/marquee"
+@layout HomeLayout
+@using BlazzyMotion.Core.Models
+@using BlazzyMotion.Marquee.Components
+@using BlazzyMotion.Marquee.Models
+@using BlazzyMotion.Demo.Model
+@using BlazzyMotion.Demo.Components
+@using BlazzyMotion.Demo.Icons
+
+<PageTitle>BzMarquee Demo - BlazzyMotion</PageTitle>
+
+<div class="bz-home">
+
+    <section class="bz-hero" style="min-height: auto; padding: 60px 20px;">
+        <div class="bz-hero__content">
+            <h1 class="bz-hero__brand">BzMarquee</h1>
+            <h2 class="bz-hero__title">Infinite Scrolling Content</h2>
+            <p class="bz-hero__subtitle">
+                CSS-driven marquee with logo bars, testimonials and text tickers.
+            </p>
+            <BzInstallBox PackageName="BlazzyMotion.Marquee" />
+            <div class="bz-hero__actions">
+                <a href="/docs/marquee" class="bz-btn bz-btn--primary" aria-label="Get started with BzMarquee documentation">
+                    @Icons.Lightning
+                    Get Started
+                </a>
+                <a href="https://github.com/Blazzy-Motion/BlazzyMotion" target="_blank" rel="noopener noreferrer" class="bz-btn bz-btn--secondary" aria-label="Star BlazzyMotion on GitHub">
+                    @Icons.GitHub
+                    Star on GitHub
+                </a>
+            </div>
+        </div>
+    </section>
+
+    @* ==================== LOGO BAR ==================== *@
+    <section class="bzb-presentation" aria-labelledby="logo-heading">
+
+        <span class="bzb-presentation__label">Logo Bar — Interactive</span>
+
+        <h3 id="logo-heading" class="bzb-presentation__title">Company Logo Marquee</h3>
+        <p style="color: rgba(255,255,255,0.7); text-align: center; margin-bottom: 24px;">
+            Controls affect all examples below — adjust in real-time
+        </p>
+
+        <BzThemePicker @bind-CurrentTheme="_currentTheme" />
+
+        <div class="bzg-demo-controls" role="group" aria-label="Marquee settings">
+            <div class="bzg-demo-controls__row bzg-demo-controls__row--primary">
+                <div class="bzg-demo-control">
+                    <label id="direction-label">Direction</label>
+                    <div class="bzg-demo-pills" role="radiogroup" aria-labelledby="direction-label">
+                        <button class="bzg-demo-pill @(_direction == BzDirection.Left ? "active" : "")"
+                                role="radio" aria-checked="@(_direction == BzDirection.Left)"
+                                @onclick="@(() => _direction = BzDirection.Left)">Left</button>
+                        <button class="bzg-demo-pill @(_direction == BzDirection.Right ? "active" : "")"
+                                role="radio" aria-checked="@(_direction == BzDirection.Right)"
+                                @onclick="@(() => _direction = BzDirection.Right)">Right</button>
+                    </div>
+                </div>
+
+                <div class="bzg-demo-control">
+                    <label for="speed-range">Speed: @_speed</label>
+                    <input id="speed-range" type="range" min="10" max="200" step="10"
+                           aria-valuemin="10" aria-valuemax="200" aria-valuenow="@_speed"
+                           @bind="_speed" @bind:event="oninput" />
+                </div>
+
+                <div class="bzg-demo-control">
+                    <label for="gap-range">Gap: @(_gap)px</label>
+                    <input id="gap-range" type="range" min="10" max="100" step="5"
+                           aria-valuemin="10" aria-valuemax="100" aria-valuenow="@_gap"
+                           @bind="_gap" @bind:event="oninput" />
+                </div>
+            </div>
+
+            <div class="bzg-demo-controls__row bzg-demo-controls__row--secondary">
+                <div class="bzg-demo-control">
+                    <label id="pause-label">Pause on Hover</label>
+                    <div class="bzg-demo-pills" role="radiogroup" aria-labelledby="pause-label">
+                        <button class="bzg-demo-pill @(_pauseOnHover ? "active" : "")"
+                                role="radio" aria-checked="@(_pauseOnHover)"
+                                @onclick="@(() => _pauseOnHover = true)">On</button>
+                        <button class="bzg-demo-pill @(!_pauseOnHover ? "active" : "")"
+                                role="radio" aria-checked="@(!_pauseOnHover)"
+                                @onclick="@(() => _pauseOnHover = false)">Off</button>
+                    </div>
+                </div>
+
+                <div class="bzg-demo-control">
+                    <label id="gradient-label">Gradients</label>
+                    <div class="bzg-demo-pills" role="radiogroup" aria-labelledby="gradient-label">
+                        <button class="bzg-demo-pill @(_showGradients ? "active" : "")"
+                                role="radio" aria-checked="@(_showGradients)"
+                                @onclick="@(() => _showGradients = true)">On</button>
+                        <button class="bzg-demo-pill @(!_showGradients ? "active" : "")"
+                                role="radio" aria-checked="@(!_showGradients)"
+                                @onclick="@(() => _showGradients = false)">Off</button>
+                    </div>
+                </div>
+
+                <div class="bzg-demo-control">
+                    <label id="fullwidth-label">Full Width</label>
+                    <div class="bzg-demo-pills" role="radiogroup" aria-labelledby="fullwidth-label">
+                        <button class="bzg-demo-pill @(_fullWidth ? "active" : "")"
+                                role="radio" aria-checked="@(_fullWidth)"
+                                @onclick="@(() => _fullWidth = true)">On</button>
+                        <button class="bzg-demo-pill @(!_fullWidth ? "active" : "")"
+                                role="radio" aria-checked="@(!_fullWidth)"
+                                @onclick="@(() => _fullWidth = false)">Off</button>
+                    </div>
+                </div>
+            </div>
+        </div>
+
+        <div class="bzb-presentation__stage" style="display: flex; flex-direction: column; gap: 8px;">
+            <BzMarquee TItem="LogoItem"
+                       Items="@_logos"
+                       Theme="@_currentTheme"
+                       Direction="@_direction"
+                       Speed="@_speed"
+                       Gap="@_gap"
+                       PauseOnHover="@_pauseOnHover"
+                       ShowGradientEdges="@_showGradients"
+                       FullWidth="@_fullWidth">
+                <ItemTemplate Context="logo">
+                    <div class="bzm-logo-item" aria-label="@logo.Name logo">
+                        @Icons.GetCompanyLogo(logo.Name)
+                        <span style="margin-left: 8px; font-size: 0.9rem; font-weight: 500; white-space: nowrap;">@logo.Name</span>
+                    </div>
+                </ItemTemplate>
+            </BzMarquee>
+
+            <BzMarquee TItem="LogoItem"
+                       Items="@_logosReversed"
+                       Theme="@_currentTheme"
+                       Direction="@_oppositeDirection"
+                       Speed="@_speed"
+                       Gap="@_gap"
+                       PauseOnHover="@_pauseOnHover"
+                       ShowGradientEdges="@_showGradients"
+                       FullWidth="@_fullWidth">
+                <ItemTemplate Context="logo">
+                    <div class="bzm-logo-item" aria-label="@logo.Name logo">
+                        @Icons.GetCompanyLogo(logo.Name)
+                        <span style="margin-left: 8px; font-size: 0.9rem; font-weight: 500; white-space: nowrap;">@logo.Name</span>
+                    </div>
+                </ItemTemplate>
+            </BzMarquee>
+        </div>
+
+    </section>
+
+    @* ==================== TESTIMONIALS ==================== *@
+    <section class="bzb-presentation" style="padding-top: 40px;" aria-labelledby="testimonial-heading">
+
+        <span class="bzb-presentation__label">Testimonials</span>
+
+        <h3 id="testimonial-heading" class="bzb-presentation__title">Customer Reviews Marquee</h3>
+        <p style="color: rgba(255,255,255,0.7); text-align: center; margin-bottom: 30px;">
+            Auto-detects image + name + description as testimonial cards
+        </p>
+
+        <div class="bzb-presentation__stage">
+            <BzMarquee TItem="TestimonialItem"
+                       Items="@_testimonials"
+                       Theme="@_currentTheme"
+                       Direction="@_direction"
+                       Speed="@_speed"
+                       Gap="@_gap"
+                       PauseOnHover="@_pauseOnHover"
+                       ShowGradientEdges="@_showGradients" />
+        </div>
+
+    </section>
+
+    @* ==================== TEXT TICKER ==================== *@
+    <section class="bzb-presentation" style="padding-top: 40px;" aria-labelledby="ticker-heading">
+
+        <span class="bzb-presentation__label">Text Ticker</span>
+
+        <h3 id="ticker-heading" class="bzb-presentation__title">Breaking News Ticker</h3>
+        <p style="color: rgba(255,255,255,0.7); text-align: center; margin-bottom: 30px;">
+            Simple text mode with just the Text parameter — no Items needed
+        </p>
+
+        <div class="bzb-presentation__stage">
+            <BzMarquee TItem="object"
+                       Text="@_tickerText"
+                       Theme="@_currentTheme"
+                       Direction="@_direction"
+                       Speed="@_speed"
+                       Gap="@_gap"
+                       PauseOnHover="@_pauseOnHover"
+                       ShowGradientEdges="@_showGradients" />
+        </div>
+
+    </section>
+
+</div>
+
+@code {
+    private BzTheme _currentTheme = BzTheme.Glass;
+    private BzDirection _direction = BzDirection.Left;
+    private int _speed = 50;
+    private int _gap = 40;
+    private bool _pauseOnHover = true;
+    private bool _showGradients = true;
+    private bool _fullWidth;
+
+    private BzDirection _oppositeDirection => _direction == BzDirection.Left
+        ? BzDirection.Right
+        : BzDirection.Left;
+
+    private string _tickerText = "BlazzyMotion — Premium Blazor Components — Carousel — Bento Grid — Gallery — Marquee — Built with .NET 8";
+
+    private List<LogoItem> _logos = new()
+    {
+        new() { Name = "Apple" },
+        new() { Name = "Microsoft" },
+        new() { Name = "Google" },
+        new() { Name = "Amazon" },
+        new() { Name = "Tesla" },
+        new() { Name = "Meta" },
+        new() { Name = "Nvidia" },
+        new() { Name = "Netflix" }
+    };
+
+    private List<LogoItem> _logosReversed = new()
+    {
+        new() { Name = "Netflix" },
+        new() { Name = "Nvidia" },
+        new() { Name = "Meta" },
+        new() { Name = "Tesla" },
+        new() { Name = "Amazon" },
+        new() { Name = "Google" },
+        new() { Name = "Microsoft" },
+        new() { Name = "Apple" }
+    };
+
+    private List<TestimonialItem> _testimonials = new()
+    {
+        new()
+        {
+            Name = "Sarah Chen",
+            Avatar = "images/companies/apple.webp",
+            Quote = "BlazzyMotion transformed our dashboard. The glassmorphism design fits perfectly with our brand."
+        },
+        new()
+        {
+            Name = "Marcus Rodriguez",
+            Avatar = "images/companies/microsoft.webp",
+            Quote = "Zero dependencies and source generators made integration seamless. Our team adopted it in a day."
+        },
+        new()
+        {
+            Name = "Elena Kowalski",
+            Avatar = "images/companies/google.webp",
+            Quote = "The WCAG accessibility support was a deciding factor. Finally, a Blazor library that cares about a11y."
+        },
+        new()
+        {
+            Name = "James Okafor",
+            Avatar = "images/companies/nvidia.webp",
+            Quote = "Smooth 60fps animations even on mobile. The CSS-driven approach really pays off in performance."
+        },
+        new()
+        {
+            Name = "Yuki Tanaka",
+            Avatar = "images/companies/tesla.webp",
+            Quote = "We use BzCarousel, BzBento and BzGallery across our entire SaaS platform. Incredible consistency."
+        },
+        new()
+        {
+            Name = "Alex Petrov",
+            Avatar = "images/companies/meta.webp",
+            Quote = "The four theme system saved us weeks of design work. Glass theme looks absolutely stunning."
+        }
+    };
+}

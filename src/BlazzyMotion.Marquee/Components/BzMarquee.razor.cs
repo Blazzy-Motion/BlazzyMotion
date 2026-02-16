@@ -40,9 +40,6 @@ public partial class BzMarquee<TItem> : BzComponentBase where TItem : class
     public bool FullWidth { get; set; }
 
     [Parameter]
-    public int Height { get; set; } = 300;
-
-    [Parameter]
     public RenderFragment<TItem>? ItemTemplate { get; set; }
 
     [Parameter]
@@ -60,6 +57,11 @@ public partial class BzMarquee<TItem> : BzComponentBase where TItem : class
     private DotNetObjectReference<BzMarquee<TItem>>? _dotNetRef;
     private IReadOnlyList<BzItem>? MappedItems;
     private bool _isInitialized;
+    private bool _needsReInit;
+
+    // Previous parameter values for JS re-init detection
+    private BzDirection _prevDirection;
+    private int _prevSpeed;
 
     #endregion
 
@@ -67,8 +69,7 @@ public partial class BzMarquee<TItem> : BzComponentBase where TItem : class
 
     private bool IsLoading => !_isInitialized && Items != null && MappedItems == null;
     private bool IsEmpty => MappedItems is null or { Count: 0 };
-    private bool IsVertical => Direction is BzDirection.Up or BzDirection.Down;
-    private bool IsReverse => Direction is BzDirection.Right or BzDirection.Down;
+    private bool IsReverse => Direction is BzDirection.Right;
 
     #endregion
 
@@ -80,6 +81,13 @@ public partial class BzMarquee<TItem> : BzComponentBase where TItem : class
         {
             MappedItems = BzRegistry.ToBzItems(Items);
         }
+
+        if (_isInitialized && HasParametersChanged())
+        {
+            _needsReInit = true;
+        }
+
+        SnapshotParameters();
     }
 
     protected override async Task OnAfterRenderAsync(bool firstRender)
@@ -95,7 +103,23 @@ public partial class BzMarquee<TItem> : BzComponentBase where TItem : class
             }
 
             _isInitialized = true;
+            StateHasChanged();
         }
+        else if (_needsReInit && !IsDisposed)
+        {
+            _needsReInit = false;
+            await InitializeMarqueeAsync();
+        }
+    }
+
+    private bool HasParametersChanged() =>
+        _prevDirection != Direction ||
+        _prevSpeed != Speed;
+
+    private void SnapshotParameters()
+    {
+        _prevDirection = Direction;
+        _prevSpeed = Speed;
     }
 
     private async Task InitializeMarqueeAsync()
@@ -110,9 +134,7 @@ public partial class BzMarquee<TItem> : BzComponentBase where TItem : class
             PauseOnHover = PauseOnHover,
             ShowGradientEdges = ShowGradientEdges,
             FullWidth = FullWidth,
-            Vertical = IsVertical,
-            Reverse = IsReverse,
-            ContainerHeight = Height
+            Reverse = IsReverse
         };
 
         await _jsInterop.InitializeAsync(_marqueeRef, options, _dotNetRef);
@@ -137,7 +159,7 @@ public partial class BzMarquee<TItem> : BzComponentBase where TItem : class
     {
         var classes = new List<string> { "bzm-container", ThemeClass };
 
-        if (IsVertical) classes.Add("bzm-vertical");
+        if (_isInitialized) classes.Add("bzm-ready");
         if (FullWidth) classes.Add("bzm-full-width");
         if (PauseOnHover) classes.Add("bzm-pause-hover");
         if (ShowGradientEdges) classes.Add("bzm-has-gradient");
@@ -147,20 +169,25 @@ public partial class BzMarquee<TItem> : BzComponentBase where TItem : class
         return string.Join(" ", classes);
     }
 
-    private string GetContainerStyle()
+    private string GetAriaLabel()
     {
-        var styles = new List<string>();
+        if (!string.IsNullOrWhiteSpace(Text))
+            return "Scrolling text marquee";
 
-        if (!_isInitialized)
-            styles.Add("opacity:0; visibility:hidden");
-
-        styles.Add($"--bzm-gap: {Gap}px");
-
-        if (IsVertical)
-            styles.Add($"--bzm-container-height: {Height}px");
-
-        return string.Join("; ", styles);
+        var count = MappedItems?.Count ?? 0;
+        return $"Scrolling content marquee with {count} items";
     }
+
+    private static string GetInitials(string name)
+    {
+        if (string.IsNullOrWhiteSpace(name)) return "?";
+        var parts = name.Split(' ', StringSplitOptions.RemoveEmptyEntries);
+        return parts.Length >= 2
+            ? $"{parts[0][0]}{parts[^1][0]}"
+            : $"{parts[0][0]}";
+    }
+
+    private string GetContainerStyle() => $"--bzm-gap: {Gap}px";
 
     #endregion
 

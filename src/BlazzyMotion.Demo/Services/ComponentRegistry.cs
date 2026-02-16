@@ -43,6 +43,17 @@ public static class ComponentRegistry
             Description = "Image gallery with Grid, Masonry, and List layouts",
             DocsUrl = "/docs/gallery",
             NuGetPackage = "BlazzyMotion.Gallery"
+        },
+        new()
+        {
+            Id = "marquee",
+            Name = "Marquee",
+            Icon = Icons.Icons.Marquee,
+            Version = AppVersions.Marquee,
+            Status = ComponentStatus.Stable,
+            Description = "Infinite scrolling content with CSS-driven animations",
+            DocsUrl = "/docs/marquee",
+            NuGetPackage = "BlazzyMotion.Marquee"
         }
     };
     

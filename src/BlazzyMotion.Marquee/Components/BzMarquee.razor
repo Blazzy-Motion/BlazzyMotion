@@ -34,6 +34,11 @@ else
 {
     <div class="@GetContainerClass()"
          style="@GetContainerStyle()"
+         data-direction="@Direction.ToString().ToLowerInvariant()"
+         role="marquee"
+         aria-label="@GetAriaLabel()"
+         aria-live="off"
+         tabindex="0"
          @ref="_marqueeRef"
          @attributes="AdditionalAttributes">
 
@@ -58,16 +63,23 @@ else
                             {
                                 @ItemTemplate(item.GetOriginal<TItem>()!)
                             }
-                            else if (item.HasImage && item.HasTitle && !string.IsNullOrWhiteSpace(item.Description))
+                            else if (item.HasTitle && !string.IsNullOrWhiteSpace(item.Description))
                             {
                                 <div class="bzm-testimonial-card">
                                     <blockquote class="bzm-testimonial-text">@item.Description</blockquote>
                                     <div class="bzm-testimonial-author">
-                                        <img class="bzm-testimonial-avatar"
-                                             src="@item.ImageUrl"
-                                             alt="@item.Title"
-                                             loading="lazy"
-                                             draggable="false" />
+                                        @if (item.HasImage)
+                                        {
+                                            <img class="bzm-testimonial-avatar"
+                                                 src="@item.ImageUrl"
+                                                 alt="@item.Title"
+                                                 loading="lazy"
+                                                 draggable="false" />
+                                        }
+                                        else
+                                        {
+                                            <span class="bzm-testimonial-initials" aria-hidden="true">@GetInitials(item.Title ?? "")</span>
+                                        }
                                         <span class="bzm-testimonial-name">@item.Title</span>
                                     </div>
                                 </div>

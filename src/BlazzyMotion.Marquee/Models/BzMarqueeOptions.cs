@@ -6,7 +6,7 @@ namespace BlazzyMotion.Marquee.Models;
 public sealed class BzMarqueeOptions
 {
     /// <summary>
-    /// Scroll direction. Values: "left", "right", "up", "down"
+    /// Scroll direction. Values: "left", "right".
     /// </summary>
     public string Direction { get; set; } = "left";
 
@@ -36,17 +36,7 @@ public sealed class BzMarqueeOptions
     public bool FullWidth { get; set; }
 
     /// <summary>
-    /// Whether this is a vertical marquee.
-    /// </summary>
-    public bool Vertical { get; set; }
-
-    /// <summary>
-    /// Whether animation direction is reversed (right or down).
+    /// Whether animation direction is reversed (right).
     /// </summary>
     public bool Reverse { get; set; }
-
-    /// <summary>
-    /// Container height in pixels for vertical marquee.
-    /// </summary>
-    public int ContainerHeight { get; set; } = 300;
 }
