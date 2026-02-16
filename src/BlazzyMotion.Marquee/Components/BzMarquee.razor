@@ -34,13 +34,16 @@ else
 {
     <div class="@GetContainerClass()"
          style="@GetContainerStyle()"
-         data-direction="@Direction.ToString().ToLowerInvariant()"
          role="marquee"
          aria-label="@GetAriaLabel()"
          aria-live="off"
          tabindex="0"
+         @onkeydown="HandleKeyDown"
+         @onkeydown:preventDefault="@(_isPausedByKeyboard || false)"
          @ref="_marqueeRef"
          @attributes="AdditionalAttributes">
+
+        <span class="bzm-sr-only" aria-live="polite" role="status">@_srAnnouncement</span>
 
         @if (ShowGradientEdges)
         {
@@ -48,61 +51,74 @@ else
             <div class="bzm-gradient bzm-gradient-end"></div>
         }
 
-        <div class="bzm-track">
-            <div class="bzm-content" aria-hidden="false">
-                @if (!string.IsNullOrWhiteSpace(Text))
-                {
-                    <span class="bzm-text-item">@Text</span>
-                }
-                else if (MappedItems != null)
-                {
-                    @foreach (var item in MappedItems)
-                    {
-                        <div class="bzm-item">
-                            @if (ItemTemplate != null)
+        @for (int r = 0; r < EffectiveRows; r++)
+        {
+            var rowIndex = r;
+            var rowDirection = GetRowDirection(rowIndex);
+            var rowSpeed = GetRowSpeed(rowIndex);
+            var rowItems = !string.IsNullOrWhiteSpace(Text) ? null : GetRowItems(rowIndex);
+
+            <div class="bzm-row"
+                 data-direction="@rowDirection.ToString().ToLowerInvariant()"
+                 data-speed="@rowSpeed"
+                 data-row="@rowIndex">
+                <div class="bzm-track">
+                    <div class="bzm-content" aria-hidden="false">
+                        @if (!string.IsNullOrWhiteSpace(Text))
+                        {
+                            <span class="bzm-text-item">@Text</span>
+                        }
+                        else if (rowItems != null)
+                        {
+                            @foreach (var item in rowItems)
                             {
-                                @ItemTemplate(item.GetOriginal<TItem>()!)
-                            }
-                            else if (item.HasTitle && !string.IsNullOrWhiteSpace(item.Description))
-                            {
-                                <div class="bzm-testimonial-card">
-                                    <blockquote class="bzm-testimonial-text">@item.Description</blockquote>
-                                    <div class="bzm-testimonial-author">
-                                        @if (item.HasImage)
-                                        {
-                                            <img class="bzm-testimonial-avatar"
+                                <div class="bzm-item">
+                                    @if (ItemTemplate != null)
+                                    {
+                                        @ItemTemplate(item.GetOriginal<TItem>()!)
+                                    }
+                                    else if (item.HasTitle && !string.IsNullOrWhiteSpace(item.Description))
+                                    {
+                                        <div class="bzm-testimonial-card">
+                                            <blockquote class="bzm-testimonial-text">@item.Description</blockquote>
+                                            <div class="bzm-testimonial-author">
+                                                @if (item.HasImage)
+                                                {
+                                                    <img class="bzm-testimonial-avatar"
+                                                         src="@item.ImageUrl"
+                                                         alt="@item.Title"
+                                                         loading="lazy"
+                                                         draggable="false" />
+                                                }
+                                                else
+                                                {
+                                                    <span class="bzm-testimonial-initials" aria-hidden="true">@GetInitials(item.Title ?? "")</span>
+                                                }
+                                                <span class="bzm-testimonial-name">@item.Title</span>
+                                            </div>
+                                        </div>
+                                    }
+                                    else if (item.HasImage)
+                                    {
+                                        <div class="bzm-logo-item">
+                                            <img class="bzm-logo-image"
                                                  src="@item.ImageUrl"
-                                                 alt="@item.Title"
+                                                 alt="@(item.HasTitle ? item.Title : "Logo")"
+                                                 title="@(item.HasTitle ? item.Title : null)"
                                                  loading="lazy"
                                                  draggable="false" />
-                                        }
-                                        else
-                                        {
-                                            <span class="bzm-testimonial-initials" aria-hidden="true">@GetInitials(item.Title ?? "")</span>
-                                        }
-                                        <span class="bzm-testimonial-name">@item.Title</span>
-                                    </div>
+                                        </div>
+                                    }
+                                    else if (item.HasTitle || !string.IsNullOrWhiteSpace(item.Description))
+                                    {
+                                        <span class="bzm-text-item">@(item.HasTitle ? item.Title : item.Description)</span>
+                                    }
                                 </div>
                             }
-                            else if (item.HasImage)
-                            {
-                                <div class="bzm-logo-item">
-                                    <img class="bzm-logo-image"
-                                         src="@item.ImageUrl"
-                                         alt="@(item.HasTitle ? item.Title : "Logo")"
-                                         title="@(item.HasTitle ? item.Title : null)"
-                                         loading="lazy"
-                                         draggable="false" />
-                                </div>
-                            }
-                            else if (item.HasTitle || !string.IsNullOrWhiteSpace(item.Description))
-                            {
-                                <span class="bzm-text-item">@(item.HasTitle ? item.Title : item.Description)</span>
-                            }
-                        </div>
-                    }
-                }
+                        }
+                    </div>
+                </div>
             </div>
-        </div>
+        }
     </div>
 }

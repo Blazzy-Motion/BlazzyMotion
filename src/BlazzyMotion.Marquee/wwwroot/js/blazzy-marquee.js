@@ -30,6 +30,83 @@ async function ensureMarqueeLoaded() {
     marqueeLoaded = true;
 }
 
+/* Stagger Entrance Animation */
+
+/**
+ * Sets up IntersectionObserver for stagger entrance.
+ * When marquee enters viewport, items animate in with stagger,
+ * then scroll begins.
+ * @param {HTMLElement} container
+ * @param {Array} rowInstances
+ * @param {number} staggerDelay
+ * @returns {IntersectionObserver}
+ */
+function setupEntranceAnimation(container, rowInstances, staggerDelay) {
+    const observer = new IntersectionObserver((entries) => {
+        entries.forEach((entry) => {
+            if (!entry.isIntersecting) return;
+
+            observer.unobserve(container);
+            playEntranceAnimation(rowInstances, staggerDelay);
+        });
+    }, {
+        threshold: 0.1,
+        rootMargin: '50px'
+    });
+
+    observer.observe(container);
+    return observer;
+}
+
+/**
+ * Plays staggered entrance animation across all rows.
+ * Row 0 starts first, each subsequent row starts after a row-level delay.
+ * After all animations complete, scroll begins.
+ * @param {Array} rowInstances
+ * @param {number} staggerDelay
+ */
+function playEntranceAnimation(rowInstances, staggerDelay) {
+    const animationDuration = 600; // matches --bz-animation-duration (0.6s)
+    const rowDelay = 150;          // delay between rows starting their entrance
+    let maxCompletionTime = 0;
+
+    rowInstances.forEach((rowData, rowIndex) => {
+        const { track, content } = rowData;
+        const items = content.querySelectorAll('.bzm-item, .bzm-text-item');
+
+        if (items.length === 0) {
+            // No items — release track immediately
+            track.classList.remove('bzm-entrance-pending');
+            return;
+        }
+
+        const rowOffset = rowIndex * rowDelay;
+
+        items.forEach((item, itemIndex) => {
+            const delay = rowOffset + (itemIndex * staggerDelay);
+            item.style.animationDelay = `${delay}ms`;
+            item.classList.add('bzm-animate');
+        });
+
+        const lastItemDelay = rowOffset + ((items.length - 1) * staggerDelay);
+        const rowCompletionTime = lastItemDelay + animationDuration;
+        maxCompletionTime = Math.max(maxCompletionTime, rowCompletionTime);
+    });
+
+    // After all entrance animations complete, release the scroll
+    setTimeout(() => {
+        rowInstances.forEach(({ track, content }) => {
+            track.classList.remove('bzm-entrance-pending');
+
+            // Clean up inline animationDelay to avoid conflicts
+            const items = content.querySelectorAll('.bzm-item, .bzm-text-item');
+            items.forEach((item) => {
+                item.style.animationDelay = '';
+            });
+        });
+    }, maxCompletionTime + 50); // +50ms buffer for smooth transition
+}
+
 /* Marquee Initialization */
 
 /**
@@ -46,40 +123,59 @@ export async function initializeMarquee(element, optionsJson, dotNetRef = null) 
         }
 
         const options = optionsJson ? JSON.parse(optionsJson) : {};
-        const track = element.querySelector('.bzm-track');
-        const content = element.querySelector('.bzm-content');
+        const rows = element.querySelectorAll('.bzm-row');
+        const rowInstances = [];
+        const staggerEntrance = options.staggerEntrance !== false;
+        const staggerDelay = options.staggerDelay || 60;
+        const reducedMotion = window.matchMedia('(prefers-reduced-motion: reduce)').matches;
 
-        if (!track || !content) return;
+        for (const row of rows) {
+            const track = row.querySelector('.bzm-track');
+            const content = row.querySelector('.bzm-content');
+            if (!track || !content) continue;
 
-        // Clone content for seamless loop
-        const clone = content.cloneNode(true);
-        clone.setAttribute('aria-hidden', 'true');
-        clone.classList.add('bzm-clone');
-        track.appendChild(clone);
+            // If stagger is enabled and not reduced-motion, pause the track
+            if (staggerEntrance && !reducedMotion) {
+                track.classList.add('bzm-entrance-pending');
+            }
 
-        // Calculate animation duration based on content width and speed
-        const speed = options.speed || 50;
+            // Clone content for seamless loop
+            const clone = content.cloneNode(true);
+            clone.setAttribute('aria-hidden', 'true');
+            clone.classList.add('bzm-clone');
+            track.appendChild(clone);
 
-        const calculateDuration = () => {
-            const contentSize = content.scrollWidth;
-            const duration = contentSize / speed;
-            track.style.setProperty('--bzm-duration', `${duration}s`);
-        };
+            // Per-row speed from data attribute, falling back to options
+            const speed = parseInt(row.dataset.speed) || options.speed || 50;
 
-        calculateDuration();
+            const calculateDuration = () => {
+                const contentSize = content.scrollWidth;
+                const duration = contentSize / speed;
+                track.style.setProperty('--bzm-duration', `${duration}s`);
+            };
 
-        const resizeObserver = new ResizeObserver(() => {
             calculateDuration();
-        });
-        resizeObserver.observe(content);
+
+            const resizeObserver = new ResizeObserver(() => {
+                calculateDuration();
+            });
+            resizeObserver.observe(content);
+
+            rowInstances.push({ track, content, clone, resizeObserver, speed });
+        }
+
+        let entranceObserver = null;
+
+        // Set up entrance animation
+        if (staggerEntrance && !reducedMotion && rowInstances.length > 0) {
+            entranceObserver = setupEntranceAnimation(element, rowInstances, staggerDelay);
+        }
 
         marqueeInstances.set(element, {
-            track,
-            content,
-            clone,
-            resizeObserver,
+            rows: rowInstances,
             options,
-            dotNetRef
+            dotNetRef,
+            entranceObserver
         });
 
         if (dotNetRef) {
@@ -104,12 +200,18 @@ export function destroyMarquee(element) {
 
     const instance = marqueeInstances.get(element);
 
-    if (instance.resizeObserver) {
-        instance.resizeObserver.disconnect();
+    // Disconnect entrance observer
+    if (instance.entranceObserver) {
+        instance.entranceObserver.disconnect();
     }
 
-    if (instance.clone && instance.clone.parentNode) {
-        instance.clone.parentNode.removeChild(instance.clone);
+    for (const row of instance.rows) {
+        if (row.resizeObserver) {
+            row.resizeObserver.disconnect();
+        }
+        if (row.clone && row.clone.parentNode) {
+            row.clone.parentNode.removeChild(row.clone);
+        }
     }
 
     marqueeInstances.delete(element);
@@ -118,13 +220,11 @@ export function destroyMarquee(element) {
 /** @param {HTMLElement} element */
 export function pauseMarquee(element) {
     if (!marqueeInstances.has(element)) return;
-    const instance = marqueeInstances.get(element);
-    instance.track.style.animationPlayState = 'paused';
+    element.classList.add('bzm-paused');
 }
 
 /** @param {HTMLElement} element */
 export function resumeMarquee(element) {
     if (!marqueeInstances.has(element)) return;
-    const instance = marqueeInstances.get(element);
-    instance.track.style.animationPlayState = 'running';
+    element.classList.remove('bzm-paused');
 }

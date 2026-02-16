@@ -4,6 +4,7 @@ using BlazzyMotion.Core.Services;
 using BlazzyMotion.Marquee.Models;
 using BlazzyMotion.Marquee.Services;
 using Microsoft.AspNetCore.Components;
+using Microsoft.AspNetCore.Components.Web;
 using Microsoft.JSInterop;
 
 namespace BlazzyMotion.Marquee.Components;
@@ -40,6 +41,21 @@ public partial class BzMarquee<TItem> : BzComponentBase where TItem : class
     public bool FullWidth { get; set; }
 
     [Parameter]
+    public int Rows { get; set; } = 1;
+
+    [Parameter]
+    public bool AlternateDirection { get; set; } = true;
+
+    [Parameter]
+    public double SpeedVariation { get; set; }
+
+    [Parameter]
+    public bool StaggerEntrance { get; set; } = true;
+
+    [Parameter]
+    public int StaggerDelay { get; set; } = 60;
+
+    [Parameter]
     public RenderFragment<TItem>? ItemTemplate { get; set; }
 
     [Parameter]
@@ -58,10 +74,17 @@ public partial class BzMarquee<TItem> : BzComponentBase where TItem : class
     private IReadOnlyList<BzItem>? MappedItems;
     private bool _isInitialized;
     private bool _needsReInit;
+    private bool _isPausedByKeyboard;
+    private string _srAnnouncement = string.Empty;
 
     // Previous parameter values for JS re-init detection
     private BzDirection _prevDirection;
     private int _prevSpeed;
+    private int _prevRows;
+    private double _prevSpeedVariation;
+    private bool _prevAlternateDirection;
+    private bool _prevStaggerEntrance;
+    private int _prevStaggerDelay;
 
     #endregion
 
@@ -70,6 +93,8 @@ public partial class BzMarquee<TItem> : BzComponentBase where TItem : class
     private bool IsLoading => !_isInitialized && Items != null && MappedItems == null;
     private bool IsEmpty => MappedItems is null or { Count: 0 };
     private bool IsReverse => Direction is BzDirection.Right;
+    private int EffectiveRows => Math.Clamp(Rows, 1, 10);
+    private double EffectiveSpeedVariation => Math.Clamp(SpeedVariation, 0.0, 0.5);
 
     #endregion
 
@@ -114,12 +139,22 @@ public partial class BzMarquee<TItem> : BzComponentBase where TItem : class
 
     private bool HasParametersChanged() =>
         _prevDirection != Direction ||
-        _prevSpeed != Speed;
+        _prevSpeed != Speed ||
+        _prevRows != Rows ||
+        Math.Abs(_prevSpeedVariation - SpeedVariation) > 0.001 ||
+        _prevAlternateDirection != AlternateDirection ||
+        _prevStaggerEntrance != StaggerEntrance ||
+        _prevStaggerDelay != StaggerDelay;
 
     private void SnapshotParameters()
     {
         _prevDirection = Direction;
         _prevSpeed = Speed;
+        _prevRows = Rows;
+        _prevSpeedVariation = SpeedVariation;
+        _prevAlternateDirection = AlternateDirection;
+        _prevStaggerEntrance = StaggerEntrance;
+        _prevStaggerDelay = StaggerDelay;
     }
 
     private async Task InitializeMarqueeAsync()
@@ -134,7 +169,9 @@ public partial class BzMarquee<TItem> : BzComponentBase where TItem : class
             PauseOnHover = PauseOnHover,
             ShowGradientEdges = ShowGradientEdges,
             FullWidth = FullWidth,
-            Reverse = IsReverse
+            Reverse = IsReverse,
+            StaggerEntrance = StaggerEntrance,
+            StaggerDelay = StaggerDelay
         };
 
         await _jsInterop.InitializeAsync(_marqueeRef, options, _dotNetRef);
@@ -153,6 +190,67 @@ public partial class BzMarquee<TItem> : BzComponentBase where TItem : class
 
     #endregion
 
+    #region Keyboard Handling
+
+    private async Task HandleKeyDown(KeyboardEventArgs e)
+    {
+        if (e.Key is not (" " or "Enter")) return;
+
+        _isPausedByKeyboard = !_isPausedByKeyboard;
+        _srAnnouncement = _isPausedByKeyboard ? "Marquee paused" : "Marquee playing";
+
+        if (_jsInterop is not null && !IsDisposed)
+        {
+            if (_isPausedByKeyboard)
+                await _jsInterop.PauseAsync(_marqueeRef);
+            else
+                await _jsInterop.ResumeAsync(_marqueeRef);
+        }
+    }
+
+    #endregion
+
+    #region Row Helpers
+
+    private BzDirection GetRowDirection(int rowIndex)
+    {
+        if (!AlternateDirection || rowIndex % 2 == 0)
+            return Direction;
+
+        return Direction == BzDirection.Left ? BzDirection.Right : BzDirection.Left;
+    }
+
+    private int GetRowSpeed(int rowIndex)
+    {
+        if (EffectiveSpeedVariation <= 0.0 || EffectiveRows <= 1)
+            return Speed;
+
+        // Deterministic variation based on row index (no Random — SSR-safe)
+        var factor = rowIndex % 2 == 0
+            ? 1.0 + (EffectiveSpeedVariation * (rowIndex + 1) / EffectiveRows)
+            : 1.0 - (EffectiveSpeedVariation * (rowIndex + 1) / EffectiveRows);
+
+        return Math.Max(10, (int)(Speed * factor));
+    }
+
+    private IReadOnlyList<BzItem> GetRowItems(int rowIndex)
+    {
+        if (MappedItems is null or { Count: 0 })
+            return Array.Empty<BzItem>();
+
+        // Offset items per row for visual variety
+        var offset = (MappedItems.Count / EffectiveRows) * rowIndex;
+        var result = new List<BzItem>(MappedItems.Count);
+        for (var i = 0; i < MappedItems.Count; i++)
+        {
+            result.Add(MappedItems[(i + offset) % MappedItems.Count]);
+        }
+
+        return result;
+    }
+
+    #endregion
+
     #region CSS Helpers
 
     private string GetContainerClass()
@@ -164,6 +262,9 @@ public partial class BzMarquee<TItem> : BzComponentBase where TItem : class
         if (PauseOnHover) classes.Add("bzm-pause-hover");
         if (ShowGradientEdges) classes.Add("bzm-has-gradient");
         if (!string.IsNullOrWhiteSpace(Text)) classes.Add("bzm-ticker");
+        if (_isPausedByKeyboard) classes.Add("bzm-paused");
+        if (EffectiveRows > 1) classes.Add("bzm-multirow");
+        if (StaggerEntrance) classes.Add("bzm-stagger");
         if (!string.IsNullOrWhiteSpace(CssClass)) classes.Add(CssClass);
 
         return string.Join(" ", classes);
@@ -171,11 +272,22 @@ public partial class BzMarquee<TItem> : BzComponentBase where TItem : class
 
     private string GetAriaLabel()
     {
-        if (!string.IsNullOrWhiteSpace(Text))
-            return "Scrolling text marquee";
+        string baseLabel;
 
-        var count = MappedItems?.Count ?? 0;
-        return $"Scrolling content marquee with {count} items";
+        if (!string.IsNullOrWhiteSpace(Text))
+        {
+            baseLabel = "Scrolling text marquee";
+        }
+        else
+        {
+            var count = MappedItems?.Count ?? 0;
+            var rowInfo = EffectiveRows > 1 ? $" in {EffectiveRows} rows" : "";
+            baseLabel = $"Scrolling content marquee with {count} items{rowInfo}";
+        }
+
+        return _isPausedByKeyboard
+            ? $"{baseLabel}, paused. Press Space to resume"
+            : $"{baseLabel}. Press Space to pause";
     }
 
     private static string GetInitials(string name)
@@ -187,7 +299,13 @@ public partial class BzMarquee<TItem> : BzComponentBase where TItem : class
             : $"{parts[0][0]}";
     }
 
-    private string GetContainerStyle() => $"--bzm-gap: {Gap}px";
+    private string GetContainerStyle()
+    {
+        var style = $"--bzm-gap: {Gap}px";
+        if (EffectiveRows > 1)
+            style += $"; --bzm-row-gap: {Math.Max(4, Gap / 3)}px";
+        return style;
+    }
 
     #endregion
 

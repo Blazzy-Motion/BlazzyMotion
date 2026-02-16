@@ -35,7 +35,7 @@
     @* ==================== LOGO BAR ==================== *@
     <section class="bzb-presentation" aria-labelledby="logo-heading">
 
-        <span class="bzb-presentation__label">Logo Bar — Interactive</span>
+        <span class="bzb-presentation__label">Logo Bar — Multi-Row</span>
 
         <h3 id="logo-heading" class="bzb-presentation__title">Company Logo Marquee</h3>
         <p style="color: rgba(255,255,255,0.7); text-align: center; margin-bottom: 24px;">
@@ -70,6 +70,13 @@
                     <input id="gap-range" type="range" min="10" max="100" step="5"
                            aria-valuemin="10" aria-valuemax="100" aria-valuenow="@_gap"
                            @bind="_gap" @bind:event="oninput" />
+                </div>
+
+                <div class="bzg-demo-control">
+                    <label for="rows-range">Rows: @_rows</label>
+                    <input id="rows-range" type="range" min="1" max="4" step="1"
+                           aria-valuemin="1" aria-valuemax="4" aria-valuenow="@_rows"
+                           @bind="_rows" @bind:event="oninput" />
                 </div>
             </div>
 
@@ -109,36 +116,42 @@
                                 @onclick="@(() => _fullWidth = false)">Off</button>
                     </div>
                 </div>
+
+                <div class="bzg-demo-control">
+                    <label for="variation-range">Speed Var: @(_speedVariation.ToString("F1"))</label>
+                    <input id="variation-range" type="range" min="0" max="0.5" step="0.1"
+                           aria-valuemin="0" aria-valuemax="0.5" aria-valuenow="@_speedVariation"
+                           @bind="_speedVariation" @bind:event="oninput" />
+                </div>
+
+                <div class="bzg-demo-control">
+                    <label id="stagger-label">Stagger Entrance</label>
+                    <div class="bzg-demo-pills" role="radiogroup" aria-labelledby="stagger-label">
+                        <button class="bzg-demo-pill @(_staggerEntrance ? "active" : "")"
+                                role="radio" aria-checked="@(_staggerEntrance)"
+                                @onclick="@(() => _staggerEntrance = true)">On</button>
+                        <button class="bzg-demo-pill @(!_staggerEntrance ? "active" : "")"
+                                role="radio" aria-checked="@(!_staggerEntrance)"
+                                @onclick="@(() => _staggerEntrance = false)">Off</button>
+                    </div>
+                </div>
             </div>
         </div>
 
-        <div class="bzb-presentation__stage" style="display: flex; flex-direction: column; gap: 8px;">
+        <div class="bzb-presentation__stage">
             <BzMarquee TItem="LogoItem"
                        Items="@_logos"
                        Theme="@_currentTheme"
                        Direction="@_direction"
                        Speed="@_speed"
                        Gap="@_gap"
+                       Rows="@_rows"
+                       AlternateDirection="true"
+                       SpeedVariation="@_speedVariation"
                        PauseOnHover="@_pauseOnHover"
                        ShowGradientEdges="@_showGradients"
-                       FullWidth="@_fullWidth">
-                <ItemTemplate Context="logo">
-                    <div class="bzm-logo-item" aria-label="@logo.Name logo">
-                        @Icons.GetCompanyLogo(logo.Name)
-                        <span style="margin-left: 8px; font-size: 0.9rem; font-weight: 500; white-space: nowrap;">@logo.Name</span>
-                    </div>
-                </ItemTemplate>
-            </BzMarquee>
-
-            <BzMarquee TItem="LogoItem"
-                       Items="@_logosReversed"
-                       Theme="@_currentTheme"
-                       Direction="@_oppositeDirection"
-                       Speed="@_speed"
-                       Gap="@_gap"
-                       PauseOnHover="@_pauseOnHover"
-                       ShowGradientEdges="@_showGradients"
-                       FullWidth="@_fullWidth">
+                       FullWidth="@_fullWidth"
+                       StaggerEntrance="@_staggerEntrance">
                 <ItemTemplate Context="logo">
                     <div class="bzm-logo-item" aria-label="@logo.Name logo">
                         @Icons.GetCompanyLogo(logo.Name)
@@ -157,7 +170,7 @@
 
         <h3 id="testimonial-heading" class="bzb-presentation__title">Customer Reviews Marquee</h3>
         <p style="color: rgba(255,255,255,0.7); text-align: center; margin-bottom: 30px;">
-            Auto-detects image + name + description as testimonial cards
+            Auto-detects name + description as testimonial cards — hover to lift
         </p>
 
         <div class="bzb-presentation__stage">
@@ -168,7 +181,9 @@
                        Speed="@_speed"
                        Gap="@_gap"
                        PauseOnHover="@_pauseOnHover"
-                       ShowGradientEdges="@_showGradients" />
+                       ShowGradientEdges="@_showGradients"
+                       FullWidth="@_fullWidth"
+                       StaggerEntrance="@_staggerEntrance" />
         </div>
 
     </section>
@@ -191,7 +206,9 @@
                        Speed="@_speed"
                        Gap="@_gap"
                        PauseOnHover="@_pauseOnHover"
-                       ShowGradientEdges="@_showGradients" />
+                       ShowGradientEdges="@_showGradients"
+                       FullWidth="@_fullWidth"
+                       StaggerEntrance="@_staggerEntrance" />
         </div>
 
     </section>
@@ -203,13 +220,12 @@
     private BzDirection _direction = BzDirection.Left;
     private int _speed = 50;
     private int _gap = 40;
+    private int _rows = 2;
+    private double _speedVariation;
     private bool _pauseOnHover = true;
     private bool _showGradients = true;
     private bool _fullWidth;
-
-    private BzDirection _oppositeDirection => _direction == BzDirection.Left
-        ? BzDirection.Right
-        : BzDirection.Left;
+    private bool _staggerEntrance = true;
 
     private string _tickerText = "BlazzyMotion — Premium Blazor Components — Carousel — Bento Grid — Gallery — Marquee — Built with .NET 8";
 
@@ -223,18 +239,6 @@
         new() { Name = "Meta" },
         new() { Name = "Nvidia" },
         new() { Name = "Netflix" }
-    };
-
-    private List<LogoItem> _logosReversed = new()
-    {
-        new() { Name = "Netflix" },
-        new() { Name = "Nvidia" },
-        new() { Name = "Meta" },
-        new() { Name = "Tesla" },
-        new() { Name = "Amazon" },
-        new() { Name = "Google" },
-        new() { Name = "Microsoft" },
-        new() { Name = "Apple" }
     };
 
     private List<TestimonialItem> _testimonials = new()

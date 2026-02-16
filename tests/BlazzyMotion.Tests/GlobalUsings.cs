@@ -28,6 +28,10 @@ global using BlazzyMotion.Gallery.Components;
 global using BlazzyMotion.Gallery.Models;
 global using BlazzyMotion.Gallery.Services;
 
+// BlazzyMotion.Marquee
+global using BlazzyMotion.Marquee.Components;
+global using BlazzyMotion.Marquee.Models;
+
 // Source Generator Testing
 global using Microsoft.CodeAnalysis;
 global using Microsoft.CodeAnalysis.CSharp;

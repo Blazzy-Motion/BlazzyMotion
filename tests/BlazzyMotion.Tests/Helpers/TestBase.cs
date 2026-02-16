@@ -27,6 +27,18 @@ public abstract class TestBase : TestContext
       });
     }
 
+    // Register mapper for TestMarqueeItem (source generator doesn't run on test project)
+    if (!BzRegistry.HasMapper<TestMarqueeItem>())
+    {
+      BzRegistry.Register<TestMarqueeItem>(item => new BzItem
+      {
+        ImageUrl = item.ImageUrl,
+        Title = item.Name,
+        Description = item.Quote,
+        OriginalItem = item
+      });
+    }
+
     // Configure JSInterop to Loose mode - automatically handles unmocked calls
     JSInterop.Mode = JSRuntimeMode.Loose;
 
@@ -67,9 +79,19 @@ public abstract class TestBase : TestContext
     GalleryModule.SetupVoid("trapFocus", _ => true);
     GalleryModule.SetupVoid("initializeLightboxSwipe", _ => true);
     GalleryModule.SetupVoid("prepareFilter", _ => true);
+
+    // Setup Marquee module
+    MarqueeModule = JSInterop.SetupModule(
+        "./_content/BlazzyMotion.Marquee/js/blazzy-marquee.js");
+
+    MarqueeModule.SetupVoid("initializeMarquee", _ => true);
+    MarqueeModule.SetupVoid("destroyMarquee", _ => true);
+    MarqueeModule.SetupVoid("pauseMarquee", _ => true);
+    MarqueeModule.SetupVoid("resumeMarquee", _ => true);
   }
 
   // Legacy property for backward compatibility with existing tests
   protected BunitJSModuleInterop CarouselModule => CoreModule;
   protected BunitJSModuleInterop GalleryModule { get; }
+  protected BunitJSModuleInterop MarqueeModule { get; }
 }

@@ -39,4 +39,14 @@ public sealed class BzMarqueeOptions
     /// Whether animation direction is reversed (right).
     /// </summary>
     public bool Reverse { get; set; }
+
+    /// <summary>
+    /// Whether to enable staggered entrance animation.
+    /// </summary>
+    public bool StaggerEntrance { get; set; } = true;
+
+    /// <summary>
+    /// Delay between each item's entrance animation in milliseconds.
+    /// </summary>
+    public int StaggerDelay { get; set; } = 60;
 }
