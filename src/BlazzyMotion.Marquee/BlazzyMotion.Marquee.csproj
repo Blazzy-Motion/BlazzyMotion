@@ -1,0 +1,35 @@
+<Project Sdk="Microsoft.NET.Sdk.Razor">
+
+  <PropertyGroup>
+    <TargetFramework>net8.0</TargetFramework>
+    <Version>$(BlazzyMarqueeVersion)</Version>
+    <PackageVersion>$(BlazzyMarqueeVersion)</PackageVersion>
+    <PackageId>BlazzyMotion.Marquee</PackageId>
+    <Title>BlazzyMotion Marquee</Title>
+    <Description>A premium continuous scrolling marquee component for Blazor. Features smooth CSS-driven animations, pause on hover, reverse direction, and 4 themes (Glass, Dark, Light, Minimal). Perfect for logo carousels, testimonials, and news tickers. Zero-config setup with Source Generator. Live demo: https://blazzymotion.com/</Description>
+    <PackageTags>blazor;marquee;scroll;ticker;animation;logos;testimonials;ui;component;glassmorphism;source-generator;blazor-component</PackageTags>
+    <PackageIcon>icon.png</PackageIcon>
+    <PackageReadmeFile>README.md</PackageReadmeFile>
+
+    <EmitCompilerGeneratedFiles>true</EmitCompilerGeneratedFiles>
+    <CompilerGeneratedFilesOutputPath>$(BaseIntermediateOutputPath)Generated</CompilerGeneratedFilesOutputPath>
+  </PropertyGroup>
+
+  <ItemGroup>
+    <SupportedPlatform Include="browser" />
+  </ItemGroup>
+
+  <ItemGroup>
+    <PackageReference Include="Microsoft.AspNetCore.Components.Web" Version="8.0.0" />
+  </ItemGroup>
+
+  <ItemGroup>
+    <ProjectReference Include="..\BlazzyMotion.Core\BlazzyMotion.Core.csproj" />
+  </ItemGroup>
+
+  <ItemGroup>
+    <None Include="icon.png" Pack="true" PackagePath="\" Condition="Exists('icon.png')" />
+    <None Include="README.md" Pack="true" PackagePath="\" />
+  </ItemGroup>
+
+</Project>

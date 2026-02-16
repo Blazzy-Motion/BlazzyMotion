@@ -4,6 +4,7 @@
     <BlazzyCarouselVersion Condition="'$(BlazzyCarouselVersion)' == ''">1.4.1</BlazzyCarouselVersion>
     <BlazzyBentoVersion Condition="'$(BlazzyBentoVersion)' == ''">1.0.2</BlazzyBentoVersion>
     <BlazzyGalleryVersion Condition="'$(BlazzyGalleryVersion)' == ''">1.0.0</BlazzyGalleryVersion>
+    <BlazzyMarqueeVersion Condition="'$(BlazzyMarqueeVersion)' == ''">1.0.0</BlazzyMarqueeVersion>
   </PropertyGroup>
 
   <PropertyGroup>
