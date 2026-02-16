@@ -212,6 +212,18 @@ export function destroyMarquee(element) {
         if (row.clone && row.clone.parentNode) {
             row.clone.parentNode.removeChild(row.clone);
         }
+
+        // Clean up entrance animation state for re-init
+        if (row.track) {
+            row.track.classList.remove('bzm-entrance-pending');
+        }
+        if (row.content) {
+            const items = row.content.querySelectorAll('.bzm-item, .bzm-text-item');
+            items.forEach(item => {
+                item.classList.remove('bzm-animate');
+                item.style.animationDelay = '';
+            });
+        }
     }
 
     marqueeInstances.delete(element);
