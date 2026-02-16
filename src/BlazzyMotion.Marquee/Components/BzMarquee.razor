@@ -1,0 +1,96 @@
+@namespace BlazzyMotion.Marquee.Components
+@using BlazzyMotion.Core.Models
+@typeparam TItem where TItem : class
+@inherits BlazzyMotion.Core.Abstractions.BzComponentBase
+
+@if (IsLoading)
+{
+    <div class="bz-loading" @attributes="AdditionalAttributes">
+        @if (LoadingTemplate != null)
+        {
+            @LoadingTemplate
+        }
+        else
+        {
+            <div class="bz-spinner"></div>
+            <p>Loading marquee...</p>
+        }
+    </div>
+}
+else if (IsEmpty && string.IsNullOrWhiteSpace(Text))
+{
+    <div class="bz-empty" @attributes="AdditionalAttributes">
+        @if (EmptyTemplate != null)
+        {
+            @EmptyTemplate
+        }
+        else
+        {
+            <p>No items to display</p>
+        }
+    </div>
+}
+else
+{
+    <div class="@GetContainerClass()"
+         style="@GetContainerStyle()"
+         @ref="_marqueeRef"
+         @attributes="AdditionalAttributes">
+
+        @if (ShowGradientEdges)
+        {
+            <div class="bzm-gradient bzm-gradient-start"></div>
+            <div class="bzm-gradient bzm-gradient-end"></div>
+        }
+
+        <div class="bzm-track">
+            <div class="bzm-content" aria-hidden="false">
+                @if (!string.IsNullOrWhiteSpace(Text))
+                {
+                    <span class="bzm-text-item">@Text</span>
+                }
+                else if (MappedItems != null)
+                {
+                    @foreach (var item in MappedItems)
+                    {
+                        <div class="bzm-item">
+                            @if (ItemTemplate != null)
+                            {
+                                @ItemTemplate(item.GetOriginal<TItem>()!)
+                            }
+                            else if (item.HasImage && item.HasTitle && !string.IsNullOrWhiteSpace(item.Description))
+                            {
+                                <div class="bzm-testimonial-card">
+                                    <blockquote class="bzm-testimonial-text">@item.Description</blockquote>
+                                    <div class="bzm-testimonial-author">
+                                        <img class="bzm-testimonial-avatar"
+                                             src="@item.ImageUrl"
+                                             alt="@item.Title"
+                                             loading="lazy"
+                                             draggable="false" />
+                                        <span class="bzm-testimonial-name">@item.Title</span>
+                                    </div>
+                                </div>
+                            }
+                            else if (item.HasImage)
+                            {
+                                <div class="bzm-logo-item">
+                                    <img class="bzm-logo-image"
+                                         src="@item.ImageUrl"
+                                         alt="@(item.HasTitle ? item.Title : "Logo")"
+                                         @(item.HasTitle ? $"title=\"{item.Title}\"" : "")
+                                         loading="lazy"
+                                         draggable="false" />
+                                </div>
+                            }
+                            else if (item.HasTitle || !string.IsNullOrWhiteSpace(item.Description))
+                            {
+                                <span class="bzm-text-item">@(item.HasTitle ? item.Title : item.Description)</span>
+                            }
+                        </div>
+                    }
+                }
+            </div>
+        </div>
+    </div>
+}
