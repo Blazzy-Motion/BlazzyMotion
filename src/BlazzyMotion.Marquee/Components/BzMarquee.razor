@@ -78,7 +78,7 @@ else
                                     <img class="bzm-logo-image"
                                          src="@item.ImageUrl"
                                          alt="@(item.HasTitle ? item.Title : "Logo")"
-                                         @(item.HasTitle ? $"title=\"{item.Title}\"" : "")
+                                         title="@(item.HasTitle ? item.Title : null)"
                                          loading="lazy"
                                          draggable="false" />
                                 </div>
