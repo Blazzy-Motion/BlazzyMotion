@@ -99,6 +99,12 @@ public partial class BzMarquee<TItem> : BzComponentBase where TItem : class
     public int StaggerDelay { get; set; } = 60;
 
     /// <summary>
+    /// Callback when a marquee item is clicked. Optional — items are not clickable unless this is set.
+    /// </summary>
+    [Parameter]
+    public EventCallback<TItem> OnItemClick { get; set; }
+
+    /// <summary>
     /// Custom template for rendering each item.
     /// </summary>
     [Parameter]
@@ -262,6 +268,12 @@ public partial class BzMarquee<TItem> : BzComponentBase where TItem : class
         }
     }
 
+    private async Task HandleItemClick(TItem item)
+    {
+        if (OnItemClick.HasDelegate)
+            await OnItemClick.InvokeAsync(item);
+    }
+
     #endregion
 
     #region Row Helpers
@@ -317,6 +329,7 @@ public partial class BzMarquee<TItem> : BzComponentBase where TItem : class
         if (_isPausedByKeyboard) classes.Add("bzm-paused");
         if (EffectiveRows > 1) classes.Add("bzm-multirow");
         if (StaggerEntrance) classes.Add("bzm-stagger");
+        if (OnItemClick.HasDelegate) classes.Add("bzm-clickable");
         if (!string.IsNullOrWhiteSpace(CssClass)) classes.Add(CssClass);
 
         return string.Join(" ", classes);

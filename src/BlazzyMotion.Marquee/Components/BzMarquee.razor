@@ -72,10 +72,14 @@ else
                         {
                             @foreach (var item in rowItems)
                             {
-                                <div class="bzm-item">
+                                var original = item.GetOriginal<TItem>()!;
+                                <div class="bzm-item"
+                                     @onclick="() => HandleItemClick(original)"
+                                     role="@(OnItemClick.HasDelegate ? "button" : null)"
+                                     tabindex="@(OnItemClick.HasDelegate ? 0 : -1)">
                                     @if (ItemTemplate != null)
                                     {
-                                        @ItemTemplate(item.GetOriginal<TItem>()!)
+                                        @ItemTemplate(original)
                                     }
                                     else if (item.HasTitle && !string.IsNullOrWhiteSpace(item.Description))
                                     {
