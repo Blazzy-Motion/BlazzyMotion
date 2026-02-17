@@ -203,6 +203,7 @@
     font-size: var(--bzm-testimonial-text-size);
     font-style: italic;
     line-height: 1.6;
+    height: calc(4 * 1.6em);
     margin: 0;
     padding: 0;
     border: none;
@@ -221,15 +222,6 @@
     vertical-align: -0.2em;
     opacity: 0.5;
     margin-right: 2px;
-}
-
-.bzm-testimonial-text::after {
-    content: "\201D";
-    font-size: 1.5em;
-    line-height: 0;
-    vertical-align: -0.2em;
-    opacity: 0.5;
-    margin-left: 2px;
 }
 
 .bzm-testimonial-author {
