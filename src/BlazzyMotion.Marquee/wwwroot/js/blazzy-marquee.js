@@ -34,20 +34,39 @@ async function ensureMarqueeLoaded() {
 
 /**
  * Sets up IntersectionObserver for stagger entrance.
- * When marquee enters viewport, items animate in with stagger,
- * then scroll begins.
+ * Waits for bzm-ready before playing to avoid animating invisible containers.
  * @param {HTMLElement} container
  * @param {Array} rowInstances
  * @param {number} staggerDelay
  * @returns {IntersectionObserver}
  */
 function setupEntranceAnimation(container, rowInstances, staggerDelay) {
+    const startEntrance = () => {
+        playEntranceAnimation(rowInstances, staggerDelay);
+    };
+
+    const waitForReady = () => {
+        if (container.classList.contains('bzm-ready')) {
+            startEntrance();
+            return;
+        }
+
+        const checkReady = setInterval(() => {
+            if (container.classList.contains('bzm-ready')) {
+                clearInterval(checkReady);
+                startEntrance();
+            }
+        }, 16);
+
+        setTimeout(() => clearInterval(checkReady), 2000);
+    };
+
     const observer = new IntersectionObserver((entries) => {
         entries.forEach((entry) => {
             if (!entry.isIntersecting) return;
 
             observer.unobserve(container);
-            playEntranceAnimation(rowInstances, staggerDelay);
+            waitForReady();
         });
     }, {
         threshold: 0.1,
@@ -60,14 +79,13 @@ function setupEntranceAnimation(container, rowInstances, staggerDelay) {
 
 /**
  * Plays staggered entrance animation across all rows.
- * Row 0 starts first, each subsequent row starts after a row-level delay.
- * After all animations complete, scroll begins.
+ * Each row starts after a row-level delay, items animate with per-item stagger.
  * @param {Array} rowInstances
- * @param {number} staggerDelay
+ * @param {number} staggerDelay - Delay between items in ms
  */
 function playEntranceAnimation(rowInstances, staggerDelay) {
-    const animationDuration = 600; // matches --bz-animation-duration (0.6s)
-    const rowDelay = 150;          // delay between rows starting their entrance
+    const animationDuration = 600;
+    const rowDelay = 150;
     let maxCompletionTime = 0;
 
     rowInstances.forEach((rowData, rowIndex) => {
@@ -75,7 +93,6 @@ function playEntranceAnimation(rowInstances, staggerDelay) {
         const items = content.querySelectorAll('.bzm-item, .bzm-text-item');
 
         if (items.length === 0) {
-            // No items — release track immediately
             track.classList.remove('bzm-entrance-pending');
             return;
         }
@@ -93,23 +110,22 @@ function playEntranceAnimation(rowInstances, staggerDelay) {
         maxCompletionTime = Math.max(maxCompletionTime, rowCompletionTime);
     });
 
-    // After all entrance animations complete, release the scroll
     setTimeout(() => {
         rowInstances.forEach(({ track, content }) => {
             track.classList.remove('bzm-entrance-pending');
 
-            // Clean up inline animationDelay to avoid conflicts
             const items = content.querySelectorAll('.bzm-item, .bzm-text-item');
             items.forEach((item) => {
                 item.style.animationDelay = '';
             });
         });
-    }, maxCompletionTime + 50); // +50ms buffer for smooth transition
+    }, maxCompletionTime + 50);
 }
 
 /* Marquee Initialization */
 
 /**
+ * Initialize BzMarquee with infinite scroll, content cloning and stagger entrance.
  * @param {HTMLElement} element - The marquee container element
  * @param {string} optionsJson - JSON string with options
  * @param {object} dotNetRef - .NET object reference for callbacks
@@ -134,7 +150,6 @@ export async function initializeMarquee(element, optionsJson, dotNetRef = null) 
             const content = row.querySelector('.bzm-content');
             if (!track || !content) continue;
 
-            // If stagger is enabled and not reduced-motion, pause the track
             if (staggerEntrance && !reducedMotion) {
                 track.classList.add('bzm-entrance-pending');
             }
@@ -145,7 +160,6 @@ export async function initializeMarquee(element, optionsJson, dotNetRef = null) 
             clone.classList.add('bzm-clone');
             track.appendChild(clone);
 
-            // Per-row speed from data attribute, falling back to options
             const speed = parseInt(row.dataset.speed) || options.speed || 50;
 
             const calculateDuration = () => {
@@ -166,7 +180,6 @@ export async function initializeMarquee(element, optionsJson, dotNetRef = null) 
 
         let entranceObserver = null;
 
-        // Set up entrance animation
         if (staggerEntrance && !reducedMotion && rowInstances.length > 0) {
             entranceObserver = setupEntranceAnimation(element, rowInstances, staggerDelay);
         }
@@ -194,13 +207,14 @@ export async function initializeMarquee(element, optionsJson, dotNetRef = null) 
 
 /* Marquee Control */
 
-/** @param {HTMLElement} element */
+/**
+ * Destroy marquee instance and clean up
+ */
 export function destroyMarquee(element) {
     if (!marqueeInstances.has(element)) return;
 
     const instance = marqueeInstances.get(element);
 
-    // Disconnect entrance observer
     if (instance.entranceObserver) {
         instance.entranceObserver.disconnect();
     }
@@ -213,7 +227,6 @@ export function destroyMarquee(element) {
             row.clone.parentNode.removeChild(row.clone);
         }
 
-        // Clean up entrance animation state for re-init
         if (row.track) {
             row.track.classList.remove('bzm-entrance-pending');
         }
@@ -229,13 +242,17 @@ export function destroyMarquee(element) {
     marqueeInstances.delete(element);
 }
 
-/** @param {HTMLElement} element */
+/**
+ * Pause marquee animation
+ */
 export function pauseMarquee(element) {
     if (!marqueeInstances.has(element)) return;
     element.classList.add('bzm-paused');
 }
 
-/** @param {HTMLElement} element */
+/**
+ * Resume marquee animation
+ */
 export function resumeMarquee(element) {
     if (!marqueeInstances.has(element)) return;
     element.classList.remove('bzm-paused');

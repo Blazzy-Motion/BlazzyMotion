@@ -9,6 +9,21 @@ namespace BlazzyMotion.Marquee.Services;
 /// <summary>
 /// JavaScript interop service for BzMarquee component.
 /// </summary>
+/// <remarks>
+/// <para>
+/// Handles communication with blazzy-marquee.js module.
+/// Inherits lazy module loading and safe invoke methods from <see cref="BzJsInteropBase"/>.
+/// </para>
+/// <para>
+/// <strong>JS Functions:</strong>
+/// <list type="bullet">
+/// <item><c>initializeMarquee</c> - Sets up infinite scroll, cloning and stagger entrance</item>
+/// <item><c>pauseMarquee</c> - Pauses marquee animation</item>
+/// <item><c>resumeMarquee</c> - Resumes marquee animation</item>
+/// <item><c>destroyMarquee</c> - Cleans up instance</item>
+/// </list>
+/// </para>
+/// </remarks>
 public sealed class BzMarqueeJsInterop : BzJsInteropBase
 {
     private static readonly JsonSerializerOptions _jsonOptions = new()
@@ -23,7 +38,7 @@ public sealed class BzMarqueeJsInterop : BzJsInteropBase
     }
 
     /// <summary>
-    /// Initializes the marquee component.
+    /// Initializes the marquee component with infinite scroll and stagger entrance.
     /// </summary>
     public async ValueTask InitializeAsync<TComponent>(
         ElementReference element,

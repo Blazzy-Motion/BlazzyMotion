@@ -9,6 +9,10 @@ using Microsoft.JSInterop;
 
 namespace BlazzyMotion.Marquee.Components;
 
+/// <summary>
+/// A CSS-driven infinite scrolling marquee for Blazor with logo bars, testimonials and text tickers.
+/// </summary>
+/// <typeparam name="TItem">The type of items to display</typeparam>
 public partial class BzMarquee<TItem> : BzComponentBase where TItem : class
 {
     [Inject]
@@ -16,51 +20,99 @@ public partial class BzMarquee<TItem> : BzComponentBase where TItem : class
 
     #region Parameters
 
+    /// <summary>
+    /// Collection of items to display in the marquee.
+    /// </summary>
     [Parameter]
     public IEnumerable<TItem>? Items { get; set; }
 
+    /// <summary>
+    /// Plain text content for text ticker mode. When set, Items are ignored.
+    /// </summary>
     [Parameter]
     public string? Text { get; set; }
 
+    /// <summary>
+    /// Scroll direction of the marquee.
+    /// </summary>
     [Parameter]
     public BzDirection Direction { get; set; } = BzDirection.Left;
 
+    /// <summary>
+    /// Animation speed in pixels per second.
+    /// </summary>
     [Parameter]
     public int Speed { get; set; } = 50;
 
+    /// <summary>
+    /// Gap between items in pixels.
+    /// </summary>
     [Parameter]
     public int Gap { get; set; } = 40;
 
+    /// <summary>
+    /// Whether to pause animation on mouse hover.
+    /// </summary>
     [Parameter]
     public bool PauseOnHover { get; set; } = true;
 
+    /// <summary>
+    /// Whether to show gradient fade on edges.
+    /// </summary>
     [Parameter]
     public bool ShowGradientEdges { get; set; } = true;
 
+    /// <summary>
+    /// Whether the marquee spans full viewport width.
+    /// </summary>
     [Parameter]
     public bool FullWidth { get; set; }
 
+    /// <summary>
+    /// Number of rows to display (1-10).
+    /// </summary>
     [Parameter]
     public int Rows { get; set; } = 1;
 
+    /// <summary>
+    /// Whether adjacent rows scroll in opposite directions.
+    /// </summary>
     [Parameter]
     public bool AlternateDirection { get; set; } = true;
 
+    /// <summary>
+    /// Speed variation factor between rows (0.0-0.5). Deterministic, SSR-safe.
+    /// </summary>
     [Parameter]
     public double SpeedVariation { get; set; }
 
+    /// <summary>
+    /// Whether to enable staggered entrance animation on first appearance.
+    /// </summary>
     [Parameter]
     public bool StaggerEntrance { get; set; } = true;
 
+    /// <summary>
+    /// Delay between each item's entrance animation in milliseconds.
+    /// </summary>
     [Parameter]
     public int StaggerDelay { get; set; } = 60;
 
+    /// <summary>
+    /// Custom template for rendering each item.
+    /// </summary>
     [Parameter]
     public RenderFragment<TItem>? ItemTemplate { get; set; }
 
+    /// <summary>
+    /// Custom loading template.
+    /// </summary>
     [Parameter]
     public RenderFragment? LoadingTemplate { get; set; }
 
+    /// <summary>
+    /// Custom empty state template.
+    /// </summary>
     [Parameter]
     public RenderFragment? EmptyTemplate { get; set; }
 
@@ -77,7 +129,6 @@ public partial class BzMarquee<TItem> : BzComponentBase where TItem : class
     private bool _isPausedByKeyboard;
     private string _srAnnouncement = string.Empty;
 
-    // Previous parameter values for JS re-init detection
     private BzDirection _prevDirection;
     private int _prevSpeed;
     private int _prevRows;
@@ -181,6 +232,9 @@ public partial class BzMarquee<TItem> : BzComponentBase where TItem : class
 
     #region JS Callbacks
 
+    /// <summary>
+    /// Called from JS when marquee initialization completes.
+    /// </summary>
     [JSInvokable]
     public async Task OnMarqueeInitializedFromJS()
     {
@@ -225,7 +279,6 @@ public partial class BzMarquee<TItem> : BzComponentBase where TItem : class
         if (EffectiveSpeedVariation <= 0.0 || EffectiveRows <= 1)
             return Speed;
 
-        // Deterministic variation based on row index (no Random — SSR-safe)
         var factor = rowIndex % 2 == 0
             ? 1.0 + (EffectiveSpeedVariation * (rowIndex + 1) / EffectiveRows)
             : 1.0 - (EffectiveSpeedVariation * (rowIndex + 1) / EffectiveRows);
@@ -238,7 +291,6 @@ public partial class BzMarquee<TItem> : BzComponentBase where TItem : class
         if (MappedItems is null or { Count: 0 })
             return Array.Empty<BzItem>();
 
-        // Offset items per row for visual variety
         var offset = (MappedItems.Count / EffectiveRows) * rowIndex;
         var result = new List<BzItem>(MappedItems.Count);
         for (var i = 0; i < MappedItems.Count; i++)
