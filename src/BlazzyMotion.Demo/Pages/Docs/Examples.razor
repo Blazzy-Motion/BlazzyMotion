@@ -275,6 +275,55 @@
   </ChildContent>
 </DocSection>
 
+<!-- MARQUEE SECTION HEADER -->
+<h2 class="bz-section-title bz-mt-4">Marquee Examples</h2>
+
+<!-- BASIC LOGO BAR -->
+<DocSection Title="Basic Logo Bar">
+  <IconContent>@Icons.Marquee</IconContent>
+  <ChildContent>
+    <p>The simplest way to use BzMarquee for a scrolling logo bar.</p>
+
+    <h4 class="bz-mt-2">Model</h4>
+    <CodeBlock Language="csharp" Code="@_marqueeBrandModel" />
+
+    <h4 class="bz-mt-2">Component</h4>
+    <CodeBlock Language="razor" Code="@_marqueeLogoBar" />
+  </ChildContent>
+</DocSection>
+
+<!-- TESTIMONIAL CAROUSEL -->
+<DocSection Title="Testimonial Carousel">
+  <IconContent>@Icons.Quote</IconContent>
+  <ChildContent>
+    <p>Auto-detected testimonial cards — just use <code>[BzTitle]</code> and <code>[BzDescription]</code>.</p>
+
+    <h4 class="bz-mt-2">Model</h4>
+    <CodeBlock Language="csharp" Code="@_marqueeReviewModel" />
+
+    <h4 class="bz-mt-2">Component</h4>
+    <CodeBlock Language="razor" Code="@_marqueeTestimonials" />
+  </ChildContent>
+</DocSection>
+
+<!-- BREAKING NEWS TICKER -->
+<DocSection Title="Breaking News Ticker">
+  <IconContent>@Icons.FileText</IconContent>
+  <ChildContent>
+    <p>Simple text ticker — no model or items needed.</p>
+    <CodeBlock Language="razor" Code="@_marqueeNewsTicker" />
+  </ChildContent>
+</DocSection>
+
+<!-- MULTI-ROW WITH CLICK -->
+<DocSection Title="Multi-Row with Click">
+  <IconContent>@Icons.Layout</IconContent>
+  <ChildContent>
+    <p>Multiple rows with alternating directions and clickable items.</p>
+    <CodeBlock Language="razor" Code="@_marqueeMultiRow" />
+  </ChildContent>
+</DocSection>
+
 <!-- NEXT STEPS -->
 <DocSection Title="Need More Help?">
   <IconContent>
@@ -294,6 +343,9 @@
       </a>
       <a href="/docs/gallery" class="bz-btn bz-btn--primary">
         Gallery Docs
+      </a>
+      <a href="/docs/marquee" class="bz-btn bz-btn--primary">
+        Marquee Docs
       </a>
       <a href="/" class="bz-btn bz-btn--secondary">
         Live Demo
@@ -818,6 +870,95 @@ public class Photo
     {
         Console.WriteLine($""Clicked: {photo.Title}"");
         // Navigate, show details panel, etc.
+    }
+}";
+
+  // MARQUEE EXAMPLES
+  private string _marqueeBrandModel = @"using BlazzyMotion.Core.Attributes;
+
+public class Brand
+{
+    [BzImage]
+    public string LogoUrl { get; set; } = """";
+
+    [BzTitle]
+    public string Name { get; set; } = """";
+}";
+
+  private string _marqueeLogoBar = @"@using BlazzyMotion.Marquee.Components
+
+<BzMarquee Items=""@_brands"" Gap=""60"" Theme=""BzTheme.Glass"">
+    <ItemTemplate Context=""brand"">
+        <img src=""@brand.LogoUrl"" alt=""@brand.Name"" style=""height: 40px;"" />
+    </ItemTemplate>
+</BzMarquee>
+
+@code {
+    private List<Brand> _brands = new()
+    {
+        new() { LogoUrl = ""/logos/github.svg"", Name = ""GitHub"" },
+        new() { LogoUrl = ""/logos/azure.svg"", Name = ""Azure"" },
+        new() { LogoUrl = ""/logos/aws.svg"", Name = ""AWS"" },
+        new() { LogoUrl = ""/logos/docker.svg"", Name = ""Docker"" },
+        new() { LogoUrl = ""/logos/kubernetes.svg"", Name = ""Kubernetes"" }
+    };
+}";
+
+  private string _marqueeReviewModel = @"using BlazzyMotion.Core.Attributes;
+
+public class Review
+{
+    [BzTitle]
+    public string Author { get; set; } = """";
+
+    [BzDescription]
+    public string Quote { get; set; } = """";
+
+    [BzImage]
+    public string? Avatar { get; set; }
+}";
+
+  private string _marqueeTestimonials = @"<BzMarquee Items=""@_reviews""
+           Theme=""BzTheme.Dark""
+           Speed=""30"" />
+
+@code {
+    private List<Review> _reviews = new()
+    {
+        new() { Author = ""Jane Doe"", Quote = ""Best Blazor library we've used!"", Avatar = ""/avatars/jane.jpg"" },
+        new() { Author = ""John Smith"", Quote = ""Easy to integrate, beautiful results."" },
+        new() { Author = ""Alice Johnson"", Quote = ""The 3D carousel blew our clients away."", Avatar = ""/avatars/alice.jpg"" }
+    };
+}";
+
+  private string _marqueeNewsTicker = @"<BzMarquee Text=""Breaking: BlazzyMotion v1.0 released with 4 premium components""
+           Theme=""BzTheme.Minimal""
+           Speed=""40""
+           ShowGradientEdges=""false"" />
+
+<!-- Multiple tickers with different speeds -->
+<BzMarquee Text=""Stock prices: MSFT +2.3% | AAPL +1.1% | GOOG -0.5%""
+           Direction=""BzDirection.Right""
+           Speed=""60""
+           Theme=""BzTheme.Dark"" />";
+
+  private string _marqueeMultiRow = @"@inject NavigationManager Nav
+
+<BzMarquee Items=""@_brands""
+           Rows=""3""
+           AlternateDirection=""true""
+           SpeedVariation=""0.3""
+           OnItemClick=""HandleBrandClick""
+           Theme=""BzTheme.Glass"">
+    <ItemTemplate Context=""brand"">
+        <img src=""@brand.LogoUrl"" alt=""@brand.Name"" style=""height: 40px;"" />
+    </ItemTemplate>
+</BzMarquee>
+
+@code {
+    private void HandleBrandClick(Brand brand)
+    {
+        Nav.NavigateTo($""/partners/{brand.Name.ToLower()}"");
     }
 }";
 }

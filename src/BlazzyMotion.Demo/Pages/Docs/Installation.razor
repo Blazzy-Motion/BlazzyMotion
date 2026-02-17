@@ -24,7 +24,7 @@
 <DocSection Title="Install via NuGet">
     <IconContent>@Icons.Download</IconContent>
     <ChildContent>
-        <p>BlazzyMotion offers three component packages. Install the ones you need:</p>
+        <p>BlazzyMotion offers four component packages. Install the ones you need:</p>
 
         <h4 class="bz-mt-3">BzCarousel - 3D Carousel Component</h4>
         <CodeBlock Language="bash" Code="@_carouselCli" />
@@ -34,6 +34,9 @@
 
         <h4 class="bz-mt-3">BzGallery - Image Gallery</h4>
         <CodeBlock Language="bash" Code="@_galleryCli" />
+
+        <h4 class="bz-mt-3">BzMarquee - Infinite Scrolling Marquee</h4>
+        <CodeBlock Language="bash" Code="@_marqueeCli" />
 
         <h4 class="bz-mt-3">Or install all</h4>
         <CodeBlock Language="bash" Code="@_allCli" />
@@ -73,6 +76,9 @@
     <h4 class="bz-mt-3">Test BzGallery</h4>
     <CodeBlock Language="razor" Code="@_testGallery" />
 
+    <h4 class="bz-mt-3">Test BzMarquee</h4>
+    <CodeBlock Language="razor" Code="@_testMarquee" />
+
     <p class="bz-mt-2">If you see the components rendered correctly, you're all set!</p>
   </ChildContent>
 </DocSection>
@@ -99,6 +105,9 @@
         <a href="/docs/gallery" class="bz-btn bz-btn--secondary">
             Gallery Docs
         </a>
+        <a href="/docs/marquee" class="bz-btn bz-btn--secondary">
+            Marquee Docs
+        </a>
     </div>
   </ChildContent>
 </DocSection>
@@ -110,13 +119,17 @@
 
     private string _galleryCli = "dotnet add package BlazzyMotion.Gallery";
 
+    private string _marqueeCli = "dotnet add package BlazzyMotion.Marquee";
+
     private string _allCli = @"dotnet add package BlazzyMotion.Carousel
 dotnet add package BlazzyMotion.Bento
-dotnet add package BlazzyMotion.Gallery";
+dotnet add package BlazzyMotion.Gallery
+dotnet add package BlazzyMotion.Marquee";
 
     private string _packageRef => $@"<PackageReference Include=""BlazzyMotion.Carousel"" Version=""{AppVersions.Carousel}"" />
 <PackageReference Include=""BlazzyMotion.Bento"" Version=""{AppVersions.Bento}"" />
-<PackageReference Include=""BlazzyMotion.Gallery"" Version=""{AppVersions.Gallery}"" />";
+<PackageReference Include=""BlazzyMotion.Gallery"" Version=""{AppVersions.Gallery}"" />
+<PackageReference Include=""BlazzyMotion.Marquee"" Version=""{AppVersions.Marquee}"" />";
 
     private string _imports = @"@* For BzCarousel *@
 @using BlazzyMotion.Core.Models
@@ -127,7 +140,10 @@ dotnet add package BlazzyMotion.Gallery";
 
 @* For BzGallery *@
 @using BlazzyMotion.Gallery.Components
-@using BlazzyMotion.Gallery.Models";
+@using BlazzyMotion.Gallery.Models
+
+@* For BzMarquee *@
+@using BlazzyMotion.Marquee.Components";
 
     private string _testCarousel = @"<BzCarousel Items=""@_movies"" />
 
@@ -164,6 +180,29 @@ dotnet add package BlazzyMotion.Gallery";
     {
         [BzImage] public string ImageUrl { get; set; } = """";
         [BzTitle] public string Title { get; set; } = """";
+    }
+}";
+
+    private string _testMarquee = @"<BzMarquee Text=""Hello BlazzyMotion!"" />
+
+@* Or with items: *@
+<BzMarquee Items=""@_brands"">
+    <ItemTemplate Context=""brand"">
+        <img src=""@brand.LogoUrl"" alt=""@brand.Name"" style=""height: 40px;"" />
+    </ItemTemplate>
+</BzMarquee>
+
+@code {
+    private List<Brand> _brands = new()
+    {
+        new Brand { LogoUrl = ""/logos/brand1.svg"", Name = ""Brand 1"" },
+        new Brand { LogoUrl = ""/logos/brand2.svg"", Name = ""Brand 2"" }
+    };
+
+    public class Brand
+    {
+        [BzImage] public string LogoUrl { get; set; } = """";
+        [BzTitle] public string Name { get; set; } = """";
     }
 }";
 }

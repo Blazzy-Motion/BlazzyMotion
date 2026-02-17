@@ -18,6 +18,7 @@
       <li><code>--bzc-*</code> - Carousel-specific variables</li>
       <li><code>--bzb-*</code> - Bento-specific variables</li>
       <li><code>--bzg-*</code> - Gallery-specific variables</li>
+      <li><code>--bzm-*</code> - Marquee-specific variables</li>
     </ul>
     <CodeBlock Language="css" Code="@_overviewExample" />
   </ChildContent>
@@ -85,6 +86,26 @@
   </ChildContent>
 </DocSection>
 
+<DocSection Title="Marquee Variables">
+  <IconContent>@Icons.Marquee</IconContent>
+  <ChildContent>
+    <h4>Animation & Layout</h4>
+    <ApiTable Parameters="@_marqueeLayout" />
+
+    <h4 class="bz-mt-3">Logo Bar</h4>
+    <ApiTable Parameters="@_marqueeLogo" />
+
+    <h4 class="bz-mt-3">Testimonials</h4>
+    <ApiTable Parameters="@_marqueeTestimonial" />
+
+    <h4 class="bz-mt-3">Text Ticker</h4>
+    <ApiTable Parameters="@_marqueeTicker" />
+
+    <h4 class="bz-mt-3">Example</h4>
+    <CodeBlock Language="css" Code="@_marqueeExample" />
+  </ChildContent>
+</DocSection>
+
 <DocSection Title="How to Override">
   <IconContent>@Icons.Target</IconContent>
   <ChildContent>
@@ -119,6 +140,9 @@
 
     <h4 class="bz-mt-3">All Gallery Variables</h4>
     <CodeBlock Language="css" Code="@_galleryReference" />
+
+    <h4 class="bz-mt-3">All Marquee Variables</h4>
+    <CodeBlock Language="css" Code="@_marqueeReference" />
   </ChildContent>
 </DocSection>
 
@@ -192,6 +216,13 @@
     --bzg-columns: 4;
     --bzg-gap: 20px;
     --bzg-item-radius: 12px;
+}
+
+/* Customize Marquee */
+.my-marquee {
+    --bzm-speed: 30;
+    --bzm-gap: 60px;
+    --bzm-gradient-size: 120px;
 }";
 
   private string _carouselExample = @".large-carousel {
@@ -207,6 +238,59 @@
     --bzb-row-height: 140px;
 }";
 
+  // Marquee variables
+  private List<ApiTable.ApiParameter> _marqueeLayout = new()
+  {
+    new() { Name = "--bzm-speed", Type = "number", Default = "50", Description = "Animation speed (pixels per second)" },
+    new() { Name = "--bzm-gap", Type = "length", Default = "40px", Description = "Gap between items" },
+    new() { Name = "--bzm-container-padding", Type = "length", Default = "24px", Description = "Container internal padding" },
+    new() { Name = "--bzm-gradient-size", Type = "length", Default = "80px", Description = "Gradient overlay width on edges" }
+  };
+
+  private List<ApiTable.ApiParameter> _marqueeLogo = new()
+  {
+    new() { Name = "--bzm-logo-height", Type = "length", Default = "40px", Description = "Logo image height" },
+    new() { Name = "--bzm-logo-opacity", Type = "number", Default = "0.6", Description = "Logo opacity (hover restores to 1)" }
+  };
+
+  private List<ApiTable.ApiParameter> _marqueeTestimonial = new()
+  {
+    new() { Name = "--bzm-testimonial-width", Type = "length", Default = "350px", Description = "Testimonial card width" },
+    new() { Name = "--bzm-testimonial-padding", Type = "length", Default = "24px", Description = "Testimonial card padding" }
+  };
+
+  private List<ApiTable.ApiParameter> _marqueeTicker = new()
+  {
+    new() { Name = "--bzm-ticker-font-size", Type = "length", Default = "1.1rem", Description = "Ticker text font size" }
+  };
+
+  private string _marqueeExample = @".fast-marquee {
+    --bzm-speed: 80;
+    --bzm-gap: 60px;
+    --bzm-gradient-size: 120px;
+    --bzm-logo-height: 50px;
+    --bzm-logo-opacity: 0.8;
+}";
+
+  private string _marqueeReference = @":root {
+    /* Animation & Layout */
+    --bzm-speed: 50;
+    --bzm-gap: 40px;
+    --bzm-container-padding: 24px;
+    --bzm-gradient-size: 80px;
+
+    /* Logo Bar */
+    --bzm-logo-height: 40px;
+    --bzm-logo-opacity: 0.6;
+
+    /* Testimonials */
+    --bzm-testimonial-width: 350px;
+    --bzm-testimonial-padding: 24px;
+
+    /* Text Ticker */
+    --bzm-ticker-font-size: 1.1rem;
+}";
+
   private string _globalOverride = @":root {
     --bz-border-radius: 16px;
     --bzc-hover-scale: 1.08;
@@ -220,7 +304,8 @@
 
   private string _cssClassOverride = @"<BzCarousel Items=""@items"" CssClass=""large-carousel"" />
 <BzBento TItem=""object"" CssClass=""compact-bento"">...</BzBento>
-<BzGallery Items=""@photos"" CssClass=""wide-gallery"" />";
+<BzGallery Items=""@photos"" CssClass=""wide-gallery"" />
+<BzMarquee Items=""@brands"" CssClass=""fast-marquee"" />";
 
   private string _responsiveExample = @"@media (max-width: 991px) {
     .my-bento {

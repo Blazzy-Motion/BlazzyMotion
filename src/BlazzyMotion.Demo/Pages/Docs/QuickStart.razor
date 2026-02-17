@@ -11,11 +11,12 @@
 <DocSection Title="Three Powerful Components">
     <IconContent>@Icons.Sparkles</IconContent>
     <ChildContent>
-        <p>BlazzyMotion provides three components for modern Blazor apps:</p>
+        <p>BlazzyMotion provides four components for modern Blazor apps:</p>
         <ul class="bz-list">
             <li><strong>BzCarousel</strong> - 3D coverflow carousel with automatic item templates via Source Generators</li>
             <li><strong>BzBento</strong> - Apple-style Bento grid layout with metrics, cards, and features</li>
             <li><strong>BzGallery</strong> - Image gallery with Grid, Masonry, and List layouts plus built-in lightbox</li>
+            <li><strong>BzMarquee</strong> - CSS-driven infinite scrolling marquee for logos, testimonials, and text tickers</li>
         </ul>
         <p class="bz-mt-2">All share the same 4 themes and work together seamlessly.</p>
     </ChildContent>
@@ -197,6 +198,46 @@
   </ChildContent>
 </DocSection>
 
+<h2 class="bz-section-title bz-mt-4">BzMarquee Quick Start</h2>
+
+<DocSection Title="Logo Bar">
+    <IconContent>@Icons.CircleOne</IconContent>
+    <ChildContent>
+        <p>Create a scrolling logo bar with a custom template:</p>
+        <CodeBlock Language="razor" Code="@_marqueeLogos" />
+    </ChildContent>
+</DocSection>
+
+<DocSection Title="Text Ticker">
+    <IconContent>@Icons.CircleTwo</IconContent>
+    <ChildContent>
+        <p>No model needed — just set the <code>Text</code> parameter:</p>
+        <CodeBlock Language="razor" Code="@_marqueeText" />
+    </ChildContent>
+</DocSection>
+
+<DocSection Title="Choose a Theme">
+    <IconContent>@Icons.CircleThree</IconContent>
+    <ChildContent>
+        <p>BzMarquee supports the same 4 themes as all BlazzyMotion components:</p>
+        <CodeBlock Language="razor" Code="@_marqueeThemes" />
+    </ChildContent>
+</DocSection>
+
+<DocSection Title="Marquee Live Demo">
+  <IconContent>
+    <svg class="bz-icon" viewBox="0 0 24 24">
+      <polygon points="5 3 19 12 5 21 5 3"/>
+    </svg>
+  </IconContent>
+  <ChildContent>
+    <div class="bz-flex bz-gap-2" style="flex-wrap: wrap;">
+        <a href="/marquee" class="bz-btn bz-btn--primary">View Marquee Demo</a>
+        <a href="/docs/marquee" class="bz-btn bz-btn--secondary">Marquee Docs</a>
+    </div>
+  </ChildContent>
+</DocSection>
+
 @code {
     private string _step1Code = @"using BlazzyMotion.Core.Attributes;
 
@@ -302,4 +343,33 @@ public class Photo
            EnableFilter=""true""
            CategorySelector=""p => p.Category""
            Layout=""BzGalleryLayout.Masonry"" />";
+
+    // Marquee examples
+    private string _marqueeLogos = @"<BzMarquee Items=""@_brands"">
+    <ItemTemplate Context=""brand"">
+        <img src=""@brand.LogoUrl"" alt=""@brand.Name"" style=""height: 40px;"" />
+    </ItemTemplate>
+</BzMarquee>
+
+@code {
+    private List<Brand> _brands = new()
+    {
+        new() { LogoUrl = ""/logos/github.svg"", Name = ""GitHub"" },
+        new() { LogoUrl = ""/logos/azure.svg"", Name = ""Azure"" },
+        new() { LogoUrl = ""/logos/aws.svg"", Name = ""AWS"" }
+    };
+
+    public class Brand
+    {
+        [BzImage] public string LogoUrl { get; set; } = """";
+        [BzTitle] public string Name { get; set; } = """";
+    }
+}";
+
+    private string _marqueeText = @"<BzMarquee Text=""Breaking news: BlazzyMotion v1.0 released!"" Speed=""40"" />";
+
+    private string _marqueeThemes = @"<BzMarquee Text=""Glass theme"" Theme=""BzTheme.Glass"" />
+<BzMarquee Text=""Dark theme"" Theme=""BzTheme.Dark"" />
+<BzMarquee Text=""Light theme"" Theme=""BzTheme.Light"" />
+<BzMarquee Text=""Minimal theme"" Theme=""BzTheme.Minimal"" />";
 }

@@ -1,0 +1,238 @@
+@page "/docs/marquee"
+@using BlazzyMotion.Demo.Services
+@using BlazzyMotion.Demo.Icons
+
+<PageTitle>Marquee Documentation - BlazzyMotion</PageTitle>
+
+<PageHeader Title="BzMarquee" Subtitle="CSS-driven infinite scrolling marquee for logos, testimonials and text tickers" Version="@AppVersions.Marquee"
+    License="MIT" Framework="@AppVersions.DotNetVersion">
+    <IconContent>@Icons.Marquee</IconContent>
+</PageHeader>
+
+<DocSection Title="Overview">
+    <IconContent>@Icons.BookOpen</IconContent>
+    <ChildContent>
+        <p><code>BzMarquee</code> is a CSS-driven infinite scrolling marquee with automatic content cloning and smooth animations.</p>
+
+        <ul class="bz-feature-list">
+            <li><strong>3 Display Modes</strong> - Logo Bar, Testimonials, and Text Ticker</li>
+            <li><strong>Multi-Row Support</strong> - Up to 10 rows with alternating directions</li>
+            <li><strong>Staggered Entrance</strong> - Items fade in sequentially on first appearance</li>
+            <li><strong>Pause on Hover + Keyboard</strong> - Space/Enter to pause, mouse hover support</li>
+            <li><strong>4 Themes</strong> - Glass, Dark, Light, and Minimal</li>
+            <li><strong>WCAG 2.1 AA</strong> - Full keyboard control, screen reader announcements, reduced motion</li>
+            <li><strong>CSS-Driven Animation</strong> - No JS animation loop, pure CSS transforms</li>
+            <li><strong>Optional Item Click</strong> - Clickable items with EventCallback</li>
+            <li><strong>Gradient Edge Overlays</strong> - Smooth fade-out at container edges</li>
+            <li><strong>prefers-reduced-motion</strong> - Respects user motion preferences</li>
+        </ul>
+    </ChildContent>
+</DocSection>
+
+<DocSection Title="Basic Usage">
+    <IconContent>@Icons.Code</IconContent>
+    <ChildContent>
+        <h4>Logo Bar</h4>
+        <p>Display logos or images with a custom template:</p>
+        <CodeBlock Language="razor" Code="@_logoBarUsage" />
+
+        <h4 class="bz-mt-3">Testimonials</h4>
+        <p>Items with <code>[BzTitle]</code> and <code>[BzDescription]</code> auto-render as testimonial cards:</p>
+        <CodeBlock Language="razor" Code="@_testimonialUsage" />
+
+        <h4 class="bz-mt-3">Text Ticker</h4>
+        <p>Use the <code>Text</code> parameter for simple scrolling text:</p>
+        <CodeBlock Language="razor" Code="@_textTickerUsage" />
+    </ChildContent>
+</DocSection>
+
+<DocSection Title="Display Modes">
+    <IconContent>@Icons.Layout</IconContent>
+    <ChildContent>
+        <p>BzMarquee auto-detects the display mode based on your data:</p>
+
+        <h4 class="bz-mt-2">Logo Bar</h4>
+        <p>When using <code>ItemTemplate</code>, items render as logos or custom content.</p>
+        <CodeBlock Language="razor" Code="@_logoMode" />
+
+        <h4 class="bz-mt-3">Testimonials</h4>
+        <p>Items with <code>Title</code> + <code>Description</code> auto-render as testimonial cards with avatars. No template needed.</p>
+        <CodeBlock Language="csharp" Code="@_testimonialModel" />
+
+        <h4 class="bz-mt-3">Text Ticker</h4>
+        <p>Set the <code>Text</code> parameter — no items or template required.</p>
+        <CodeBlock Language="razor" Code="@_textMode" />
+    </ChildContent>
+</DocSection>
+
+<DocSection Title="Multi-Row">
+    <IconContent>@Icons.Layout</IconContent>
+    <ChildContent>
+        <p>Display multiple scrolling rows with different directions and speeds:</p>
+        <CodeBlock Language="razor" Code="@_multiRow" />
+
+        <ul class="bz-list bz-mt-2">
+            <li><code>Rows</code> - Number of rows (1-10)</li>
+            <li><code>AlternateDirection</code> - Even rows scroll opposite direction</li>
+            <li><code>SpeedVariation</code> - Speed varies per row (0.0-0.5) for parallax effect</li>
+        </ul>
+    </ChildContent>
+</DocSection>
+
+<DocSection Title="Item Click">
+    <IconContent>@Icons.Target</IconContent>
+    <ChildContent>
+        <p>Add <code>OnItemClick</code> to make items clickable. Items gain <code>cursor: pointer</code> and focus styles automatically.</p>
+        <CodeBlock Language="razor" Code="@_itemClick" />
+    </ChildContent>
+</DocSection>
+
+<DocSection Title="API Reference">
+    <IconContent>@Icons.Settings</IconContent>
+    <ChildContent>
+        <h4>Data Parameters</h4>
+        <ApiTable Parameters="@_dataParams" />
+
+        <h4 class="bz-mt-3">Appearance Parameters</h4>
+        <ApiTable Parameters="@_appearanceParams" />
+
+        <h4 class="bz-mt-3">Behavior Parameters</h4>
+        <ApiTable Parameters="@_behaviorParams" />
+    </ChildContent>
+</DocSection>
+
+<DocSection Title="CSS Customization">
+    <IconContent>@Icons.Pen</IconContent>
+    <ChildContent>
+        <CodeBlock Language="css" Code="@_cssVars" />
+    </ChildContent>
+</DocSection>
+
+@code {
+    private string _logoBarUsage = @"<BzMarquee Items=""@_brands"" Theme=""BzTheme.Glass"">
+    <ItemTemplate Context=""brand"">
+        <img src=""@brand.LogoUrl"" alt=""@brand.Name"" style=""height: 40px;"" />
+    </ItemTemplate>
+</BzMarquee>
+
+@code {
+    private List<Brand> _brands = new()
+    {
+        new() { LogoUrl = ""/logos/github.svg"", Name = ""GitHub"" },
+        new() { LogoUrl = ""/logos/azure.svg"", Name = ""Azure"" },
+        new() { LogoUrl = ""/logos/aws.svg"", Name = ""AWS"" }
+    };
+
+    public class Brand
+    {
+        [BzImage] public string LogoUrl { get; set; } = """";
+        [BzTitle] public string Name { get; set; } = """";
+    }
+}";
+
+    private string _testimonialUsage = @"<BzMarquee Items=""@_reviews"" Theme=""BzTheme.Dark"" Speed=""30"" />
+
+@code {
+    private List<Review> _reviews = new()
+    {
+        new() { Author = ""Jane Doe"", Quote = ""Best Blazor library we've used!"", Avatar = ""/avatars/jane.jpg"" },
+        new() { Author = ""John Smith"", Quote = ""Easy to integrate, beautiful results."" }
+    };
+
+    public class Review
+    {
+        [BzTitle] public string Author { get; set; } = """";
+        [BzDescription] public string Quote { get; set; } = """";
+        [BzImage] public string? Avatar { get; set; }
+    }
+}";
+
+    private string _textTickerUsage = @"<BzMarquee Text=""Breaking news: BlazzyMotion v1.0 released!""
+           Theme=""BzTheme.Minimal""
+           Speed=""40"" />";
+
+    private string _logoMode = @"<BzMarquee Items=""@_brands"" Gap=""60"">
+    <ItemTemplate Context=""brand"">
+        <img src=""@brand.LogoUrl"" alt=""@brand.Name"" />
+    </ItemTemplate>
+</BzMarquee>";
+
+    private string _testimonialModel = @"public class Review
+{
+    [BzTitle] public string Author { get; set; } = """";
+    [BzDescription] public string Quote { get; set; } = """";
+    [BzImage] public string? Avatar { get; set; }
+}
+
+// Items with Title + Description = auto testimonial cards
+<BzMarquee Items=""@_reviews"" />";
+
+    private string _textMode = @"<BzMarquee Text=""Your scrolling message here"" />";
+
+    private string _multiRow = @"<BzMarquee Items=""@_brands""
+           Rows=""3""
+           AlternateDirection=""true""
+           SpeedVariation=""0.3""
+           Theme=""BzTheme.Glass"">
+    <ItemTemplate Context=""brand"">
+        <img src=""@brand.LogoUrl"" alt=""@brand.Name"" />
+    </ItemTemplate>
+</BzMarquee>";
+
+    private string _itemClick = @"@inject NavigationManager Nav
+
+<BzMarquee Items=""@_brands"" OnItemClick=""HandleClick"">
+    <ItemTemplate Context=""brand"">
+        <img src=""@brand.LogoUrl"" alt=""@brand.Name"" />
+    </ItemTemplate>
+</BzMarquee>
+
+@code {
+    private void HandleClick(Brand brand)
+    {
+        Nav.NavigateTo($""/brand/{brand.Name}"");
+    }
+}";
+
+    private List<ApiTable.ApiParameter> _dataParams = new()
+    {
+        new() { Name = "Items", Type = "IEnumerable<TItem>?", Description = "Collection of items to display", Required = true },
+        new() { Name = "Text", Type = "string?", Default = "null", Description = "Plain text for ticker mode (overrides Items)" },
+        new() { Name = "ItemTemplate", Type = "RenderFragment<TItem>?", Default = "null", Description = "Custom template for each item" },
+        new() { Name = "OnItemClick", Type = "EventCallback<TItem>", Description = "Click callback — items become clickable when set" },
+        new() { Name = "LoadingTemplate", Type = "RenderFragment?", Default = "null", Description = "Custom loading state" },
+        new() { Name = "EmptyTemplate", Type = "RenderFragment?", Default = "null", Description = "Custom empty state" }
+    };
+
+    private List<ApiTable.ApiParameter> _appearanceParams = new()
+    {
+        new() { Name = "Theme", Type = "BzTheme", Default = "Glass", Description = "Visual theme: Glass, Dark, Light, or Minimal" },
+        new() { Name = "Direction", Type = "BzDirection", Default = "Left", Description = "Scroll direction: Left or Right" },
+        new() { Name = "Speed", Type = "int", Default = "50", Description = "Animation speed in pixels per second" },
+        new() { Name = "Gap", Type = "int", Default = "40", Description = "Gap between items (px)" },
+        new() { Name = "Rows", Type = "int", Default = "1", Description = "Number of rows (1-10)" },
+        new() { Name = "ShowGradientEdges", Type = "bool", Default = "true", Description = "Show gradient fade on edges" },
+        new() { Name = "FullWidth", Type = "bool", Default = "false", Description = "Span full viewport width" },
+        new() { Name = "CssClass", Type = "string?", Default = "null", Description = "Additional CSS classes" }
+    };
+
+    private List<ApiTable.ApiParameter> _behaviorParams = new()
+    {
+        new() { Name = "PauseOnHover", Type = "bool", Default = "true", Description = "Pause animation on mouse hover" },
+        new() { Name = "AlternateDirection", Type = "bool", Default = "true", Description = "Adjacent rows scroll in opposite directions" },
+        new() { Name = "SpeedVariation", Type = "double", Default = "0.0", Description = "Speed variation between rows (0.0-0.5)" },
+        new() { Name = "StaggerEntrance", Type = "bool", Default = "true", Description = "Enable staggered entrance animation" },
+        new() { Name = "StaggerDelay", Type = "int", Default = "60", Description = "Delay between entrance animations (ms)" }
+    };
+
+    private string _cssVars = @".my-marquee {
+    --bzm-speed: 30;
+    --bzm-gap: 60px;
+    --bzm-gradient-size: 120px;
+    --bzm-logo-height: 50px;
+    --bzm-logo-opacity: 0.8;
+    --bzm-testimonial-width: 400px;
+    --bzm-testimonial-padding: 28px;
+    --bzm-ticker-font-size: 1.2rem;
+}";
+}
