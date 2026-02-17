@@ -20,6 +20,7 @@ Experience BlazzyMotion components in action: **[View Live Demo](https://blazzym
 | [BlazzyMotion.Carousel](src/BlazzyMotion.Carousel/README.md) | 3D coverflow carousel powered by Swiper.js               | [![NuGet](https://img.shields.io/nuget/v/BlazzyMotion.Carousel.svg)](https://www.nuget.org/packages/BlazzyMotion.Carousel/) |
 | [BlazzyMotion.Gallery](src/BlazzyMotion.Gallery/README.md)   | Photo gallery with lightbox, filtering, and masonry grid | [![NuGet](https://img.shields.io/nuget/v/BlazzyMotion.Gallery.svg)](https://www.nuget.org/packages/BlazzyMotion.Gallery/)   |
 | [BlazzyMotion.Bento](src/BlazzyMotion.Bento/README.md)       | Bento Grid with Composition Mode for dashboards          | [![NuGet](https://img.shields.io/nuget/v/BlazzyMotion.Bento.svg)](https://www.nuget.org/packages/BlazzyMotion.Bento/)       |
+| [BlazzyMotion.Marquee](src/BlazzyMotion.Marquee/README.md)   | CSS-driven infinite scrolling marquee for logos & text   | [![NuGet](https://img.shields.io/nuget/v/BlazzyMotion.Marquee.svg)](https://www.nuget.org/packages/BlazzyMotion.Marquee/)   |
 | BlazzyMotion.Core                                            | Shared infrastructure (attributes, themes, registry)     | [![NuGet](https://img.shields.io/nuget/v/BlazzyMotion.Core.svg)](https://www.nuget.org/packages/BlazzyMotion.Core/)         |
 
 ## Key Features
@@ -43,6 +44,9 @@ dotnet add package BlazzyMotion.Gallery
 
 # For Bento Grid
 dotnet add package BlazzyMotion.Bento
+
+# For Infinite Scrolling Marquee
+dotnet add package BlazzyMotion.Marquee
 ```
 
 ### Define Your Model
@@ -110,6 +114,20 @@ public class Movie
 ```
 
 **Note:** Gallery supports grid, masonry, and columns layouts with built-in lightbox, category filtering, and full keyboard/screen reader accessibility. See [Gallery README](src/BlazzyMotion.Gallery/README.md) for full documentation.
+
+**Marquee:**
+
+```razor
+@using BlazzyMotion.Marquee.Components
+@using BlazzyMotion.Core.Models
+
+<BzMarquee TItem="Brand"
+           Items="brands"
+           Theme="BzTheme.Glass"
+           Speed="30" />
+```
+
+**Note:** Marquee auto-detects logos from `[BzImage]` attributes — zero configuration needed. Use `ItemTemplate` for custom rendering. Supports testimonials, text tickers, multi-row layout, and WCAG 2.1 AA accessibility. See [Marquee README](src/BlazzyMotion.Marquee/README.md) for full documentation.
 
 ## How It Works
 

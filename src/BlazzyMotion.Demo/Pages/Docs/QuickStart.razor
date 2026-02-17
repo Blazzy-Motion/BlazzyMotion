@@ -8,7 +8,7 @@
     <IconContent>@Icons.Rocket</IconContent>
 </PageHeader>
 
-<DocSection Title="Three Powerful Components">
+<DocSection Title="Four Powerful Components">
     <IconContent>@Icons.Sparkles</IconContent>
     <ChildContent>
         <p>BlazzyMotion provides four components for modern Blazor apps:</p>
@@ -200,10 +200,10 @@
 
 <h2 class="bz-section-title bz-mt-4">BzMarquee Quick Start</h2>
 
-<DocSection Title="Logo Bar">
+<DocSection Title="Logo Bar (Zero Config)">
     <IconContent>@Icons.CircleOne</IconContent>
     <ChildContent>
-        <p>Create a scrolling logo bar with a custom template:</p>
+        <p>Just mark your model with <code>[BzImage]</code> — logos render automatically:</p>
         <CodeBlock Language="razor" Code="@_marqueeLogos" />
     </ChildContent>
 </DocSection>
@@ -345,11 +345,7 @@ public class Photo
            Layout=""BzGalleryLayout.Masonry"" />";
 
     // Marquee examples
-    private string _marqueeLogos = @"<BzMarquee Items=""@_brands"">
-    <ItemTemplate Context=""brand"">
-        <img src=""@brand.LogoUrl"" alt=""@brand.Name"" style=""height: 40px;"" />
-    </ItemTemplate>
-</BzMarquee>
+    private string _marqueeLogos = @"<BzMarquee Items=""@_brands"" />
 
 @code {
     private List<Brand> _brands = new()

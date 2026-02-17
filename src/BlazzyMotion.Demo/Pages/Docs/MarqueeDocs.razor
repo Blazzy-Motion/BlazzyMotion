@@ -32,9 +32,13 @@
 <DocSection Title="Basic Usage">
     <IconContent>@Icons.Code</IconContent>
     <ChildContent>
-        <h4>Logo Bar</h4>
-        <p>Display logos or images with a custom template:</p>
-        <CodeBlock Language="razor" Code="@_logoBarUsage" />
+        <h4>Logo Bar (Zero Config)</h4>
+        <p>Just mark your model with <code>[BzImage]</code> — logos render automatically, no template needed:</p>
+        <CodeBlock Language="razor" Code="@_logoBarZeroConfig" />
+
+        <h4 class="bz-mt-3">Logo Bar (Custom Template)</h4>
+        <p>Use <code>ItemTemplate</code> for full control over logo rendering:</p>
+        <CodeBlock Language="razor" Code="@_logoBarCustom" />
 
         <h4 class="bz-mt-3">Testimonials</h4>
         <p>Items with <code>[BzTitle]</code> and <code>[BzDescription]</code> auto-render as testimonial cards:</p>
@@ -52,8 +56,8 @@
         <p>BzMarquee auto-detects the display mode based on your data:</p>
 
         <h4 class="bz-mt-2">Logo Bar</h4>
-        <p>When using <code>ItemTemplate</code>, items render as logos or custom content.</p>
-        <CodeBlock Language="razor" Code="@_logoMode" />
+        <p>When items have only <code>[BzImage]</code> (and optionally <code>[BzTitle]</code>), logos render automatically — zero configuration. Use <code>ItemTemplate</code> for custom rendering.</p>
+        <CodeBlock Language="razor" Code="@_logoModeZeroConfig" />
 
         <h4 class="bz-mt-3">Testimonials</h4>
         <p>Items with <code>Title</code> + <code>Description</code> auto-render as testimonial cards with avatars. No template needed.</p>
@@ -109,11 +113,7 @@
 </DocSection>
 
 @code {
-    private string _logoBarUsage = @"<BzMarquee Items=""@_brands"" Theme=""BzTheme.Glass"">
-    <ItemTemplate Context=""brand"">
-        <img src=""@brand.LogoUrl"" alt=""@brand.Name"" style=""height: 40px;"" />
-    </ItemTemplate>
-</BzMarquee>
+    private string _logoBarZeroConfig = @"<BzMarquee Items=""@_brands"" Theme=""BzTheme.Glass"" />
 
 @code {
     private List<Brand> _brands = new()
@@ -129,6 +129,12 @@
         [BzTitle] public string Name { get; set; } = """";
     }
 }";
+
+    private string _logoBarCustom = @"<BzMarquee Items=""@_brands"" Theme=""BzTheme.Glass"">
+    <ItemTemplate Context=""brand"">
+        <img src=""@brand.LogoUrl"" alt=""@brand.Name"" style=""height: 40px;"" />
+    </ItemTemplate>
+</BzMarquee>";
 
     private string _testimonialUsage = @"<BzMarquee Items=""@_reviews"" Theme=""BzTheme.Dark"" Speed=""30"" />
 
@@ -151,7 +157,11 @@
            Theme=""BzTheme.Minimal""
            Speed=""40"" />";
 
-    private string _logoMode = @"<BzMarquee Items=""@_brands"" Gap=""60"">
+    private string _logoModeZeroConfig = @"<!-- Zero config: just pass items with [BzImage] -->
+<BzMarquee Items=""@_brands"" Gap=""60"" />
+
+<!-- Or use ItemTemplate for custom rendering -->
+<BzMarquee Items=""@_brands"" Gap=""60"">
     <ItemTemplate Context=""brand"">
         <img src=""@brand.LogoUrl"" alt=""@brand.Name"" />
     </ItemTemplate>
@@ -173,19 +183,11 @@
            Rows=""3""
            AlternateDirection=""true""
            SpeedVariation=""0.3""
-           Theme=""BzTheme.Glass"">
-    <ItemTemplate Context=""brand"">
-        <img src=""@brand.LogoUrl"" alt=""@brand.Name"" />
-    </ItemTemplate>
-</BzMarquee>";
+           Theme=""BzTheme.Glass"" />";
 
     private string _itemClick = @"@inject NavigationManager Nav
 
-<BzMarquee Items=""@_brands"" OnItemClick=""HandleClick"">
-    <ItemTemplate Context=""brand"">
-        <img src=""@brand.LogoUrl"" alt=""@brand.Name"" />
-    </ItemTemplate>
-</BzMarquee>
+<BzMarquee Items=""@_brands"" OnItemClick=""HandleClick"" />
 
 @code {
     private void HandleClick(Brand brand)

@@ -59,6 +59,9 @@
         <h4 class="bz-mt-3">BzGallery</h4>
         <CodeBlock Language="razor" Code="@_galleryUsage" />
 
+        <h4 class="bz-mt-3">BzMarquee</h4>
+        <CodeBlock Language="razor" Code="@_marqueeUsage" />
+
         <p class="bz-mt-2">
             <strong>Tip:</strong> When nesting components (e.g., BzCarousel inside BzBento),
             use the same theme for visual consistency.
@@ -143,6 +146,11 @@
 <BzGallery Items=""@photos"" Theme=""BzTheme.Light"" />
 <BzGallery Items=""@photos"" Theme=""BzTheme.Minimal"" />";
 
+    private string _marqueeUsage = @"<BzMarquee Items=""@brands"" Theme=""BzTheme.Glass"" />
+<BzMarquee Items=""@brands"" Theme=""BzTheme.Dark"" />
+<BzMarquee Items=""@brands"" Theme=""BzTheme.Light"" />
+<BzMarquee Items=""@brands"" Theme=""BzTheme.Minimal"" />";
+
     private string _customUsage = @"<!-- Carousel with custom theme -->
 <BzCarousel Items=""@items"" Theme=""BzTheme.Glass"" CssClass=""theme-neon"" />
 
@@ -152,5 +160,8 @@
 </BzBento>
 
 <!-- Gallery with custom theme -->
-<BzGallery Items=""@photos"" Theme=""BzTheme.Glass"" CssClass=""theme-neon"" />";
+<BzGallery Items=""@photos"" Theme=""BzTheme.Glass"" CssClass=""theme-neon"" />
+
+<!-- Marquee with custom theme -->
+<BzMarquee Items=""@brands"" Theme=""BzTheme.Glass"" CssClass=""theme-neon"" />";
 }

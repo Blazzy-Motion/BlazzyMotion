@@ -279,10 +279,10 @@
 <h2 class="bz-section-title bz-mt-4">Marquee Examples</h2>
 
 <!-- BASIC LOGO BAR -->
-<DocSection Title="Basic Logo Bar">
+<DocSection Title="Basic Logo Bar (Zero Config)">
   <IconContent>@Icons.Marquee</IconContent>
   <ChildContent>
-    <p>The simplest way to use BzMarquee for a scrolling logo bar.</p>
+    <p>Just mark your model with <code>[BzImage]</code> — logos render automatically, no template needed.</p>
 
     <h4 class="bz-mt-2">Model</h4>
     <CodeBlock Language="csharp" Code="@_marqueeBrandModel" />
@@ -887,11 +887,7 @@ public class Brand
 
   private string _marqueeLogoBar = @"@using BlazzyMotion.Marquee.Components
 
-<BzMarquee Items=""@_brands"" Gap=""60"" Theme=""BzTheme.Glass"">
-    <ItemTemplate Context=""brand"">
-        <img src=""@brand.LogoUrl"" alt=""@brand.Name"" style=""height: 40px;"" />
-    </ItemTemplate>
-</BzMarquee>
+<BzMarquee Items=""@_brands"" Gap=""60"" Theme=""BzTheme.Glass"" />
 
 @code {
     private List<Brand> _brands = new()
@@ -949,11 +945,7 @@ public class Review
            AlternateDirection=""true""
            SpeedVariation=""0.3""
            OnItemClick=""HandleBrandClick""
-           Theme=""BzTheme.Glass"">
-    <ItemTemplate Context=""brand"">
-        <img src=""@brand.LogoUrl"" alt=""@brand.Name"" style=""height: 40px;"" />
-    </ItemTemplate>
-</BzMarquee>
+           Theme=""BzTheme.Glass"" />
 
 @code {
     private void HandleBrandClick(Brand brand)
