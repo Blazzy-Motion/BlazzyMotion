@@ -77,6 +77,9 @@
     align-items: center;
     width: max-content;
     will-change: transform;
+    backface-visibility: hidden;
+    -webkit-backface-visibility: hidden;
+    transform: translateZ(0);
     animation: bzm-scroll-left var(--bzm-duration, 20s) linear infinite;
 }
 
@@ -125,13 +128,13 @@
 /* Animations */
 
 @keyframes bzm-scroll-left {
-    from { transform: translateX(0); }
-    to { transform: translateX(-50%); }
+    from { transform: translate3d(0, 0, 0); }
+    to { transform: translate3d(-50%, 0, 0); }
 }
 
 @keyframes bzm-scroll-right {
-    from { transform: translateX(-50%); }
-    to { transform: translateX(0); }
+    from { transform: translate3d(-50%, 0, 0); }
+    to { transform: translate3d(0, 0, 0); }
 }
 
 /* Gradient Edge Overlays */
@@ -202,6 +205,9 @@
     flex-direction: column;
     gap: 16px;
     transition: transform 0.3s ease, box-shadow 0.3s ease;
+    transform: translateZ(0);
+    -webkit-font-smoothing: antialiased;
+    -moz-osx-font-smoothing: grayscale;
 }
 
 .bzm-pause-hover:hover .bzm-testimonial-card:hover {
@@ -218,6 +224,8 @@
     padding: 0;
     border: none;
     color: var(--bz-text-primary, rgba(255, 255, 255, 0.95));
+    -webkit-font-smoothing: antialiased;
+    -moz-osx-font-smoothing: grayscale;
     display: -webkit-box;
     -webkit-line-clamp: 4;
     line-clamp: 4;
