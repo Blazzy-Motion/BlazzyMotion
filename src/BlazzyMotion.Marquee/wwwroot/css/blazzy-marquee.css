@@ -7,9 +7,9 @@
     --bzm-gradient-size: 80px;
 
     /* Logo tokens */
-    --bzm-logo-height: 40px;
-    --bzm-logo-height-tablet: 36px;
-    --bzm-logo-height-mobile: 32px;
+    --bzm-logo-height: 28px;
+    --bzm-logo-height-tablet: 24px;
+    --bzm-logo-height-mobile: 22px;
     --bzm-logo-opacity: 0.6;
     --bzm-logo-opacity-hover: 1;
     --bzm-logo-grayscale: 1;
@@ -387,7 +387,7 @@
     --bz-text-muted: rgba(0, 0, 0, 0.38);
     --bzm-gradient-color: rgba(255, 255, 255, 1);
     --bzm-logo-grayscale: 1;
-    --bzm-logo-opacity: 0.65;
+    --bzm-logo-opacity: 0.85;
 }
 
 .bzm-container.bzc-theme-light .bzm-testimonial-card {
@@ -419,7 +419,12 @@
 }
 
 .bzm-container.bzc-theme-light .bzm-logo-image {
-    filter: grayscale(var(--bzm-logo-grayscale)) opacity(var(--bzm-logo-opacity));
+    filter: brightness(0.4) grayscale(var(--bzm-logo-grayscale)) opacity(var(--bzm-logo-opacity));
+}
+
+.bzm-container.bzc-theme-light .bzm-pause-hover:hover .bzm-logo-image:hover,
+.bzm-container.bzc-theme-light.bzm-pause-hover:hover .bzm-logo-image:hover {
+    filter: brightness(0.2) grayscale(var(--bzm-logo-grayscale-hover)) opacity(var(--bzm-logo-opacity-hover));
 }
 
 /* Minimal Theme */

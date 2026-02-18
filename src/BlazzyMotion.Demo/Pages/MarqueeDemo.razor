@@ -5,7 +5,6 @@
 @using BlazzyMotion.Marquee.Models
 @using BlazzyMotion.Demo.Model
 @using BlazzyMotion.Demo.Components
-@using BlazzyMotion.Demo.Icons
 
 <PageTitle>BzMarquee Demo - BlazzyMotion</PageTitle>
 
@@ -151,14 +150,7 @@
                        PauseOnHover="@_pauseOnHover"
                        ShowGradientEdges="@_showGradients"
                        FullWidth="@_fullWidth"
-                       StaggerEntrance="@_staggerEntrance">
-                <ItemTemplate Context="logo">
-                    <div class="bzm-logo-item" aria-label="@logo.Name logo">
-                        @Icons.GetCompanyLogo(logo.Name)
-                        <span style="margin-left: 8px; font-size: 0.9rem; font-weight: 500; white-space: nowrap;">@logo.Name</span>
-                    </div>
-                </ItemTemplate>
-            </BzMarquee>
+                       StaggerEntrance="@_staggerEntrance" />
         </div>
 
     </section>
@@ -231,14 +223,14 @@
 
     private List<LogoItem> _logos = new()
     {
-        new() { Name = "Apple" },
-        new() { Name = "Microsoft" },
-        new() { Name = "Google" },
-        new() { Name = "Amazon" },
-        new() { Name = "Tesla" },
-        new() { Name = "Meta" },
-        new() { Name = "Nvidia" },
-        new() { Name = "Netflix" }
+        new() { Name = "Apple", ImageUrl = "images/logos/apple.webp" },
+        new() { Name = "Microsoft", ImageUrl = "images/logos/microsoft.webp" },
+        new() { Name = "Google", ImageUrl = "images/logos/google.webp" },
+        new() { Name = "Amazon", ImageUrl = "images/logos/amazon.webp" },
+        new() { Name = "Tesla", ImageUrl = "images/logos/tesla.webp" },
+        new() { Name = "Meta", ImageUrl = "images/logos/meta.webp" },
+        new() { Name = "Nvidia", ImageUrl = "images/logos/nvidia.webp" },
+        new() { Name = "Netflix", ImageUrl = "images/logos/netflix.webp" }
     };
 
     private List<TestimonialItem> _testimonials = new()
