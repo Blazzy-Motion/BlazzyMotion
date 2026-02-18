@@ -18,7 +18,6 @@ A CSS-driven infinite scrolling marquee component for Blazor with logo bars, tes
 - [Multi-Row](#multi-row)
 - [API Reference](#api-reference)
 - [Themes](#themes)
-- [Accessibility](#accessibility)
 - [CSS Customization](#css-customization)
 - [How It Works](#how-it-works)
 - [Performance](#performance)
@@ -40,7 +39,6 @@ A CSS-driven infinite scrolling marquee component for Blazor with logo bars, tes
 - **Optional Item Click** - `OnItemClick` EventCallback for clickable items
 - **Gradient Edge Overlays** - Smooth fade-out effect at container edges
 - **CSS-Driven Animation** - Pure CSS transforms, no JavaScript animation loop
-- **Fully Accessible** - WCAG 2.1 AA compliant with screen reader announcements, keyboard control, and `prefers-reduced-motion`
 
 ## Live Demo
 
@@ -237,37 +235,6 @@ No background container, borderless design:
 <BzMarquee Items="brands" Theme="BzTheme.Minimal" />
 ```
 
-## Accessibility
-
-BlazzyMotion.Marquee is built with WCAG 2.1 AA compliance:
-
-### Screen Reader Support
-
-- Container uses `role="marquee"` with descriptive `aria-label` (item count, row info)
-- `aria-live="off"` prevents constant reading of scrolling content
-- Hidden `.bzm-sr-only` element uses `aria-live="polite"` with `role="status"` to announce pause/resume
-- Content region uses `aria-hidden="false"` for screen reader access
-
-### Keyboard Navigation
-
-| Key     | Action              |
-| ------- | ------------------- |
-| `Space` | Toggle pause/resume |
-| `Enter` | Toggle pause/resume |
-| `Tab`   | Focus marquee       |
-
-### Focus Indicators
-
-All interactive elements (container, clickable items) display a visible `2px solid` outline with `2px offset` on `:focus-visible`.
-
-### Reduced Motion
-
-When `prefers-reduced-motion: reduce` is enabled:
-
-- All scrolling animations are disabled
-- Stagger entrance animations are removed
-- Content displays statically without motion
-
 ## CSS Customization
 
 Override CSS variables for custom styling:
@@ -351,7 +318,6 @@ internal static class BzMappingRegistration_Brand
 
 - Verify content width exceeds container width (cloning needs enough content)
 - Check that JavaScript interop loaded correctly
-- Ensure `prefers-reduced-motion` is not set to `reduce` in browser
 
 **Items Not Visible:**
 
