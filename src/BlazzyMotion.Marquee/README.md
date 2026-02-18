@@ -44,7 +44,7 @@ A CSS-driven infinite scrolling marquee component for Blazor with logo bars, tes
 
 Experience BlazzyMotion.Marquee in action: **[View Live Demo](https://blazzymotion.com/marquee)**
 
-![BlazzyMotion.Marquee Demo](https://raw.githubusercontent.com/Blazzy-Motion/BlazzyMotion/feature/marquee/docs/images/marquee.gif)
+![BlazzyMotion.Marquee Demo](https://raw.githubusercontent.com/Blazzy-Motion/BlazzyMotion/main/docs/images/marquee.gif)
 
 ## Quick Start
 
