@@ -252,6 +252,125 @@ public static class ComponentRegistry
                         Description = "Enable staggered entry animations"
                     }
                 }
+            },
+
+            // BzMarquee Component
+            new ComponentMetadata
+            {
+                Id = "marquee",
+                Name = "BzMarquee",
+                Description = "Infinite scrolling marquee with logo bars, testimonials, and text tickers",
+                Icon = Icons.Film,
+                ComponentTypeName = "BzMarquee",
+                Parameters = new List<ComponentParameter>
+                {
+                    new ComponentParameter
+                    {
+                        Name = "Mode",
+                        DisplayName = "Mode",
+                        Type = ParameterType.Select,
+                        DefaultValue = "Logos",
+                        Description = "Display mode",
+                        Options = new List<ParameterOption>
+                        {
+                            new() { Label = "Logo Bar", Value = "Logos" },
+                            new() { Label = "Testimonials", Value = "Testimonials" },
+                            new() { Label = "Text Ticker", Value = "Ticker" }
+                        }
+                    },
+                    new ComponentParameter
+                    {
+                        Name = "Theme",
+                        DisplayName = "Theme",
+                        Type = ParameterType.Select,
+                        DefaultValue = BzTheme.Glass,
+                        Description = "Visual theme of the marquee",
+                        Options = new List<ParameterOption>
+                        {
+                            new() { Label = "Glass", Value = "Glass" },
+                            new() { Label = "Dark", Value = "Dark" },
+                            new() { Label = "Light", Value = "Light" },
+                            new() { Label = "Minimal", Value = "Minimal" }
+                        }
+                    },
+                    new ComponentParameter
+                    {
+                        Name = "Direction",
+                        DisplayName = "Direction",
+                        Type = ParameterType.Select,
+                        DefaultValue = "Left",
+                        Description = "Scroll direction",
+                        Options = new List<ParameterOption>
+                        {
+                            new() { Label = "Left", Value = "Left" },
+                            new() { Label = "Right", Value = "Right" }
+                        }
+                    },
+                    new ComponentParameter
+                    {
+                        Name = "Speed",
+                        DisplayName = "Speed",
+                        Type = ParameterType.Range,
+                        DefaultValue = 50,
+                        MinValue = 10,
+                        MaxValue = 200,
+                        Description = "Animation speed in pixels per second",
+                        Unit = "px/s"
+                    },
+                    new ComponentParameter
+                    {
+                        Name = "Gap",
+                        DisplayName = "Gap",
+                        Type = ParameterType.Range,
+                        DefaultValue = 40,
+                        MinValue = 0,
+                        MaxValue = 120,
+                        Description = "Gap between items",
+                        Unit = "px"
+                    },
+                    new ComponentParameter
+                    {
+                        Name = "Rows",
+                        DisplayName = "Rows",
+                        Type = ParameterType.Range,
+                        DefaultValue = 1,
+                        MinValue = 1,
+                        MaxValue = 5,
+                        Description = "Number of rows"
+                    },
+                    new ComponentParameter
+                    {
+                        Name = "PauseOnHover",
+                        DisplayName = "Pause on Hover",
+                        Type = ParameterType.Boolean,
+                        DefaultValue = true,
+                        Description = "Pause animation on mouse hover"
+                    },
+                    new ComponentParameter
+                    {
+                        Name = "ShowGradientEdges",
+                        DisplayName = "Gradient Edges",
+                        Type = ParameterType.Boolean,
+                        DefaultValue = true,
+                        Description = "Show gradient fade on edges"
+                    },
+                    new ComponentParameter
+                    {
+                        Name = "AlternateDirection",
+                        DisplayName = "Alternate Direction",
+                        Type = ParameterType.Boolean,
+                        DefaultValue = true,
+                        Description = "Adjacent rows scroll in opposite directions"
+                    },
+                    new ComponentParameter
+                    {
+                        Name = "StaggerEntrance",
+                        DisplayName = "Stagger Entrance",
+                        Type = ParameterType.Boolean,
+                        DefaultValue = true,
+                        Description = "Enable staggered entrance animation"
+                    }
+                }
             }
         };
 
