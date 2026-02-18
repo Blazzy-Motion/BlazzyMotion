@@ -369,6 +369,10 @@ public partial class BzMarquee<TItem> : BzComponentBase where TItem : class
         var style = $"--bzm-gap: {Gap}px";
         if (EffectiveRows > 1)
             style += $"; --bzm-row-gap: {Math.Max(4, Gap / 3)}px";
+
+        if (!_isInitialized)
+            style += "; opacity:0; visibility:hidden";
+
         return style;
     }
 
