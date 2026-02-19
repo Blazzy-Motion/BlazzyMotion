@@ -264,7 +264,7 @@ Override CSS variables for custom styling:
 | `--bzm-gap`                 | `40px`   | Gap between items                   |
 | `--bzm-container-padding`   | `24px`   | Container internal padding          |
 | `--bzm-gradient-size`       | `80px`   | Gradient overlay width on edges     |
-| `--bzm-logo-height`         | `40px`   | Logo image height                   |
+| `--bzm-logo-height`         | `28px`   | Logo image height                   |
 | `--bzm-logo-opacity`        | `0.6`    | Logo opacity (hover restores to 1)  |
 | `--bzm-testimonial-width`   | `350px`  | Testimonial card width              |
 | `--bzm-testimonial-padding` | `24px`   | Testimonial card padding            |
@@ -305,7 +305,7 @@ internal static class BzMappingRegistration_Brand
 - **Zero Runtime Overhead** - Mapping functions generated at compile-time
 - **Zero Reflection** - Uses `[ModuleInitializer]` for automatic registration
 - **CSS-Only Animation** - Pure CSS transforms, no `requestAnimationFrame` loop
-- **GPU Accelerated** - Uses `transform: translateX()` for compositor-layer animation
+- **GPU Accelerated** - Uses `transform: translate3d()` for compositor-layer animation
 - **Lazy Loading** - Images use `loading="lazy"` for deferred loading
 
 ## Troubleshooting
