@@ -991,4 +991,523 @@ public class BzMarqueeTests : TestBase
     }
 
     #endregion
+
+    #region SpeedVariation Clamping Tests
+
+    [Fact]
+    public void BzMarquee_WithNegativeSpeedVariation_ShouldClampToZero()
+    {
+        var items = CreateItems(6);
+
+        var cut = RenderComponent<BzMarquee<TestMarqueeItem>>(p => p
+            .Add(x => x.Items, items)
+            .Add(x => x.Rows, 2)
+            .Add(x => x.Speed, 50)
+            .Add(x => x.SpeedVariation, -1.0));
+
+        var rows = cut.FindAll(".bzm-row");
+        var speed0 = rows[0].GetAttribute("data-speed");
+        var speed1 = rows[1].GetAttribute("data-speed");
+        speed0.Should().Be(speed1, "clamped to 0.0 means no variation");
+    }
+
+    [Fact]
+    public void BzMarquee_WithSpeedVariationAboveMax_ShouldClampTo05()
+    {
+        var items = CreateItems(6);
+
+        var cut = RenderComponent<BzMarquee<TestMarqueeItem>>(p => p
+            .Add(x => x.Items, items)
+            .Add(x => x.Rows, 2)
+            .Add(x => x.Speed, 50)
+            .Add(x => x.SpeedVariation, 2.0));
+
+        var rows = cut.FindAll(".bzm-row");
+        var speed0 = int.Parse(rows[0].GetAttribute("data-speed")!);
+        var speed1 = int.Parse(rows[1].GetAttribute("data-speed")!);
+        speed0.Should().NotBe(speed1);
+        speed0.Should().BeGreaterOrEqualTo(10, "minimum speed is 10px/s");
+        speed1.Should().BeGreaterOrEqualTo(10, "minimum speed is 10px/s");
+    }
+
+    [Fact]
+    public void BzMarquee_WithSpeedVariation_SingleRow_ShouldNotVary()
+    {
+        var items = CreateItems();
+
+        var cut = RenderComponent<BzMarquee<TestMarqueeItem>>(p => p
+            .Add(x => x.Items, items)
+            .Add(x => x.Rows, 1)
+            .Add(x => x.Speed, 50)
+            .Add(x => x.SpeedVariation, 0.3));
+
+        var row = cut.Find(".bzm-row");
+        row.GetAttribute("data-speed").Should().Be("50");
+    }
+
+    #endregion
+
+    #region Row Speed Calculation Tests
+
+    [Fact]
+    public void BzMarquee_RowSpeed_ShouldNeverGoBelowMinimum()
+    {
+        var items = CreateItems(6);
+
+        var cut = RenderComponent<BzMarquee<TestMarqueeItem>>(p => p
+            .Add(x => x.Items, items)
+            .Add(x => x.Rows, 3)
+            .Add(x => x.Speed, 15)
+            .Add(x => x.SpeedVariation, 0.5));
+
+        var rows = cut.FindAll(".bzm-row");
+        foreach (var row in rows)
+        {
+            var speed = int.Parse(row.GetAttribute("data-speed")!);
+            speed.Should().BeGreaterOrEqualTo(10, "minimum speed is 10px/s");
+        }
+    }
+
+    [Fact]
+    public void BzMarquee_RowSpeed_EvenAndOddRowsShouldDiffer()
+    {
+        var items = CreateItems(6);
+
+        var cut = RenderComponent<BzMarquee<TestMarqueeItem>>(p => p
+            .Add(x => x.Items, items)
+            .Add(x => x.Rows, 3)
+            .Add(x => x.Speed, 60)
+            .Add(x => x.SpeedVariation, 0.4));
+
+        var rows = cut.FindAll(".bzm-row");
+        var speed0 = int.Parse(rows[0].GetAttribute("data-speed")!);
+        var speed1 = int.Parse(rows[1].GetAttribute("data-speed")!);
+        var speed2 = int.Parse(rows[2].GetAttribute("data-speed")!);
+
+        speed0.Should().NotBe(speed1);
+        speed0.Should().NotBe(speed2);
+    }
+
+    #endregion
+
+    #region Row Items Distribution Tests
+
+    [Fact]
+    public void BzMarquee_MultiRow_EachRowShouldHaveAllItems()
+    {
+        var items = CreateItems(6);
+
+        var cut = RenderComponent<BzMarquee<TestMarqueeItem>>(p => p
+            .Add(x => x.Items, items)
+            .Add(x => x.Rows, 2));
+
+        var rows = cut.FindAll(".bzm-row");
+        foreach (var row in rows)
+        {
+            var rowItems = row.QuerySelectorAll(".bzm-item");
+            rowItems.Should().HaveCount(6, "each row gets all items with offset rotation");
+        }
+    }
+
+    [Fact]
+    public void BzMarquee_MultiRow_Row0AndRow1ShouldHaveDifferentOrder()
+    {
+        var items = new List<TestMarqueeItem>
+        {
+            new() { Id = 1, ImageUrl = "https://example.com/a.png", Name = "Alpha" },
+            new() { Id = 2, ImageUrl = "https://example.com/b.png", Name = "Beta" },
+            new() { Id = 3, ImageUrl = "https://example.com/c.png", Name = "Gamma" },
+            new() { Id = 4, ImageUrl = "https://example.com/d.png", Name = "Delta" }
+        };
+
+        var cut = RenderComponent<BzMarquee<TestMarqueeItem>>(p => p
+            .Add(x => x.Items, items)
+            .Add(x => x.Rows, 2));
+
+        var rows = cut.FindAll(".bzm-row");
+        var row0FirstAlt = rows[0].QuerySelectorAll("img.bzm-logo-image")[0].GetAttribute("alt");
+        var row1FirstAlt = rows[1].QuerySelectorAll("img.bzm-logo-image")[0].GetAttribute("alt");
+        row0FirstAlt.Should().NotBe(row1FirstAlt, "rows have offset rotation");
+    }
+
+    #endregion
+
+    #region AriaLabel Variation Tests
+
+    [Fact]
+    public void BzMarquee_WithText_AriaLabel_ShouldSayTextMarquee()
+    {
+        var cut = RenderComponent<BzMarquee<TestMarqueeItem>>(p => p
+            .Add(x => x.Text, "Breaking news"));
+
+        var container = cut.Find(".bzm-container");
+        container.GetAttribute("aria-label").Should().Contain("text marquee");
+        container.GetAttribute("aria-label").Should().Contain("pause");
+    }
+
+    [Fact]
+    public void BzMarquee_Paused_AriaLabel_ShouldSayResume()
+    {
+        var items = CreateItems();
+
+        var cut = RenderComponent<BzMarquee<TestMarqueeItem>>(p => p
+            .Add(x => x.Items, items));
+
+        var container = cut.Find(".bzm-container");
+        container.KeyDown(new KeyboardEventArgs { Key = " " });
+
+        container.GetAttribute("aria-label").Should().Contain("resume");
+    }
+
+    [Fact]
+    public void BzMarquee_Unpaused_AriaLabel_ShouldSayPause()
+    {
+        var items = CreateItems();
+
+        var cut = RenderComponent<BzMarquee<TestMarqueeItem>>(p => p
+            .Add(x => x.Items, items));
+
+        var container = cut.Find(".bzm-container");
+        container.GetAttribute("aria-label").Should().Contain("pause");
+        container.GetAttribute("aria-label").Should().NotContain("resume");
+    }
+
+    [Fact]
+    public void BzMarquee_WithRows3_AriaLabel_ShouldIncludeRowCount()
+    {
+        var items = CreateItems(9);
+
+        var cut = RenderComponent<BzMarquee<TestMarqueeItem>>(p => p
+            .Add(x => x.Items, items)
+            .Add(x => x.Rows, 3));
+
+        var container = cut.Find(".bzm-container");
+        container.GetAttribute("aria-label").Should().Contain("3 rows");
+        container.GetAttribute("aria-label").Should().Contain("9 items");
+    }
+
+    [Fact]
+    public void BzMarquee_WithRows1_AriaLabel_ShouldNotIncludeRowCount()
+    {
+        var items = CreateItems(4);
+
+        var cut = RenderComponent<BzMarquee<TestMarqueeItem>>(p => p
+            .Add(x => x.Items, items)
+            .Add(x => x.Rows, 1));
+
+        var container = cut.Find(".bzm-container");
+        container.GetAttribute("aria-label").Should().NotContain("rows");
+        container.GetAttribute("aria-label").Should().Contain("4 items");
+    }
+
+    #endregion
+
+    #region Container Style Combination Tests
+
+    [Fact]
+    public void BzMarquee_WithGap60_ShouldSetCorrectGapVariable()
+    {
+        var items = CreateItems();
+
+        var cut = RenderComponent<BzMarquee<TestMarqueeItem>>(p => p
+            .Add(x => x.Items, items)
+            .Add(x => x.Gap, 60));
+
+        cut.Markup.Should().Contain("--bzm-gap: 60px");
+    }
+
+    [Fact]
+    public void BzMarquee_WithSmallGapAndMultiRow_ShouldClampRowGap()
+    {
+        var items = CreateItems(6);
+
+        var cut = RenderComponent<BzMarquee<TestMarqueeItem>>(p => p
+            .Add(x => x.Items, items)
+            .Add(x => x.Gap, 9)
+            .Add(x => x.Rows, 2));
+
+        cut.Markup.Should().Contain("--bzm-row-gap: 4px");
+    }
+
+    [Fact]
+    public void BzMarquee_WithLargeGapAndMultiRow_ShouldCalculateRowGap()
+    {
+        var items = CreateItems(6);
+
+        var cut = RenderComponent<BzMarquee<TestMarqueeItem>>(p => p
+            .Add(x => x.Items, items)
+            .Add(x => x.Gap, 90)
+            .Add(x => x.Rows, 2));
+
+        cut.Markup.Should().Contain("--bzm-row-gap: 30px");
+    }
+
+    #endregion
+
+    #region Text Mode Tests
+
+    [Fact]
+    public void BzMarquee_TextMode_ShouldNotRenderItems()
+    {
+        var cut = RenderComponent<BzMarquee<TestMarqueeItem>>(p => p
+            .Add(x => x.Text, "Scrolling text"));
+
+        cut.Markup.Should().NotContain("bzm-item");
+        cut.Markup.Should().NotContain("bzm-logo-item");
+        cut.Markup.Should().NotContain("bzm-testimonial-card");
+    }
+
+    [Fact]
+    public void BzMarquee_TextMode_WithMultiRow_ShouldRenderTextInEachRow()
+    {
+        var cut = RenderComponent<BzMarquee<TestMarqueeItem>>(p => p
+            .Add(x => x.Text, "Breaking news")
+            .Add(x => x.Rows, 3));
+
+        var textItems = cut.FindAll(".bzm-text-item");
+        textItems.Should().HaveCount(3);
+    }
+
+    [Fact]
+    public void BzMarquee_TextMode_ShouldHaveTickerClass()
+    {
+        var cut = RenderComponent<BzMarquee<TestMarqueeItem>>(p => p
+            .Add(x => x.Text, "Ticker text"));
+
+        cut.Markup.Should().Contain("bzm-ticker");
+    }
+
+    [Fact]
+    public void BzMarquee_TextMode_WithTheme_ShouldApplyTheme()
+    {
+        var cut = RenderComponent<BzMarquee<TestMarqueeItem>>(p => p
+            .Add(x => x.Text, "News flash")
+            .Add(x => x.Theme, BzTheme.Light));
+
+        cut.Markup.Should().Contain("bzc-theme-light");
+        cut.Markup.Should().Contain("bzm-ticker");
+    }
+
+    #endregion
+
+    #region Alternate Direction Tests
+
+    [Fact]
+    public void BzMarquee_AlternateDirection_WithRightBase_ShouldFlipCorrectly()
+    {
+        var items = CreateItems(6);
+
+        var cut = RenderComponent<BzMarquee<TestMarqueeItem>>(p => p
+            .Add(x => x.Items, items)
+            .Add(x => x.Rows, 3)
+            .Add(x => x.AlternateDirection, true)
+            .Add(x => x.Direction, BzDirection.Right));
+
+        var rows = cut.FindAll(".bzm-row");
+        rows[0].GetAttribute("data-direction").Should().Be("right");
+        rows[1].GetAttribute("data-direction").Should().Be("left");
+        rows[2].GetAttribute("data-direction").Should().Be("right");
+    }
+
+    [Fact]
+    public void BzMarquee_NoAlternateDirection_AllRowsSameDirection()
+    {
+        var items = CreateItems(6);
+
+        var cut = RenderComponent<BzMarquee<TestMarqueeItem>>(p => p
+            .Add(x => x.Items, items)
+            .Add(x => x.Rows, 3)
+            .Add(x => x.AlternateDirection, false)
+            .Add(x => x.Direction, BzDirection.Right));
+
+        var rows = cut.FindAll(".bzm-row");
+        rows[0].GetAttribute("data-direction").Should().Be("right");
+        rows[1].GetAttribute("data-direction").Should().Be("right");
+        rows[2].GetAttribute("data-direction").Should().Be("right");
+    }
+
+    #endregion
+
+    #region Keyboard Resume Tests
+
+    [Fact]
+    public void BzMarquee_EnterKeyTwice_ShouldRemovePausedClass()
+    {
+        var items = CreateItems();
+
+        var cut = RenderComponent<BzMarquee<TestMarqueeItem>>(p => p
+            .Add(x => x.Items, items));
+
+        var container = cut.Find(".bzm-container");
+        container.KeyDown(new KeyboardEventArgs { Key = "Enter" });
+        cut.Markup.Should().Contain("bzm-paused");
+
+        container.KeyDown(new KeyboardEventArgs { Key = "Enter" });
+        cut.Markup.Should().NotContain("bzm-paused");
+    }
+
+    [Fact]
+    public void BzMarquee_SpaceKey_SrAnnouncement_ShouldSayPlaying()
+    {
+        var items = CreateItems();
+
+        var cut = RenderComponent<BzMarquee<TestMarqueeItem>>(p => p
+            .Add(x => x.Items, items));
+
+        var container = cut.Find(".bzm-container");
+        container.KeyDown(new KeyboardEventArgs { Key = " " });
+        container.KeyDown(new KeyboardEventArgs { Key = " " });
+
+        var srSpan = cut.Find(".bzm-sr-only");
+        srSpan.TextContent.Should().Contain("playing");
+    }
+
+    [Fact]
+    public void BzMarquee_TabKey_ShouldNotTogglePause()
+    {
+        var items = CreateItems();
+
+        var cut = RenderComponent<BzMarquee<TestMarqueeItem>>(p => p
+            .Add(x => x.Items, items));
+
+        var container = cut.Find(".bzm-container");
+        container.KeyDown(new KeyboardEventArgs { Key = "Tab" });
+
+        cut.Markup.Should().NotContain("bzm-paused");
+    }
+
+    [Fact]
+    public void BzMarquee_EscapeKey_ShouldNotTogglePause()
+    {
+        var items = CreateItems();
+
+        var cut = RenderComponent<BzMarquee<TestMarqueeItem>>(p => p
+            .Add(x => x.Items, items));
+
+        var container = cut.Find(".bzm-container");
+        container.KeyDown(new KeyboardEventArgs { Key = "Escape" });
+
+        cut.Markup.Should().NotContain("bzm-paused");
+    }
+
+    #endregion
+
+    #region Combined Parameter Tests
+
+    [Fact]
+    public void BzMarquee_AllFeaturesEnabled_ShouldRenderCorrectly()
+    {
+        var items = CreateItems(8);
+
+        var cut = RenderComponent<BzMarquee<TestMarqueeItem>>(p => p
+            .Add(x => x.Items, items)
+            .Add(x => x.Theme, BzTheme.Glass)
+            .Add(x => x.Direction, BzDirection.Left)
+            .Add(x => x.Speed, 60)
+            .Add(x => x.Gap, 30)
+            .Add(x => x.Rows, 2)
+            .Add(x => x.PauseOnHover, true)
+            .Add(x => x.ShowGradientEdges, true)
+            .Add(x => x.FullWidth, true)
+            .Add(x => x.AlternateDirection, true)
+            .Add(x => x.SpeedVariation, 0.3)
+            .Add(x => x.StaggerEntrance, true)
+            .Add(x => x.CssClass, "my-marquee"));
+
+        cut.Markup.Should().Contain("bzc-theme-glass");
+        cut.Markup.Should().Contain("bzm-pause-hover");
+        cut.Markup.Should().Contain("bzm-has-gradient");
+        cut.Markup.Should().Contain("bzm-full-width");
+        cut.Markup.Should().Contain("bzm-multirow");
+        cut.Markup.Should().Contain("bzm-stagger");
+        cut.Markup.Should().Contain("my-marquee");
+        cut.Markup.Should().Contain("--bzm-gap: 30px");
+        cut.FindAll(".bzm-row").Should().HaveCount(2);
+    }
+
+    [Fact]
+    public void BzMarquee_AllFeaturesDisabled_ShouldRenderMinimal()
+    {
+        var items = CreateItems();
+
+        var cut = RenderComponent<BzMarquee<TestMarqueeItem>>(p => p
+            .Add(x => x.Items, items)
+            .Add(x => x.Theme, BzTheme.Minimal)
+            .Add(x => x.PauseOnHover, false)
+            .Add(x => x.ShowGradientEdges, false)
+            .Add(x => x.FullWidth, false)
+            .Add(x => x.StaggerEntrance, false));
+
+        cut.Markup.Should().Contain("bzc-theme-minimal");
+        cut.Markup.Should().NotContain("bzm-pause-hover");
+        cut.Markup.Should().NotContain("bzm-has-gradient");
+        cut.Markup.Should().NotContain("bzm-full-width");
+        cut.Markup.Should().NotContain("bzm-stagger");
+        cut.Markup.Should().NotContain("bzm-gradient-start");
+    }
+
+    #endregion
+
+    #region GetInitials Edge Cases
+
+    [Fact]
+    public void BzMarquee_TestimonialWithShortName_ShouldShowSingleInitial()
+    {
+        var items = new List<TestMarqueeItem>
+        {
+            new() { Id = 1, Name = "X", Quote = "Good product!" }
+        };
+
+        var cut = RenderComponent<BzMarquee<TestMarqueeItem>>(p => p
+            .Add(x => x.Items, items));
+
+        cut.Markup.Should().Contain("bzm-testimonial-initials");
+        cut.Markup.Should().Contain(">X<");
+    }
+
+    [Fact]
+    public void BzMarquee_TestimonialWithExtraSpacesInName_ShouldHandleGracefully()
+    {
+        var items = new List<TestMarqueeItem>
+        {
+            new() { Id = 1, Name = "  John   Doe  ", Quote = "Nice!" }
+        };
+
+        var cut = RenderComponent<BzMarquee<TestMarqueeItem>>(p => p
+            .Add(x => x.Items, items));
+
+        cut.Markup.Should().Contain("bzm-testimonial-initials");
+        cut.Markup.Should().Contain("JD");
+    }
+
+    #endregion
+
+    #region Item Click TabIndex Tests
+
+    [Fact]
+    public void BzMarquee_WithClickHandler_ItemsShouldHaveTabIndex0()
+    {
+        var items = CreateItems();
+
+        var cut = RenderComponent<BzMarquee<TestMarqueeItem>>(p => p
+            .Add(x => x.Items, items)
+            .Add(x => x.OnItemClick, EventCallback.Factory.Create<TestMarqueeItem>(this, _ => { })));
+
+        var firstItem = cut.FindAll(".bzm-item")[0];
+        firstItem.GetAttribute("tabindex").Should().Be("0");
+    }
+
+    [Fact]
+    public void BzMarquee_WithoutClickHandler_ItemsShouldHaveTabIndexMinus1()
+    {
+        var items = CreateItems();
+
+        var cut = RenderComponent<BzMarquee<TestMarqueeItem>>(p => p
+            .Add(x => x.Items, items));
+
+        var firstItem = cut.FindAll(".bzm-item")[0];
+        firstItem.GetAttribute("tabindex").Should().Be("-1");
+    }
+
+    #endregion
 }
