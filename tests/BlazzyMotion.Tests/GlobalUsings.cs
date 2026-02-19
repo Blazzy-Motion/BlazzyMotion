@@ -31,6 +31,7 @@ global using BlazzyMotion.Gallery.Services;
 // BlazzyMotion.Marquee
 global using BlazzyMotion.Marquee.Components;
 global using BlazzyMotion.Marquee.Models;
+global using BlazzyMotion.Marquee.Services;
 
 // Source Generator Testing
 global using Microsoft.CodeAnalysis;
