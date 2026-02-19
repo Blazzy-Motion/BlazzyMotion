@@ -127,7 +127,7 @@ public class Movie
            Speed="30" />
 ```
 
-**Note:** Marquee auto-detects logos from `[BzImage]` attributes — zero configuration needed. Use `ItemTemplate` for custom rendering. Supports testimonials, text tickers, multi-row layout, and WCAG 2.1 AA accessibility. See [Marquee README](src/BlazzyMotion.Marquee/README.md) for full documentation.
+**Note:** Marquee auto-detects logos from `[BzImage]` attributes — zero configuration needed. Use `ItemTemplate` for custom rendering. Supports testimonials, text tickers, and multi-row layout. See [Marquee README](src/BlazzyMotion.Marquee/README.md) for full documentation.
 
 ## How It Works
 
