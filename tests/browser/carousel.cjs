@@ -165,6 +165,21 @@ async function inspectImageReadiness(browser) {
     await active.locator('.bzc-media-placeholder').waitFor({ state: 'visible' });
     const pending = await active.evaluate(slide => ({ state: slide.dataset.bzcMedia, shadow: getComputedStyle(slide).boxShadow, imageOpacity: getComputedStyle(slide.querySelector('img')).opacity, overlay: getComputedStyle(slide.querySelector('.bzc-overlay')).visibility }));
     assert.deepEqual(pending, { state: 'loading', shadow: 'none', imageOpacity: '0', overlay: 'hidden' });
+    const contrast = await active.locator('.bzc-media-placeholder').evaluate(el => {
+      const style = getComputedStyle(el);
+      const parse = value => value.match(/[\d.]+/g).map(Number);
+      const foreground = parse(style.color).slice(0, 3);
+      const background = parse(style.backgroundColor);
+      const alpha = background[3] ?? 1;
+      // White behind this dark placeholder is the least favorable default host surface.
+      const composite = background.slice(0, 3).map(value => value * alpha + 255 * (1 - alpha));
+      const luminance = values => values.map(value => value / 255)
+        .map(value => value <= 0.04045 ? value / 12.92 : ((value + 0.055) / 1.055) ** 2.4)
+        .reduce((total, value, index) => total + value * [0.2126, 0.7152, 0.0722][index], 0);
+      const values = [luminance(foreground), luminance(composite)].sort((a, b) => a - b);
+      return (values[1] + 0.05) / (values[0] + 0.05);
+    });
+    assert(contrast >= 4.5, `Loading text contrast must reach 4.5:1, got ${contrast}`);
     assert.equal(await root.locator('.swiper-slide:not(.swiper-slide-active) .bzc-media-placeholder').first().evaluate(el => getComputedStyle(el).fontSize), '0px');
     await root.screenshot({ path: path.join(artifacts, 'loading-slow-posters.png') });
     assert.equal(await root.locator('img[loading=eager][fetchpriority=high]').count(), 1);

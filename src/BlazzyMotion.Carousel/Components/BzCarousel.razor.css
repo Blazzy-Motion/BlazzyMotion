@@ -208,7 +208,7 @@
     box-sizing: border-box;
     border: 1px solid rgba(148, 163, 184, 0.24);
     border-radius: 10px;
-    background: var(--bzc-placeholder-bg, rgba(255, 255, 255, 0.04));
+    background: var(--bzc-placeholder-bg, rgba(15, 23, 42, 0.72));
     color: var(--bzc-placeholder-color, #cbd5e1);
     font: inherit;
     font-size: 12px;
