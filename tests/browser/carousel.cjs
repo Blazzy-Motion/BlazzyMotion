@@ -69,15 +69,24 @@ async function inspectCarousel(browser, name, contextOptions) {
   for (const theme of ['Glass', 'Dark', 'Light', 'Minimal']) {
     await page.getByRole('button', { name: theme, exact: true }).click();
     await page.waitForTimeout(150);
-    const depth = await root.locator('.swiper-slide-active').evaluate(slide => {
-      const surface = getComputedStyle(slide, '::before');
-      return { display: surface.display, height: parseFloat(surface.height), image: slide.querySelector('img').offsetHeight, slide: slide.offsetHeight };
-    });
-    if (theme === 'Minimal') assert.equal(depth.display, 'none');
-    else {
-      assert(depth.height > depth.image, 'Depth surface should extend slightly beyond the poster');
-      assert(depth.height < depth.slide, 'Depth surface must not recreate full-height shadow columns');
+    const depth = await root.locator('.swiper-slide-active').evaluate(slide => ({
+      syntheticSurface: getComputedStyle(slide, '::before').content,
+      shadow: getComputedStyle(slide).boxShadow,
+      image: slide.querySelector('img').offsetHeight,
+      height: slide.offsetHeight,
+      container: slide.closest('.swiper-container').offsetHeight,
+      overlay: slide.querySelector('.bzc-overlay').offsetHeight
+    }));
+    assert.equal(depth.syntheticSurface, 'none', 'Use the actual Swiper slide, not a shorter pseudo-element');
+    assert.equal(depth.height, depth.container, 'Preserve main full-height Swiper slides');
+    assert.equal(depth.overlay, depth.height, 'Preserve main full-height overlays');
+    assert(depth.height > depth.image, 'Swiper slides must extend beyond the poster');
+    if (theme === 'Minimal') assert.equal(depth.shadow, 'none');
+    else assert.notEqual(depth.shadow, 'none');
+    if (theme === 'Glass' || theme === 'Dark') {
+      assert(depth.shadow.includes('15px 40px') && depth.shadow.includes('5px 15px'), 'Restore the main-branch shadow on the real slide');
     }
+    if (contextOptions.isMobile) assert.equal(depth.height, 250, 'Preserve main mobile slide height');
     const result = await new AxeBuilder({ page }).include('.bz-demo .bzc-carousel-box').analyze();
     assert.deepEqual(result.violations.map(v => ({ id: v.id, impact: v.impact })), [], `${name}/${theme} accessibility`);
     await page.screenshot({ path: path.join(artifacts, `${name}-${theme}.png`) });
@@ -196,14 +205,15 @@ async function inspectImageReadiness(browser) {
     await root.locator('.swiper-slide-active[data-bzc-media=ready]').waitFor();
     assert(await active.locator('.bzc-media-placeholder').isHidden());
     const dimensions = await active.evaluate(slide => ({ image: slide.querySelector('img').offsetHeight, overlay: slide.querySelector('.bzc-overlay').offsetHeight, total: slide.offsetHeight }));
-    assert.equal(dimensions.image, dimensions.overlay, 'Overlay must follow artwork, not the full slide');
+    assert.equal(dimensions.total, dimensions.overlay, 'Decoded slides restore the original full-height overlay');
+    assert(dimensions.total > dimensions.image);
     await page.route('**/missing-poster.webp', route => route.abort());
     await active.locator('img').evaluate(image => { image.src = '/missing-poster.webp'; });
     await root.locator('.swiper-slide-active[data-bzc-media=error]').waitFor();
     assert.equal(await active.locator('.bzc-media-placeholder').textContent(), 'Image unavailable');
     await active.locator('img').evaluate(image => { image.src = '/images/despicableme.webp'; });
     await root.locator('.swiper-slide-active[data-bzc-media=ready]').waitFor();
-    console.log('PASS image lifecycle: slow placeholder, poster-sized overlay, failure and source replacement');
+    console.log('PASS image lifecycle: slow placeholder, full-height decoded slide, failure and source replacement');
   } finally { release(); await page.close(); }
 }
 

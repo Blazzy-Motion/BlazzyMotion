@@ -796,8 +796,8 @@ tracking starts before Swiper loads, so a failed Swiper script does not hide a
 successfully loaded poster. Custom templates retain their own loading markup and
 behavior.
 
-Artwork shadows and the mapped overlay follow the actual image rather than the
-full slide height. Coverflow slide/image sizes, transforms and selection callbacks
+Artwork keeps its own soft shadow. Once decoded, the actual Swiper slide and
+overlay retain their original full height; loading and failed slides stay shadow-free. Coverflow slide/image sizes, transforms and selection callbacks
 remain unchanged. Glass uses the existing blur token without extra saturation;
 stationary surface lighting provides definition on plain backgrounds. Dark, Light
 and Minimal use distinct artwork shadow treatments. No blur is applied to moving
@@ -818,18 +818,19 @@ has few details to soften; the glass treatment therefore also uses highlights an
 edges. Physical-device performance and visual approval are still required.
 
 
-### Slide depth surfaces
+### Original Swiper slide surfaces
 
-Decoded mapped posters use a shallow decorative surface behind the image. Its
-height follows the image and is capped within the existing Swiper slide; it does
-not change slide width, Coverflow transforms or loading placeholders. Minimal
-omits this surface. Custom templates keep their own presentation. The surface
-uses gradients and a small shadow, without per-slide backdrop blur.
+Decoded mapped posters restore the actual full-height Swiper slide shadow and
+overlay from the original Coverflow presentation. There is no shorter, image-sized
+decorative surface. Slide width, height and Swiper transforms stay unchanged;
+loading and failed posters keep their independent placeholders without large empty
+shadows. Minimal omits the slide shadow. Custom templates keep their presentation.
+No per-slide backdrop blur is introduced.
 
 Glass has a broader translucent highlight; Dark retains a predominantly opaque
 surface. Light uses a soft neutral wash and layered card shadows. Existing theme
-background tokens remain supported. Optional `--bzc-slide-surface`,
-`--bzc-slide-surface-border` and `--bzc-slide-surface-shadow` variables customize
-the decorative cards. Loading placeholders are rendered by Carousel markup and
-managed by runtime image decoding. Source generators retain their existing model
-mapping and template generation; they do not create placeholder images.
+background tokens remain supported. Optional `--bzc-slide-surface` and
+`--bzc-slide-surface-shadow` variables customize decoded slides. Loading
+placeholders are rendered by Carousel markup and managed by runtime image
+decoding. Source generators retain their existing model mapping and template
+generation; they do not create placeholder images.

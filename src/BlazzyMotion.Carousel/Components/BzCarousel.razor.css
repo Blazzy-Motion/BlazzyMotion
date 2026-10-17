@@ -166,7 +166,6 @@
     --bzc-placeholder-color: #475569;
     --bzc-placeholder-bg: rgba(15, 23, 42, 0.045);
     --bzc-slide-surface: linear-gradient(155deg, rgba(255, 255, 255, 0.9), rgba(226, 232, 240, 0.42));
-    --bzc-slide-surface-border: rgba(148, 163, 184, 0.14);
     --bzc-slide-surface-shadow: 0 2px 5px rgba(15, 23, 42, 0.025), 0 10px 20px rgba(15, 23, 42, 0.045);
     background: linear-gradient(160deg, rgba(226, 232, 240, 0.18), transparent 48%, rgba(226, 232, 240, 0.24)),
         var(--bzc-light-bg, #fff);
@@ -179,27 +178,16 @@
     --bzc-active-artwork-shadow: 0 6px 14px rgba(0, 0, 0, 0.16);
 }
 
-/* Shallow card surfaces restore depth without the former full-height shadow columns.
-   Only decoded mapped images receive this surface; loading and custom templates stay independent. */
-.bzc-carousel-box ::deep .swiper-slide[data-bzc-media="ready"]::before {
-    content: '';
-    position: absolute;
-    top: 50%;
-    left: 0;
-    width: 100%;
-    height: min(calc(var(--bzc-media-height, 0px) * 1.35), calc(100% - 24px));
-    border: 1px solid var(--bzc-slide-surface-border, rgba(255, 255, 255, 0.045));
-    box-sizing: border-box;
-    border-radius: 12px;
-    background: var(--bzc-slide-surface, linear-gradient(155deg, rgba(255, 255, 255, 0.045), rgba(0, 0, 0, 0.08)));
-    box-shadow: var(--bzc-slide-surface-shadow, 0 5px 12px rgba(0, 0, 0, 0.12));
-    transform: translateY(-50%);
-    pointer-events: none;
-    z-index: -1;
+/* Restore main's full-height Swiper slide surfaces only after artwork is decoded.
+   Swiper retains its original dimensions and transforms; unloaded slides stay shadow-free. */
+.bzc-carousel-box ::deep .swiper-slide[data-bzc-media="ready"] {
+    background: var(--bzc-slide-surface, transparent);
+    box-shadow: var(--bzc-slide-surface-shadow, 0 15px 40px rgba(0, 0, 0, 0.7), 0 5px 15px rgba(0, 0, 0, 0.5));
 }
 
-.bzc-carousel-box.bzc-theme-minimal ::deep .swiper-slide[data-bzc-media="ready"]::before {
-    display: none;
+.bzc-carousel-box.bzc-theme-minimal ::deep .swiper-slide[data-bzc-media="ready"] {
+    background: transparent;
+    box-shadow: none;
 }
 
 .bzc-carousel-box.bzc-theme-light::before {
@@ -207,23 +195,6 @@
 }
 
 /* Mapped artwork stays useful while individual requests load or fail. */
-.bzc-carousel-box ::deep .swiper-slide[data-bzc-media] {
-    overflow: visible;
-}
-
-.bzc-carousel-box ::deep .swiper-slide[data-bzc-media] > .bzc-overlay {
-    inset: auto;
-    top: 50%;
-    left: 50%;
-    width: var(--bzc-media-width, 0px);
-    height: var(--bzc-media-height, 0px);
-    transform: translate(-50%, -50%);
-}
-
-.bzc-carousel-box ::deep .swiper-slide-active[data-bzc-media] > .bzc-overlay {
-    transform: translate(-50%, -50%) scale(var(--bzc-active-scale, 1.1));
-}
-
 .bzc-carousel-box ::deep .swiper-slide[data-bzc-media]:not([data-bzc-media="ready"]) > img {
     opacity: 0;
     box-shadow: none;
