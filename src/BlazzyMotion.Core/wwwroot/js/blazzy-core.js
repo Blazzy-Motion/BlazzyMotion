@@ -1,6 +1,7 @@
 let swiperLoaded = false;
 let coreStylesLoaded = false;
 const swiperInstances = new Map();
+const carouselBindings = new WeakMap();
 const bentoInstances = new Map();
 
 // script/stylesheet loaders
@@ -106,7 +107,11 @@ const DEFAULT_TOUCH_SETTINGS = {
 // CAROUSEL INITIALIZATION
 
 /**
- * Initialize BzCarousel with 3D Coverflow effect
+ * Initialize BzCarousel without changing the consumer's Coverflow geometry.
+ * @param {HTMLElement} element - Carousel root, including its accessible controls.
+ * @param {string} optionsJson - Serialized component options.
+ * @param {object|null} dotNetRef - Existing Blazor selection callback reference.
+ * @returns {Promise<void>} Resolves after binding the Swiper instance.
  */
 export async function initializeCarousel(element, optionsJson, dotNetRef = null) {
     try {
@@ -117,17 +122,16 @@ export async function initializeCarousel(element, optionsJson, dotNetRef = null)
             return;
         }
 
-        // Destroy existing instance if present
-        if (swiperInstances.has(element)) {
-            const instance = swiperInstances.get(element);
-            instance.destroy(true, true);
-            swiperInstances.delete(element);
-        }
-
+        destroyCarousel(element);
+        const motion = window.matchMedia('(prefers-reduced-motion: reduce)');
+        const bindings = new AbortController();
+        carouselBindings.set(element, bindings);
         const options = optionsJson ? JSON.parse(optionsJson) : {};
         const wrapper = container.querySelector('.swiper-wrapper');
         const originalSlides = wrapper.querySelectorAll('.swiper-slide');
         const slideCount = originalSlides.length;
+        if (!slideCount) return;
+        const status = element.querySelector('.bzc-status');
 
         const minSlidesForLoop = 4;
         const minSlidesForAutoLoop = 7;
@@ -153,7 +157,7 @@ export async function initializeCarousel(element, optionsJson, dotNetRef = null)
 
         const swiperConfig = {
             // Effect settings
-            effect: options.effect || "coverflow",
+            effect: motion.matches ? "slide" : (options.effect || "coverflow"),
             grabCursor: options.grabCursor ?? true,
             centeredSlides: options.centeredSlides ?? true,
             spaceBetween: options.spaceBetween || 0,
@@ -183,14 +187,14 @@ export async function initializeCarousel(element, optionsJson, dotNetRef = null)
 
             on: {
                 afterInit: function () {
-                    this.params.speed = options.speed || 300;
+                    this.params.speed = motion.matches ? 0 : (options.speed || 300);
                     this.params.runCallbacksOnInit = true;
 
                     // Show carousel after initialization
                     requestAnimationFrame(() => {
                         requestAnimationFrame(() => {
                             if (this.el) {
-                                this.el.classList.remove('bzc-hidden');
+                                this.el.classList.remove('bzc-hidden', 'bzc-pending');
                                 this.el.classList.add('bzc-visible');
                             }
                         });
@@ -198,6 +202,7 @@ export async function initializeCarousel(element, optionsJson, dotNetRef = null)
                 },
 
                 slideChange: function () {
+                    updateCarouselAccessibility(this, originalSlideCount, status);
                     if (dotNetRef) {
                         // Use modulo to get correct index when clones are present
                         const realIndex = this.realIndex % originalSlideCount;
@@ -217,22 +222,108 @@ export async function initializeCarousel(element, optionsJson, dotNetRef = null)
             swiperConfig.loopAdditionalSlides = 2;
         }
 
+        // Remove fallback-only layout before Swiper measures the original slide geometry.
+        container.classList.remove('bzc-pending', 'bzc-hidden');
+        container.classList.add('bzc-visible');
         const swiperInstance = new Swiper(container, swiperConfig);
 
         // Store instance for later reference
         swiperInstances.set(element, swiperInstance);
+        updateCarouselAccessibility(swiperInstance, originalSlideCount, null);
+        element.querySelectorAll('[data-bzc-direction]').forEach(control => { control.disabled = false; });
+        bindCarouselInput(element, swiperInstance, originalSlides, bindings.signal);
+        motion.addEventListener('change', () => {
+            if (swiperInstance.destroyed) return;
+            initializeCarousel(element, optionsJson, dotNetRef);
+        }, { signal: bindings.signal });
 
     } catch (err) {
         console.error("[BlazzyMotion] Initialization error:", err);
     }
 }
 
+/**
+ * Update slide semantics, including the currently active loop copy.
+ * @param {object} swiper - Current Swiper instance.
+ * @param {number} count - Number of consumer items, excluding loop copies.
+ * @param {HTMLElement|null} status - Optional polite announcement target.
+ */
+function updateCarouselAccessibility(swiper, count, status) {
+    if (swiper.destroyed) return;
+    const index = ((swiper.realIndex % count) + count) % count;
+    for (const slide of swiper.slides) {
+        const active = slide.classList.contains('swiper-slide-active');
+        for (const control of slide.querySelectorAll('a[href],button,input,select,textarea,[tabindex]')) {
+            if (!control.hasAttribute('data-bzc-tabindex')) {
+                control.setAttribute('data-bzc-tabindex', control.getAttribute('tabindex') ?? '');
+            }
+            const original = control.getAttribute('data-bzc-tabindex');
+            if (!active) control.tabIndex = -1;
+            else if (original === '') control.removeAttribute('tabindex');
+            else control.setAttribute('tabindex', original);
+        }
+        slide.setAttribute('aria-hidden', String(!active));
+        slide.tabIndex = active && slide.dataset.bzcSelectable === 'true' ? 0 : -1;
+    }
+    if (status) status.textContent = `Slide ${index + 1} of ${count}`;
+}
+
+/**
+ * Bind local keyboard and assistive controls without capturing nested widget keys.
+ * Loop copies forward selection to their original Blazor event handler.
+ * @param {HTMLElement} element - Carousel root.
+ * @param {object} swiper - Initialized Swiper instance.
+ * @param {NodeList} originals - Original slides retaining Blazor event handlers.
+ * @param {AbortSignal} signal - Aborts all input handlers when the instance is destroyed.
+ */
+function bindCarouselInput(element, swiper, originals, signal) {
+    element.addEventListener('keydown', event => {
+        const target = event.target;
+        const slide = target.closest('.swiper-slide');
+        if (target !== element && target !== slide) return;
+        if (event.altKey || event.ctrlKey || event.metaKey || event.shiftKey) return;
+        const reverse = getComputedStyle(element).direction === 'rtl';
+        if (event.key === 'ArrowRight' || event.key === 'ArrowLeft') {
+            event.preventDefault();
+            const next = (event.key === 'ArrowRight') !== reverse;
+            if (next) swiper.slideNext();
+            else swiper.slidePrev();
+        } else if (slide?.dataset.bzcSelectable === 'true' &&
+                   (event.key === 'Enter' || event.key === ' ')) {
+            event.preventDefault();
+            slide.click();
+        }
+    }, { signal });
+    element.addEventListener('click', event => {
+        const control = event.target.closest('[data-bzc-direction]');
+        if (control && element.contains(control)) {
+            if (control.dataset.bzcDirection === 'next') swiper.slideNext();
+            else swiper.slidePrev();
+            return;
+        }
+        const clone = event.target.closest('[data-bz-clone="true"]');
+        if (!clone || !element.contains(clone)) return;
+        // Interactive templates own their links and controls; do not synthesize a second action.
+        if (event.target.closest('a,button,input,select,textarea,[contenteditable]')) return;
+        event.stopPropagation();
+        const itemIndex = Number(clone.getAttribute('data-swiper-slide-index')) % originals.length;
+        originals[itemIndex]?.click();
+    }, { signal });
+}
+
+/**
+ * Destroy a Carousel and remove only copies and handlers created by this module.
+ * @param {HTMLElement} element - Carousel root previously initialized by this module.
+ */
 export function destroyCarousel(element) {
+    carouselBindings.get(element)?.abort();
+    carouselBindings.delete(element);
     if (swiperInstances.has(element)) {
         const instance = swiperInstances.get(element);
         instance.destroy(true, true);
         swiperInstances.delete(element);
     }
+    element.querySelectorAll('[data-bz-clone="true"]').forEach(slide => slide.remove());
 }
 
 export function getActiveIndex(element) {

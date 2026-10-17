@@ -1,6 +1,6 @@
 /* SWIPER CONTAINER - Initial Hidden State (Scoped) */
 
-::deep .swiper-container.bzc-hidden {
+::deep .swiper-container.bzc-hidden:not(.bzc-pending) {
     opacity: 0 !important;
     visibility: hidden !important;
     transition: opacity 0.4s ease-in, visibility 0.4s;
@@ -31,7 +31,6 @@
     overflow: hidden;
     position: relative;
     pointer-events: auto !important;
-    z-index: 100 !important;
 }
 
 ::deep .swiper-slide:focus-visible {
@@ -116,4 +115,108 @@
     color: rgba(255, 255, 255, 0.6);
     font-size: 14px;
     text-align: center;
+}
+/* Keep the first artwork visible while the optional Swiper assets load. */
+::deep .swiper-container.bzc-pending {
+    opacity: 1;
+    visibility: visible;
+    width: 100%;
+    height: var(--bzc-swiper-height, 400px);
+    display: grid;
+    place-items: center;
+}
+
+::deep .bzc-pending .swiper-wrapper {
+    display: flex;
+    justify-content: center;
+    align-items: center;
+}
+
+::deep .bzc-pending .swiper-slide:not(:first-child) {
+    display: none;
+}
+
+/* One stationary glass surface; slide transforms remain owned by Swiper. */
+.bzc-carousel-box.bzc-theme-glass {
+    background: var(--bzc-glass-bg, rgba(15, 15, 15, 0.6));
+    border-color: var(--bzc-glass-border, rgba(255, 255, 255, 0.15));
+    backdrop-filter: blur(var(--bzc-glass-blur, 12px)) saturate(145%);
+    -webkit-backdrop-filter: blur(var(--bzc-glass-blur, 12px)) saturate(145%);
+    box-shadow: var(--bzc-glass-shadow, 0 8px 32px rgba(0, 0, 0, 0.4)),
+        inset 0 1px 0 rgba(255, 255, 255, 0.22),
+        inset 0 -1px 0 rgba(255, 255, 255, 0.04);
+}
+
+.bzc-carousel-box.bzc-theme-glass::before {
+    height: 28%;
+    background: linear-gradient(160deg, rgba(255, 255, 255, 0.1), transparent 65%);
+    border-radius: inherit;
+}
+
+.bzc-sr-only {
+    position: absolute;
+    width: 1px;
+    height: 1px;
+    padding: 0;
+    margin: -1px;
+    overflow: hidden;
+    clip-path: inset(50%);
+    white-space: nowrap;
+    border: 0;
+}
+
+.bzc-carousel-box:focus-visible,
+.bzc-carousel-box ::deep :focus-visible {
+    outline: 3px solid #60a5fa;
+    outline-offset: -3px;
+}
+
+.bzc-keyboard-control {
+    position: absolute;
+    bottom: 8px;
+    width: 1px;
+    height: 1px;
+    padding: 0;
+    overflow: hidden;
+    clip-path: inset(50%);
+    border: 0;
+}
+
+.bzc-keyboard-control:focus-visible {
+    width: auto;
+    height: auto;
+    min-height: 44px;
+    padding: 8px 16px;
+    clip-path: none;
+    background: #0f172a;
+    color: #fff;
+    border-radius: 8px;
+    z-index: 2;
+}
+
+.bzc-previous { left: 8px; }
+.bzc-next { right: 8px; }
+
+@supports not ((backdrop-filter: blur(1px)) or (-webkit-backdrop-filter: blur(1px))) {
+    .bzc-carousel-box.bzc-theme-glass {
+        background: #182131;
+    }
+}
+
+@media (prefers-reduced-motion: reduce) {
+    .bzc-carousel-box ::deep * {
+        transition: none !important;
+        animation: none !important;
+    }
+
+    .bzc-carousel-box ::deep .swiper-slide img:hover,
+    .bzc-carousel-box ::deep .swiper-slide-active img {
+        transform: none;
+    }
+}
+
+@media (forced-colors: active) {
+    .bzc-carousel-box {
+        border: 1px solid CanvasText;
+    }
 }

@@ -1,4 +1,4 @@
-﻿using BlazzyMotion.Carousel.Models;
+using BlazzyMotion.Carousel.Models;
 using BlazzyMotion.Carousel.Services;
 using BlazzyMotion.Core.Abstractions;
 using BlazzyMotion.Core.Models;
@@ -305,14 +305,17 @@ public partial class BzCarousel<TItem> : BzComponentBase where TItem : class
     }
 
     /// <summary>
-    /// Called after render. Initializes or reinitializes Swiper.
+    /// Initializes Swiper only after non-empty item markup has rendered, or reinitializes changed items.
+    /// A null collection remains in the loading state without initializing a missing element.
     /// </summary>
+    /// <param name="firstRender">Whether this is the component's first render.</param>
+    /// <returns>A task representing initialization or reinitialization.</returns>
     [ExcludeFromCodeCoverage(Justification = "JS initialization - cannot fully test with bUnit")]
     protected override async Task OnAfterRenderAsync(bool firstRender)
     {
         if (IsDisposed) return;
 
-        if (!IsEmpty && !_initialized)
+        if (!IsLoading && !IsEmpty && !_initialized)
         {
             _initialized = true;
             try

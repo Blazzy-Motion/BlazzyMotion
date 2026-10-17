@@ -33,6 +33,16 @@ jobs:
           output_location: "wwwroot" # Built app content directory - optional
           ###### End of Repository/Build Configurations ######
 
+      - name: Report preview URL
+        if: github.event_name == 'pull_request'
+        env:
+          PREVIEW_URL: ${{ steps.builddeploy.outputs.static_web_app_url }}
+        run: |
+          if [ -n "$PREVIEW_URL" ]; then
+            printf '%s\n' "::notice title=Preview URL::$PREVIEW_URL"
+            printf '[Open preview](%s)\n' "$PREVIEW_URL" >> "$GITHUB_STEP_SUMMARY"
+          fi
+
   close_pull_request_job:
     if: github.event_name == 'pull_request' && github.event.action == 'closed'
     runs-on: ubuntu-latest

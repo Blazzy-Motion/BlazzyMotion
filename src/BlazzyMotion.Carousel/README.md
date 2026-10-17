@@ -752,3 +752,36 @@ If you find BlazzyMotion.Carousel useful, please consider:
 - Reporting bugs or suggesting features via GitHub Issues
 
 For questions or support, please open an issue on GitHub.
+
+### Glass rendering and accessible navigation
+
+The Coverflow geometry and responsive image sizes remain unchanged. Glass uses
+one stationary backdrop surface with a subtle highlight and saturation; it does
+not animate backdrop blur on moving slides. The shared Core theme tokens are
+unchanged, so other components retain their existing appearance. Browsers without
+backdrop-filter support receive an opaque fallback surface.
+
+The first item remains visible while Swiper loads, including when its script
+cannot load. Load the styles in your host document before rendering components
+for a consistently styled first paint:
+
+```html
+<link rel="stylesheet" href="_content/BlazzyMotion.Core/css/blazzy-core.css" />
+<link rel="stylesheet" href="_content/BlazzyMotion.Core/css/swiper-bundle.min.css" />
+```
+
+Focus the carousel and use Left/Right Arrow keys to browse. Keyboard handling is
+local and leaves nested input controls alone. Previous/Next buttons are available
+to assistive technology and become visible when keyboard-focused; there are no
+persistent dots or counters. Active slide changes are announced politely. When
+an item-selection callback is supplied, the active slide can also be selected
+with Enter or Space. Existing SelectOnScroll behavior remains unchanged.
+
+Use the existing additional attributes to provide a contextual region name,
+for example `aria-label="Featured movies"`. Custom templates must provide useful
+image alternatives, accessible names for interactive elements, and visible focus
+styles. With attribute mapping, provide `[BzTitle]` for meaningful image text.
+The reduced-motion preference selects a flat, immediate transition and updates
+when that preference changes. An application-level accessibility audit and
+physical-device checks are still required; scoped automated checks do not
+establish full WCAG conformance or guarantee a particular frame rate.
