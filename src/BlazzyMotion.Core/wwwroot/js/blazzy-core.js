@@ -2,6 +2,7 @@ let swiperLoaded = false;
 let coreStylesLoaded = false;
 const swiperInstances = new Map();
 const carouselBindings = new WeakMap();
+const carouselMedia = new WeakMap();
 const bentoInstances = new Map();
 
 // script/stylesheet loaders
@@ -230,6 +231,7 @@ export async function initializeCarousel(element, optionsJson, dotNetRef = null)
 
         // Store instance for later reference
         swiperInstances.set(element, swiperInstance);
+        prepareCarouselImages(element);
         updateCarouselAccessibility(swiperInstance, originalSlideCount, null);
         element.querySelectorAll('[data-bzc-direction]').forEach(control => { control.disabled = false; });
         bindCarouselInput(element, swiperInstance, originalSlides, bindings.signal);
@@ -242,6 +244,72 @@ export async function initializeCarousel(element, optionsJson, dotNetRef = null)
     } catch (err) {
         console.error("[BlazzyMotion] Initialization error:", err);
     }
+}
+
+/**
+ * Track mapped image decoding independently of Swiper, including cached and failed images.
+ * Custom templates are untouched. A single ResizeObserver aligns overlays with actual images,
+ * avoiding full-height shadows or filters on moving slide geometry.
+ * @param {HTMLElement} element - Carousel root containing mapped image placeholders.
+ */
+export function prepareCarouselImages(element) {
+    carouselMedia.get(element)?.abort();
+    const bindings = new AbortController();
+    carouselMedia.set(element, bindings);
+    const observer = new ResizeObserver(entries => {
+        for (const entry of entries) updateCarouselImageSize(entry.target);
+    });
+    const sources = new MutationObserver(records => {
+        let changed = false;
+        for (const record of records) {
+            const image = record.target;
+            const slide = image.closest('.swiper-slide[data-bzc-media]');
+            if (slide && image.parentElement === slide) {
+                slide.dataset.bzcMedia = 'loading';
+                const placeholder = slide.querySelector('.bzc-media-placeholder');
+                if (placeholder) placeholder.textContent = 'Loading image';
+                changed = true;
+            }
+        }
+        if (changed) prepareCarouselImages(element);
+    });
+    sources.observe(element, { subtree: true, attributes: true, attributeFilter: ['src', 'srcset'] });
+    bindings.signal.addEventListener('abort', () => {
+        observer.disconnect();
+        sources.disconnect();
+    }, { once: true });
+    for (const slide of element.querySelectorAll('.swiper-slide[data-bzc-media]')) {
+        const image = slide.querySelector(':scope > img');
+        if (!image) continue;
+        const placeholder = slide.querySelector('.bzc-media-placeholder');
+        const settle = async () => {
+            const source = image.currentSrc || image.src;
+            if (image.naturalWidth) {
+                try { await image.decode(); } catch { /* A usable loaded image may outlive a decode request. */ }
+            }
+            if (bindings.signal.aborted || !image.isConnected || source !== (image.currentSrc || image.src)) return;
+            const loaded = image.complete && image.naturalWidth > 0;
+            slide.dataset.bzcMedia = loaded ? 'ready' : 'error';
+            if (placeholder) placeholder.textContent = loaded ? '' : 'Image unavailable';
+            updateCarouselImageSize(image);
+        };
+        image.addEventListener('load', settle, { signal: bindings.signal });
+        image.addEventListener('error', settle, { signal: bindings.signal });
+        if (image.complete) settle();
+        observer.observe(image);
+    }
+}
+
+/**
+ * Align a mapped image's overlay without measuring or changing Swiper transforms.
+ * @param {HTMLImageElement} image - Loaded or resized image directly inside its slide.
+ */
+function updateCarouselImageSize(image) {
+    if (!image.isConnected) return;
+    const slide = image.closest('.swiper-slide');
+    if (!slide) return;
+    slide.style.setProperty('--bzc-media-width', `${image.offsetWidth}px`);
+    slide.style.setProperty('--bzc-media-height', `${image.offsetHeight}px`);
 }
 
 /**
@@ -324,6 +392,8 @@ function bindCarouselInput(element, swiper, originals, signal) {
  * @param {HTMLElement} element - Carousel root previously initialized by this module.
  */
 export function destroyCarousel(element) {
+    carouselMedia.get(element)?.abort();
+    carouselMedia.delete(element);
     carouselBindings.get(element)?.abort();
     carouselBindings.delete(element);
     if (swiperInstances.has(element)) {

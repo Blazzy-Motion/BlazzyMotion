@@ -245,6 +245,7 @@ public partial class BzCarousel<TItem> : BzComponentBase where TItem : class
     /// Indicates whether we're using BzRegistry mapping or custom template.
     /// </summary>
     private bool _useRegistryMapping;
+    private int _initialImageIndex;
 
     #endregion
 
@@ -274,8 +275,10 @@ public partial class BzCarousel<TItem> : BzComponentBase where TItem : class
     #region Lifecycle Methods
 
     /// <summary>
-    /// Called when parameters are set. Maps items and detects changes.
+    /// Maps items, resolves the effective initial image priority, and detects configuration changes.
+    /// Advanced options and automatic small-collection mode retain their existing precedence.
     /// </summary>
+    /// <returns>A task representing parameter processing and any required cleanup.</returns>
     protected override async Task OnParametersSetAsync()
     {
         ValidateParameters();
@@ -298,6 +301,14 @@ public partial class BzCarousel<TItem> : BzComponentBase where TItem : class
         {
             _useRegistryMapping = false;
             _mappedItems = Array.Empty<BzItem>();
+        }
+
+        if (_itemsCache.Count > 0)
+        {
+            var effectiveOptions = BuildOptions();
+            _initialImageIndex = effectiveOptions.Loop
+                ? ((effectiveOptions.InitialSlide % _itemsCache.Count) + _itemsCache.Count) % _itemsCache.Count
+                : Math.Clamp(effectiveOptions.InitialSlide, 0, _itemsCache.Count - 1);
         }
 
         await DetectChangesAsync();
@@ -396,8 +407,11 @@ public partial class BzCarousel<TItem> : BzComponentBase where TItem : class
     #region Rendering Methods
 
     /// <summary>
-    /// Gets the RenderFragment for a specific item.
+    /// Gets item content while prioritizing the initial mapped image without changing custom templates.
     /// </summary>
+    /// <param name="item">The original consumer item.</param>
+    /// <param name="index">The zero-based item index.</param>
+    /// <returns>The custom, mapped image, or fallback fragment for this item.</returns>
     private RenderFragment GetItemContent(TItem item, int index)
     {
         if (ItemTemplate != null)
@@ -408,11 +422,28 @@ public partial class BzCarousel<TItem> : BzComponentBase where TItem : class
         if (_useRegistryMapping && index < _mappedItems.Count)
         {
             var bzItem = _mappedItems[index];
-            return BzTemplateFactory.CreateImage()(bzItem);
+            return CreateCarouselImage(bzItem, index);
         }
 
         return BzTemplateFactory.CreateGenericFallback<TItem>()(item);
     }
+
+    /// <summary>Renders a mapped image with eager loading for the initially selected item.</summary>
+    /// <param name="item">The mapped image and accessible title.</param>
+    /// <param name="index">The original item index, before loop copies are created.</param>
+    /// <returns>An image fragment, or an empty fragment when no image is available.</returns>
+    private RenderFragment CreateCarouselImage(BzItem item, int index) => builder =>
+    {
+        if (!item.HasImage) return;
+        builder.OpenElement(0, "img");
+        builder.AddAttribute(1, "src", item.ImageUrl);
+        builder.AddAttribute(2, "alt", item.HasTitle ? item.Title : "Image");
+        if (item.HasTitle) builder.AddAttribute(3, "title", item.Title);
+        builder.AddAttribute(4, "loading", index == _initialImageIndex ? "eager" : "lazy");
+        builder.AddAttribute(5, "decoding", "async");
+        if (index == _initialImageIndex) builder.AddAttribute(6, "fetchpriority", "high");
+        builder.CloseElement();
+    };
 
     #endregion
 

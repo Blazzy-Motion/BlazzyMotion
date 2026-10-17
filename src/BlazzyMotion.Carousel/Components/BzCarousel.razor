@@ -43,11 +43,17 @@ else
                     foreach (var item in Items!)
                     {
                         var currentIndex = index;
+                        var hasImage = _useRegistryMapping && currentIndex < _mappedItems.Count && _mappedItems[currentIndex].HasImage;
                         <div class="swiper-slide" role="group" aria-roledescription="slide"
                              aria-label="@($"{currentIndex + 1} of {ItemCount}")"
+                             data-bzc-media="@(hasImage ? "loading" : null)"
                              data-bzc-selectable="@(OnItemSelected.HasDelegate ? "true" : "false")"
                              @onclick="() => HandleItemClick(item)">
                             @GetItemContent(item, currentIndex)
+                            @if (hasImage)
+                            {
+                                <span class="bzc-media-placeholder" aria-hidden="true">Loading image</span>
+                            }
                             @if (ShowOverlay)
                             {
                                 <div class="bzc-overlay"></div>

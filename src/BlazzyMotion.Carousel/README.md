@@ -756,13 +756,13 @@ For questions or support, please open an issue on GitHub.
 ### Glass rendering and accessible navigation
 
 The Coverflow geometry and responsive image sizes remain unchanged. Glass uses
-one stationary backdrop surface with a subtle highlight and saturation; it does
+one stationary backdrop surface with a subtle highlight and edge lighting; it does
 not animate backdrop blur on moving slides. The shared Core theme tokens are
 unchanged, so other components retain their existing appearance. Browsers without
 backdrop-filter support receive an opaque fallback surface.
 
-The first item remains visible while Swiper loads, including when its script
-cannot load. Load the styles in your host document before rendering components
+The first item or its loading placeholder remains visible while Swiper loads,
+including when its script cannot load. Load the styles in your host document before rendering components
 for a consistently styled first paint:
 
 ```html
@@ -785,3 +785,34 @@ The reduced-motion preference selects a flat, immediate transition and updates
 when that preference changes. An application-level accessibility audit and
 physical-device checks are still required; scoped automated checks do not
 establish full WCAG conformance or guarantee a particular frame rate.
+
+### Artwork readiness and theme surfaces
+
+Mapped images show a stationary, poster-sized placeholder until decoding completes.
+A failed request shows “Image unavailable”; other images remain usable. The
+initial item uses eager loading and high fetch priority, while the other items
+retain lazy loading. Image requests do not block Swiper initialization. Readiness
+tracking starts before Swiper loads, so a failed Swiper script does not hide a
+successfully loaded poster. Custom templates retain their own loading markup and
+behavior.
+
+Artwork shadows and the mapped overlay follow the actual image rather than the
+full slide height. Coverflow slide/image sizes, transforms and selection callbacks
+remain unchanged. Glass uses the existing blur token without extra saturation;
+stationary surface lighting provides definition on plain backgrounds. Dark, Light
+and Minimal use distinct artwork shadow treatments. No blur is applied to moving
+posters, and the shared Core theme tokens are unchanged.
+
+Optional Carousel CSS variables:
+
+| Variable | Purpose |
+| --- | --- |
+| `--bzc-artwork-shadow` | Shadow around inactive artwork |
+| `--bzc-active-artwork-shadow` | Shadow around active artwork |
+| `--bzc-placeholder-ratio` | Loading/error placeholder ratio; defaults to `2 / 3`, without constraining loaded images |
+| `--bzc-placeholder-bg` | Loading/error placeholder background |
+| `--bzc-placeholder-color` | Loading/error placeholder text and border |
+
+Placeholder text currently uses English. On a uniformly colored background, blur
+has few details to soften; the glass treatment therefore also uses highlights and
+edges. Physical-device performance and visual approval are still required.

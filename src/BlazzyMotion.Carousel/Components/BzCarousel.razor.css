@@ -25,8 +25,7 @@
     display: flex;
     justify-content: center;
     align-items: center;
-    box-shadow: 0px 15px 40px rgba(0, 0, 0, 0.7),
-        0px 5px 15px rgba(0, 0, 0, 0.5);
+    box-shadow: none;
     border-radius: 10px;
     overflow: hidden;
     position: relative;
@@ -48,7 +47,7 @@
     object-fit: cover;
     object-position: center;
     display: block;
-    box-shadow: 0px 0px 8px rgba(255, 255, 255, 0.2);
+    box-shadow: var(--bzc-artwork-shadow, 0 6px 14px rgba(0, 0, 0, 0.24));
     transition: transform var(--bzc-transition-duration) ease,
         box-shadow 0.4s ease-out 0.3s;
 }
@@ -58,7 +57,7 @@
 }
 
 ::deep .swiper-slide-active img {
-    box-shadow: 0px 0px 25px rgba(255, 255, 255, 0.95);
+    box-shadow: var(--bzc-active-artwork-shadow, 0 10px 22px rgba(0, 0, 0, 0.3), 0 0 10px rgba(255, 255, 255, 0.18));
     transform: scale(var(--bzc-active-scale));
 }
 
@@ -136,21 +135,93 @@
     display: none;
 }
 
-/* One stationary glass surface; slide transforms remain owned by Swiper. */
+/* Surface lighting is stationary; Swiper alone owns the slide transforms. */
 .bzc-carousel-box.bzc-theme-glass {
-    background: var(--bzc-glass-bg, rgba(15, 15, 15, 0.6));
+    background: linear-gradient(135deg, rgba(255, 255, 255, 0.1), transparent 58%),
+        var(--bzc-glass-bg, rgba(15, 15, 15, 0.6));
     border-color: var(--bzc-glass-border, rgba(255, 255, 255, 0.15));
-    backdrop-filter: blur(var(--bzc-glass-blur, 12px)) saturate(145%);
-    -webkit-backdrop-filter: blur(var(--bzc-glass-blur, 12px)) saturate(145%);
+    backdrop-filter: blur(var(--bzc-glass-blur, 12px));
+    -webkit-backdrop-filter: blur(var(--bzc-glass-blur, 12px));
     box-shadow: var(--bzc-glass-shadow, 0 8px 32px rgba(0, 0, 0, 0.4)),
-        inset 0 1px 0 rgba(255, 255, 255, 0.22),
-        inset 0 -1px 0 rgba(255, 255, 255, 0.04);
+        inset 0 1px 0 rgba(255, 255, 255, 0.32),
+        inset 0 -1px 0 rgba(255, 255, 255, 0.06);
 }
 
 .bzc-carousel-box.bzc-theme-glass::before {
-    height: 28%;
-    background: linear-gradient(160deg, rgba(255, 255, 255, 0.1), transparent 65%);
+    height: 1px;
+    background: linear-gradient(90deg, transparent, rgba(255, 255, 255, 0.45), transparent);
     border-radius: inherit;
+}
+
+.bzc-carousel-box.bzc-theme-dark {
+    background: linear-gradient(145deg, rgba(255, 255, 255, 0.035), transparent 65%),
+        var(--bzc-dark-bg, #181a22);
+    box-shadow: var(--bzc-dark-shadow, 0 10px 32px rgba(0, 0, 0, 0.3)),
+        inset 0 1px 0 rgba(255, 255, 255, 0.07);
+}
+
+.bzc-carousel-box.bzc-theme-light {
+    --bzc-artwork-shadow: 0 5px 12px rgba(15, 23, 42, 0.12);
+    --bzc-active-artwork-shadow: 0 12px 24px rgba(15, 23, 42, 0.2);
+    --bzc-placeholder-color: #475569;
+    --bzc-placeholder-bg: rgba(15, 23, 42, 0.045);
+    background: var(--bzc-light-bg, #fff);
+    box-shadow: 0 2px 5px rgba(15, 23, 42, 0.035),
+        var(--bzc-light-shadow, 0 16px 36px rgba(15, 23, 42, 0.1));
+}
+
+.bzc-carousel-box.bzc-theme-minimal {
+    --bzc-artwork-shadow: none;
+    --bzc-active-artwork-shadow: 0 6px 14px rgba(0, 0, 0, 0.16);
+}
+
+/* Mapped artwork stays useful while individual requests load or fail. */
+.bzc-carousel-box ::deep .swiper-slide[data-bzc-media] {
+    overflow: visible;
+}
+
+.bzc-carousel-box ::deep .swiper-slide[data-bzc-media] > .bzc-overlay {
+    inset: auto;
+    top: 50%;
+    left: 50%;
+    width: var(--bzc-media-width, 0px);
+    height: var(--bzc-media-height, 0px);
+    transform: translate(-50%, -50%);
+}
+
+.bzc-carousel-box ::deep .swiper-slide-active[data-bzc-media] > .bzc-overlay {
+    transform: translate(-50%, -50%) scale(var(--bzc-active-scale, 1.1));
+}
+
+.bzc-carousel-box ::deep .swiper-slide[data-bzc-media]:not([data-bzc-media="ready"]) > img {
+    opacity: 0;
+    box-shadow: none;
+}
+
+.bzc-media-placeholder {
+    position: absolute;
+    width: var(--bzc-image-max-width, 160px);
+    aspect-ratio: var(--bzc-placeholder-ratio, 2 / 3);
+    display: grid;
+    place-items: center;
+    padding: 10px;
+    box-sizing: border-box;
+    border: 1px solid currentColor;
+    border-radius: 10px;
+    background: var(--bzc-placeholder-bg, rgba(255, 255, 255, 0.04));
+    color: var(--bzc-placeholder-color, #cbd5e1);
+    font: inherit;
+    font-size: 12px;
+    text-align: center;
+    pointer-events: none;
+}
+
+.bzc-carousel-box ::deep [data-bzc-media="ready"] > .bzc-media-placeholder {
+    display: none;
+}
+
+.bzc-carousel-box ::deep [data-bzc-media]:not([data-bzc-media="ready"]) > .bzc-overlay {
+    visibility: hidden;
 }
 
 .bzc-sr-only {

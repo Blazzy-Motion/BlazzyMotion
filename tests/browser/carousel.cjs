@@ -37,6 +37,7 @@ async function inspectCarousel(browser, name, contextOptions) {
   await page.goto(baseURL);
   const root = page.locator('.bz-demo .bzc-carousel-box');
   await root.locator('.bzc-visible').waitFor();
+  await root.locator('.swiper-slide-active[data-bzc-media=ready]').waitFor();
   await root.scrollIntoViewIfNeeded();
   const before = await root.locator('.swiper-slide-active').getAttribute('data-swiper-slide-index');
   await root.focus();
@@ -127,6 +128,60 @@ async function inspectLoopCopies(browser) {
   console.log('PASS loop copies: one selection and clean teardown for 4, 5 and 6 items');
 }
 
+/** Capture each theme on independent host backgrounds without changing shared theme tokens. */
+async function inspectHostBackgrounds(browser) {
+  const page = await browser.newPage({ viewport: { width: 1200, height: 1000 } });
+  await page.goto(baseURL);
+  const root = page.locator('.bz-demo .bzc-carousel-box');
+  await root.locator('.swiper-slide-active[data-bzc-media=ready]').waitFor();
+  const backgrounds = { light: '#f1f5f9', dark: '#111827', mixed: 'linear-gradient(135deg, #e2e8f0, #334155 50%, #22d3ee)' };
+  for (const theme of ['Glass', 'Dark', 'Light', 'Minimal']) {
+    await page.getByRole('button', { name: theme, exact: true }).click();
+    for (const [name, background] of Object.entries(backgrounds)) {
+      await root.evaluate((el, value) => { el.parentElement.style.background = value; }, background);
+      await root.screenshot({ path: path.join(artifacts, `surface-${theme}-${name}.png`) });
+      if (theme === 'Glass') {
+        const filter = await root.evaluate(el => getComputedStyle(el).backdropFilter);
+        assert.match(filter, /blur/);
+        assert(!filter.includes('saturate'), 'Glass should not require extra saturation');
+      }
+    }
+  }
+  await page.close();
+  console.log('PASS theme surfaces: four themes on light, dark and mixed host backgrounds');
+}
+
+/** Exercise slow, cached, failed and replaced mapped artwork independently of Swiper. */
+async function inspectImageReadiness(browser) {
+  const page = await browser.newPage();
+  let release;
+  const gate = new Promise(resolve => { release = resolve; });
+  await page.route('**/images/*.webp', async route => { await gate; await route.continue(); });
+  try {
+    await page.goto(baseURL, { waitUntil: 'domcontentloaded' });
+    const root = page.locator('.bz-demo .bzc-carousel-box');
+    await root.locator('.bzc-visible').waitFor();
+    const active = root.locator('.swiper-slide-active');
+    await active.locator('.bzc-media-placeholder').waitFor({ state: 'visible' });
+    const pending = await active.evaluate(slide => ({ state: slide.dataset.bzcMedia, shadow: getComputedStyle(slide).boxShadow, imageOpacity: getComputedStyle(slide.querySelector('img')).opacity, overlay: getComputedStyle(slide.querySelector('.bzc-overlay')).visibility }));
+    assert.deepEqual(pending, { state: 'loading', shadow: 'none', imageOpacity: '0', overlay: 'hidden' });
+    await root.screenshot({ path: path.join(artifacts, 'loading-slow-posters.png') });
+    assert.equal(await root.locator('img[loading=eager][fetchpriority=high]').count(), 1);
+    release();
+    await root.locator('.swiper-slide-active[data-bzc-media=ready]').waitFor();
+    assert(await active.locator('.bzc-media-placeholder').isHidden());
+    const dimensions = await active.evaluate(slide => ({ image: slide.querySelector('img').offsetHeight, overlay: slide.querySelector('.bzc-overlay').offsetHeight, total: slide.offsetHeight }));
+    assert.equal(dimensions.image, dimensions.overlay, 'Overlay must follow artwork, not the full slide');
+    await page.route('**/missing-poster.webp', route => route.abort());
+    await active.locator('img').evaluate(image => { image.src = '/missing-poster.webp'; });
+    await root.locator('.swiper-slide-active[data-bzc-media=error]').waitFor();
+    assert.equal(await active.locator('.bzc-media-placeholder').textContent(), 'Image unavailable');
+    await active.locator('img').evaluate(image => { image.src = '/images/despicableme.webp'; });
+    await root.locator('.swiper-slide-active[data-bzc-media=ready]').waitFor();
+    console.log('PASS image lifecycle: slow placeholder, poster-sized overlay, failure and source replacement');
+  } finally { release(); await page.close(); }
+}
+
 /** Verify that unavailable Swiper assets leave useful content rather than a blank stage. */
 async function inspectFallback(browser) {
   const page = await browser.newPage();
@@ -134,7 +189,8 @@ async function inspectFallback(browser) {
   await page.goto(baseURL);
   const image = page.locator('.bz-demo .bzc-pending .swiper-slide').first().locator('img');
   await image.waitFor({ state: 'visible' });
-  assert(await image.evaluate(img => getComputedStyle(img.closest('.swiper-container')).visibility === 'visible'));
+  await page.locator('.bz-demo .bzc-pending [data-bzc-media=ready]').first().waitFor();
+  assert(await image.evaluate(img => getComputedStyle(img.closest('.swiper-container')).visibility === 'visible' && getComputedStyle(img).opacity === '1'));
   assert(await page.locator('.bz-demo [data-bzc-direction=next]').isDisabled());
   console.log('PASS missing Swiper: first artwork remains visible');
   await page.close();
@@ -149,6 +205,8 @@ async function inspectFallback(browser) {
     await inspectCarousel(browser, 'mobile', { ...devices['iPhone 13'] });
     await inspectCarousel(browser, 'reduced', { viewport: { width: 1440, height: 1000 }, reducedMotion: 'reduce' });
     await inspectLoopCopies(browser);
+    await inspectHostBackgrounds(browser);
+    await inspectImageReadiness(browser);
     await inspectFallback(browser);
   } finally { await browser.close(); }
 })().catch(error => { console.error(error); process.exit(1); });

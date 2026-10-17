@@ -71,6 +71,7 @@ public class BzCarouselJsInterop : IAsyncDisposable
     /// <param name="options">Carousel configuration options</param>
     /// <param name="dotNetRef">Reference to the Blazor component for callbacks</param>
     /// <remarks>
+    /// <para>Image readiness and error placeholders are bound before loading Swiper.</para>
     /// <para>
     /// This method:
     /// <list type="number">
@@ -88,6 +89,9 @@ public class BzCarouselJsInterop : IAsyncDisposable
     {
         _element = element;
         var module = await _moduleTask.Value;
+
+        // Image readiness is independent of Swiper; a failed script must not hide loaded artwork.
+        await module.InvokeVoidAsync("prepareCarouselImages", element);
 
         // Ensure Swiper library is loaded
         if (!_swiperLoaded)
