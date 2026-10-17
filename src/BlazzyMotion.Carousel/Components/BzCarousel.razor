@@ -1,5 +1,6 @@
 @namespace BlazzyMotion.Carousel.Components
 @using Microsoft.AspNetCore.Components.Web
+@using BlazzyMotion.Carousel.Models
 @typeparam TItem where TItem : class
 @inherits BlazzyMotion.Core.Abstractions.BzComponentBase
 
@@ -62,9 +63,20 @@ else
         </div>
         @if (ShowNavigation && ItemCount > 1)
         {
-            <div class="bzc-navigation" role="group" aria-label="Carousel navigation">
-                <button type="button" class="bzc-previous" aria-label="Previous slide" disabled>←</button>
-                <button type="button" class="bzc-next" aria-label="Next slide" disabled>→</button>
+            <div class="bzc-navigation" data-style="@NavigationStyle.ToString().ToLowerInvariant()" role="group" aria-label="Carousel navigation">
+                @if (NavigationStyle == BzCarouselNavigation.Arrows)
+                {
+                    <button type="button" class="bzc-previous" aria-label="Previous slide" disabled>←</button>
+                    <button type="button" class="bzc-next" aria-label="Next slide" disabled>→</button>
+                }
+                else
+                {
+                    @for (var dotIndex = 0; dotIndex < ItemCount; dotIndex++)
+                    {
+                        <button type="button" class="bzc-dot" data-bzc-index="@dotIndex"
+                                aria-label="@($"Go to slide {dotIndex + 1}")" disabled></button>
+                    }
+                }
             </div>
         }
         <span class="bzc-status" aria-live="polite" aria-atomic="true"></span>

@@ -775,8 +775,9 @@ merge behavior: the selected presentation determines these values.
 
 ### Accessible navigation
 
-Previous/next buttons appear by default for multiple items. Set
-`ShowNavigation="false"` to hide them; keyboard navigation remains available when
+Dots appear by default for multiple items, with the active item shown as a pill.
+Use `NavigationStyle="BzCarouselNavigation.Arrows"` for previous/next buttons. Set
+`ShowNavigation="false"` to hide navigation; keyboard navigation remains available when
 the region is focused. Use Tab to focus the carousel, then Left/Right to navigate.
 Arrow keys inside links, form controls, and editable content are left to those
 controls. When `OnItemSelected` is supplied, the active slide also provides a

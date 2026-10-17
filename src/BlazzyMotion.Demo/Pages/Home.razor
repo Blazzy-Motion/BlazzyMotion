@@ -63,12 +63,12 @@
         <BzThemePicker @bind-CurrentTheme="_currentTheme" />
 
       
-        <label class="bz-carousel-variant">Presentation
-            <select @bind="_variant" aria-label="Carousel presentation">
-                <option value="Auto">Coverflow (automatic)</option>
-                <option value="Cards">Cards</option>
-            </select>
-        </label>
+        <div class="bz-carousel-variant" role="group" aria-label="Carousel presentation">
+            <button type="button" aria-pressed="@((_variant == BlazzyMotion.Carousel.Models.BzCarouselVariant.Auto).ToString().ToLowerInvariant())"
+                    @onclick="() => SetVariant(BlazzyMotion.Carousel.Models.BzCarouselVariant.Auto)">Coverflow</button>
+            <button type="button" aria-pressed="@((_variant == BlazzyMotion.Carousel.Models.BzCarouselVariant.Cards).ToString().ToLowerInvariant())"
+                    @onclick="() => SetVariant(BlazzyMotion.Carousel.Models.BzCarouselVariant.Cards)">Cards</button>
+        </div>
         <div class="bz-demo__stage">
             <BzCarousel TItem="Movie"
                         Items="@_movies"
@@ -175,6 +175,13 @@
         new() { Title = "The Wild Robot", ImageUrl = "images/wild-robot.webp" },
         new() { Title = "Deadpool & Wolverine", ImageUrl = "images/wolwerine.webp" }
     };
+
+    /// <summary>Changes the live demo presentation without navigating or reloading the page.</summary>
+    /// <param name="variant">Presentation to preview.</param>
+    private void SetVariant(BlazzyMotion.Carousel.Models.BzCarouselVariant variant)
+    {
+        _variant = variant;
+    }
 
     private void OnItemSelected(Movie selectedItem)
     {

@@ -281,3 +281,30 @@
     .bz-demo ::deep .bz-pill__icon { display: none; }
     .bz-demo ::deep .bz-pill { padding: 9px 12px; }
 }
+
+.bz-demo ::deep .bz-theme-pills { background: none; border: 0; box-shadow: none; }
+.bz-carousel-variant { gap: 4px; margin: 8px auto 18px; }
+.bz-carousel-variant button {
+    border: 0;
+    border-radius: 9px;
+    background: transparent;
+    color: #94a3b8;
+    padding: 10px 18px;
+    min-height: 44px;
+    font: inherit;
+    cursor: pointer;
+}
+.bz-carousel-variant button[aria-pressed="true"] { background: rgb(148 163 184 / 10%); color: #f1f5f9; }
+.bz-carousel-variant button:focus-visible { outline: 2px solid #67e8f9; outline-offset: 2px; }
+.bz-selected-title {
+    margin: 12px 0 0;
+    font-size: 1.125rem;
+    font-weight: 500;
+    background: none;
+    -webkit-text-fill-color: currentColor;
+    color: #cbd5e1;
+}
+
+.bz-demo__title { margin-bottom: 18px; }
+.bz-demo__stage { padding: 4px 0; }
+.bz-carousel-variant { margin-bottom: 8px; }

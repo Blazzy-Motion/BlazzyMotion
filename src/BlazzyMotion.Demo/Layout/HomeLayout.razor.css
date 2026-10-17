@@ -12,7 +12,7 @@
     position: fixed;
     top: 1.5rem;
     right: 1.5rem;
-    z-index: 100;
+    z-index: 1100;
     display: flex;
     align-items: center;
     gap: 0.5rem;
@@ -26,12 +26,7 @@
     text-decoration: none;
     font-size: 0.875rem;
     font-weight: 500;
-    transition: all 0.2s ease;
-    will-change: transform;
-    transform: translateZ(0);
-    -webkit-transform: translateZ(0);
-    backface-visibility: hidden;
-    -webkit-backface-visibility: hidden;
+    transition: background-color 0.2s ease, border-color 0.2s ease, color 0.2s ease;
 }
 
 .bz-home-layout__docs-btn:hover {

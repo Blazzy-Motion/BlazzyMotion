@@ -24,3 +24,9 @@ npm test
 `BASE_URL` overrides the server address. `CHROMIUM_PATH` can select an existing
 Chromium executable. Dependencies and screenshots are ignored by Git. CI starts
 the Demo, runs the checks and uploads screenshots alongside test/coverage results.
+
+Mobile checks also dispatch touch gestures through Chromium's input protocol,
+verify that the fixed documentation link remains reachable throughout each
+swipe, and check that the document identity does not change. These checks cover
+both Cards and Coverflow. Direct dot navigation and the active presentation
+state are asserted independently from keyboard navigation.

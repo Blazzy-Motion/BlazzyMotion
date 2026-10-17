@@ -27,7 +27,8 @@ async function checkPresentation(browser, mode) {
         await page.waitForSelector('.bzc-visible');
         const root = page.locator('.bzc-carousel-box');
         for (const variant of ['Cards', 'Auto']) {
-            await page.getByLabel('Carousel presentation', { exact: true }).selectOption(variant);
+            await page.getByRole('button', { name: variant === 'Cards' ? 'Cards' : 'Coverflow', exact: true }).click();
+            assert.equal(await page.locator('.bz-carousel-variant button[aria-pressed="true"]').count(), 1);
             await page.waitForFunction(value => document.querySelector('.swiper-container').swiper?.params.effect ===
                 (matchMedia('(prefers-reduced-motion: reduce)').matches ? 'slide' : value === 'Cards' ? 'cards' : 'coverflow'), variant);
             const before = await root.locator('.bzc-status').textContent();
@@ -35,6 +36,10 @@ async function checkPresentation(browser, mode) {
             await page.keyboard.press('ArrowRight');
             await page.waitForFunction(text => document.querySelector('.bzc-status').textContent !== text, before);
             await page.waitForTimeout(350);
+            await page.getByRole('button', { name: 'Go to slide 4', exact: true }).click();
+            await page.waitForFunction(() => document.querySelector('[data-bzc-index="3"]').getAttribute('aria-current') === 'true');
+            await page.waitForTimeout(350);
+            if (mode === 'mobile') await checkMobileSwipe(page, root);
             const input = await root.evaluateHandle(element => {
                 const input = document.createElement('input');
                 input.setAttribute('aria-label', 'Consumer input');
@@ -73,6 +78,33 @@ async function checkPresentation(browser, mode) {
         assert.deepEqual(errors, []);
         console.log(`PASS ${mode}: both presentations, four themes, local keyboard navigation, geometry and scoped axe`);
     } finally { await context.close(); }
+}
+
+/** Exercises real touch input while checking fixed documentation access and document stability. */
+async function checkMobileSwipe(page, root) {
+    await root.locator('.swiper-slide-active img').scrollIntoViewIfNeeded();
+    const before = await root.locator('.bzc-status').textContent();
+    const documentId = await page.evaluate(() => window.__carouselDocumentId ||= crypto.randomUUID());
+    const bounds = await root.locator('.swiper-slide-active img').boundingBox();
+    const session = await page.context().newCDPSession(page);
+    const startX = bounds.x + bounds.width * .8;
+    const endX = bounds.x + bounds.width * .1;
+    const y = bounds.y + bounds.height / 2;
+    try {
+        await session.send('Input.dispatchTouchEvent', { type: 'touchStart', touchPoints: [{ x: startX, y }] });
+        for (let step = 1; step <= 12; step++) {
+            await session.send('Input.dispatchTouchEvent', { type: 'touchMove', touchPoints: [{ x: startX + (endX - startX) * step / 12, y }] });
+            await page.waitForTimeout(35);
+            assert.ok(await page.evaluate(() => {
+                const button = document.querySelector('.bz-home-layout__docs-btn');
+                const box = button.getBoundingClientRect();
+                return document.elementFromPoint(box.x + box.width / 2, box.y + box.height / 2)?.closest('.bz-home-layout__docs-btn') === button;
+            }), 'The fixed Docs link must stay above the deck throughout a swipe');
+        }
+        await session.send('Input.dispatchTouchEvent', { type: 'touchEnd', touchPoints: [] });
+        await page.waitForFunction(text => document.querySelector('.bzc-status').textContent !== text, before);
+        assert.equal(await page.evaluate(() => window.__carouselDocumentId), documentId, 'Swipe must not reload the document');
+    } finally { await session.detach(); }
 }
 
 /** Verifies active loop copies remain accessible and activate original consumer handlers. */
@@ -130,7 +162,7 @@ async function checkInitializationFailure(browser) {
         await page.goto(baseUrl);
         await page.waitForSelector('.bzc-pending .swiper-slide img', { state: 'visible' });
         assert.ok(await page.locator('.bzc-pending .swiper-slide img').first().isVisible());
-        assert.ok(await page.getByRole('button', { name: 'Next slide', exact: true }).isDisabled());
+        assert.ok(await page.getByRole('button', { name: 'Go to slide 2', exact: true }).isDisabled());
         console.log('PASS initialization failure: first artwork remains visible and unavailable controls stay disabled');
     } finally { await page.close(); }
 }

@@ -216,9 +216,13 @@ public partial class BzCarousel<TItem> : BzComponentBase where TItem : class
     [Parameter]
     public BzCarouselVariant Variant { get; set; } = BzCarouselVariant.Auto;
 
-    /// <summary>Shows accessible previous/next buttons when multiple items are present.</summary>
+    /// <summary>Shows accessible navigation when multiple items are present.</summary>
     [Parameter]
     public bool ShowNavigation { get; set; } = true;
+
+    /// <summary>Navigation presentation. Dots provide a compact default; arrows remain available.</summary>
+    [Parameter]
+    public BzCarouselNavigation NavigationStyle { get; set; } = BzCarouselNavigation.Dots;
 
     #region Injected Services
 
@@ -538,7 +542,7 @@ public partial class BzCarousel<TItem> : BzComponentBase where TItem : class
     {
         var currentItemCount = ItemCount;
         var optionsSnapshot = Options != null ? JsonSerializer.Serialize(Options) : null;
-        var keyParamsHash = HashCode.Combine(Loop, RotateDegree, Depth, MinItemsForLoop, MinItemsForCoverflow, SelectOnScroll, HashCode.Combine(Variant, AutoDetectMode, ShowNavigation));
+        var keyParamsHash = HashCode.Combine(Loop, RotateDegree, Depth, MinItemsForLoop, MinItemsForCoverflow, SelectOnScroll, HashCode.Combine(Variant, AutoDetectMode, ShowNavigation, NavigationStyle));
 
         if (currentItemCount == 0)
         {

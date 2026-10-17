@@ -285,7 +285,13 @@ function bindCarouselAccessibility(element, swiper, count) {
         if (swiper.destroyed || !swiper.params) return;
         if (previous) previous.disabled = !swiper.params.loop && swiper.isBeginning;
         if (next) next.disabled = !swiper.params.loop && swiper.isEnd;
-        if (status) status.textContent = `Slide ${(swiper.realIndex % count) + 1} of ${count}`;
+        const activeIndex = swiper.realIndex % count;
+        if (status) status.textContent = `Slide ${activeIndex + 1} of ${count}`;
+        element.querySelectorAll('[data-bzc-index]').forEach(dot => {
+            dot.disabled = false;
+            if (Number(dot.dataset.bzcIndex) === activeIndex) dot.setAttribute('aria-current', 'true');
+            else dot.removeAttribute('aria-current');
+        });
         element.querySelectorAll('.bzc-select').forEach(button => {
             button.tabIndex = button.closest('.swiper-slide')?.classList.contains('swiper-slide-active') ? 0 : -1;
         });
@@ -301,6 +307,13 @@ function bindCarouselAccessibility(element, swiper, count) {
             });
         });
     };
+    element.querySelector('.bzc-navigation')?.addEventListener('click', event => {
+        const dot = event.target.closest('[data-bzc-index]');
+        if (!dot || dot.disabled) return;
+        const index = Number(dot.dataset.bzcIndex);
+        if (swiper.params.loop) swiper.slideToLoop(index);
+        else swiper.slideTo(index);
+    }, { signal: controller.signal });
     previous?.addEventListener('click', () => swiper.slidePrev(), { signal: controller.signal });
     next?.addEventListener('click', () => swiper.slideNext(), { signal: controller.signal });
     element.addEventListener('keydown', event => {

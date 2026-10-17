@@ -109,4 +109,18 @@ public class BzCarouselRefreshTests : TestBase
         cut.FindAll(".bzc-navigation button").Should().HaveCount(buttons);
     }
 
+    /// <summary>Dots identify original items rather than loop copies and retain an arrow opt-in.</summary>
+    [Fact]
+    public void Navigation_DefaultsToNamedDots_AndSupportsArrows()
+    {
+        var cut = RenderComponent<BzCarousel<TestMovie>>(p => p
+            .Add(x => x.Items, new[] { new TestMovie(), new TestMovie(), new TestMovie() }));
+        cut.FindAll(".bzc-dot").Should().HaveCount(3);
+        cut.Find("[data-bzc-index='2']").GetAttribute("aria-label").Should().Be("Go to slide 3");
+        cut.SetParametersAndRender(p => p.Add(x => x.NavigationStyle, BzCarouselNavigation.Arrows));
+        cut.FindAll(".bzc-dot").Should().BeEmpty();
+        cut.Find(".bzc-previous").Should().NotBeNull();
+        cut.Find(".bzc-next").Should().NotBeNull();
+    }
+
 }
