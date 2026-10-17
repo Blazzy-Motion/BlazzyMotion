@@ -122,6 +122,19 @@ async function checkLoopCopies(browser) {
     } finally { await page.close(); }
 }
 
+/** Verifies missing Swiper resources do not turn available content into an empty panel. */
+async function checkInitializationFailure(browser) {
+    const page = await browser.newPage();
+    try {
+        await page.route('**/swiper-bundle.min.js', route => route.abort());
+        await page.goto(baseUrl);
+        await page.waitForSelector('.bzc-pending .swiper-slide img', { state: 'visible' });
+        assert.ok(await page.locator('.bzc-pending .swiper-slide img').first().isVisible());
+        assert.ok(await page.getByRole('button', { name: 'Next slide', exact: true }).isDisabled());
+        console.log('PASS initialization failure: first artwork remains visible and unavailable controls stay disabled');
+    } finally { await page.close(); }
+}
+
 /** Runs the checks and always closes Chromium so assertion failures cannot hang CI. */
 async function main() {
     await waitForServer();
@@ -131,6 +144,7 @@ async function main() {
     try {
         for (const mode of ['desktop', 'mobile', 'reduced']) await checkPresentation(browser, mode);
         await checkLoopCopies(browser);
+        await checkInitializationFailure(browser);
     } finally { await browser.close(); }
 }
 main().catch(error => { console.error(error); process.exitCode = 1; });

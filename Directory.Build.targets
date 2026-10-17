@@ -1,12 +1,8 @@
 <Project>
-  <!-- Sonar's Razor analysis pass generates the legacy Execute method itself.
-       Keep the compatibility shim for ordinary builds, without defining it twice
-       during analysis. This does not exclude component logic from analysis. -->
-  <Target Name="UseGeneratedRazorImportsDuringSonar"
-          BeforeTargets="CoreCompile"
-          Condition="'$(SonarQubeTargetsImported)' == 'true' And ('$(MSBuildProjectName)' == 'BlazzyMotion.Core' Or '$(MSBuildProjectName)' == 'BlazzyMotion.Carousel')">
-    <ItemGroup>
-      <Compile Remove="_Imports.razor.cs" />
-    </ItemGroup>
-  </Target>
+  <!-- The Sonar build explicitly selects Razor's generated imports method.
+       Ordinary builds retain the compatibility shim. Package validation catches
+       accidental omission of the legacy API from release artifacts. -->
+  <ItemGroup Condition="'$(BlazzyUseGeneratedImports)' == 'true' And ('$(MSBuildProjectName)' == 'BlazzyMotion.Core' Or '$(MSBuildProjectName)' == 'BlazzyMotion.Carousel')">
+    <Compile Remove="_Imports.razor.cs" />
+  </ItemGroup>
 </Project>

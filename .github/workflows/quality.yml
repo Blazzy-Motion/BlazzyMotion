@@ -51,6 +51,7 @@ jobs:
           GITHUB_TOKEN: ${{ secrets.GITHUB_TOKEN }}
           SONAR_TOKEN: ${{ secrets.SONAR_TOKEN }}
         run: |
+          set -o pipefail
           dotnet sonarscanner begin \
             /k:"Blazzy-Motion_BlazzyMotion" \
             /o:"blazzy-motion" \
@@ -60,13 +61,14 @@ jobs:
             /d:sonar.cs.opencover.reportsPaths="**/coverage.opencover.xml" \
             /d:sonar.coverage.exclusions="**Tests/**,**Demo/**,**/*JsInterop*.cs,**/SourceGen/**" \
             /d:sonar.exclusions="**/wwwroot/js/**" \
+            /d:sonar.test.inclusions="tests/**/*" \
             /d:sonar.qualitygate.wait=true 2>&1 | tee "$RUNNER_TEMP/sonar-begin.log"
 
       - name: Restore Dependencies
         run: dotnet restore ${{ env.SOLUTION_PATH }}
 
       - name: Build Solution
-        run: dotnet build ${{ env.SOLUTION_PATH }} --no-restore --configuration Release
+        run: dotnet build ${{ env.SOLUTION_PATH }} --no-restore --configuration Release /p:BlazzyUseGeneratedImports=true
 
       - name: Run Tests
         run: |
@@ -126,7 +128,7 @@ jobs:
               value = os.environ.get(name)
               if value:
                   text = text.replace(value, "[REDACTED]")
-          lines = [line for line in text.splitlines() if any(word in line.lower() for word in ("error", "failed", "unauthorized", "automatic analysis"))]
+          lines = [line for line in text.splitlines() if any(word in line.lower() for word in ("error", "failed", "unauthorized", "automatic analysis", "invalid", "not authorized", "not found", "permission", "exception"))]
           message = " | ".join(lines)[-2400:] or "Sonar initialization failed; inspect the SonarCloud Begin step."
           message = message.replace("%", "%25").replace("\r", "%0D").replace("\n", "%0A")
           print("::error title=Sonar initialization failed::" + message)
