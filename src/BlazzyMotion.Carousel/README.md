@@ -11,6 +11,12 @@ A modern, high-performance 3D carousel component for Blazor with zero-configurat
 [![Maintainability Rating](https://sonarcloud.io/api/project_badges/measure?project=Blazzy-Motion_BlazzyMotion&metric=sqale_rating)](https://sonarcloud.io/summary/new_code?id=Blazzy-Motion_BlazzyMotion)
 [![Security Rating](https://sonarcloud.io/api/project_badges/measure?project=Blazzy-Motion_BlazzyMotion&metric=security_rating)](https://sonarcloud.io/summary/new_code?id=Blazzy-Motion_BlazzyMotion)
 
+## Unreleased
+
+Nested grid layouts observe actual Carousel container resizing without treating
+ancestor attribute-only updates as a request to realign an active touch gesture.
+Standalone Carousel parent observation and existing public APIs remain unchanged.
+
 ## Version 1.5.0-preview.1
 
 Requires BlazzyMotion.Core 1.4.0-preview.1 or later. Core is installed transitively:

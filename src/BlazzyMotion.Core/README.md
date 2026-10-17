@@ -6,6 +6,12 @@ Core infrastructure package for BlazzyMotion UI components.
 [![NuGet Downloads](https://img.shields.io/nuget/dt/BlazzyMotion.Core.svg)](https://www.nuget.org/packages/BlazzyMotion.Core/)
 [![License: MIT](https://img.shields.io/badge/License-MIT-blue.svg)](https://opensource.org/licenses/MIT)
 
+## Unreleased
+
+Nested grid layouts observe actual Carousel container resizing without treating
+ancestor attribute-only updates as a request to realign an active touch gesture.
+Standalone Carousel parent observation and existing public APIs remain unchanged.
+
 ## Version 1.4.0-preview.1
 
 This preview updates the shared Carousel runtime with local keyboard navigation,

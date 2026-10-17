@@ -14,7 +14,9 @@ local keyboard navigation, assistive controls, four themes, scoped axe checks,
 reduced-motion rendering, an unavailable Swiper script, and the first Carousel
 gesture and complete eight-company loop in both directions inside a Bento
 composition (including stable dimensions, dashboard updates and preserved
-animations on ordinary Bento cards). Screenshots are saved
+animations on ordinary Bento cards). A separate route-lifecycle regression covers
+Home/Bento reentry, ancestor updates while a touch is held, container resizing
+without a window resize, metric updates and instance disposal. Screenshots are saved
 under `artifacts/`. These checks do not establish real-device performance, full
 application accessibility or screen-reader interoperability.
 
