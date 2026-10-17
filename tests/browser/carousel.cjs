@@ -66,17 +66,23 @@ async function inspectCarousel(browser, name, contextOptions) {
   await page.keyboard.press('ArrowLeft');
   assert.equal(await root.locator('.swiper-slide-active').getAttribute('data-swiper-slide-index'), inputIndex);
   await input.evaluate(field => field.remove());
+  const themeLighting = new Map();
   for (const theme of ['Glass', 'Dark', 'Light', 'Minimal']) {
     await page.getByRole('button', { name: theme, exact: true }).click();
-    await page.waitForTimeout(150);
+    // Theme changes include a delayed artwork-shadow transition.
+    await page.waitForTimeout(750);
     const depth = await root.locator('.swiper-slide-active').evaluate(slide => ({
       syntheticSurface: getComputedStyle(slide, '::before').content,
       shadow: getComputedStyle(slide).boxShadow,
+      artworkShadow: getComputedStyle(slide.querySelector('img')).boxShadow,
+      artworkFilter: getComputedStyle(slide.querySelector('img')).filter,
       image: slide.querySelector('img').offsetHeight,
       height: slide.offsetHeight,
       container: slide.closest('.swiper-container').offsetHeight,
       overlay: slide.querySelector('.bzc-overlay').offsetHeight
     }));
+    themeLighting.set(theme, depth.artworkShadow);
+    assert.equal(depth.artworkFilter, 'none', 'Moving artwork must not introduce blur or color filters');
     assert.equal(depth.syntheticSurface, 'none', 'Use the actual Swiper slide, not a shorter pseudo-element');
     assert.equal(depth.height, depth.container, 'Preserve main full-height Swiper slides');
     assert.equal(depth.overlay, depth.height, 'Preserve main full-height overlays');
@@ -91,6 +97,7 @@ async function inspectCarousel(browser, name, contextOptions) {
     assert.deepEqual(result.violations.map(v => ({ id: v.id, impact: v.impact })), [], `${name}/${theme} accessibility`);
     await page.screenshot({ path: path.join(artifacts, `${name}-${theme}.png`) });
   }
+  assert.equal(new Set(themeLighting.values()).size, 4, 'Each theme must retain its own active artwork lighting');
   if (contextOptions.reducedMotion === 'reduce') {
     assert.equal(await root.evaluate(el => el.querySelector('.swiper-container').swiper.params.effect), 'slide');
     assert.equal(await root.evaluate(el => el.querySelector('.swiper-container').swiper.params.speed), 0);

@@ -137,6 +137,7 @@
 
 /* Surface lighting is stationary; Swiper alone owns the slide transforms. */
 .bzc-carousel-box.bzc-theme-glass {
+    --bzc-active-artwork-shadow: 0 10px 22px rgba(0, 0, 0, 0.3), 0 0 16px rgba(255, 255, 255, 0.34);
     background: linear-gradient(135deg, rgba(255, 255, 255, 0.16), rgba(255, 255, 255, 0.035) 55%, rgba(255, 255, 255, 0.065)),
         var(--bzc-glass-bg, rgba(15, 15, 15, 0.6));
     border-color: var(--bzc-glass-border, rgba(255, 255, 255, 0.15));
@@ -154,7 +155,9 @@
 }
 
 .bzc-carousel-box.bzc-theme-dark {
-    --bzc-slide-surface: linear-gradient(160deg, rgba(255, 255, 255, 0.035), rgba(0, 0, 0, 0.1));
+    --bzc-artwork-shadow: 0 6px 14px rgba(0, 0, 0, 0.3);
+    --bzc-active-artwork-shadow: 0 12px 26px rgba(0, 0, 0, 0.42), 0 0 0 1px rgba(255, 255, 255, 0.1);
+    --bzc-slide-surface: linear-gradient(160deg, rgba(255, 255, 255, 0.055), rgba(0, 0, 0, 0.16));
     background: var(--bzc-dark-bg, #181a22);
     box-shadow: var(--bzc-dark-shadow, 0 10px 32px rgba(0, 0, 0, 0.3)),
         inset 0 1px 0 rgba(255, 255, 255, 0.07);
@@ -167,7 +170,8 @@
     --bzc-placeholder-bg: rgba(15, 23, 42, 0.045);
     --bzc-slide-surface: linear-gradient(155deg, rgba(255, 255, 255, 0.9), rgba(226, 232, 240, 0.42));
     --bzc-slide-surface-shadow: 0 2px 5px rgba(15, 23, 42, 0.025), 0 10px 20px rgba(15, 23, 42, 0.045);
-    background: linear-gradient(160deg, rgba(226, 232, 240, 0.18), transparent 48%, rgba(226, 232, 240, 0.24)),
+    border-color: var(--bzc-light-border, rgba(15, 23, 42, 0.12));
+    background: linear-gradient(160deg, rgba(226, 232, 240, 0.22), transparent 48%, rgba(226, 232, 240, 0.3)),
         var(--bzc-light-bg, #fff);
     box-shadow: 0 2px 5px rgba(15, 23, 42, 0.035),
         var(--bzc-light-shadow, 0 16px 36px rgba(15, 23, 42, 0.1));

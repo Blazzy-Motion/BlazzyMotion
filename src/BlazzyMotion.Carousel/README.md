@@ -834,3 +834,13 @@ background tokens remain supported. Optional `--bzc-slide-surface` and
 placeholders are rendered by Carousel markup and managed by runtime image
 decoding. Source generators retain their existing model mapping and template
 generation; they do not create placeholder images.
+
+### Theme lighting
+
+Glass emphasizes the active poster with a restrained white halo. Dark uses a
+neutral edge and a dark artwork shadow instead of the Glass halo. Light combines
+a neutral border, a soft white-gray surface and diffuse shadows without a white
+artwork glow. Minimal leaves the full-height slide surface transparent and
+shadow-free. These treatments retain the existing Coverflow geometry and do not
+add blur to moving artwork or change the shared Core tokens. Existing artwork
+shadow variables remain available for host customization.
