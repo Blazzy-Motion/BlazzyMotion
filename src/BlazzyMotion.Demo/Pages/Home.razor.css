@@ -253,3 +253,21 @@
         font-size: 0.875rem;
     }
 }
+
+.bz-carousel-variant {
+    display: flex;
+    align-items: center;
+    justify-content: center;
+    gap: 12px;
+    margin: 16px 0;
+    color: #cbd5e1;
+}
+
+.bz-carousel-variant select {
+    padding: 10px 14px;
+    border: 1px solid #64748b;
+    border-radius: 10px;
+    color: #f8fafc;
+    background: #172033;
+    font: inherit;
+}

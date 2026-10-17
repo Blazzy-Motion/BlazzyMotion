@@ -126,9 +126,11 @@ export async function initializeCarousel(element, optionsJson, dotNetRef = null)
 
         const options = optionsJson ? JSON.parse(optionsJson) : {};
         const wrapper = container.querySelector('.swiper-wrapper');
-        const originalSlides = wrapper.querySelectorAll('.swiper-slide');
+        const originalSlides = wrapper.querySelectorAll('.swiper-slide:not([data-bz-clone])');
         const slideCount = originalSlides.length;
 
+        // Clear only clones owned by this module before rebuilding the instance.
+        wrapper.querySelectorAll('[data-bz-clone]').forEach(clone => clone.remove());
         const minSlidesForLoop = 4;
         const minSlidesForAutoLoop = 7;
         const shouldLoop = options.loop === true && slideCount >= minSlidesForLoop;
@@ -136,7 +138,7 @@ export async function initializeCarousel(element, optionsJson, dotNetRef = null)
         // Store original slide count for correct realIndex calculation with clones
         const originalSlideCount = slideCount;
 
-        if (shouldLoop && slideCount < minSlidesForAutoLoop) {
+        if (shouldLoop && options.effect !== "cards" && slideCount < minSlidesForAutoLoop) {
             const slidesToAdd = minSlidesForAutoLoop - slideCount + 2;
             for (let i = 0; i < slidesToAdd; i++) {
                 const clone = originalSlides[i % slideCount].cloneNode(true);
@@ -151,13 +153,15 @@ export async function initializeCarousel(element, optionsJson, dotNetRef = null)
         const resistanceRatio = options.resistanceRatio ?? DEFAULT_TOUCH_SETTINGS.resistanceRatio;
         const longSwipesRatio = options.longSwipesRatio ?? DEFAULT_TOUCH_SETTINGS.longSwipesRatio;
 
+        const reducedMotion = window.matchMedia('(prefers-reduced-motion: reduce)');
+        const cards = options.effect === "cards";
         const swiperConfig = {
             // Effect settings
-            effect: options.effect || "coverflow",
+            effect: reducedMotion.matches ? "slide" : (options.effect || "coverflow"),
             grabCursor: options.grabCursor ?? true,
             centeredSlides: options.centeredSlides ?? true,
             spaceBetween: options.spaceBetween || 0,
-            slidesPerView: options.slidesPerView || "auto",
+            slidesPerView: cards ? 1 : (options.slidesPerView || "auto"),
             initialSlide: options.initialSlide || 0,
             loop: shouldLoop,
             speed: 0,
@@ -173,24 +177,26 @@ export async function initializeCarousel(element, optionsJson, dotNetRef = null)
             resistanceRatio: resistanceRatio,
             longSwipesRatio: longSwipesRatio,
 
+            cardsEffect: { slideShadows: false, perSlideOffset: 8, perSlideRotate: 2 },
+            a11y: { enabled: true, slideLabelMessage: "{{index}} / {{slidesLength}}" },
             coverflowEffect: {
-                rotate: options.rotateDegree || 50,
+                rotate: options.rotateDegree ?? 50,
                 stretch: options.stretch || 0,
-                depth: options.depth || 150,
-                modifier: options.modifier || 1.5,
+                depth: options.depth ?? 150,
+                modifier: options.modifier ?? 1.5,
                 slideShadows: options.slideShadows ?? false,
             },
 
             on: {
                 afterInit: function () {
-                    this.params.speed = options.speed || 300;
+                    this.params.speed = reducedMotion.matches ? 0 : (options.speed ?? 300);
                     this.params.runCallbacksOnInit = true;
 
                     // Show carousel after initialization
                     requestAnimationFrame(() => {
                         requestAnimationFrame(() => {
                             if (this.el) {
-                                this.el.classList.remove('bzc-hidden');
+                                this.el.classList.remove('bzc-hidden', 'bzc-pending');
                                 this.el.classList.add('bzc-visible');
                             }
                         });
@@ -221,10 +227,63 @@ export async function initializeCarousel(element, optionsJson, dotNetRef = null)
 
         // Store instance for later reference
         swiperInstances.set(element, swiperInstance);
+        bindCarouselAccessibility(element, swiperInstance, originalSlideCount);
 
     } catch (err) {
+        containerFallback(element);
         console.error("[BlazzyMotion] Initialization error:", err);
     }
+}
+
+/**
+ * Leaves the initial item visible when initialization fails.
+ * @param {HTMLElement} element Carousel root.
+ */
+function containerFallback(element) {
+    element.querySelector('.swiper-container')?.classList.remove('bzc-hidden');
+}
+
+/**
+ * Binds local navigation without intercepting keys inside consumer controls.
+ * Removes listeners on destroy and keeps cloned slides out of the tab order.
+ * @param {HTMLElement} element Carousel root.
+ * @param {object} swiper Initialized Swiper instance.
+ * @param {number} count Original item count, excluding loop clones.
+ */
+function bindCarouselAccessibility(element, swiper, count) {
+    const controller = new AbortController();
+    const previous = element.querySelector('.bzc-previous');
+    const next = element.querySelector('.bzc-next');
+    const status = element.querySelector('.bzc-status');
+    /** Updates navigation boundaries and original-item announcements. */
+    const update = () => {
+        if (previous) previous.disabled = !swiper.params.loop && swiper.isBeginning;
+        if (next) next.disabled = !swiper.params.loop && swiper.isEnd;
+        if (status) status.textContent = `Slide ${(swiper.realIndex % count) + 1} of ${count}`;
+        element.querySelectorAll('.bzc-select').forEach(button => {
+            button.tabIndex = button.closest('.swiper-slide')?.classList.contains('swiper-slide-active') ? 0 : -1;
+        });
+        element.querySelectorAll('[data-bz-clone]').forEach(clone => {
+            clone.setAttribute('aria-hidden', 'true');
+            clone.inert = true;
+        });
+    };
+    previous?.addEventListener('click', () => swiper.slidePrev(), { signal: controller.signal });
+    next?.addEventListener('click', () => swiper.slideNext(), { signal: controller.signal });
+    element.addEventListener('keydown', event => {
+        if (event.defaultPrevented || event.altKey || event.ctrlKey || event.metaKey || event.shiftKey) return;
+        if (event.target.closest('input, textarea, select, button, a, [contenteditable], [role="slider"], [role="combobox"]')) return;
+        if (event.key === 'ArrowRight' || event.key === 'ArrowLeft') {
+            event.preventDefault();
+            const forward = (event.key === 'ArrowRight') !== swiper.rtlTranslate;
+            if (forward) swiper.slideNext(); else swiper.slidePrev();
+        }
+    }, { signal: controller.signal });
+    swiper.on('slideChange', update);
+    swiper.on('lock', update);
+    swiper.on('unlock', update);
+    swiper.on('destroy', () => controller.abort());
+    update();
 }
 
 export function destroyCarousel(element) {

@@ -63,9 +63,16 @@
         <BzThemePicker @bind-CurrentTheme="_currentTheme" />
 
       
+        <label class="bz-carousel-variant">Presentation
+            <select @bind="_variant" aria-label="Carousel presentation">
+                <option value="Auto">Coverflow (automatic)</option>
+                <option value="Cards">Cards</option>
+            </select>
+        </label>
         <div class="bz-demo__stage">
             <BzCarousel TItem="Movie"
                         Items="@_movies"
+                        Variant="@_variant"
                         Theme="@_currentTheme"
                         OnItemSelected="@OnItemSelected" />
         </div>
@@ -153,6 +160,7 @@
 @code {
     [Inject] private IJSRuntime JS { get; set; } = default!;
 
+    private BlazzyMotion.Carousel.Models.BzCarouselVariant _variant;
     private BzTheme _currentTheme = BzTheme.Glass;
     private Movie? _selectedMovie;
 

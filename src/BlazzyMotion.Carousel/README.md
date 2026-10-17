@@ -752,3 +752,57 @@ If you find BlazzyMotion.Carousel useful, please consider:
 - Reporting bugs or suggesting features via GitHub Issues
 
 For questions or support, please open an issue on GitHub.
+
+## Carousel refresh (upcoming preview)
+
+The existing zero-configuration usage and model attributes remain supported. The
+`Auto` presentation keeps the previous small-collection fallback and Coverflow
+behavior. All four themes now use softer, theme-aware card shadows. The initial
+item remains visible while JavaScript initializes, instead of an empty carousel.
+
+### Cards presentation
+
+```razor
+@using BlazzyMotion.Carousel.Models
+
+<BzCarousel TItem="Movie" Items="movies" Variant="BzCarouselVariant.Cards" />
+```
+
+`Variant` defaults to `BzCarouselVariant.Auto`. Cards uses Swiper's native cards
+presentation; it does not change your data, attributes, templates, or callbacks.
+`Options.Effect`, `Options.Loop`, and `Options.SlidesPerView` retain the existing
+merge behavior: the selected presentation determines these values.
+
+### Accessible navigation
+
+Previous/next buttons appear by default for multiple items. Set
+`ShowNavigation="false"` to hide them; keyboard navigation remains available when
+the region is focused. Use Tab to focus the carousel, then Left/Right to navigate.
+Arrow keys inside links, form controls, and editable content are left to those
+controls. When `OnItemSelected` is supplied, the active slide also provides a
+selection button visible on keyboard focus. Existing click and `SelectOnScroll`
+behavior is preserved.
+
+Name each carousel for its context, especially when displaying several:
+
+```razor
+<BzCarousel TItem="Movie" Items="movies" aria-label="Featured movies" />
+```
+
+Use `[BzTitle]` to provide meaningful image alternative text. Custom
+`ItemTemplate` content must provide its own text alternatives and accessible
+controls. Consumer CSS remains responsible for contrast on custom backgrounds.
+When reduced motion is requested at initialization, the carousel uses a flat,
+zero-duration slide presentation rather than 3D movement. No autoplay is enabled.
+These changes improve accessibility; they are not a certification of complete
+WCAG conformance for every consumer template or application.
+
+### Upgrade notes
+
+Public method signatures, legacy Carousel attributes, Core attributes, item
+mapping, and event defaults are retained. The default appearance is refreshed,
+and navigation buttons add space below the slides. Review custom CSS that targets
+slide descendants: content now has a `.bzc-slide-inner` wrapper. Swiper controls
+slide transforms and stacking; custom effects should target inner content.
+The refreshed Carousel must be installed with its declared Core dependency;
+copying the new Carousel DLL over an older Core installation is unsupported.

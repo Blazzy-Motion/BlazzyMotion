@@ -1,4 +1,4 @@
-﻿@namespace BlazzyMotion.Carousel.Components
+@namespace BlazzyMotion.Carousel.Components
 @using Microsoft.AspNetCore.Components.Web
 @typeparam TItem where TItem : class
 @inherits BlazzyMotion.Core.Abstractions.BzComponentBase
@@ -32,9 +32,9 @@ else if (IsEmpty)
 }
 else
 {
-    <div class="@GetCombinedClass("bzc-carousel-box")" style="@GetContainerStyle()" @ref="_carouselRef" data-item-count="@ItemCount"
+    <div class="@GetCombinedClass("bzc-carousel-box")" style="@GetContainerStyle()" @ref="_carouselRef" data-item-count="@ItemCount" role="region" aria-roledescription="carousel" aria-label="Carousel" tabindex="0" data-variant="@Variant.ToString().ToLowerInvariant()"
         @attributes="AdditionalAttributes">
-        <div class="swiper-container bzc-hidden">
+        <div class="swiper-container bzc-pending">
             <div class="swiper-wrapper">
                 @{
                     var index = 0;
@@ -42,7 +42,14 @@ else
                     {
                         var currentIndex = index;
                         <div class="swiper-slide" @onclick="() => HandleItemClick(item)">
-                            @GetItemContent(item, currentIndex)
+                            <div class="bzc-slide-inner">
+                                @GetItemContent(item, currentIndex)
+                            </div>
+                            @if (OnItemSelected.HasDelegate)
+                            {
+                                <button type="button" class="bzc-select" aria-label="@($"Select item {currentIndex + 1}")"
+                                        @onclick="() => HandleItemClick(item)" @onclick:stopPropagation="true">✓</button>
+                            }
                             @if (ShowOverlay)
                             {
                                 <div class="bzc-overlay"></div>
@@ -53,5 +60,13 @@ else
                 }
             </div>
         </div>
+        @if (ShowNavigation && ItemCount > 1)
+        {
+            <div class="bzc-navigation" aria-label="Carousel navigation">
+                <button type="button" class="bzc-previous" aria-label="Previous slide" disabled>←</button>
+                <button type="button" class="bzc-next" aria-label="Next slide" disabled>→</button>
+            </div>
+        }
+        <span class="bzc-status" aria-live="polite" aria-atomic="true"></span>
     </div>
 }

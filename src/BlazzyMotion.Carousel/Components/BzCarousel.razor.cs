@@ -1,4 +1,4 @@
-﻿using BlazzyMotion.Carousel.Models;
+using BlazzyMotion.Carousel.Models;
 using BlazzyMotion.Carousel.Services;
 using BlazzyMotion.Core.Abstractions;
 using BlazzyMotion.Core.Models;
@@ -211,6 +211,14 @@ public partial class BzCarousel<TItem> : BzComponentBase where TItem : class
     public string? Height { get; set; }
 
     #endregion
+
+    /// <summary>Presentation mode. Auto preserves the existing item-count behavior.</summary>
+    [Parameter]
+    public BzCarouselVariant Variant { get; set; } = BzCarouselVariant.Auto;
+
+    /// <summary>Shows accessible previous/next buttons when multiple items are present.</summary>
+    [Parameter]
+    public bool ShowNavigation { get; set; } = true;
 
     #region Injected Services
 
@@ -444,6 +452,7 @@ public partial class BzCarousel<TItem> : BzComponentBase where TItem : class
     /// <summary>
     /// Builds Swiper configuration options.
     /// </summary>
+    /// <returns>Options for the selected variant, preserving legacy overrides.</returns>
     private BzCarouselOptions BuildOptions()
     {
         var baseOptions = CurrentMode switch
@@ -478,12 +487,15 @@ public partial class BzCarousel<TItem> : BzComponentBase where TItem : class
             _ => throw new InvalidOperationException($"Unknown mode: {CurrentMode}")
         };
 
-        if (Options != null)
+        if (Variant == BzCarouselVariant.Cards)
         {
-            return MergeOptions(baseOptions, Options);
+            baseOptions.Effect = "cards";
+            baseOptions.SlidesPerView = "1";
+            baseOptions.InitialSlide = SafeInitialSlide;
+            baseOptions.Loop = ShouldEnableLoop;
         }
 
-        return baseOptions;
+        return Options != null ? MergeOptions(baseOptions, Options) : baseOptions;
     }
 
     /// <summary>
@@ -526,7 +538,7 @@ public partial class BzCarousel<TItem> : BzComponentBase where TItem : class
     {
         var currentItemCount = ItemCount;
         var optionsSnapshot = Options != null ? JsonSerializer.Serialize(Options) : null;
-        var keyParamsHash = HashCode.Combine(Loop, RotateDegree, Depth, MinItemsForLoop, MinItemsForCoverflow, SelectOnScroll);
+        var keyParamsHash = HashCode.Combine(Loop, RotateDegree, Depth, MinItemsForLoop, MinItemsForCoverflow, SelectOnScroll, Variant, AutoDetectMode);
 
         if (currentItemCount == 0)
         {
