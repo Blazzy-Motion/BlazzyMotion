@@ -4,19 +4,19 @@ on:
   workflow_dispatch:
     inputs:
       core_version:
-        description: "Core Package Version (e.g., 1.0.0)"
+        description: "Core Package Version (e.g., 1.4.0)"
         required: true
-        default: "1.0.0"
+        default: "1.4.0"
         type: string
       carousel_version:
-        description: "Carousel Package Version (e.g., 1.1.0)"
+        description: "Carousel Package Version (e.g., 1.5.0)"
         required: true
-        default: "1.1.0"
+        default: "1.5.0"
         type: string
       bento_version:
-        description: "Bento Package Version (e.g., 1.0.0)"
+        description: "Bento Package Version (e.g., 1.0.2)"
         required: true
-        default: "1.0.0"
+        default: "1.0.2"
         type: string
       gallery_version:
         description: "Gallery Package Version (e.g., 1.0.0)"
@@ -41,17 +41,17 @@ on:
       publish_bento:
         description: "Publish Bento package?"
         required: true
-        default: true
+        default: false
         type: boolean
       publish_gallery:
         description: "Publish Gallery package?"
         required: true
-        default: true
+        default: false
         type: boolean
       publish_marquee:
         description: "Publish Marquee package?"
         required: true
-        default: true
+        default: false
         type: boolean
 
 env:
@@ -157,43 +157,52 @@ jobs:
       - name: List Packages
         run: ls -lah ./nupkgs
 
-      - name: Verify Carousel Package Dependencies
-        if: ${{ inputs.publish_carousel }}
+      - name: Verify Package Versions and Dependencies
         run: |
-          echo "=== Verifying Carousel package dependencies ==="
-          unzip -p ./nupkgs/BlazzyMotion.Carousel.*.nupkg "*.nuspec" | grep -A5 "<dependencies>"
-          echo ""
-          echo "Expected Core dependency version: $CORE_VERSION"
+          python3 - <<'PYTHON'
+          import os
+          from pathlib import Path
+          import xml.etree.ElementTree as ET
+          import zipfile
 
-      - name: Verify Bento Package Dependencies
-        if: ${{ inputs.publish_bento }}
-        run: |
-          echo "=== Verifying Bento package dependencies ==="
-          unzip -p ./nupkgs/BlazzyMotion.Bento.*.nupkg "*.nuspec" | grep -A5 "<dependencies>"
-          echo ""
-          echo "Expected Core dependency version: $CORE_VERSION"
-
-      - name: Verify Gallery Package Dependencies
-        if: ${{ inputs.publish_gallery }}
-        run: |
-          echo "=== Verifying Gallery package dependencies ==="
-          unzip -p ./nupkgs/BlazzyMotion.Gallery.*.nupkg "*.nuspec" | grep -A5 "<dependencies>"
-          echo ""
-          echo "Expected Core dependency version: $CORE_VERSION"
-
-      - name: Verify Marquee Package Dependencies
-        if: ${{ inputs.publish_marquee }}
-        run: |
-          echo "=== Verifying Marquee package dependencies ==="
-          unzip -p ./nupkgs/BlazzyMotion.Marquee.*.nupkg "*.nuspec" | grep -A5 "<dependencies>"
-          echo ""
-          echo "Expected Core dependency version: $CORE_VERSION"
+          ns = {"n": "http://schemas.microsoft.com/packaging/2013/05/nuspec.xsd"}
+          for component in ("Core", "Carousel", "Bento", "Gallery", "Marquee"):
+              key = component.upper()
+              if os.environ[f"PUBLISH_{key}"] != "true":
+                  continue
+              version = os.environ[f"{key}_VERSION"]
+              package = Path("nupkgs") / f"BlazzyMotion.{component}.{version}.nupkg"
+              with zipfile.ZipFile(package) as archive:
+                  manifests = [name for name in archive.namelist() if name.endswith(".nuspec")]
+                  assert len(manifests) == 1, f"Expected one manifest in {package}"
+                  metadata = ET.fromstring(archive.read(manifests[0])).find("n:metadata", ns)
+                  assert metadata.findtext("n:id", namespaces=ns) == f"BlazzyMotion.{component}"
+                  assert metadata.findtext("n:version", namespaces=ns) == version
+                  dependencies = metadata.findall("n:dependencies/n:group/n:dependency", ns)
+                  if component != "Core":
+                      core = [dependency for dependency in dependencies if dependency.get("id") == "BlazzyMotion.Core"]
+                      assert len(core) == 1 and core[0].get("version") == os.environ["CORE_VERSION"], f"Unexpected Core dependency in {package}"
+                  if "-" not in version:
+                      assert all("-" not in dependency.get("version", "") for dependency in dependencies), f"Stable package has a prerelease dependency: {package}"
+              print(f"Verified {package}")
+          PYTHON
 
       - name: Push to NuGet.org
         env:
           NUGET_API_KEY: ${{ secrets.NUGET_API_KEY }}
         run: |
+          # Publish Core before packages that depend on the new version.
+          core_package="./nupkgs/BlazzyMotion.Core.$CORE_VERSION.nupkg"
+          if [ -f "$core_package" ]; then
+            dotnet nuget push "$core_package" \
+              --api-key "$NUGET_API_KEY" \
+              --source https://api.nuget.org/v3/index.json \
+              --skip-duplicate
+          fi
           for package in ./nupkgs/*.nupkg; do
+            if [ "$package" = "$core_package" ]; then
+              continue
+            fi
             echo "Publishing: $package"
             dotnet nuget push "$package" \
               --api-key "$NUGET_API_KEY" \

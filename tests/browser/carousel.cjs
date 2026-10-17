@@ -214,6 +214,33 @@ async function inspectIndexNotifications(browser) {
   await page.close();
 }
 
+/** Keep the original full-height slide wrapper for consumer-owned item templates. */
+async function inspectCustomTemplateSurface(browser) {
+  const page = await browser.newPage();
+  await page.goto(baseURL);
+  await page.locator('.bz-demo .bzc-visible').waitFor();
+  const result = await page.evaluate(async () => {
+    const core = await import('/_content/BlazzyMotion.Core/js/blazzy-core.js');
+    const root = document.querySelector('.bz-demo .bzc-carousel-box').cloneNode(false);
+    root.innerHTML = '<div class="swiper-container"><div class="swiper-wrapper"><div class="swiper-slide"><article><strong>Custom content</strong><button type="button">Custom action</button></article></div></div></div>';
+    document.body.appendChild(root);
+    await core.initializeCarousel(root, JSON.stringify({ loop: false }));
+    const slide = root.querySelector('.swiper-slide');
+    const original = { shadow: getComputedStyle(slide).boxShadow, height: slide.offsetHeight, container: root.querySelector('.swiper-container').offsetHeight };
+    if (slide.hasAttribute('data-bzc-media') || root.querySelector('.bzc-media-placeholder')) throw new Error('Custom templates must not acquire managed-image placeholders');
+    root.classList.replace('bzc-theme-glass', 'bzc-theme-minimal');
+    const minimal = getComputedStyle(slide).boxShadow;
+    core.destroyCarousel(root);
+    root.remove();
+    return { original, minimal };
+  });
+  assert(result.original.shadow.includes('15px 40px'), 'Keep the original custom-template wrapper shadow');
+  assert.equal(result.original.height, result.original.container, 'Keep full-height custom-template slides');
+  assert.equal(result.minimal, 'none', 'Minimal remains shadow-free for custom templates');
+  await page.close();
+  console.log('PASS custom templates: original full-height wrapper and consumer-owned content');
+}
+
 /** Capture each theme on independent host backgrounds without changing shared theme tokens. */
 async function inspectHostBackgrounds(browser) {
   const page = await browser.newPage({ viewport: { width: 1200, height: 1000 } });
@@ -309,6 +336,7 @@ async function inspectFallback(browser) {
     await inspectCarousel(browser, 'reduced', { viewport: { width: 1440, height: 1000 }, reducedMotion: 'reduce' });
     await inspectLoopCopies(browser);
     await inspectIndexNotifications(browser);
+    await inspectCustomTemplateSurface(browser);
     await inspectHostBackgrounds(browser);
     await inspectImageReadiness(browser);
     await inspectFallback(browser);

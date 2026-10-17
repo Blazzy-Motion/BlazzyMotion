@@ -12,6 +12,7 @@
     <PackageTags>blazor;carousel;3d;swiper;coverflow;ui;component;glassmorphism;source-generator</PackageTags>
     <PackageIcon>icon.png</PackageIcon>
     <PackageReadmeFile>README.md</PackageReadmeFile>
+    <PackageReleaseNotes>Refine four themes while retaining Coverflow dimensions; add accessible navigation, mapped-image loading fallbacks and suppression of unchanged-index notifications. Requires BlazzyMotion.Core 1.4.0 or later.</PackageReleaseNotes>
 
     <EmitCompilerGeneratedFiles>true</EmitCompilerGeneratedFiles>
     <CompilerGeneratedFilesOutputPath>$(BaseIntermediateOutputPath)Generated</CompilerGeneratedFilesOutputPath>

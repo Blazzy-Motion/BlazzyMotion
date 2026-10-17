@@ -11,6 +11,25 @@ A modern, high-performance 3D carousel component for Blazor with zero-configurat
 [![Maintainability Rating](https://sonarcloud.io/api/project_badges/measure?project=Blazzy-Motion_BlazzyMotion&metric=sqale_rating)](https://sonarcloud.io/summary/new_code?id=Blazzy-Motion_BlazzyMotion)
 [![Security Rating](https://sonarcloud.io/api/project_badges/measure?project=Blazzy-Motion_BlazzyMotion&metric=security_rating)](https://sonarcloud.io/summary/new_code?id=Blazzy-Motion_BlazzyMotion)
 
+## Version 1.5.0
+
+Requires BlazzyMotion.Core 1.4.0 or later. Core is installed transitively:
+
+```sh
+dotnet add package BlazzyMotion.Carousel --version 1.5.0
+```
+
+Existing Carousel 1.4.x usage does not require parameter or model changes. Both
+legacy Carousel attributes and Core attributes remain supported. If your project
+pins Core explicitly, update that reference to 1.4.0 or later as well.
+
+This release refines the four themes, preserves the original Coverflow geometry,
+adds accessible keyboard navigation and image-loading fallbacks, and avoids
+redundant notifications when Swiper reports an unchanged active consumer index.
+Consumers must not rely on duplicate callbacks for an unchanged index. Custom
+`ItemTemplate` content retains its full-height slide wrapper and owns its image
+loading and accessible content. Shared Core CSS tokens remain unchanged.
+
 ## ⚠️ Migration Guide
 
 ### Upgrading from v1.0.x to v1.1.x
@@ -824,7 +843,8 @@ Decoded mapped posters restore the actual full-height Swiper slide shadow and
 overlay from the original Coverflow presentation. There is no shorter, image-sized
 decorative surface. Slide width, height and Swiper transforms stay unchanged;
 loading and failed posters keep their independent placeholders without large empty
-shadows. Minimal omits the slide shadow. Custom templates keep their presentation.
+shadows. Minimal omits the slide shadow. Custom templates retain the full-height
+wrapper and remain outside mapped-image readiness tracking.
 No per-slide backdrop blur is introduced.
 
 Glass has a broader translucent highlight; Dark retains a predominantly opaque

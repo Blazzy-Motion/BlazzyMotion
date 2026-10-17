@@ -182,13 +182,15 @@
     --bzc-active-artwork-shadow: 0 6px 14px rgba(0, 0, 0, 0.16);
 }
 
-/* Restore main's full-height Swiper slide surfaces only after artwork is decoded.
-   Swiper retains its original dimensions and transforms; unloaded slides stay shadow-free. */
+/* Preserve full-height surfaces for custom templates and decoded mapped artwork.
+   Swiper owns geometry; only managed loading/error slides remain shadow-free. */
+.bzc-carousel-box ::deep .swiper-slide:not([data-bzc-media]),
 .bzc-carousel-box ::deep .swiper-slide[data-bzc-media="ready"] {
     background: var(--bzc-slide-surface, transparent);
     box-shadow: var(--bzc-slide-surface-shadow, 0 15px 40px rgba(0, 0, 0, 0.7), 0 5px 15px rgba(0, 0, 0, 0.5));
 }
 
+.bzc-carousel-box.bzc-theme-minimal ::deep .swiper-slide:not([data-bzc-media]),
 .bzc-carousel-box.bzc-theme-minimal ::deep .swiper-slide[data-bzc-media="ready"] {
     background: transparent;
     box-shadow: none;

@@ -13,6 +13,11 @@ A collection of modern, high-performance UI components for Blazor with zero-conf
 
 Experience BlazzyMotion components in action: **[View Live Demo](https://blazzymotion.com/)**
 
+## Release notes
+
+[Carousel 1.5.0 and Core 1.4.0](docs/release-notes/carousel-1.5.0.md) describe the
+visual, accessibility, image-loading and compatibility changes in this release.
+
 ## Components
 
 | Package                                                      | Description                                              | NuGet                                                                                                                       |
