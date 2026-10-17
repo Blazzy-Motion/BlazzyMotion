@@ -1,7 +1,9 @@
-﻿<Project Sdk="Microsoft.NET.Sdk.Razor">
+<Project Sdk="Microsoft.NET.Sdk.Razor">
 
   <PropertyGroup>
     <TargetFramework>net8.0</TargetFramework>
+    <EnablePackageValidation>true</EnablePackageValidation>
+    <PackageValidationBaselineVersion>1.4.1</PackageValidationBaselineVersion>
     <Version>$(BlazzyCarouselVersion)</Version>
     <PackageVersion>$(BlazzyCarouselVersion)</PackageVersion>
     <PackageId>BlazzyMotion.Carousel</PackageId>
@@ -10,6 +12,7 @@
     <PackageTags>blazor;carousel;3d;swiper;coverflow;ui;component;glassmorphism;source-generator</PackageTags>
     <PackageIcon>icon.png</PackageIcon>
     <PackageReadmeFile>README.md</PackageReadmeFile>
+    <PackageReleaseNotes>Refine four themes while retaining Coverflow dimensions; add accessible navigation, mapped-image loading fallbacks and suppression of unchanged-index notifications. Requires BlazzyMotion.Core 1.4.0-preview.1 or later.</PackageReleaseNotes>
 
     <EmitCompilerGeneratedFiles>true</EmitCompilerGeneratedFiles>
     <CompilerGeneratedFilesOutputPath>$(BaseIntermediateOutputPath)Generated</CompilerGeneratedFilesOutputPath>

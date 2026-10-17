@@ -6,6 +6,19 @@ Core infrastructure package for BlazzyMotion UI components.
 [![NuGet Downloads](https://img.shields.io/nuget/dt/BlazzyMotion.Core.svg)](https://www.nuget.org/packages/BlazzyMotion.Core/)
 [![License: MIT](https://img.shields.io/badge/License-MIT-blue.svg)](https://opensource.org/licenses/MIT)
 
+## Version 1.4.0-preview.1
+
+This preview updates the shared Carousel runtime with local keyboard navigation,
+focus and slide-announcement handling, reduced-motion support, mapped-image
+readiness tracking, and suppression of duplicate active-index notifications.
+Existing public C# APIs, model attributes, registry behavior and static asset paths
+remain supported. Shared theme token values and existing component APIs are preserved.
+
+Core is installed automatically with Carousel 1.5.0-preview.1. Existing component packages
+can continue using their declared Core version ranges; no simultaneous component
+upgrade is required. Applications with an explicit older Core reference must
+update it to 1.4.0-preview.1 when installing Carousel 1.5.0-preview.1 to avoid a NuGet downgrade error.
+
 ## Overview
 
 BlazzyMotion.Core is a shared infrastructure package designed exclusively for the BlazzyMotion component ecosystem. It provides common abstractions, services, and theming used by all BlazzyMotion components (Carousel, Gallery, Masonry, etc.).

@@ -1,9 +1,10 @@
-﻿using BlazzyMotion.Carousel.Attributes;
+using BlazzyMotion.Carousel.Attributes;
 
 namespace BlazzyMotion.Demo.Model;
 
 public class Movie
 {
+    [BzTitle]
     public string? Title { get; set; }
 
     [BzImage]

@@ -1,6 +1,6 @@
 /* SWIPER CONTAINER - Initial Hidden State (Scoped) */
 
-::deep .swiper-container.bzc-hidden {
+::deep .swiper-container.bzc-hidden:not(.bzc-pending) {
     opacity: 0 !important;
     visibility: hidden !important;
     transition: opacity 0.4s ease-in, visibility 0.4s;
@@ -25,13 +25,11 @@
     display: flex;
     justify-content: center;
     align-items: center;
-    box-shadow: 0px 15px 40px rgba(0, 0, 0, 0.7),
-        0px 5px 15px rgba(0, 0, 0, 0.5);
+    box-shadow: none;
     border-radius: 10px;
     overflow: hidden;
     position: relative;
     pointer-events: auto !important;
-    z-index: 100 !important;
 }
 
 ::deep .swiper-slide:focus-visible {
@@ -49,7 +47,7 @@
     object-fit: cover;
     object-position: center;
     display: block;
-    box-shadow: 0px 0px 8px rgba(255, 255, 255, 0.2);
+    box-shadow: var(--bzc-artwork-shadow, 0 6px 14px rgba(0, 0, 0, 0.24));
     transition: transform var(--bzc-transition-duration) ease,
         box-shadow 0.4s ease-out 0.3s;
 }
@@ -59,7 +57,7 @@
 }
 
 ::deep .swiper-slide-active img {
-    box-shadow: 0px 0px 25px rgba(255, 255, 255, 0.95);
+    box-shadow: var(--bzc-active-artwork-shadow, 0 10px 22px rgba(0, 0, 0, 0.3), 0 0 10px rgba(255, 255, 255, 0.18));
     transform: scale(var(--bzc-active-scale));
 }
 
@@ -116,4 +114,196 @@
     color: rgba(255, 255, 255, 0.6);
     font-size: 14px;
     text-align: center;
+}
+/* Keep the first artwork visible while the optional Swiper assets load. */
+::deep .swiper-container.bzc-pending {
+    opacity: 1;
+    visibility: visible;
+    width: 100%;
+    height: var(--bzc-swiper-height, 400px);
+    display: grid;
+    place-items: center;
+}
+
+::deep .bzc-pending .swiper-wrapper {
+    display: flex;
+    justify-content: center;
+    align-items: center;
+}
+
+::deep .bzc-pending .swiper-slide:not(:first-child) {
+    display: none;
+}
+
+/* Surface lighting is stationary; Swiper alone owns the slide transforms. */
+.bzc-carousel-box.bzc-theme-glass {
+    --bzc-active-artwork-shadow: 0 10px 22px rgba(0, 0, 0, 0.3), 0 0 16px rgba(255, 255, 255, 0.34);
+    background: linear-gradient(135deg, rgba(255, 255, 255, 0.16), rgba(255, 255, 255, 0.035) 55%, rgba(255, 255, 255, 0.065)),
+        var(--bzc-glass-bg, rgba(15, 15, 15, 0.6));
+    border-color: var(--bzc-glass-border, rgba(255, 255, 255, 0.15));
+    backdrop-filter: blur(var(--bzc-glass-blur, 12px));
+    -webkit-backdrop-filter: blur(var(--bzc-glass-blur, 12px));
+    box-shadow: var(--bzc-glass-shadow, 0 8px 32px rgba(0, 0, 0, 0.4)),
+        inset 0 1px 0 rgba(255, 255, 255, 0.42),
+        inset 0 -1px 0 rgba(255, 255, 255, 0.06);
+}
+
+.bzc-carousel-box.bzc-theme-glass::before {
+    height: 1px;
+    background: linear-gradient(90deg, transparent, rgba(255, 255, 255, 0.45), transparent);
+    border-radius: inherit;
+}
+
+.bzc-carousel-box.bzc-theme-dark {
+    --bzc-artwork-shadow: 0 6px 14px rgba(0, 0, 0, 0.3);
+    --bzc-active-artwork-shadow: 0 12px 26px rgba(0, 0, 0, 0.42), 0 0 0 1px rgba(255, 255, 255, 0.1);
+    --bzc-slide-surface: linear-gradient(160deg, rgba(255, 255, 255, 0.055), rgba(0, 0, 0, 0.16));
+    background: var(--bzc-dark-bg, #181a22);
+    box-shadow: var(--bzc-dark-shadow, 0 10px 32px rgba(0, 0, 0, 0.3)),
+        inset 0 1px 0 rgba(255, 255, 255, 0.07);
+}
+
+.bzc-carousel-box.bzc-theme-light {
+    --bzc-artwork-shadow: 0 5px 12px rgba(15, 23, 42, 0.12);
+    --bzc-active-artwork-shadow: 0 12px 24px rgba(15, 23, 42, 0.2);
+    --bzc-placeholder-color: #475569;
+    --bzc-placeholder-bg: rgba(15, 23, 42, 0.045);
+    --bzc-slide-surface: linear-gradient(155deg, rgba(255, 255, 255, 0.9), rgba(226, 232, 240, 0.42));
+    --bzc-slide-surface-shadow: 0 2px 5px rgba(15, 23, 42, 0.025), 0 10px 20px rgba(15, 23, 42, 0.045);
+    border-color: var(--bzc-light-border, rgba(15, 23, 42, 0.12));
+    background: linear-gradient(160deg, rgba(226, 232, 240, 0.22), transparent 48%, rgba(226, 232, 240, 0.3)),
+        var(--bzc-light-bg, #fff);
+    box-shadow: 0 2px 5px rgba(15, 23, 42, 0.035),
+        var(--bzc-light-shadow, 0 16px 36px rgba(15, 23, 42, 0.1));
+}
+
+.bzc-carousel-box.bzc-theme-minimal {
+    --bzc-artwork-shadow: none;
+    --bzc-active-artwork-shadow: 0 6px 14px rgba(0, 0, 0, 0.16);
+}
+
+/* Preserve full-height surfaces for custom templates and decoded mapped artwork.
+   Swiper owns geometry; only managed loading/error slides remain shadow-free. */
+.bzc-carousel-box ::deep .swiper-slide:not([data-bzc-media]),
+.bzc-carousel-box ::deep .swiper-slide[data-bzc-media="ready"] {
+    background: var(--bzc-slide-surface, transparent);
+    box-shadow: var(--bzc-slide-surface-shadow, 0 15px 40px rgba(0, 0, 0, 0.7), 0 5px 15px rgba(0, 0, 0, 0.5));
+}
+
+.bzc-carousel-box.bzc-theme-minimal ::deep .swiper-slide:not([data-bzc-media]),
+.bzc-carousel-box.bzc-theme-minimal ::deep .swiper-slide[data-bzc-media="ready"] {
+    background: transparent;
+    box-shadow: none;
+}
+
+.bzc-carousel-box.bzc-theme-light::before {
+    background: linear-gradient(180deg, rgba(255, 255, 255, 0.28), transparent 65%);
+}
+
+/* Mapped artwork stays useful while individual requests load or fail. */
+.bzc-carousel-box ::deep .swiper-slide[data-bzc-media]:not([data-bzc-media="ready"]) > img {
+    opacity: 0;
+    box-shadow: none;
+}
+
+.bzc-media-placeholder {
+    position: absolute;
+    width: var(--bzc-image-max-width, 160px);
+    aspect-ratio: var(--bzc-placeholder-ratio, 2 / 3);
+    display: grid;
+    place-items: center;
+    padding: 10px;
+    box-sizing: border-box;
+    border: 1px solid rgba(148, 163, 184, 0.24);
+    border-radius: 10px;
+    background: var(--bzc-placeholder-bg, rgba(15, 23, 42, 0.72));
+    color: var(--bzc-placeholder-color, #cbd5e1);
+    font: inherit;
+    font-size: 12px;
+    text-align: center;
+    pointer-events: none;
+}
+
+.bzc-carousel-box ::deep .swiper-slide:not(.swiper-slide-active) > .bzc-media-placeholder {
+    font-size: 0;
+}
+
+.bzc-carousel-box ::deep .bzc-pending .swiper-slide > .bzc-media-placeholder {
+    font-size: 12px;
+}
+
+.bzc-carousel-box ::deep [data-bzc-media="ready"] > .bzc-media-placeholder {
+    display: none;
+}
+
+.bzc-carousel-box ::deep [data-bzc-media]:not([data-bzc-media="ready"]) > .bzc-overlay {
+    visibility: hidden;
+}
+
+.bzc-sr-only {
+    position: absolute;
+    width: 1px;
+    height: 1px;
+    padding: 0;
+    margin: -1px;
+    overflow: hidden;
+    clip-path: inset(50%);
+    white-space: nowrap;
+    border: 0;
+}
+
+.bzc-carousel-box:focus-visible,
+.bzc-carousel-box ::deep :focus-visible {
+    outline: 3px solid #60a5fa;
+    outline-offset: -3px;
+}
+
+.bzc-keyboard-control {
+    position: absolute;
+    bottom: 8px;
+    width: 1px;
+    height: 1px;
+    padding: 0;
+    overflow: hidden;
+    clip-path: inset(50%);
+    border: 0;
+}
+
+.bzc-keyboard-control:focus-visible {
+    width: auto;
+    height: auto;
+    min-height: 44px;
+    padding: 8px 16px;
+    clip-path: none;
+    background: #0f172a;
+    color: #fff;
+    border-radius: 8px;
+    z-index: 2;
+}
+
+.bzc-previous { left: 8px; }
+.bzc-next { right: 8px; }
+
+@supports not ((backdrop-filter: blur(1px)) or (-webkit-backdrop-filter: blur(1px))) {
+    .bzc-carousel-box.bzc-theme-glass {
+        background: #182131;
+    }
+}
+
+@media (prefers-reduced-motion: reduce) {
+    .bzc-carousel-box ::deep * {
+        transition: none !important;
+        animation: none !important;
+    }
+
+    .bzc-carousel-box ::deep .swiper-slide img:hover,
+    .bzc-carousel-box ::deep .swiper-slide-active img {
+        transform: none;
+    }
+}
+
+@media (forced-colors: active) {
+    .bzc-carousel-box {
+        border: 1px solid CanvasText;
+    }
 }

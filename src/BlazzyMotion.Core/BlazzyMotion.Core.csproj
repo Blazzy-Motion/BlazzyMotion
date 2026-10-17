@@ -2,6 +2,8 @@
 
   <PropertyGroup>
     <TargetFramework>net8.0</TargetFramework>
+    <EnablePackageValidation>true</EnablePackageValidation>
+    <PackageValidationBaselineVersion>1.3.1</PackageValidationBaselineVersion>
     <Version>$(BlazzyCoreVersion)</Version>
     <PackageVersion>$(BlazzyCoreVersion)</PackageVersion>
     <PackageId>BlazzyMotion.Core</PackageId>
@@ -10,6 +12,7 @@
     <PackageTags>blazor;ui;components;core;infrastructure;theming</PackageTags>
     <PackageIcon>icon.png</PackageIcon>
     <PackageReadmeFile>README.md</PackageReadmeFile>
+    <PackageReleaseNotes>Update shared Carousel helpers for accessible navigation, mapped-image readiness and actual-index notifications while retaining public APIs, generated mappings and shared CSS tokens.</PackageReleaseNotes>
 
     <EmitCompilerGeneratedFiles>true</EmitCompilerGeneratedFiles>
     <CompilerGeneratedFilesOutputPath>$(BaseIntermediateOutputPath)Generated</CompilerGeneratedFilesOutputPath>

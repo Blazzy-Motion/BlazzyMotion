@@ -1,0 +1,8 @@
+<Project>
+  <!-- The Sonar build explicitly selects Razor's generated imports method.
+       Ordinary builds retain the compatibility shim. Package validation catches
+       accidental omission of the legacy API from release artifacts. -->
+  <ItemGroup Condition="'$(BlazzyUseGeneratedImports)' == 'true' And ('$(MSBuildProjectName)' == 'BlazzyMotion.Core' Or '$(MSBuildProjectName)' == 'BlazzyMotion.Carousel')">
+    <Compile Remove="_Imports.razor.cs" />
+  </ItemGroup>
+</Project>

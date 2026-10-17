@@ -11,6 +11,25 @@ A modern, high-performance 3D carousel component for Blazor with zero-configurat
 [![Maintainability Rating](https://sonarcloud.io/api/project_badges/measure?project=Blazzy-Motion_BlazzyMotion&metric=sqale_rating)](https://sonarcloud.io/summary/new_code?id=Blazzy-Motion_BlazzyMotion)
 [![Security Rating](https://sonarcloud.io/api/project_badges/measure?project=Blazzy-Motion_BlazzyMotion&metric=security_rating)](https://sonarcloud.io/summary/new_code?id=Blazzy-Motion_BlazzyMotion)
 
+## Version 1.5.0-preview.1
+
+Requires BlazzyMotion.Core 1.4.0-preview.1 or later. Core is installed transitively:
+
+```sh
+dotnet add package BlazzyMotion.Carousel --version 1.5.0-preview.1
+```
+
+Existing Carousel 1.4.x usage does not require parameter or model changes. Both
+legacy Carousel attributes and Core attributes remain supported. If your project
+pins Core explicitly, update that reference to 1.4.0-preview.1 or later as well.
+
+This preview refines the four themes, preserves the original Coverflow geometry,
+adds accessible keyboard navigation and image-loading fallbacks, and avoids
+redundant notifications when Swiper reports an unchanged active consumer index.
+Consumers must not rely on duplicate callbacks for an unchanged index. Custom
+`ItemTemplate` content retains its full-height slide wrapper and owns its image
+loading and accessible content. Shared Core CSS tokens remain unchanged.
+
 ## ⚠️ Migration Guide
 
 ### Upgrading from v1.0.x to v1.1.x
@@ -752,3 +771,107 @@ If you find BlazzyMotion.Carousel useful, please consider:
 - Reporting bugs or suggesting features via GitHub Issues
 
 For questions or support, please open an issue on GitHub.
+
+### Glass rendering and accessible navigation
+
+The Coverflow geometry and responsive image sizes remain unchanged. Glass uses
+one stationary backdrop surface with a subtle highlight and edge lighting; it does
+not animate backdrop blur on moving slides. The shared Core theme tokens are
+unchanged, so other components retain their existing appearance. Browsers without
+backdrop-filter support receive an opaque fallback surface.
+
+The first item or its loading placeholder remains visible while Swiper loads,
+including when its script cannot load. Load the styles in your host document before rendering components
+for a consistently styled first paint:
+
+```html
+<link rel="stylesheet" href="_content/BlazzyMotion.Core/css/blazzy-core.css" />
+<link rel="stylesheet" href="_content/BlazzyMotion.Core/css/swiper-bundle.min.css" />
+```
+
+Focus the carousel and use Left/Right Arrow keys to browse. Keyboard handling is
+local and leaves nested input controls alone. Previous/Next buttons are available
+to assistive technology and become visible when keyboard-focused; there are no
+persistent dots or counters. Active slide changes are announced politely. When
+an item-selection callback is supplied, the active slide can also be selected
+with Enter or Space. Existing SelectOnScroll behavior remains unchanged.
+
+Use the existing additional attributes to provide a contextual region name,
+for example `aria-label="Featured movies"`. Custom templates must provide useful
+image alternatives, accessible names for interactive elements, and visible focus
+styles. With attribute mapping, provide `[BzTitle]` for meaningful image text.
+The reduced-motion preference selects a flat, immediate transition and updates
+when that preference changes. An application-level accessibility audit and
+physical-device checks are still required; scoped automated checks do not
+establish full WCAG conformance or guarantee a particular frame rate.
+
+### Artwork readiness and theme surfaces
+
+Mapped images show a stationary, poster-sized placeholder until decoding completes.
+A failed request shows “Image unavailable”; other images remain usable. The
+initial item uses eager loading and high fetch priority, while the other items
+retain lazy loading. Image requests do not block Swiper initialization. Readiness
+tracking starts before Swiper loads, so a failed Swiper script does not hide a
+successfully loaded poster. Custom templates retain their own loading markup and
+behavior.
+
+Artwork keeps its own soft shadow. Once decoded, the actual Swiper slide and
+overlay retain their original full height; loading and failed slides stay shadow-free. Coverflow slide/image sizes, transforms and selection callbacks
+remain unchanged. Glass uses the existing blur token without extra saturation;
+stationary surface lighting provides definition on plain backgrounds. Dark, Light
+and Minimal use distinct artwork shadow treatments. No blur is applied to moving
+posters, and the shared Core theme tokens are unchanged.
+
+Optional Carousel CSS variables:
+
+| Variable | Purpose |
+| --- | --- |
+| `--bzc-artwork-shadow` | Shadow around inactive artwork |
+| `--bzc-active-artwork-shadow` | Shadow around active artwork |
+| `--bzc-placeholder-ratio` | Loading/error placeholder ratio; defaults to `2 / 3`, without constraining loaded images |
+| `--bzc-placeholder-bg` | Loading/error placeholder background |
+| `--bzc-placeholder-color` | Loading/error placeholder text and border |
+
+Placeholder text currently uses English. On a uniformly colored background, blur
+has few details to soften; the glass treatment therefore also uses highlights and
+edges. Physical-device performance and visual approval are still required.
+
+
+### Original Swiper slide surfaces
+
+Decoded mapped posters restore the actual full-height Swiper slide shadow and
+overlay from the original Coverflow presentation. There is no shorter, image-sized
+decorative surface. Slide width, height and Swiper transforms stay unchanged;
+loading and failed posters keep their independent placeholders without large empty
+shadows. Minimal omits the slide shadow. Custom templates retain the full-height
+wrapper and remain outside mapped-image readiness tracking.
+No per-slide backdrop blur is introduced.
+
+Glass has a broader translucent highlight; Dark retains a predominantly opaque
+surface. Light uses a soft neutral wash and layered card shadows. Existing theme
+background tokens remain supported. Optional `--bzc-slide-surface` and
+`--bzc-slide-surface-shadow` variables customize decoded slides. Loading
+placeholders are rendered by Carousel markup and managed by runtime image
+decoding. Source generators retain their existing model mapping and template
+generation; they do not create placeholder images.
+
+### Theme lighting
+
+Glass emphasizes the active poster with a restrained white halo. Dark uses a
+neutral edge and a dark artwork shadow instead of the Glass halo. Light combines
+a neutral border, a soft white-gray surface and diffuse shadows without a white
+artwork glow. Minimal leaves the full-height slide surface transparent and
+shadow-free. These treatments retain the existing Coverflow geometry and do not
+add blur to moving artwork or change the shared Core tokens. Existing artwork
+shadow variables remain available for host customization.
+
+### Swipe processing
+
+Swiper may repeat `slideChange` while repairing a loop without changing the active
+consumer item. Carousel forwards actual index changes to Blazor once, including
+reverse navigation and wraparound, while still synchronizing accessibility with
+the active DOM copy. Unchanged accessibility attributes and live announcements are
+not rewritten. Click selection and the existing `SelectOnScroll` behavior remain
+unchanged. This avoids redundant work without reducing Glass blur or changing the
+full-height slide surfaces. Emulated performance measurements are diagnostics, not
+a guarantee of 60 FPS on every device.

@@ -1,4 +1,4 @@
-﻿@namespace BlazzyMotion.Carousel.Components
+@namespace BlazzyMotion.Carousel.Components
 @using Microsoft.AspNetCore.Components.Web
 @typeparam TItem where TItem : class
 @inherits BlazzyMotion.Core.Abstractions.BzComponentBase
@@ -33,16 +33,27 @@ else if (IsEmpty)
 else
 {
     <div class="@GetCombinedClass("bzc-carousel-box")" style="@GetContainerStyle()" @ref="_carouselRef" data-item-count="@ItemCount"
+        role="region" aria-roledescription="carousel" aria-label="Carousel" tabindex="0"
         @attributes="AdditionalAttributes">
-        <div class="swiper-container bzc-hidden">
+        <p class="bzc-sr-only">Use Left and Right Arrow keys to browse slides. Use Tab to reach slide content.</p>
+        <div class="swiper-container bzc-pending">
             <div class="swiper-wrapper">
                 @{
                     var index = 0;
                     foreach (var item in Items!)
                     {
                         var currentIndex = index;
-                        <div class="swiper-slide" @onclick="() => HandleItemClick(item)">
+                        var hasImage = _useRegistryMapping && currentIndex < _mappedItems.Count && _mappedItems[currentIndex].HasImage;
+                        <div class="swiper-slide" role="group" aria-roledescription="slide"
+                             aria-label="@($"{currentIndex + 1} of {ItemCount}")"
+                             data-bzc-media="@(hasImage ? "loading" : null)"
+                             data-bzc-selectable="@(OnItemSelected.HasDelegate ? "true" : "false")"
+                             @onclick="() => HandleItemClick(item)">
                             @GetItemContent(item, currentIndex)
+                            @if (hasImage)
+                            {
+                                <span class="bzc-media-placeholder" aria-hidden="true">Loading image</span>
+                            }
                             @if (ShowOverlay)
                             {
                                 <div class="bzc-overlay"></div>
@@ -53,5 +64,11 @@ else
                 }
             </div>
         </div>
+        @if (ItemCount > 1)
+        {
+            <button type="button" disabled class="bzc-keyboard-control bzc-previous" data-bzc-direction="previous" aria-label="Previous slide">Previous</button>
+            <button type="button" disabled class="bzc-keyboard-control bzc-next" data-bzc-direction="next" aria-label="Next slide">Next</button>
+        }
+        <span class="bzc-sr-only bzc-status" role="status" aria-live="polite" aria-atomic="true"></span>
     </div>
 }

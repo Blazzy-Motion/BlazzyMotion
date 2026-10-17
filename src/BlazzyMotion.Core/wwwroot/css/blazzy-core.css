@@ -1136,7 +1136,13 @@
 
 /* Nested carousel in Bento - default sizing for carousel inside Bento cells */
 
+/* Keep the host stationary while Swiper owns the nested 3D gesture.
+   Other Bento cards retain their entrance and hover animations. */
 .bzb-item:has(.bzc-carousel-box) {
+    opacity: 1;
+    animation: none;
+    transform: none;
+    will-change: auto;
     display: flex;
     align-items: center;
     justify-content: center;

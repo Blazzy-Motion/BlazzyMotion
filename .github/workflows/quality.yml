@@ -58,13 +58,14 @@ jobs:
             /d:sonar.cs.opencover.reportsPaths="**/coverage.opencover.xml" \
             /d:sonar.coverage.exclusions="**Tests/**,**Demo/**,**/*JsInterop*.cs,**/SourceGen/**" \
             /d:sonar.exclusions="**/wwwroot/js/**" \
-            /d:sonar.qualitygate.wait=false
+            /d:sonar.test.inclusions="tests/**/*" \
+            /d:sonar.qualitygate.wait=true
 
       - name: Restore Dependencies
         run: dotnet restore ${{ env.SOLUTION_PATH }}
 
       - name: Build Solution
-        run: dotnet build ${{ env.SOLUTION_PATH }} --no-restore --configuration Release
+        run: dotnet build ${{ env.SOLUTION_PATH }} --no-restore --configuration Release /p:BlazzyUseGeneratedImports=true
 
       - name: Run Tests
         run: |
@@ -75,6 +76,20 @@ jobs:
             /p:CollectCoverage=true \
             /p:CoverletOutputFormat=opencover \
             /p:CoverletOutput=../coverage/coverage.opencover.xml
+
+      - name: Setup Node.js
+        uses: actions/setup-node@v4
+        with:
+          node-version: "22"
+
+      - name: Run Browser Regression Checks
+        run: |
+          npm ci --ignore-scripts --prefix tests/browser
+          node tests/browser/node_modules/playwright/cli.js install --with-deps chromium
+          dotnet run --project src/BlazzyMotion.Demo -c Release --no-build --no-launch-profile --urls http://127.0.0.1:5130 > "$RUNNER_TEMP/carousel-demo.log" 2>&1 &
+          demo_pid=$!
+          trap 'kill "$demo_pid" 2>/dev/null || true' EXIT
+          npm test --prefix tests/browser
 
       - name: SonarCloud End
         env:
@@ -87,4 +102,7 @@ jobs:
         uses: actions/upload-artifact@v4
         with:
           name: test-results
-          path: "**/TestResults/*.trx"
+          path: |
+            **/TestResults/*.trx
+            **/coverage.opencover.xml
+            tests/browser/artifacts/
