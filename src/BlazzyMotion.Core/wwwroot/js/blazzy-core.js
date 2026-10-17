@@ -109,6 +109,7 @@ const DEFAULT_TOUCH_SETTINGS = {
 
 /**
  * Initialize BzCarousel without changing the consumer's Coverflow geometry.
+ * Notify Blazor once per actual consumer-index change, excluding loop repairs.
  * @param {HTMLElement} element - Carousel root, including its accessible controls.
  * @param {string} optionsJson - Serialized component options.
  * @param {object|null} dotNetRef - Existing Blazor selection callback reference.
@@ -156,6 +157,7 @@ export async function initializeCarousel(element, optionsJson, dotNetRef = null)
         const resistanceRatio = options.resistanceRatio ?? DEFAULT_TOUCH_SETTINGS.resistanceRatio;
         const longSwipesRatio = options.longSwipesRatio ?? DEFAULT_TOUCH_SETTINGS.longSwipesRatio;
 
+        let lastNotifiedIndex;
         const swiperConfig = {
             // Effect settings
             effect: motion.matches ? "slide" : (options.effect || "coverflow"),
@@ -190,6 +192,7 @@ export async function initializeCarousel(element, optionsJson, dotNetRef = null)
                 afterInit: function () {
                     this.params.speed = motion.matches ? 0 : (options.speed || 300);
                     this.params.runCallbacksOnInit = true;
+                    lastNotifiedIndex = this.realIndex % originalSlideCount;
 
                     // Show carousel after initialization
                     requestAnimationFrame(() => {
@@ -205,9 +208,12 @@ export async function initializeCarousel(element, optionsJson, dotNetRef = null)
                 slideChange: function () {
                     // Swiper emits slideChange before updating its active-slide classes.
                     queueMicrotask(() => updateCarouselAccessibility(this, originalSlideCount, status));
-                    if (dotNetRef) {
-                        // Use modulo to get correct index when clones are present
-                        const realIndex = this.realIndex % originalSlideCount;
+                    // Loop repairs can emit slideChange repeatedly for the same consumer item.
+                    // Keep accessibility aligned with the current DOM copy, but notify Blazor
+                    // only when the consumer's active index actually changes.
+                    const realIndex = this.realIndex % originalSlideCount;
+                    if (dotNetRef && realIndex !== lastNotifiedIndex) {
+                        lastNotifiedIndex = realIndex;
                         dotNetRef.invokeMethodAsync('OnSlideChangeFromJS', realIndex)
                             .catch(err => {
                                 if (!err.message?.includes('disposed')) {
@@ -248,8 +254,8 @@ export async function initializeCarousel(element, optionsJson, dotNetRef = null)
 
 /**
  * Track mapped image decoding independently of Swiper, including cached and failed images.
- * Custom templates are untouched. A single ResizeObserver aligns overlays with actual images,
- * avoiding full-height shadows or filters on moving slide geometry.
+ * Custom templates are untouched. A single ResizeObserver records image dimensions
+ * without changing the original full-height slide geometry or adding moving filters.
  * @param {HTMLElement} element - Carousel root containing mapped image placeholders.
  */
 export function prepareCarouselImages(element) {
@@ -301,7 +307,7 @@ export function prepareCarouselImages(element) {
 }
 
 /**
- * Align a mapped image's overlay without measuring or changing Swiper transforms.
+ * Record mapped image dimensions without measuring or changing Swiper transforms.
  * @param {HTMLImageElement} image - Loaded or resized image directly inside its slide.
  */
 function updateCarouselImageSize(image) {
@@ -313,7 +319,8 @@ function updateCarouselImageSize(image) {
 }
 
 /**
- * Update slide semantics and retain keyboard focus on the current loop copy.
+ * Update slide semantics only when values change and retain focus on the current loop copy.
+ * Repeated loop events do not rewrite unchanged attributes or live-region text.
  * @param {object} swiper - Current Swiper instance.
  * @param {number} count - Number of consumer items, excluding loop copies.
  * @param {HTMLElement|null} status - Optional polite announcement target.
@@ -328,12 +335,17 @@ function updateCarouselAccessibility(swiper, count, status) {
                 control.setAttribute('data-bzc-tabindex', control.getAttribute('tabindex') ?? '');
             }
             const original = control.getAttribute('data-bzc-tabindex');
-            if (!active) control.tabIndex = -1;
-            else if (original === '') control.removeAttribute('tabindex');
-            else control.setAttribute('tabindex', original);
+            const desired = active ? original : '-1';
+            if (desired === '') {
+                if (control.hasAttribute('tabindex')) control.removeAttribute('tabindex');
+            } else if (control.getAttribute('tabindex') !== desired) {
+                control.setAttribute('tabindex', desired);
+            }
         }
-        slide.setAttribute('aria-hidden', String(!active));
-        slide.tabIndex = active && slide.dataset.bzcSelectable === 'true' ? 0 : -1;
+        const hidden = String(!active);
+        if (slide.getAttribute('aria-hidden') !== hidden) slide.setAttribute('aria-hidden', hidden);
+        const tabIndex = active && slide.dataset.bzcSelectable === 'true' ? 0 : -1;
+        if (slide.tabIndex !== tabIndex) slide.tabIndex = tabIndex;
     }
     const focusedSlide = document.activeElement?.closest('.swiper-slide');
     if (focusedSlide && swiper.el.contains(focusedSlide) && !focusedSlide.classList.contains('swiper-slide-active')) {
@@ -341,7 +353,8 @@ function updateCarouselAccessibility(swiper, count, status) {
         const target = activeSlide?.tabIndex === 0 ? activeSlide : swiper.el.closest('.bzc-carousel-box');
         target?.focus({ preventScroll: true });
     }
-    if (status) status.textContent = `Slide ${index + 1} of ${count}`;
+    const announcement = `Slide ${index + 1} of ${count}`;
+    if (status && status.textContent !== announcement) status.textContent = announcement;
 }
 
 /**

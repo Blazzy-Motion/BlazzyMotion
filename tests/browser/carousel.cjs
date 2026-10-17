@@ -153,6 +153,67 @@ async function inspectLoopCopies(browser) {
   console.log('PASS loop copies: one selection and clean teardown for 4, 5 and 6 items');
 }
 
+/** Preserve real index notifications while ignoring repeated Swiper loop-repair events. */
+async function inspectIndexNotifications(browser) {
+  const page = await browser.newPage();
+  await page.goto(baseURL);
+  await page.locator('.bz-demo .bzc-visible').waitFor();
+  const results = await page.evaluate(async () => {
+    const core = await import('/_content/BlazzyMotion.Core/js/blazzy-core.js');
+    const root = document.querySelector('.bz-demo .bzc-carousel-box');
+    const results = [];
+    for (const loop of [false, true]) {
+      const calls = [];
+      const dotNet = { invokeMethodAsync: async (method, index) => { calls.push({ method, index }); } };
+      await core.initializeCarousel(root, JSON.stringify({ loop, initialSlide: 3, speed: 1 }), dotNet);
+      const swiper = root.querySelector('.swiper-container').swiper;
+      const nested = document.createElement('button');
+      nested.textContent = 'Nested action';
+      nested.tabIndex = 2;
+      root.querySelector('.swiper-slide-active').appendChild(nested);
+      await new Promise(resolve => requestAnimationFrame(resolve));
+      if (calls.length) throw new Error('Initialization must not notify an active-index change');
+      let mutations = 0;
+      const observer = new MutationObserver(records => { mutations += records.length; });
+      observer.observe(root, { subtree: true, childList: true, characterData: true, attributes: true, attributeFilter: ['aria-hidden', 'tabindex'] });
+      // First synchronize the announcement; subsequent identical events must be silent.
+      swiper.emit('slideChange');
+      await new Promise(resolve => setTimeout(resolve, 0));
+      mutations = 0;
+      for (let i = 0; i < 5; i++) swiper.emit('slideChange');
+      await new Promise(resolve => setTimeout(resolve, 0));
+      observer.disconnect();
+      if (calls.length || mutations) throw new Error(`Repeated index caused callbacks or accessibility mutations: ${calls.length}/${mutations}`);
+      const expected = [];
+      for (const direction of ['next', 'next', 'previous', 'next', 'next', 'next', 'next', 'next', 'next', 'previous']) {
+        const before = swiper.realIndex;
+        if (direction === 'next') swiper.slideNext(0);
+        else swiper.slidePrev(0);
+        await new Promise(resolve => requestAnimationFrame(resolve));
+        const after = swiper.realIndex;
+        if (after !== before) expected.push({ method: 'OnSlideChangeFromJS', index: after });
+        for (let i = 0; i < 3; i++) swiper.emit('slideChange');
+        await new Promise(resolve => setTimeout(resolve, 0));
+      }
+      if (nested.tabIndex !== -1) throw new Error('Inactive nested controls must leave the tab order');
+      const beforeReturn = swiper.realIndex;
+      if (loop) swiper.slideToLoop(3, 0);
+      else swiper.slideTo(3, 0);
+      await new Promise(resolve => requestAnimationFrame(() => requestAnimationFrame(resolve)));
+      if (swiper.realIndex !== beforeReturn) expected.push({ method: 'OnSlideChangeFromJS', index: swiper.realIndex });
+      if (nested.tabIndex !== 2) throw new Error('Restore the original nested control tab index');
+      nested.remove();
+      if (JSON.stringify(calls) !== JSON.stringify(expected)) throw new Error(`Index callbacks lost or duplicated: ${JSON.stringify({ loop, calls, expected })}`);
+      results.push({ loop, notifications: calls.length });
+    }
+    core.destroyCarousel(root);
+    return results;
+  });
+  assert(results.every(result => result.notifications > 0));
+  console.log('PASS index notifications: real changes, loop wrap, reverse navigation and silent duplicate events');
+  await page.close();
+}
+
 /** Capture each theme on independent host backgrounds without changing shared theme tokens. */
 async function inspectHostBackgrounds(browser) {
   const page = await browser.newPage({ viewport: { width: 1200, height: 1000 } });
@@ -247,6 +308,7 @@ async function inspectFallback(browser) {
     await inspectCarousel(browser, 'mobile', { ...devices['iPhone 13'] });
     await inspectCarousel(browser, 'reduced', { viewport: { width: 1440, height: 1000 }, reducedMotion: 'reduce' });
     await inspectLoopCopies(browser);
+    await inspectIndexNotifications(browser);
     await inspectHostBackgrounds(browser);
     await inspectImageReadiness(browser);
     await inspectFallback(browser);

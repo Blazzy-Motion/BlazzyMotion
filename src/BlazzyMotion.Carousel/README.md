@@ -844,3 +844,14 @@ artwork glow. Minimal leaves the full-height slide surface transparent and
 shadow-free. These treatments retain the existing Coverflow geometry and do not
 add blur to moving artwork or change the shared Core tokens. Existing artwork
 shadow variables remain available for host customization.
+
+### Swipe processing
+
+Swiper may repeat `slideChange` while repairing a loop without changing the active
+consumer item. Carousel forwards actual index changes to Blazor once, including
+reverse navigation and wraparound, while still synchronizing accessibility with
+the active DOM copy. Unchanged accessibility attributes and live announcements are
+not rewritten. Click selection and the existing `SelectOnScroll` behavior remain
+unchanged. This avoids redundant work without reducing Glass blur or changing the
+full-height slide surfaces. Emulated performance measurements are diagnostics, not
+a guarantee of 60 FPS on every device.
