@@ -110,6 +110,7 @@ const DEFAULT_TOUCH_SETTINGS = {
 /**
  * Initialize BzCarousel without changing the consumer's Coverflow geometry.
  * Notify Blazor once per actual consumer-index change, excluding loop repairs.
+ * Nested Bento layouts use size observation so parent attribute updates cannot snap an active drag.
  * @param {HTMLElement} element - Carousel root, including its accessible controls.
  * @param {string} optionsJson - Serialized component options.
  * @param {object|null} dotNetRef - Existing Blazor selection callback reference.
@@ -172,7 +173,10 @@ export async function initializeCarousel(element, optionsJson, dotNetRef = null)
             slideToClickedSlide: true,
             watchSlidesProgress: true,
             observer: true,
-            observeParents: true,
+            // Bento updates ancestor classes when dashboard data first renders.
+            // Observe actual container resizing instead of resetting an in-progress drag.
+            observeParents: !element.closest('.bzb-grid'),
+            resizeObserver: true,
             // Touch settings - mobile optimization
             touchRatio: touchRatio,
             threshold: threshold,

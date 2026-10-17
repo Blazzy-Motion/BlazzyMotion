@@ -399,6 +399,100 @@ async function inspectFallback(browser) {
   await page.close();
 }
 
+/**
+ * Verify client-side route reentry and parent rerenders cannot realign an active touch drag.
+ * Also require actual container-size changes to update Swiper without a window resize.
+ * @param {import('playwright').Browser} browser Browser used for independent mobile navigation.
+ * @returns {Promise<void>} Resolves after three route visits and disposal checks.
+ */
+async function inspectBentoNavigationLifecycle(browser) {
+  const context = await browser.newContext({ ...devices['Galaxy S9+'], viewport: { width: 412, height: 915 } });
+  const page = await context.newPage();
+  const errors = [];
+  const results = [];
+  page.on('pageerror', error => errors.push(error.message));
+  await page.goto(baseURL);
+  await page.locator('.bz-demo .bzc-visible').waitFor();
+  const timeOrigin = await page.evaluate(() => performance.timeOrigin);
+  const cdp = await context.newCDPSession(page);
+  try {
+    for (const [visit, direction] of [-1, 1, -1].entries()) {
+      // A same-origin anchor exercises Blazor routing without replacing the document.
+      await page.evaluate(() => {
+        const link = document.createElement('a');
+        link.href = '/bento';
+        document.body.append(link);
+        link.click();
+        link.remove();
+      });
+      const root = page.locator('.bzb-item .bzc-carousel-box');
+      await root.locator('.swiper-slide-active[data-bzc-media=ready]').waitFor();
+      await root.scrollIntoViewIfNeeded();
+      await page.waitForTimeout(700);
+      await root.evaluate(element => { window.bzcRouteSwiper = element.querySelector('.swiper-container').swiper; });
+      const initial = await root.evaluate(element => element.querySelector('.swiper-container').swiper.realIndex);
+      const box = await root.boundingBox();
+      const x = box.x + box.width / 2;
+      const y = box.y + box.height / 2;
+      await cdp.send('Input.dispatchTouchEvent', { type: 'touchStart', touchPoints: [{ x, y }] });
+      let probe;
+      for (let step = 1; step <= 18; step++) {
+        await cdp.send('Input.dispatchTouchEvent', { type: 'touchMove', touchPoints: [{ x: x + direction * box.width * 0.45 * step / 18, y }] });
+        await page.waitForTimeout(16);
+        if (step === 8) {
+          const before = await root.evaluate(element => {
+            const swiper = element.querySelector('.swiper-container').swiper;
+            const before = { translate: swiper.translate, width: swiper.width, touched: swiper.touchEventsData.isTouched };
+            // Ancestor metadata can change during a dashboard render without changing geometry.
+            element.closest('.bzb-grid').dataset.bzcNavigationProbe = 'updated';
+            return before;
+          });
+          await page.waitForTimeout(100);
+          const after = await root.evaluate(element => {
+            const swiper = element.querySelector('.swiper-container').swiper;
+            return { translate: swiper.translate, width: swiper.width, touched: swiper.touchEventsData.isTouched };
+          });
+          assert(before.touched && after.touched, 'The parent update must occur during a real drag');
+          assert.equal(after.width, before.width, 'The metadata update must not resize the container');
+          assert(Math.abs(after.translate - before.translate) < 0.1, 'Parent rerenders must not snap the held slide to its center');
+          probe = { before, after };
+        }
+      }
+      await cdp.send('Input.dispatchTouchEvent', { type: 'touchEnd', touchPoints: [] });
+      await page.waitForTimeout(450);
+      const state = await root.evaluate(element => {
+        const swiper = element.querySelector('.swiper-container').swiper;
+        return { same: swiper === window.bzcRouteSwiper, index: swiper.realIndex, width: swiper.width, name: element.querySelector('.swiper-slide-active img').alt, metrics: [...element.closest('.bzb-grid').querySelectorAll('.bzb-metric-value')].map(node => node.textContent.trim()) };
+      });
+      assert.notEqual(state.index, initial, 'Every route visit must permit the first swipe in either direction');
+      assert(state.same, 'Dashboard callbacks must preserve the active instance');
+      assert(state.metrics.includes(state.name), 'Dashboard metrics must follow the selected company');
+      await root.evaluate(element => {
+        const grid = element.closest('.bzb-grid');
+        grid.style.width = `${grid.getBoundingClientRect().width - 24}px`;
+      });
+      await page.waitForFunction(previous => {
+        const swiper = window.bzcRouteSwiper;
+        return swiper.width !== previous && Math.abs(swiper.width - swiper.el.clientWidth) <= 1;
+      }, state.width);
+      results.push({ visit, direction, index: state.index, probe });
+      await page.evaluate(() => {
+        const link = document.createElement('a');
+        link.href = '/';
+        document.body.append(link);
+        link.click();
+        link.remove();
+      });
+      await page.locator('.bz-demo .bzc-visible').waitFor();
+      await page.waitForFunction(() => window.bzcRouteSwiper.destroyed === true);
+      assert.equal(await page.evaluate(() => performance.timeOrigin), timeOrigin, 'Route reentry must not reload the document');
+    }
+    assert.deepEqual(errors, []);
+    fs.writeFileSync(path.join(artifacts, 'bento-navigation.json'), JSON.stringify(results, null, 2));
+    console.log('PASS Bento route reentry: held-drag stability, forward/reverse input, real resizing, metrics and disposal');
+  } finally { await context.close(); }
+}
+
 (async () => {
   fs.mkdirSync(artifacts, { recursive: true });
   await waitForHost();
@@ -411,6 +505,7 @@ async function inspectFallback(browser) {
     await inspectIndexNotifications(browser);
     await inspectCustomTemplateSurface(browser);
     await inspectNestedBentoCarousel(browser);
+    await inspectBentoNavigationLifecycle(browser);
     await inspectHostBackgrounds(browser);
     await inspectImageReadiness(browser);
     await inspectFallback(browser);
