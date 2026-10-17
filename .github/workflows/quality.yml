@@ -115,7 +115,7 @@ jobs:
           import os
           import urllib.parse
           import urllib.request
-          query = urllib.parse.urlencode({"componentKeys": "Blazzy-Motion_BlazzyMotion", "pullRequest": os.environ["PR_NUMBER"], "resolved": "false", "ps": 100})
+          query = urllib.parse.urlencode({"componentKeys": "Blazzy-Motion_BlazzyMotion", "pullRequest": os.environ["PR_NUMBER"], "resolved": "false", "types": "VULNERABILITY", "ps": 100})
           request = urllib.request.Request("https://sonarcloud.io/api/issues/search?" + query, headers={"Authorization": "Bearer " + os.environ["SONAR_TOKEN"]})
           with urllib.request.urlopen(request, timeout=30) as response:
               issues = json.load(response).get("issues", [])
