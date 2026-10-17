@@ -1,7 +1,10 @@
-﻿@inherits LayoutComponentBase
+@inherits LayoutComponentBase
+@using BlazzyMotion.Demo.Components
+
+<SiteHeader />
 
 <!-- Mobile Menu Toggle Button -->
-<button class="bz-mobile-toggle" @onclick="ToggleSidebar" aria-label="Toggle navigation menu">
+<button class="bz-mobile-toggle" @onclick="ToggleSidebar" aria-label="Toggle documentation navigation" aria-expanded="@_sidebarOpen.ToString().ToLowerInvariant()" aria-controls="docs-navigation">
     <svg xmlns="http://www.w3.org/2000/svg" width="24" height="24" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2" stroke-linecap="round" stroke-linejoin="round">
         @if (_sidebarOpen)
         {
@@ -27,20 +30,23 @@
 <NavMenu IsOpen="_sidebarOpen" OnLinkClick="CloseSidebar" />
 
 <!-- Main Content Area -->
-<main class="bz-main">
+<main id="main-content" tabindex="-1" class="bz-main">
     <div class="bz-main__content">
         @Body
     </div>
+    <SiteFooter />
 </main>
 
 @code {
     private bool _sidebarOpen = false;
 
+    /// <summary>Toggles the mobile documentation navigation.</summary>
     private void ToggleSidebar()
     {
         _sidebarOpen = !_sidebarOpen;
     }
 
+    /// <summary>Closes the documentation navigation after a selection.</summary>
     private void CloseSidebar()
     {
         _sidebarOpen = false;

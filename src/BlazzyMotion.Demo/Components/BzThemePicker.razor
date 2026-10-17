@@ -1,35 +1,45 @@
 @using BlazzyMotion.Core.Models
 @using BlazzyMotion.Demo.Icons
 
-<div class="bz-theme-pills">
+<div class="bz-theme-pills" role="group" aria-label="Component theme">
     <button class="bz-pill @(CurrentTheme == BzTheme.Glass ? "active" : "")"
+            aria-pressed="@((CurrentTheme == BzTheme.Glass).ToString().ToLowerInvariant())"
             @onclick="() => SetTheme(BzTheme.Glass)">
         <span class="bz-pill__icon">@Icons.Crystal</span> Glass
     </button>
     <button class="bz-pill @(CurrentTheme == BzTheme.Dark ? "active" : "")"
+            aria-pressed="@((CurrentTheme == BzTheme.Dark).ToString().ToLowerInvariant())"
             @onclick="() => SetTheme(BzTheme.Dark)">
         <span class="bz-pill__icon">@Icons.Moon</span> Dark
     </button>
     <button class="bz-pill @(CurrentTheme == BzTheme.Light ? "active" : "")"
+            aria-pressed="@((CurrentTheme == BzTheme.Light).ToString().ToLowerInvariant())"
             @onclick="() => SetTheme(BzTheme.Light)">
         <span class="bz-pill__icon">@Icons.Sun</span> Light
     </button>
     <button class="bz-pill @(CurrentTheme == BzTheme.Minimal ? "active" : "")"
+            aria-pressed="@((CurrentTheme == BzTheme.Minimal).ToString().ToLowerInvariant())"
             @onclick="() => SetTheme(BzTheme.Minimal)">
         <span class="bz-pill__icon">@Icons.Minus</span> Minimal
     </button>
 </div>
 
 @code {
+    /// <summary>Gets or sets the theme displayed by the example.</summary>
     [Parameter]
     public BzTheme CurrentTheme { get; set; } = BzTheme.Glass;
 
+    /// <summary>Notifies the parent when the bound theme changes.</summary>
     [Parameter]
     public EventCallback<BzTheme> CurrentThemeChanged { get; set; }
 
+    /// <summary>Notifies consumers when a theme is selected.</summary>
     [Parameter]
     public EventCallback<BzTheme> OnThemeChanged { get; set; }
 
+    /// <summary>Updates the example theme and notifies its consumer.</summary>
+    /// <param name="theme">The component theme to display.</param>
+    /// <returns>A task representing the change notifications.</returns>
     private async Task SetTheme(BzTheme theme)
     {
         CurrentTheme = theme;

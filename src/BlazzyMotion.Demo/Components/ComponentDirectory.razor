@@ -1,0 +1,20 @@
+@using BlazzyMotion.Demo.Services
+
+<section class="component-directory" aria-labelledby="component-directory-title">
+    <div class="section-heading">
+        <span class="site-eyebrow">The collection</span>
+        <h2 id="component-directory-title">Small details. Distinctive interfaces.</h2>
+        <p>Explore the components, try a theme, and take the code into your project.</p>
+    </div>
+    <div class="component-directory__grid">
+        @foreach (var component in ComponentRegistry.Components.Where(item => item.IsAvailable))
+        {
+            <article class="component-entry">
+                <div class="component-entry__top"><span class="component-entry__icon" aria-hidden="true">@component.Icon</span><span class="component-entry__version">Stable @component.Version</span></div>
+                <h3><a href="@($"/{component.Id}")">@component.Name <svg aria-hidden="true" width="14" height="14" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="1.5"><path d="M7 17 17 7M7 7h10v10" /></svg></a></h3>
+                <p>@component.Description</p>
+                <div class="component-entry__links"><a href="@($"/{component.Id}")">Explore demo</a><a href="@component.DocsUrl">Documentation</a></div>
+            </article>
+        }
+    </div>
+</section>

@@ -2,7 +2,7 @@
   "name": "blazzymotion-browser-checks",
   "private": true,
   "scripts": {
-    "test": "node carousel.cjs",
+    "test": "node carousel.cjs && node site.cjs",
     "performance": "node performance.cjs"
   },
   "devDependencies": {

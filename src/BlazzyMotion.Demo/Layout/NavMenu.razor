@@ -1,9 +1,9 @@
-﻿@using Microsoft.AspNetCore.Components.Routing
+@using Microsoft.AspNetCore.Components.Routing
 @using BlazzyMotion.Demo.Services
 @using BlazzyMotion.Demo.Models
 @using BlazzyMotion.Demo.Icons
 
-<aside class="bz-sidebar @(IsOpen ? "bz-sidebar--open" : "")">
+<aside id="docs-navigation" class="bz-sidebar @(IsOpen ? "bz-sidebar--open" : "")">
 
     <header class="bz-sidebar__header">
         <button class="bz-sidebar__close" @onclick="HandleLinkClick" aria-label="Close menu">
