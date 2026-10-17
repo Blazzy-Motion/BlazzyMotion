@@ -103,6 +103,28 @@ jobs:
           SONAR_TOKEN: ${{ secrets.SONAR_TOKEN }}
         run: dotnet sonarscanner end /d:sonar.token="$SONAR_TOKEN"
 
+      - name: Report Sonar Findings
+        if: always() && steps.sonar-begin.outcome == 'success' && github.event_name == 'pull_request'
+        continue-on-error: true
+        env:
+          SONAR_TOKEN: ${{ secrets.SONAR_TOKEN }}
+          PR_NUMBER: ${{ github.event.pull_request.number }}
+        run: |
+          python3 - <<'PYTHON'
+          import json
+          import os
+          import urllib.parse
+          import urllib.request
+          query = urllib.parse.urlencode({"componentKeys": "Blazzy-Motion_BlazzyMotion", "pullRequest": os.environ["PR_NUMBER"], "resolved": "false", "ps": 100})
+          request = urllib.request.Request("https://sonarcloud.io/api/issues/search?" + query, headers={"Authorization": "Bearer " + os.environ["SONAR_TOKEN"]})
+          with urllib.request.urlopen(request, timeout=30) as response:
+              issues = json.load(response).get("issues", [])
+          for issue in issues:
+              message = issue.get("rule", "") + ": " + issue.get("message", "")
+              message = message.replace("%", "%25").replace("\r", "%0D").replace("\n", "%0A")
+              print("::warning title=Sonar finding::" + issue.get("component", "") + ":" + str(issue.get("line", "")) + " " + message)
+          PYTHON
+
       - name: Upload Test Results
         if: always()
         uses: actions/upload-artifact@v4
