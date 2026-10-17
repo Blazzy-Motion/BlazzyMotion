@@ -87,10 +87,8 @@ jobs:
 
       - name: Run Browser Regression Checks
         run: |
-          npm ci --prefix tests/browser
-          cd tests/browser
-          npx playwright install --with-deps chromium
-          cd ../..
+          npm ci --ignore-scripts --prefix tests/browser
+          node tests/browser/node_modules/playwright/cli.js install --with-deps chromium
           dotnet run --project src/BlazzyMotion.Demo -c Release --no-build --no-launch-profile --urls http://127.0.0.1:5130 > "$RUNNER_TEMP/carousel-demo.log" 2>&1 &
           demo_pid=$!
           trap 'kill "$demo_pid" 2>/dev/null || true' EXIT
