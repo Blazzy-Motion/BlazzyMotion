@@ -59,16 +59,26 @@ async function checkPresentation(browser, mode) {
                     const bounds = element.getBoundingClientRect();
                     const artwork = image.getBoundingClientRect();
                     return { height: bounds.height, imageWidth: image.offsetWidth,
+                        visibleArtwork: [...element.querySelectorAll('.swiper-slide img')].filter(item => {
+                            const box = item.getBoundingClientRect();
+                            return box.width > 5 && box.right > bounds.left + 5 && box.left < bounds.right - 5;
+                        }).length,
                         centerOffset: Math.abs((artwork.left + artwork.width / 2) - (bounds.left + bounds.width / 2)),
                         background: getComputedStyle(element).backgroundColor, border: getComputedStyle(element).borderTopWidth };
                 });
-                assert.ok(geometry.height < (mode === 'mobile' ? 380 : 470), 'Avoid oversized empty panels');
-                if (mode === 'mobile') assert.ok(geometry.imageWidth >= 145, 'Mobile artwork must remain prominent');
+                assert.ok(geometry.height < (mode === 'mobile' ? 390 : variant === 'Auto' ? 530 : 470), 'Avoid oversized empty panels');
+                if (mode === 'mobile' && variant === 'Cards') assert.ok(geometry.imageWidth >= 145, 'The deck must retain its own artwork size');
+                if (mode === 'mobile' && variant === 'Auto') {
+                    assert.equal(geometry.imageWidth, 90, 'Preserve main branch mobile Coverflow image sizing');
+                    assert.ok(geometry.visibleArtwork >= 5, 'Keep at least five intersecting Coverflow artworks on mobile');
+                }
                 if (variant === 'Cards') {
                     assert.equal(geometry.background, 'rgba(0, 0, 0, 0)', 'Cards must not have an outer panel');
                     assert.equal(geometry.border, '0px');
                     assert.ok(geometry.centerOffset < 20, 'The deck must be centered over its navigation');
                 }
+                const dotBackgrounds = await root.locator('.bzc-dot').evaluateAll(dots => dots.map(dot => getComputedStyle(dot).backgroundColor));
+                assert.ok(dotBackgrounds.every(color => color === 'rgba(0, 0, 0, 0)'), 'Dot hit areas must remain transparent in every theme');
                 const result = await new AxeBuilder({ page }).include('.bzc-carousel-box')
                     .withTags(['wcag2a', 'wcag2aa', 'wcag21aa', 'wcag22aa']).analyze();
                 assert.deepEqual(result.violations.map(v => ({ id: v.id, targets: v.nodes.map(n => n.target) })), []);
@@ -99,7 +109,7 @@ async function checkMobileSwipe(page, root) {
                 const button = document.querySelector('.bz-home-layout__docs-btn');
                 const box = button.getBoundingClientRect();
                 return document.elementFromPoint(box.x + box.width / 2, box.y + box.height / 2)?.closest('.bz-home-layout__docs-btn') === button;
-            }), 'The fixed Docs link must stay above the deck throughout a swipe');
+            }), 'The sticky Docs link must stay above the deck throughout a swipe');
         }
         await session.send('Input.dispatchTouchEvent', { type: 'touchEnd', touchPoints: [] });
         await page.waitForFunction(text => document.querySelector('.bzc-status').textContent !== text, before);

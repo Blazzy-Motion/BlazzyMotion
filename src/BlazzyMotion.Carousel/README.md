@@ -757,7 +757,7 @@ For questions or support, please open an issue on GitHub.
 
 The existing zero-configuration usage and model attributes remain supported. The
 `Auto` presentation keeps the previous small-collection fallback and Coverflow
-behavior. All four themes now use softer, theme-aware card shadows. The initial
+behavior. Coverflow retains its main-branch theme treatment; Cards uses independent theme surfaces. The initial
 item remains visible while JavaScript initializes, instead of an empty carousel.
 
 ### Cards presentation
@@ -815,8 +815,9 @@ Light decorate the card surface and navigation; Minimal removes that decoration.
 The image itself is not tinted to simulate a theme. Coverflow retains its themed
 container, with content and controls in normal flow to avoid oversized empty space.
 
-Default artwork widths are now 220px on desktop, 185px on tablets and 160px on
-small screens, with matching image limits. Existing `--bz-slide-width*`,
+Coverflow preserves the main branch sizing tokens: slide widths of 180px,
+150px and 100px, with image limits of 160px, 140px and 90px. Cards has independent
+responsive sizing (160–220px), configurable with `--bzc-deck-width`. Existing `--bz-slide-width*`,
 `--bz-image-max-width*`, `--bzc-slide-width` and `--bzc-image-max-width` variables
 remain configurable. `Width` and `Height` overrides remain supported. Check the
 Demo on your target devices before upgrading custom layouts.

@@ -1,4 +1,4 @@
-﻿.bz-home-layout {
+.bz-home-layout {
     min-height: 100vh;
     position: relative;
 }
@@ -9,16 +9,14 @@
 
 /* Floating Docs Button */
 .bz-home-layout__docs-btn {
-    position: fixed;
-    top: 1.5rem;
-    right: 1.5rem;
+    position: relative;
     z-index: 1100;
     display: flex;
     align-items: center;
     gap: 0.5rem;
     background: rgba(15, 23, 42, 0.8);
-    backdrop-filter: blur(12px);
-    -webkit-backdrop-filter: blur(12px);
+    backdrop-filter: none;
+    -webkit-backdrop-filter: none;
     border: 1px solid rgba(255, 255, 255, 0.1);
     border-radius: 50px;
     padding: 0.625rem 1.25rem;
@@ -44,8 +42,7 @@
 /* Mobile Responsive */
 @media (max-width: 768px) {
     .bz-home-layout__docs-btn {
-        top: 1rem;
-        right: 1rem;
+
         padding: 0.75rem;
         border-radius: 50%;
         backdrop-filter: none;
@@ -57,3 +54,16 @@
         display: none;
     }
 }
+
+/* Sticky positioning avoids a fixed composited layer competing with the 3D deck. */
+.bz-home-layout__toolbar {
+    position: sticky;
+    top: 1rem;
+    height: 0;
+    z-index: 1100;
+    display: flex;
+    justify-content: flex-end;
+    padding-right: 1rem;
+    pointer-events: none;
+}
+.bz-home-layout__docs-btn { pointer-events: auto; }
