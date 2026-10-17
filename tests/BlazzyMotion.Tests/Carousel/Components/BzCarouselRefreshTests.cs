@@ -62,4 +62,17 @@ public class BzCarouselRefreshTests : TestBase
         cut.Find(".bzc-select").Click();
         selected.Should().ContainSingle().Which.Should().BeSameAs(movie);
     }
+    /// <summary>Showing navigation after initialization must bind the newly rendered controls.</summary>
+    [Fact]
+    public void EnablingNavigation_ReinitializesTheRenderedControls()
+    {
+        var cut = RenderComponent<BzCarousel<TestMovie>>(p => p
+            .Add(x => x.Items, new[] { new TestMovie(), new TestMovie() })
+            .Add(x => x.ShowNavigation, false));
+        var initializations = CoreModule.Invocations["initializeCarousel"].Count;
+        cut.SetParametersAndRender(p => p.Add(x => x.ShowNavigation, true));
+        cut.FindAll(".bzc-navigation button").Should().HaveCount(2);
+        CoreModule.Invocations["initializeCarousel"].Count.Should().Be(initializations + 1);
+    }
+
 }

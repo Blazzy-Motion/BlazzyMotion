@@ -106,7 +106,11 @@ const DEFAULT_TOUCH_SETTINGS = {
 // CAROUSEL INITIALIZATION
 
 /**
- * Initialize BzCarousel with 3D Coverflow effect
+ * Initializes a carousel while preserving existing effect and callback options.
+ * @param {HTMLElement} element Carousel root containing the slide wrapper.
+ * @param {string} optionsJson Serialized carousel options.
+ * @param {object|null} dotNetRef Optional Blazor callback reference.
+ * @returns {Promise<void>} Resolves after initialization; failures retain the initial view.
  */
 export async function initializeCarousel(element, optionsJson, dotNetRef = null) {
     try {
@@ -143,6 +147,22 @@ export async function initializeCarousel(element, optionsJson, dotNetRef = null)
             for (let i = 0; i < slidesToAdd; i++) {
                 const clone = originalSlides[i % slideCount].cloneNode(true);
                 clone.setAttribute('data-bz-clone', 'true');
+                // Cloned DOM has no Blazor event registrations. Forward activation
+                // to the matching original element so consumer callbacks still run.
+                const original = originalSlides[i % slideCount];
+                clone.addEventListener('click', event => {
+                    event.preventDefault();
+                    event.stopPropagation();
+                    const path = [];
+                    let target = event.target;
+                    while (target && target !== clone) {
+                        path.unshift(Array.prototype.indexOf.call(target.parentElement.children, target));
+                        target = target.parentElement;
+                    }
+                    let source = original;
+                    for (const index of path) source = source.children[index];
+                    source?.click();
+                });
                 wrapper.appendChild(clone);
             }
         }
@@ -255,17 +275,30 @@ function bindCarouselAccessibility(element, swiper, count) {
     const previous = element.querySelector('.bzc-previous');
     const next = element.querySelector('.bzc-next');
     const status = element.querySelector('.bzc-status');
+    const cloneControls = [...element.querySelectorAll('[data-bz-clone]')].map(clone => ({
+        clone,
+        controls: [...clone.querySelectorAll('a[href], button, input, select, textarea, [tabindex], [contenteditable]')]
+            .map(control => ({ control, tabIndex: control.getAttribute('tabindex') }))
+    }));
     /** Updates navigation boundaries and original-item announcements. */
     const update = () => {
+        if (swiper.destroyed || !swiper.params) return;
         if (previous) previous.disabled = !swiper.params.loop && swiper.isBeginning;
         if (next) next.disabled = !swiper.params.loop && swiper.isEnd;
         if (status) status.textContent = `Slide ${(swiper.realIndex % count) + 1} of ${count}`;
         element.querySelectorAll('.bzc-select').forEach(button => {
             button.tabIndex = button.closest('.swiper-slide')?.classList.contains('swiper-slide-active') ? 0 : -1;
         });
-        element.querySelectorAll('[data-bz-clone]').forEach(clone => {
-            clone.setAttribute('aria-hidden', 'true');
-            clone.inert = true;
+        cloneControls.forEach(({ clone, controls }) => {
+            const active = clone.classList.contains('swiper-slide-active');
+            if (active) clone.removeAttribute('aria-hidden');
+            else clone.setAttribute('aria-hidden', 'true');
+            clone.inert = !active;
+            controls.forEach(({ control, tabIndex }) => {
+                if (!active) control.tabIndex = -1;
+                else if (tabIndex === null) control.removeAttribute('tabindex');
+                else control.setAttribute('tabindex', tabIndex);
+            });
         });
     };
     previous?.addEventListener('click', () => swiper.slidePrev(), { signal: controller.signal });
@@ -279,7 +312,9 @@ function bindCarouselAccessibility(element, swiper, count) {
             if (forward) swiper.slideNext(); else swiper.slidePrev();
         }
     }, { signal: controller.signal });
-    swiper.on('slideChange', update);
+    // Swiper emits slideChange before applying active-slide classes.
+    swiper.on('slideChange', () => queueMicrotask(update));
+    swiper.on('slideChangeTransitionEnd', update);
     swiper.on('lock', update);
     swiper.on('unlock', update);
     swiper.on('destroy', () => controller.abort());

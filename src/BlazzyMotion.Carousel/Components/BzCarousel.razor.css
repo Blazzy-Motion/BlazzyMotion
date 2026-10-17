@@ -124,7 +124,7 @@
     --bzc-focus-color: #67e8f9;
 }
 
-.bzc-carousel-box:has(.bzc-navigation) {
+.bzc-carousel-box[data-navigation="true"] {
     padding-bottom: calc(var(--bzc-padding, 24px) + 52px);
 }
 

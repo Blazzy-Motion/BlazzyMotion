@@ -538,7 +538,7 @@ public partial class BzCarousel<TItem> : BzComponentBase where TItem : class
     {
         var currentItemCount = ItemCount;
         var optionsSnapshot = Options != null ? JsonSerializer.Serialize(Options) : null;
-        var keyParamsHash = HashCode.Combine(Loop, RotateDegree, Depth, MinItemsForLoop, MinItemsForCoverflow, SelectOnScroll, Variant, AutoDetectMode);
+        var keyParamsHash = HashCode.Combine(Loop, RotateDegree, Depth, MinItemsForLoop, MinItemsForCoverflow, SelectOnScroll, HashCode.Combine(Variant, AutoDetectMode, ShowNavigation));
 
         if (currentItemCount == 0)
         {

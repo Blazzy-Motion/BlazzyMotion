@@ -32,7 +32,7 @@ else if (IsEmpty)
 }
 else
 {
-    <div class="@GetCombinedClass("bzc-carousel-box")" style="@GetContainerStyle()" @ref="_carouselRef" data-item-count="@ItemCount" role="region" aria-roledescription="carousel" aria-label="Carousel" tabindex="0" data-variant="@Variant.ToString().ToLowerInvariant()"
+    <div class="@GetCombinedClass("bzc-carousel-box")" style="@GetContainerStyle()" @ref="_carouselRef" data-item-count="@ItemCount" role="region" aria-roledescription="carousel" aria-label="Carousel" tabindex="0" data-variant="@Variant.ToString().ToLowerInvariant()" data-navigation="@((ShowNavigation && ItemCount > 1).ToString().ToLowerInvariant())"
         @attributes="AdditionalAttributes">
         <div class="swiper-container bzc-pending">
             <div class="swiper-wrapper">
@@ -62,7 +62,7 @@ else
         </div>
         @if (ShowNavigation && ItemCount > 1)
         {
-            <div class="bzc-navigation" aria-label="Carousel navigation">
+            <div class="bzc-navigation" role="group" aria-label="Carousel navigation">
                 <button type="button" class="bzc-previous" aria-label="Previous slide" disabled>←</button>
                 <button type="button" class="bzc-next" aria-label="Next slide" disabled>→</button>
             </div>
