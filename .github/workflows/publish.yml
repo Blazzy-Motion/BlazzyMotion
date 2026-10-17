@@ -4,14 +4,14 @@ on:
   workflow_dispatch:
     inputs:
       core_version:
-        description: "Core Package Version (e.g., 1.4.0-preview.1)"
+        description: "Core Package Version (e.g., 1.4.0-preview.2)"
         required: true
-        default: "1.4.0-preview.1"
+        default: "1.4.0-preview.2"
         type: string
       carousel_version:
-        description: "Carousel Package Version (e.g., 1.5.0-preview.1)"
+        description: "Carousel Package Version (e.g., 1.5.0-preview.2)"
         required: true
-        default: "1.5.0-preview.1"
+        default: "1.5.0-preview.2"
         type: string
       bento_version:
         description: "Bento Package Version (e.g., 1.0.2)"

@@ -15,7 +15,7 @@ Experience BlazzyMotion components in action: **[View Live Demo](https://blazzym
 
 ## Release notes
 
-[Carousel 1.5.0-preview.1 and Core 1.4.0-preview.1](docs/release-notes/carousel-1.5.0-preview.1.md) describe the
+[Carousel 1.5.0-preview.2 and Core 1.4.0-preview.2](docs/release-notes/carousel-1.5.0-preview.2.md) describe the
 visual, accessibility, image-loading and compatibility changes in this release.
 
 ## Components
