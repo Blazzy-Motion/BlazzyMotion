@@ -11,19 +11,19 @@ A modern, high-performance 3D carousel component for Blazor with zero-configurat
 [![Maintainability Rating](https://sonarcloud.io/api/project_badges/measure?project=Blazzy-Motion_BlazzyMotion&metric=sqale_rating)](https://sonarcloud.io/summary/new_code?id=Blazzy-Motion_BlazzyMotion)
 [![Security Rating](https://sonarcloud.io/api/project_badges/measure?project=Blazzy-Motion_BlazzyMotion&metric=security_rating)](https://sonarcloud.io/summary/new_code?id=Blazzy-Motion_BlazzyMotion)
 
-## Version 1.5.0
+## Version 1.5.0-preview.1
 
-Requires BlazzyMotion.Core 1.4.0 or later. Core is installed transitively:
+Requires BlazzyMotion.Core 1.4.0-preview.1 or later. Core is installed transitively:
 
 ```sh
-dotnet add package BlazzyMotion.Carousel --version 1.5.0
+dotnet add package BlazzyMotion.Carousel --version 1.5.0-preview.1
 ```
 
 Existing Carousel 1.4.x usage does not require parameter or model changes. Both
 legacy Carousel attributes and Core attributes remain supported. If your project
-pins Core explicitly, update that reference to 1.4.0 or later as well.
+pins Core explicitly, update that reference to 1.4.0-preview.1 or later as well.
 
-This release refines the four themes, preserves the original Coverflow geometry,
+This preview refines the four themes, preserves the original Coverflow geometry,
 adds accessible keyboard navigation and image-loading fallbacks, and avoids
 redundant notifications when Swiper reports an unchanged active consumer index.
 Consumers must not rely on duplicate callbacks for an unchanged index. Custom
@@ -875,10 +875,3 @@ not rewritten. Click selection and the existing `SelectOnScroll` behavior remain
 unchanged. This avoids redundant work without reducing Glass blur or changing the
 full-height slide surfaces. Emulated performance measurements are diagnostics, not
 a guarantee of 60 FPS on every device.
-
-### Nested Bento gestures
-
-A Bento item hosting a Carousel remains stationary and visible. This avoids
-combining the grid's entrance fade/translation or hover translation with the
-first Swiper gesture. Other Bento items retain their animations, and Carousel
-geometry, image-loading behavior and Glass blur remain unchanged.

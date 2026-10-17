@@ -1,10 +1,12 @@
-# BlazzyMotion.Carousel 1.5.0 and BlazzyMotion.Core 1.4.0
+# BlazzyMotion.Carousel 1.5.0-preview.1 and BlazzyMotion.Core 1.4.0-preview.1
+
+This prerelease is intended for evaluation before the stable release.
 
 Carousel retains its original 3D Coverflow composition and responsive slide and
 artwork dimensions while improving theme definition, keyboard navigation and
 image-loading behavior.
 
-## Carousel 1.5.0
+## Carousel 1.5.0-preview.1
 
 - Refine Glass with stationary edge lighting and a restrained active-artwork halo.
 - Distinguish Dark, Light and Minimal through surface and shadow treatments.
@@ -17,25 +19,22 @@ image-loading behavior.
 - Respect reduced-motion changes without changing the selected consumer index.
 - Avoid repeated accessibility attribute and announcement writes when values match.
 
-## Core 1.4.0
+## Core 1.4.0-preview.1
 
 - Update shared Carousel helpers for accessibility and mapped-image readiness.
 - Forward active-index changes to Blazor once per actual consumer-index change,
   excluding repeated Swiper events and loop repairs for the same item.
 - Preserve shared CSS tokens, public C# APIs, legacy attribute support, registry
   mapping, generated APIs and static asset paths.
-- Keep Bento cards hosting a Carousel visible and stationary, avoiding overlap
-  between the grid entrance/hover transform and the first Swiper gesture.
-- Preserve other Bento card animations and existing Bento, Gallery and Marquee
-  JavaScript entry points and public APIs.
+
 
 ## Upgrade
 
 ```sh
-dotnet add package BlazzyMotion.Carousel --version 1.5.0
+dotnet add package BlazzyMotion.Carousel --version 1.5.0-preview.1
 ```
 
-Carousel requires Core 1.4.0 or later, installed automatically. Update an explicit
+Carousel requires Core 1.4.0-preview.1 or later, installed automatically. Update an explicit
 older Core reference as well to avoid a package downgrade error. Existing
 Carousel 1.4.x parameters, model mappings and selection options remain supported.
 Click selection and `SelectOnScroll=false` continue to work; applications must
@@ -45,11 +44,9 @@ Theme appearance intentionally changes. Applications with custom CSS should
 check their overrides against all four themes. Custom templates own their image
 loading, alternative text and accessible interactive content.
 
-Bento, Gallery and Marquee do not require new package versions for this release.
-
 ## Validation and limits
 
-Release validation includes the solution test suite, Chromium desktop/mobile
+Preview validation includes the solution test suite, Chromium desktop/mobile
 regressions, reduced motion, scoped accessibility checks, released API baselines,
 and separate consumers using packed artifacts and legacy/Core model attributes.
 

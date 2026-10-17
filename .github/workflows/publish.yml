@@ -4,14 +4,14 @@ on:
   workflow_dispatch:
     inputs:
       core_version:
-        description: "Core Package Version (e.g., 1.4.0)"
+        description: "Core Package Version (e.g., 1.4.0-preview.1)"
         required: true
-        default: "1.4.0"
+        default: "1.4.0-preview.1"
         type: string
       carousel_version:
-        description: "Carousel Package Version (e.g., 1.5.0)"
+        description: "Carousel Package Version (e.g., 1.5.0-preview.1)"
         required: true
-        default: "1.5.0"
+        default: "1.5.0-preview.1"
         type: string
       bento_version:
         description: "Bento Package Version (e.g., 1.0.2)"
@@ -211,31 +211,37 @@ jobs:
           done
 
       - name: Create Git Tags
+        if: >-
+          ${{ (inputs.publish_core && !contains(inputs.core_version, '-')) ||
+              (inputs.publish_carousel && !contains(inputs.carousel_version, '-')) ||
+              (inputs.publish_bento && !contains(inputs.bento_version, '-')) ||
+              (inputs.publish_gallery && !contains(inputs.gallery_version, '-')) ||
+              (inputs.publish_marquee && !contains(inputs.marquee_version, '-')) }}
         run: |
           git config user.name "github-actions[bot]"
           git config user.email "github-actions[bot]@users.noreply.github.com"
 
-          if [ "$PUBLISH_CORE" = "true" ]; then
+          if [ "$PUBLISH_CORE" = "true" ] && [[ "$CORE_VERSION" != *-* ]]; then
             git tag -a "core-v$CORE_VERSION" -m "Release BlazzyMotion.Core v$CORE_VERSION" || true
             git push origin "core-v$CORE_VERSION" || echo "Tag already exists"
           fi
 
-          if [ "$PUBLISH_CAROUSEL" = "true" ]; then
+          if [ "$PUBLISH_CAROUSEL" = "true" ] && [[ "$CAROUSEL_VERSION" != *-* ]]; then
             git tag -a "carousel-v$CAROUSEL_VERSION" -m "Release BlazzyMotion.Carousel v$CAROUSEL_VERSION" || true
             git push origin "carousel-v$CAROUSEL_VERSION" || echo "Tag already exists"
           fi
 
-          if [ "$PUBLISH_BENTO" = "true" ]; then
+          if [ "$PUBLISH_BENTO" = "true" ] && [[ "$BENTO_VERSION" != *-* ]]; then
             git tag -a "bento-v$BENTO_VERSION" -m "Release BlazzyMotion.Bento v$BENTO_VERSION" || true
             git push origin "bento-v$BENTO_VERSION" || echo "Tag already exists"
           fi
 
-          if [ "$PUBLISH_GALLERY" = "true" ]; then
+          if [ "$PUBLISH_GALLERY" = "true" ] && [[ "$GALLERY_VERSION" != *-* ]]; then
             git tag -a "gallery-v$GALLERY_VERSION" -m "Release BlazzyMotion.Gallery v$GALLERY_VERSION" || true
             git push origin "gallery-v$GALLERY_VERSION" || echo "Tag already exists"
           fi
 
-          if [ "$PUBLISH_MARQUEE" = "true" ]; then
+          if [ "$PUBLISH_MARQUEE" = "true" ] && [[ "$MARQUEE_VERSION" != *-* ]]; then
             git tag -a "marquee-v$MARQUEE_VERSION" -m "Release BlazzyMotion.Marquee v$MARQUEE_VERSION" || true
             git push origin "marquee-v$MARQUEE_VERSION" || echo "Tag already exists"
           fi

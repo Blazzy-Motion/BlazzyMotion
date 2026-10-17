@@ -6,21 +6,18 @@ Core infrastructure package for BlazzyMotion UI components.
 [![NuGet Downloads](https://img.shields.io/nuget/dt/BlazzyMotion.Core.svg)](https://www.nuget.org/packages/BlazzyMotion.Core/)
 [![License: MIT](https://img.shields.io/badge/License-MIT-blue.svg)](https://opensource.org/licenses/MIT)
 
-## Version 1.4.0
+## Version 1.4.0-preview.1
 
-This release updates the shared Carousel runtime with local keyboard navigation,
+This preview updates the shared Carousel runtime with local keyboard navigation,
 focus and slide-announcement handling, reduced-motion support, mapped-image
 readiness tracking, and suppression of duplicate active-index notifications.
 Existing public C# APIs, model attributes, registry behavior and static asset paths
-remain supported. Shared theme tokens and the runtime implementations for Bento,
-Gallery and Marquee are unchanged. Bento cards that host a Carousel remain
-visible and stationary instead of applying the grid entrance or hover transform
-to Swiper's moving 3D scene. Other Bento cards keep their existing animations.
+remain supported. Shared theme token values and existing component APIs are preserved.
 
-Core is installed automatically with Carousel 1.5.0. Existing component packages
+Core is installed automatically with Carousel 1.5.0-preview.1. Existing component packages
 can continue using their declared Core version ranges; no simultaneous component
 upgrade is required. Applications with an explicit older Core reference must
-update it to 1.4.0 when installing Carousel 1.5.0 to avoid a NuGet downgrade error.
+update it to 1.4.0-preview.1 when installing Carousel 1.5.0-preview.1 to avoid a NuGet downgrade error.
 
 ## Overview
 
