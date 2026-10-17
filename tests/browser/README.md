@@ -37,3 +37,13 @@ measure rAF scheduling, not displayed frames. CPU throttling and software render
 not reproduce a specific Android GPU, thermal state or browser. No fixed FPS threshold
 is used in CI. Validate physical devices separately with Chrome remote debugging and
 DevTools Performance recordings, including first load, fast swipes and theme changes.
+
+Temporary first-swipe diagnostics are available on `/bento?swipeTest=images`,
+`/bento?swipeTest=layers`, and `/bento?swipeTest=callbacks`. Open each in a fresh
+page and wait for the Ready message before the first gesture. These isolate image
+decoding, an image compositing hint, and the configured slide-change callback.
+The callback variant intentionally pauses company metrics and accessibility
+updates; it is a diagnostic, not a release configuration. The normal `/bento`
+page is unchanged. Remove these temporary diagnostics before stable release.
+Run `BASE_URL=http://127.0.0.1:5135 node tests/browser/bento-swipe-diagnostics.cjs`
+to verify the isolation controls against a running Demo.
