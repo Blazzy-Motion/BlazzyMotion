@@ -49,6 +49,17 @@ async function inspectCarousel(browser, name, contextOptions) {
   assert.match(await root.locator('[role=status]').textContent(), /Slide \d+ of 8/);
   assert.equal(await root.locator('.swiper-slide[aria-hidden=false]').count(), 1);
   await inspectGeometry(root, Boolean(contextOptions.isMobile));
+  const input = root.locator('.swiper-slide-active input');
+  await root.locator('.swiper-slide-active').evaluate(slide => {
+    const field = document.createElement('input');
+    field.setAttribute('aria-label', 'Nested input');
+    slide.appendChild(field);
+  });
+  const inputIndex = await root.locator('.swiper-slide-active').getAttribute('data-swiper-slide-index');
+  await input.focus();
+  await page.keyboard.press('ArrowLeft');
+  assert.equal(await root.locator('.swiper-slide-active').getAttribute('data-swiper-slide-index'), inputIndex);
+  await input.evaluate(field => field.remove());
   for (const theme of ['Glass', 'Dark', 'Light', 'Minimal']) {
     await page.getByRole('button', { name: theme, exact: true }).click();
     await page.waitForTimeout(150);
@@ -63,6 +74,44 @@ async function inspectCarousel(browser, name, contextOptions) {
   assert.deepEqual(errors, []);
   console.log(`PASS ${name}: original geometry, local keys, assistive controls and four themes`);
   await context.close();
+}
+
+/** Verify manual loop copies forward selection once and are removed on teardown. */
+async function inspectLoopCopies(browser) {
+  const page = await browser.newPage();
+  await page.goto(baseURL);
+  await page.locator('.bz-demo .bzc-visible').waitFor();
+  const counts = await page.evaluate(async () => {
+    const core = await import('/_content/BlazzyMotion.Core/js/blazzy-core.js');
+    const source = document.querySelector('.bz-demo .swiper-slide:not(.swiper-slide-duplicate)');
+    const results = [];
+    for (const count of [4, 5, 6]) {
+      const root = document.createElement('div');
+      root.className = 'bzc-carousel-box';
+      root.innerHTML = '<div class="swiper-container"><div class="swiper-wrapper"></div></div>';
+      document.body.appendChild(root);
+      let selections = 0;
+      for (let i = 0; i < count; i++) {
+        const slide = source.cloneNode(true);
+        slide.removeAttribute('data-bz-clone');
+        slide.removeAttribute('data-swiper-slide-index');
+        slide.className = 'swiper-slide';
+        slide.addEventListener('click', () => { selections++; });
+        root.querySelector('.swiper-wrapper').appendChild(slide);
+      }
+      await core.initializeCarousel(root, JSON.stringify({ loop: true, slidesPerView: 'auto' }));
+      root.querySelector('[data-bz-clone="true"]').click();
+      if (selections !== 1) throw new Error(`Expected one forwarded selection for ${count} items, got ${selections}`);
+      core.destroyCarousel(root);
+      if (root.querySelectorAll('.swiper-slide').length !== count) throw new Error('Loop copies survived teardown');
+      root.remove();
+      results.push(count);
+    }
+    return results;
+  });
+  assert.deepEqual(counts, [4, 5, 6]);
+  await page.close();
+  console.log('PASS loop copies: one selection and clean teardown for 4, 5 and 6 items');
 }
 
 /** Verify that unavailable Swiper assets leave useful content rather than a blank stage. */
@@ -86,6 +135,7 @@ async function inspectFallback(browser) {
     await inspectCarousel(browser, 'desktop', { viewport: { width: 1440, height: 1000 } });
     await inspectCarousel(browser, 'mobile', { ...devices['iPhone 13'] });
     await inspectCarousel(browser, 'reduced', { viewport: { width: 1440, height: 1000 }, reducedMotion: 'reduce' });
+    await inspectLoopCopies(browser);
     await inspectFallback(browser);
   } finally { await browser.close(); }
 })().catch(error => { console.error(error); process.exit(1); });
