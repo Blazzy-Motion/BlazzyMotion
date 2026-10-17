@@ -29,7 +29,7 @@ Release solution build passed (one existing CS1998 warning). All 1,110 C# tests 
 
 ## Preview
 
-PR #9: https://github.com/Blazzy-Motion/BlazzyMotion/pull/9. Azure deployment and Quality Gate are running. Do not merge without owner visual approval.
+PR #9: https://github.com/Blazzy-Motion/BlazzyMotion/pull/9. Use the PR checks for the current Azure deployment and Quality Gate status. Do not merge without owner visual approval.
 
 ## Remaining scope
 
