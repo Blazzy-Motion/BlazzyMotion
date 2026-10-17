@@ -69,7 +69,7 @@
             All metrics update in real-time as you browse
         </p>
 
-        @if (SwipeTest is "images" or "layers" or "callbacks")
+        @if (SwipeTest is "images" or "layers" or "callbacks" or "main-css")
         {
             <p role="status" style="color: white; text-align: center;">@_diagnosticStatus</p>
         }
@@ -218,7 +218,7 @@
     /// <returns>A task completing when diagnostic preparation finishes.</returns>
     protected override async Task OnAfterRenderAsync(bool firstRender)
     {
-        if (!firstRender || SwipeTest is not ("images" or "layers" or "callbacks")) return;
+        if (!firstRender || SwipeTest is not ("images" or "layers" or "callbacks" or "main-css")) return;
         await using var module = await JS.InvokeAsync<IJSObjectReference>("import", "./js/bento-swipe-diagnostics.js");
         _diagnosticStatus = await module.InvokeAsync<string>("apply", _companyDashboard, SwipeTest);
         await InvokeAsync(StateHasChanged);

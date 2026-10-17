@@ -47,3 +47,11 @@ updates; it is a diagnostic, not a release configuration. The normal `/bento`
 page is unchanged. Remove these temporary diagnostics before stable release.
 Run `BASE_URL=http://127.0.0.1:5135 node tests/browser/bento-swipe-diagnostics.cjs`
 to verify the isolation controls against a running Demo.
+
+`/bento?swipeTest=main-css` replaces the Carousel scoped stylesheet with the
+compiled original from main commit `447945580482bc437937fefa2cfaf012155063c8`.
+It retains current JavaScript, image markup and the stationary Bento host fix,
+so it isolates Carousel CSS rather than reproducing the entire old application.
+Screen-reader/control helpers remain hidden; new loading placeholders are hidden
+because the original stylesheet did not include them. This page-only stylesheet
+replacement is temporary and must be removed before release.
