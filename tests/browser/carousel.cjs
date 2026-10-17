@@ -165,6 +165,7 @@ async function inspectImageReadiness(browser) {
     await active.locator('.bzc-media-placeholder').waitFor({ state: 'visible' });
     const pending = await active.evaluate(slide => ({ state: slide.dataset.bzcMedia, shadow: getComputedStyle(slide).boxShadow, imageOpacity: getComputedStyle(slide.querySelector('img')).opacity, overlay: getComputedStyle(slide.querySelector('.bzc-overlay')).visibility }));
     assert.deepEqual(pending, { state: 'loading', shadow: 'none', imageOpacity: '0', overlay: 'hidden' });
+    assert.equal(await root.locator('.swiper-slide:not(.swiper-slide-active) .bzc-media-placeholder').first().evaluate(el => getComputedStyle(el).fontSize), '0px');
     await root.screenshot({ path: path.join(artifacts, 'loading-slow-posters.png') });
     assert.equal(await root.locator('img[loading=eager][fetchpriority=high]').count(), 1);
     release();

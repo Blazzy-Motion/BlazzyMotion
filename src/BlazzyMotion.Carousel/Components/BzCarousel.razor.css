@@ -206,7 +206,7 @@
     place-items: center;
     padding: 10px;
     box-sizing: border-box;
-    border: 1px solid currentColor;
+    border: 1px solid rgba(148, 163, 184, 0.24);
     border-radius: 10px;
     background: var(--bzc-placeholder-bg, rgba(255, 255, 255, 0.04));
     color: var(--bzc-placeholder-color, #cbd5e1);
@@ -214,6 +214,14 @@
     font-size: 12px;
     text-align: center;
     pointer-events: none;
+}
+
+.bzc-carousel-box ::deep .swiper-slide:not(.swiper-slide-active) > .bzc-media-placeholder {
+    font-size: 0;
+}
+
+.bzc-carousel-box ::deep .bzc-pending .swiper-slide > .bzc-media-placeholder {
+    font-size: 12px;
 }
 
 .bzc-carousel-box ::deep [data-bzc-media="ready"] > .bzc-media-placeholder {
