@@ -241,7 +241,7 @@ async function inspectCustomTemplateSurface(browser) {
   console.log('PASS custom templates: original full-height wrapper and consumer-owned content');
 }
 
-/** Exercise the first nested gesture before Bento entrance animations could finish. */
+/** Exercise a cold first gesture, complete loop and reverse traversal inside Bento. */
 async function inspectNestedBentoCarousel(browser) {
   for (const [name, options] of [['mobile', { ...devices['Galaxy S9+'], viewport: { width: 412, height: 915 } }], ['desktop', { viewport: { width: 1440, height: 1000 } }]]) {
     const context = await browser.newContext(options);
@@ -263,14 +263,14 @@ async function inspectNestedBentoCarousel(browser) {
       const sample = () => {
         const style = getComputedStyle(host);
         const active = element.querySelector('.swiper-slide-active');
-        report.samples.push({ opacity: style.opacity, transform: style.transform, animation: style.animationName, imageOpacity: getComputedStyle(active.querySelector('img')).opacity, state: active.dataset.bzcMedia });
+        report.samples.push({ width: element.offsetWidth, height: element.offsetHeight, opacity: style.opacity, transform: style.transform, animation: style.animationName, imageOpacity: getComputedStyle(active.querySelector('img')).opacity, state: active.dataset.bzcMedia });
         if (!report.stop) requestAnimationFrame(sample);
       };
       sample();
     });
     const box = await root.boundingBox();
     const cdp = options.isMobile ? await context.newCDPSession(page) : null;
-    for (const direction of [-1, 1]) {
+    for (const direction of [...Array(9).fill(-1), ...Array(9).fill(1)]) {
       const x = box.x + box.width * 0.5;
       const y = box.y + box.height * 0.5;
       if (cdp) await cdp.send('Input.dispatchTouchEvent', { type: 'touchStart', touchPoints: [{ x, y }] });
@@ -294,7 +294,9 @@ async function inspectNestedBentoCarousel(browser) {
     assert(report.samples.length > 0);
     assert(report.samples.every(sample => sample.opacity === '1' && sample.transform === 'none' && sample.animation === 'none'), 'The nested host must remain visible and stationary from the first gesture');
     assert(report.samples.every(sample => sample.state !== 'ready' || sample.imageOpacity === '1'), 'Decoded artwork must stay visible');
-    assert(new Set(report.changes).size > 1, 'Both touch and mouse input must navigate actual slides');
+    assert.equal(new Set(report.changes).size, 8, 'Both input types must traverse every company and wrap the loop');
+    assert.equal(new Set(report.samples.map(sample => sample.width)).size, 1, 'Dashboard updates must preserve Carousel width');
+    assert.equal(new Set(report.samples.map(sample => sample.height)).size, 1, 'Dashboard updates must preserve Carousel height');
     assert(report.sameInstance, 'Dashboard callbacks must not recreate Swiper');
     assert(report.metrics.includes(report.activeName), 'Company metrics must still follow the active artwork');
     for (const theme of ['Glass', 'Dark', 'Light', 'Minimal']) {
@@ -307,7 +309,7 @@ async function inspectNestedBentoCarousel(browser) {
     await page.waitForFunction(() => document.querySelector('.bzb-item').classList.contains('bzb-animate'));
     assert.equal(await ordinary.evaluate(element => getComputedStyle(element).animationName), 'bz-fade-in', 'Other Bento cards retain their entrance animation');
     assert.deepEqual(errors, []);
-    console.log(`PASS nested Bento/${name}: cold first gesture, both directions, metrics, four themes and ordinary card animations`);
+    console.log(`PASS nested Bento/${name}: cold first gesture, complete loop in both directions, stable dimensions, metrics, four themes and ordinary card animations`);
     await context.close();
   }
 }

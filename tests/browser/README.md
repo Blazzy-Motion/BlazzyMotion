@@ -12,7 +12,8 @@ npm test --prefix tests/browser
 Chromium executable. The checks cover desktop/mobile original image geometry,
 local keyboard navigation, assistive controls, four themes, scoped axe checks,
 reduced-motion rendering, an unavailable Swiper script, and the first Carousel
-gesture inside a Bento composition (including dashboard updates and preserved
+gesture and complete eight-company loop in both directions inside a Bento
+composition (including stable dimensions, dashboard updates and preserved
 animations on ordinary Bento cards). Screenshots are saved
 under `artifacts/`. These checks do not establish real-device performance, full
 application accessibility or screen-reader interoperability.
