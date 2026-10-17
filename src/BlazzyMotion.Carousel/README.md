@@ -875,3 +875,10 @@ not rewritten. Click selection and the existing `SelectOnScroll` behavior remain
 unchanged. This avoids redundant work without reducing Glass blur or changing the
 full-height slide surfaces. Emulated performance measurements are diagnostics, not
 a guarantee of 60 FPS on every device.
+
+### Nested Bento gestures
+
+A Bento item hosting a Carousel remains stationary and visible. This avoids
+combining the grid's entrance fade/translation or hover translation with the
+first Swiper gesture. Other Bento items retain their animations, and Carousel
+geometry, image-loading behavior and Glass blur remain unchanged.

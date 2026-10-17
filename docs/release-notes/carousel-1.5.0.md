@@ -24,7 +24,10 @@ image-loading behavior.
   excluding repeated Swiper events and loop repairs for the same item.
 - Preserve shared CSS tokens, public C# APIs, legacy attribute support, registry
   mapping, generated APIs and static asset paths.
-- Leave Bento, Gallery and Marquee runtime implementations unchanged.
+- Keep Bento cards hosting a Carousel visible and stationary, avoiding overlap
+  between the grid entrance/hover transform and the first Swiper gesture.
+- Preserve other Bento card animations and existing Bento, Gallery and Marquee
+  JavaScript entry points and public APIs.
 
 ## Upgrade
 
