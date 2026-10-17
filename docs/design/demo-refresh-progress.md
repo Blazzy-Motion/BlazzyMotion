@@ -11,8 +11,8 @@ Refresh the entire Demo presentation while preserving existing component librari
 - [x] Inspect existing layouts, navigation, component demos and documentation.
 - [x] Add shared navigation and component discovery across all pages.
 - [x] Refine typography, spacing, documentation surfaces and demo controls.
-- [ ] Preserve and verify startup animation and reduced motion behavior.
-- [ ] Run Release build and desktop/mobile navigation and component regressions.
+- [x] Preserve and verify startup animation and reduced motion behavior.
+- [x] Run Release build and desktop/mobile navigation and component regressions.
 - [ ] Publish branch and Azure PR preview for owner review.
 
 ## Follow-up direction
@@ -25,4 +25,12 @@ Read this file and `/workspace/AGENTS.md`, inspect `git status`, and continue on
 
 ## Validation checkpoint
 
-Release solution build passed (one existing CS1998 warning). All 1,110 C# tests passed. Desktop/mobile visual review performed locally. Full component browser regression suite and the new 16-route desktop/mobile site checks are in progress. No library source, package versions or public component behavior changed.
+Release solution build passed (one existing CS1998 warning). All 1,110 C# tests passed. Desktop/mobile visual review performed locally. The full existing component browser suite passed, including nested gestures, route reentry, four themes, image lifecycle and missing-Swiper fallback. New site checks passed all 16 routes at 1440px and 390px, including navigation, component discovery and selected theme state. Final Demo rebuild passed. No library source, package versions or public component behavior changed.
+
+## Preview
+
+PR #9: https://github.com/Blazzy-Motion/BlazzyMotion/pull/9. Azure deployment and Quality Gate are running. Do not merge without owner visual approval.
+
+## Remaining scope
+
+This pass refreshes presentation across all existing pages, rather than replacing documentation content. Independent site light mode, richer per-component playground controls, a documentation table of contents and a complete focus-trapped mobile documentation drawer remain follow-up work. Existing component theme controls and Gallery playground are preserved. No claim of complete site accessibility conformance or measured device FPS is made.
