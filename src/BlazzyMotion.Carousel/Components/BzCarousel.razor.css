@@ -137,13 +137,13 @@
 
 /* Surface lighting is stationary; Swiper alone owns the slide transforms. */
 .bzc-carousel-box.bzc-theme-glass {
-    background: linear-gradient(135deg, rgba(255, 255, 255, 0.1), transparent 58%),
+    background: linear-gradient(135deg, rgba(255, 255, 255, 0.16), rgba(255, 255, 255, 0.035) 55%, rgba(255, 255, 255, 0.065)),
         var(--bzc-glass-bg, rgba(15, 15, 15, 0.6));
     border-color: var(--bzc-glass-border, rgba(255, 255, 255, 0.15));
     backdrop-filter: blur(var(--bzc-glass-blur, 12px));
     -webkit-backdrop-filter: blur(var(--bzc-glass-blur, 12px));
     box-shadow: var(--bzc-glass-shadow, 0 8px 32px rgba(0, 0, 0, 0.4)),
-        inset 0 1px 0 rgba(255, 255, 255, 0.32),
+        inset 0 1px 0 rgba(255, 255, 255, 0.42),
         inset 0 -1px 0 rgba(255, 255, 255, 0.06);
 }
 
@@ -154,8 +154,8 @@
 }
 
 .bzc-carousel-box.bzc-theme-dark {
-    background: linear-gradient(145deg, rgba(255, 255, 255, 0.035), transparent 65%),
-        var(--bzc-dark-bg, #181a22);
+    --bzc-slide-surface: linear-gradient(160deg, rgba(255, 255, 255, 0.035), rgba(0, 0, 0, 0.1));
+    background: var(--bzc-dark-bg, #181a22);
     box-shadow: var(--bzc-dark-shadow, 0 10px 32px rgba(0, 0, 0, 0.3)),
         inset 0 1px 0 rgba(255, 255, 255, 0.07);
 }
@@ -165,7 +165,11 @@
     --bzc-active-artwork-shadow: 0 12px 24px rgba(15, 23, 42, 0.2);
     --bzc-placeholder-color: #475569;
     --bzc-placeholder-bg: rgba(15, 23, 42, 0.045);
-    background: var(--bzc-light-bg, #fff);
+    --bzc-slide-surface: linear-gradient(155deg, rgba(255, 255, 255, 0.9), rgba(226, 232, 240, 0.42));
+    --bzc-slide-surface-border: rgba(148, 163, 184, 0.14);
+    --bzc-slide-surface-shadow: 0 2px 5px rgba(15, 23, 42, 0.025), 0 10px 20px rgba(15, 23, 42, 0.045);
+    background: linear-gradient(160deg, rgba(226, 232, 240, 0.18), transparent 48%, rgba(226, 232, 240, 0.24)),
+        var(--bzc-light-bg, #fff);
     box-shadow: 0 2px 5px rgba(15, 23, 42, 0.035),
         var(--bzc-light-shadow, 0 16px 36px rgba(15, 23, 42, 0.1));
 }
@@ -173,6 +177,33 @@
 .bzc-carousel-box.bzc-theme-minimal {
     --bzc-artwork-shadow: none;
     --bzc-active-artwork-shadow: 0 6px 14px rgba(0, 0, 0, 0.16);
+}
+
+/* Shallow card surfaces restore depth without the former full-height shadow columns.
+   Only decoded mapped images receive this surface; loading and custom templates stay independent. */
+.bzc-carousel-box ::deep .swiper-slide[data-bzc-media="ready"]::before {
+    content: '';
+    position: absolute;
+    top: 50%;
+    left: 0;
+    width: 100%;
+    height: min(calc(var(--bzc-media-height, 0px) * 1.35), calc(100% - 24px));
+    border: 1px solid var(--bzc-slide-surface-border, rgba(255, 255, 255, 0.045));
+    box-sizing: border-box;
+    border-radius: 12px;
+    background: var(--bzc-slide-surface, linear-gradient(155deg, rgba(255, 255, 255, 0.045), rgba(0, 0, 0, 0.08)));
+    box-shadow: var(--bzc-slide-surface-shadow, 0 5px 12px rgba(0, 0, 0, 0.12));
+    transform: translateY(-50%);
+    pointer-events: none;
+    z-index: -1;
+}
+
+.bzc-carousel-box.bzc-theme-minimal ::deep .swiper-slide[data-bzc-media="ready"]::before {
+    display: none;
+}
+
+.bzc-carousel-box.bzc-theme-light::before {
+    background: linear-gradient(180deg, rgba(255, 255, 255, 0.28), transparent 65%);
 }
 
 /* Mapped artwork stays useful while individual requests load or fail. */

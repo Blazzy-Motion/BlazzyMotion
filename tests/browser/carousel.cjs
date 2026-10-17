@@ -69,6 +69,15 @@ async function inspectCarousel(browser, name, contextOptions) {
   for (const theme of ['Glass', 'Dark', 'Light', 'Minimal']) {
     await page.getByRole('button', { name: theme, exact: true }).click();
     await page.waitForTimeout(150);
+    const depth = await root.locator('.swiper-slide-active').evaluate(slide => {
+      const surface = getComputedStyle(slide, '::before');
+      return { display: surface.display, height: parseFloat(surface.height), image: slide.querySelector('img').offsetHeight, slide: slide.offsetHeight };
+    });
+    if (theme === 'Minimal') assert.equal(depth.display, 'none');
+    else {
+      assert(depth.height > depth.image, 'Depth surface should extend slightly beyond the poster');
+      assert(depth.height < depth.slide, 'Depth surface must not recreate full-height shadow columns');
+    }
     const result = await new AxeBuilder({ page }).include('.bz-demo .bzc-carousel-box').analyze();
     assert.deepEqual(result.violations.map(v => ({ id: v.id, impact: v.impact })), [], `${name}/${theme} accessibility`);
     await page.screenshot({ path: path.join(artifacts, `${name}-${theme}.png`) });

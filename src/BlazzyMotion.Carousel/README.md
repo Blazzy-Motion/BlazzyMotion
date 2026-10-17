@@ -816,3 +816,20 @@ Optional Carousel CSS variables:
 Placeholder text currently uses English. On a uniformly colored background, blur
 has few details to soften; the glass treatment therefore also uses highlights and
 edges. Physical-device performance and visual approval are still required.
+
+
+### Slide depth surfaces
+
+Decoded mapped posters use a shallow decorative surface behind the image. Its
+height follows the image and is capped within the existing Swiper slide; it does
+not change slide width, Coverflow transforms or loading placeholders. Minimal
+omits this surface. Custom templates keep their own presentation. The surface
+uses gradients and a small shadow, without per-slide backdrop blur.
+
+Glass has a broader translucent highlight; Dark retains a predominantly opaque
+surface. Light uses a soft neutral wash and layered card shadows. Existing theme
+background tokens remain supported. Optional `--bzc-slide-surface`,
+`--bzc-slide-surface-border` and `--bzc-slide-surface-shadow` variables customize
+the decorative cards. Loading placeholders are rendered by Carousel markup and
+managed by runtime image decoding. Source generators retain their existing model
+mapping and template generation; they do not create placeholder images.
