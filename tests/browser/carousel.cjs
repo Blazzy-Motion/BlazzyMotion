@@ -47,7 +47,12 @@ async function inspectCarousel(browser, name, contextOptions) {
   await page.keyboard.press('Enter');
   await page.waitForTimeout(400);
   assert.match(await root.locator('[role=status]').textContent(), /Slide \d+ of 8/);
-  assert.equal(await root.locator('.swiper-slide[aria-hidden=false]').count(), 1);
+  assert.equal(await root.locator('.swiper-slide-active[aria-hidden=false]').count(), 1);
+  await root.locator('.swiper-slide-active').focus();
+  await page.keyboard.press('ArrowRight');
+  await page.waitForTimeout(400);
+  assert(await root.locator('.swiper-slide-active').evaluate(slide => slide === document.activeElement), 'Keyboard focus must follow the active slide');
+  assert.equal(await root.locator('.swiper-slide-active[aria-hidden=false]').count(), 1);
   await inspectGeometry(root, Boolean(contextOptions.isMobile));
   const input = root.locator('.swiper-slide-active input');
   await root.locator('.swiper-slide-active').evaluate(slide => {
@@ -70,6 +75,14 @@ async function inspectCarousel(browser, name, contextOptions) {
   if (contextOptions.reducedMotion === 'reduce') {
     assert.equal(await root.evaluate(el => el.querySelector('.swiper-container').swiper.params.effect), 'slide');
     assert.equal(await root.evaluate(el => el.querySelector('.swiper-container').swiper.params.speed), 0);
+  }
+  if (name === 'desktop') {
+    const activeIndex = await root.locator('.swiper-slide-active').getAttribute('data-swiper-slide-index');
+    await page.emulateMedia({ reducedMotion: 'reduce' });
+    await page.waitForFunction(() => document.querySelector('.bz-demo .swiper-container').swiper.params.effect === 'slide');
+    assert.equal(await root.locator('.swiper-slide-active').getAttribute('data-swiper-slide-index'), activeIndex);
+    await page.emulateMedia({ reducedMotion: 'no-preference' });
+    await page.waitForFunction(() => document.querySelector('.bz-demo .swiper-container').swiper.params.effect === 'coverflow');
   }
   assert.deepEqual(errors, []);
   console.log(`PASS ${name}: original geometry, local keys, assistive controls and four themes`);

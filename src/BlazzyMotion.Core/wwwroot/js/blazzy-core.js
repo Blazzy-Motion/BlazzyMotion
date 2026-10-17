@@ -202,7 +202,8 @@ export async function initializeCarousel(element, optionsJson, dotNetRef = null)
                 },
 
                 slideChange: function () {
-                    updateCarouselAccessibility(this, originalSlideCount, status);
+                    // Swiper emits slideChange before updating its active-slide classes.
+                    queueMicrotask(() => updateCarouselAccessibility(this, originalSlideCount, status));
                     if (dotNetRef) {
                         // Use modulo to get correct index when clones are present
                         const realIndex = this.realIndex % originalSlideCount;
@@ -234,7 +235,8 @@ export async function initializeCarousel(element, optionsJson, dotNetRef = null)
         bindCarouselInput(element, swiperInstance, originalSlides, bindings.signal);
         motion.addEventListener('change', () => {
             if (swiperInstance.destroyed) return;
-            initializeCarousel(element, optionsJson, dotNetRef);
+            const currentOptions = { ...options, initialSlide: swiperInstance.realIndex % originalSlideCount };
+            initializeCarousel(element, JSON.stringify(currentOptions), dotNetRef);
         }, { signal: bindings.signal });
 
     } catch (err) {
@@ -243,7 +245,7 @@ export async function initializeCarousel(element, optionsJson, dotNetRef = null)
 }
 
 /**
- * Update slide semantics, including the currently active loop copy.
+ * Update slide semantics and retain keyboard focus on the current loop copy.
  * @param {object} swiper - Current Swiper instance.
  * @param {number} count - Number of consumer items, excluding loop copies.
  * @param {HTMLElement|null} status - Optional polite announcement target.
@@ -264,6 +266,12 @@ function updateCarouselAccessibility(swiper, count, status) {
         }
         slide.setAttribute('aria-hidden', String(!active));
         slide.tabIndex = active && slide.dataset.bzcSelectable === 'true' ? 0 : -1;
+    }
+    const focusedSlide = document.activeElement?.closest('.swiper-slide');
+    if (focusedSlide && swiper.el.contains(focusedSlide) && !focusedSlide.classList.contains('swiper-slide-active')) {
+        const activeSlide = swiper.el.querySelector('.swiper-slide-active');
+        const target = activeSlide?.tabIndex === 0 ? activeSlide : swiper.el.closest('.bzc-carousel-box');
+        target?.focus({ preventScroll: true });
     }
     if (status) status.textContent = `Slide ${index + 1} of ${count}`;
 }
