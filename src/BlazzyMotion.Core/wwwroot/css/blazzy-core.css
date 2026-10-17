@@ -24,17 +24,17 @@
     --bz-container-max-width-tablet: 750px;
     --bz-container-max-width-mobile: 350px;
     /* SWIPER HEIGHTS */
-    --bz-swiper-height: 400px;
-    --bz-swiper-height-tablet: 300px;
-    --bz-swiper-height-mobile: 250px;
+    --bz-swiper-height: 330px;
+    --bz-swiper-height-tablet: 280px;
+    --bz-swiper-height-mobile: 240px;
     /* SLIDE DIMENSIONS */
-    --bz-slide-width: 180px;
-    --bz-slide-width-tablet: 150px;
-    --bz-slide-width-mobile: 100px;
+    --bz-slide-width: 220px;
+    --bz-slide-width-tablet: 185px;
+    --bz-slide-width-mobile: 160px;
     /* IMAGE DIMENSIONS */
-    --bz-image-max-width: 160px;
-    --bz-image-max-width-tablet: 140px;
-    --bz-image-max-width-mobile: 90px;
+    --bz-image-max-width: 220px;
+    --bz-image-max-width-tablet: 185px;
+    --bz-image-max-width-mobile: 160px;
     /* EFFECTS */
     --bz-hover-scale: 1.05;
     --bz-active-scale: 1.1;

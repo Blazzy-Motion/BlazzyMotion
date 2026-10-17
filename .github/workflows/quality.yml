@@ -45,6 +45,8 @@ jobs:
         run: dotnet tool install --global dotnet-sonarscanner
 
       - name: SonarCloud Begin
+        id: sonar-begin
+        continue-on-error: true
         env:
           GITHUB_TOKEN: ${{ secrets.GITHUB_TOKEN }}
           SONAR_TOKEN: ${{ secrets.SONAR_TOKEN }}
@@ -58,7 +60,7 @@ jobs:
             /d:sonar.cs.opencover.reportsPaths="**/coverage.opencover.xml" \
             /d:sonar.coverage.exclusions="**Tests/**,**Demo/**,**/*JsInterop*.cs,**/SourceGen/**" \
             /d:sonar.exclusions="**/wwwroot/js/**" \
-            /d:sonar.qualitygate.wait=false
+            /d:sonar.qualitygate.wait=true 2>&1 | tee "$RUNNER_TEMP/sonar-begin.log"
 
       - name: Restore Dependencies
         run: dotnet restore ${{ env.SOLUTION_PATH }}
@@ -76,7 +78,24 @@ jobs:
             /p:CoverletOutputFormat=opencover \
             /p:CoverletOutput=../coverage/coverage.opencover.xml
 
+      - name: Setup Node.js
+        uses: actions/setup-node@v4
+        with:
+          node-version: "22"
+
+      - name: Run Browser Regression Checks
+        run: |
+          npm ci --prefix tests/browser
+          cd tests/browser
+          npx playwright install --with-deps chromium
+          cd ../..
+          dotnet run --project src/BlazzyMotion.Demo -c Release --no-build --no-launch-profile --urls http://127.0.0.1:5130 > "$RUNNER_TEMP/carousel-demo.log" 2>&1 &
+          demo_pid=$!
+          trap 'kill "$demo_pid" 2>/dev/null || true' EXIT
+          npm test --prefix tests/browser
+
       - name: SonarCloud End
+        if: steps.sonar-begin.outcome == 'success'
         env:
           GITHUB_TOKEN: ${{ secrets.GITHUB_TOKEN }}
           SONAR_TOKEN: ${{ secrets.SONAR_TOKEN }}
@@ -87,4 +106,29 @@ jobs:
         uses: actions/upload-artifact@v4
         with:
           name: test-results
-          path: "**/TestResults/*.trx"
+          path: |
+            **/TestResults/*.trx
+            **/coverage.opencover.xml
+            tests/browser/artifacts/
+
+      - name: Report Sonar Initialization Failure
+        if: always() && steps.sonar-begin.outcome == 'failure'
+        env:
+          SONAR_TOKEN: ${{ secrets.SONAR_TOKEN }}
+          GITHUB_TOKEN: ${{ secrets.GITHUB_TOKEN }}
+        run: |
+          python3 - <<'PYTHON'
+          import os
+          from pathlib import Path
+          log = Path(os.environ["RUNNER_TEMP"]) / "sonar-begin.log"
+          text = log.read_text(errors="replace") if log.exists() else "Sonar initialization failed before a log was created."
+          for name in ("SONAR_TOKEN", "GITHUB_TOKEN"):
+              value = os.environ.get(name)
+              if value:
+                  text = text.replace(value, "[REDACTED]")
+          lines = [line for line in text.splitlines() if any(word in line.lower() for word in ("error", "failed", "unauthorized", "automatic analysis"))]
+          message = " | ".join(lines)[-2400:] or "Sonar initialization failed; inspect the SonarCloud Begin step."
+          message = message.replace("%", "%25").replace("\r", "%0D").replace("\n", "%0A")
+          print("::error title=Sonar initialization failed::" + message)
+          raise SystemExit(1)
+          PYTHON

@@ -75,4 +75,38 @@ public class BzCarouselRefreshTests : TestBase
         CoreModule.Invocations["initializeCarousel"].Count.Should().Be(initializations + 1);
     }
 
+    /// <summary>Cards keeps safe loop boundaries and honors consumer timing options.</summary>
+    /// <param name="count">Number of consumer items.</param>
+    /// <param name="loop">Whether the collection can loop using the existing minimum.</param>
+    [Theory]
+    [InlineData(1, false)]
+    [InlineData(2, false)]
+    [InlineData(4, true)]
+    [InlineData(6, true)]
+    public void Cards_PreservesLoopThreshold_AndCustomTiming(int count, bool loop)
+    {
+        RenderComponent<BzCarousel<TestMovie>>(p => p
+            .Add(x => x.Items, Enumerable.Range(0, count).Select(_ => new TestMovie()).ToArray())
+            .Add(x => x.Variant, BzCarouselVariant.Cards)
+            .Add(x => x.Options, new BzCarouselOptions { Speed = 650, Effect = "fade" }));
+        using var options = JsonDocument.Parse((string)CoreModule.Invocations["initializeCarousel"].Last().Arguments[1]!);
+        options.RootElement.GetProperty("effect").GetString().Should().Be("cards");
+        options.RootElement.GetProperty("speed").GetInt32().Should().Be(650);
+        options.RootElement.GetProperty("loop").GetBoolean().Should().Be(loop);
+    }
+
+    /// <summary>Navigation is only rendered for collections that can actually advance.</summary>
+    /// <param name="count">Number of consumer items.</param>
+    /// <param name="buttons">Expected number of navigation controls.</param>
+    [Theory]
+    [InlineData(0, 0)]
+    [InlineData(1, 0)]
+    [InlineData(2, 2)]
+    public void Navigation_ReflectsCollectionSize(int count, int buttons)
+    {
+        var cut = RenderComponent<BzCarousel<TestMovie>>(p => p
+            .Add(x => x.Items, Enumerable.Range(0, count).Select(_ => new TestMovie()).ToArray()));
+        cut.FindAll(".bzc-navigation button").Should().HaveCount(buttons);
+    }
+
 }

@@ -806,3 +806,20 @@ slide descendants: content now has a `.bzc-slide-inner` wrapper. Swiper controls
 slide transforms and stacking; custom effects should target inner content.
 The refreshed Carousel must be installed with its declared Core dependency;
 copying the new Carousel DLL over an older Core installation is unsupported.
+
+### Responsive artwork and theme surfaces
+
+Cards renders a standalone deck without a surrounding panel. Glass, Dark and
+Light decorate the card surface and navigation; Minimal removes that decoration.
+The image itself is not tinted to simulate a theme. Coverflow retains its themed
+container, with content and controls in normal flow to avoid oversized empty space.
+
+Default artwork widths are now 220px on desktop, 185px on tablets and 160px on
+small screens, with matching image limits. Existing `--bz-slide-width*`,
+`--bz-image-max-width*`, `--bzc-slide-width` and `--bzc-image-max-width` variables
+remain configurable. `Width` and `Height` overrides remain supported. Check the
+Demo on your target devices before upgrading custom layouts.
+
+Browser regression instructions are in `tests/browser/README.md` at the repository
+root. CI keeps test execution independent from Sonar initialization and retains a
+failure when analysis cannot run; it does not silently bypass the quality gate.

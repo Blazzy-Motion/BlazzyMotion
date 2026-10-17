@@ -1,264 +1,169 @@
-/* SWIPER CONTAINER - Initial Hidden State (Scoped) */
-
-::deep .swiper-container.bzc-hidden {
-    opacity: 0 !important;
-    visibility: hidden !important;
-    transition: opacity 0.4s ease-in, visibility 0.4s;
-}
-
-::deep .swiper-container.bzc-visible {
-    opacity: 1;
-    visibility: visible;
-    transition: opacity 0.4s ease-in, visibility 0.4s;
-}
-
-
-::deep .swiper-wrapper {
-    pointer-events: none !important;
-}
-
-/* SWIPER SLIDES */
-
-::deep .swiper-slide {
-    width: var(--bzc-slide-width);
-    cursor: pointer;
-    display: flex;
-    justify-content: center;
-    align-items: center;
-    box-shadow: 0px 15px 40px rgba(0, 0, 0, 0.7),
-        0px 5px 15px rgba(0, 0, 0, 0.5);
-    border-radius: 10px;
-    overflow: hidden;
-    position: relative;
-    pointer-events: auto !important;
-    /* Swiper owns slide stacking and transforms. */
-}
-
-::deep .swiper-slide:focus-visible {
-    outline: 2px solid rgba(255, 255, 255, 0.8);
-    outline-offset: 4px;
-}
-
-/* IMAGES */
-
-::deep .swiper-slide img {
-    max-width: var(--bzc-image-max-width);
-    width: 100%;
-    height: auto;
-    border-radius: 10px;
-    object-fit: cover;
-    object-position: center;
-    display: block;
-    box-shadow: 0px 0px 8px rgba(255, 255, 255, 0.2);
-    transition: transform var(--bzc-transition-duration) ease,
-        box-shadow 0.4s ease-out 0.3s;
-}
-
-::deep .swiper-slide img:hover {
-    transform: scale(var(--bzc-hover-scale));
-}
-
-::deep .swiper-slide-active img {
-    box-shadow: 0px 0px 25px rgba(255, 255, 255, 0.95);
-    transform: scale(var(--bzc-active-scale));
-}
-
-
-::deep .swiper-slide-shadow,
-::deep .swiper-slide-shadow-left,
-::deep .swiper-slide-shadow-right,
-::deep .swiper-slide-shadow-top,
-::deep .swiper-slide-shadow-bottom,
-::deep .swiper-slide-shadow-coverflow {
-    display: none !important;
-    opacity: 0 !important;
-    visibility: hidden !important;
-}
-
-/* OVERLAY */
-
-.bzc-overlay {
-    position: absolute;
-    top: 0;
-    left: 0;
-    right: 0;
-    bottom: 0;
-    pointer-events: none;
-    border-radius: 10px;
-    background: linear-gradient(to bottom,
-            rgba(0, 0, 0, 0.05) 0%,
-            rgba(0, 0, 0, 0.3) 50%,
-            rgba(0, 0, 0, 0.5) 100%);
-    opacity: 1;
-    transition: opacity 0.4s ease-out 0.3s;
-}
-
-::deep .swiper-slide-active .bzc-overlay {
-    opacity: 0.1;
-}
-
-::deep .swiper-slide-prev .bzc-overlay,
-::deep .swiper-slide-next .bzc-overlay {
-    opacity: 0.5;
-}
-
-/* FALLBACK ITEM */
-
-::deep .bzc-fallback-item {
-    display: flex;
-    align-items: center;
-    justify-content: center;
-    min-height: 200px;
-    padding: 20px;
-    background: rgba(255, 255, 255, 0.05);
-    border: 1px dashed rgba(255, 255, 255, 0.2);
-    border-radius: 8px;
-    color: rgba(255, 255, 255, 0.6);
-    font-size: 14px;
-    text-align: center;
-}
-/* Carousel-local tokens preserve the shared theme API used by other packages. */
+/* Keep geometry under Swiper's control; decorate the inner artwork surface. */
 .bzc-carousel-box {
-    --bzc-card-shadow: 0 6px 18px rgb(0 0 0 / 18%), 0 18px 36px rgb(0 0 0 / 16%);
+    display: grid;
+    grid-template-columns: minmax(0, 1fr);
+    gap: 12px;
+    min-height: 0;
+    padding: 16px;
     --bzc-card-radius: 14px;
+    --bzc-card-shadow: 0 8px 22px rgb(0 0 0 / 24%);
+    --bzc-card-edge: rgb(255 255 255 / 16%);
     --bzc-focus-color: #67e8f9;
-}
-
-.bzc-carousel-box[data-navigation="true"] {
-    padding-bottom: calc(var(--bzc-padding, 24px) + 52px);
+    color: #f1f5f9;
 }
 
 .bzc-carousel-box.bzc-theme-glass {
     background: linear-gradient(135deg, rgb(255 255 255 / 8%), transparent), var(--bz-theme-glass-bg);
-    box-shadow: inset 0 1px 0 rgb(255 255 255 / 16%), var(--bz-theme-glass-shadow);
+    box-shadow: inset 0 1px 0 rgb(255 255 255 / 16%), 0 12px 28px rgb(0 0 0 / 16%);
+    --bzc-card-shadow: 0 8px 24px rgb(0 0 0 / 24%), 0 0 0 1px rgb(255 255 255 / 16%);
 }
 
 .bzc-carousel-box.bzc-theme-dark {
-    box-shadow: inset 0 1px 0 rgb(255 255 255 / 6%), 0 12px 32px rgb(0 0 0 / 22%);
+    --bzc-card-edge: rgb(165 180 252 / 20%);
+    --bzc-card-shadow: 0 10px 26px rgb(0 0 0 / 35%), 0 0 0 1px rgb(165 180 252 / 16%);
 }
 
 .bzc-carousel-box.bzc-theme-light {
-    --bzc-card-shadow: 0 2px 4px rgb(0 0 0 / 3%), 0 12px 24px rgb(0 0 0 / 8%), 0 24px 40px rgb(0 0 0 / 8%);
+    --bzc-card-edge: rgb(15 23 42 / 12%);
+    --bzc-card-shadow: 0 3px 6px rgb(15 23 42 / 5%), 0 12px 26px rgb(15 23 42 / 14%);
     --bzc-focus-color: #075985;
     color: #172033;
     background: #f8fafc;
+    box-shadow: 0 8px 24px rgb(15 23 42 / 8%);
 }
 
 .bzc-carousel-box.bzc-theme-minimal {
-    --bzc-card-shadow: 0 4px 14px rgb(0 0 0 / 12%);
+    --bzc-card-shadow: none;
+    --bzc-card-edge: transparent;
 }
 
+::deep .swiper-container { min-width: 0; }
+::deep .swiper-wrapper { align-items: center; }
 ::deep .swiper-slide {
-    box-shadow: var(--bzc-card-shadow);
-    border-radius: var(--bzc-card-radius);
-    background: transparent;
-}
-
-.bzc-slide-inner {
-    width: 100%;
-    border-radius: inherit;
-    overflow: hidden;
-}
-
-::deep .swiper-slide img,
-::deep .swiper-slide-active img {
-    border-radius: var(--bzc-card-radius);
-    box-shadow: none;
-}
-
-.bzc-carousel-box:not(.bzc-theme-minimal) ::deep .swiper-slide-active {
-    box-shadow: var(--bzc-card-shadow), 0 0 0 1px rgb(255 255 255 / 14%);
-}
-
-/* A useful initial view remains visible during JS loading and on failure. */
-::deep .swiper-container.bzc-pending .swiper-wrapper {
-    transform: none;
-    justify-content: center;
-}
-
-::deep .swiper-container.bzc-pending .swiper-slide:not(:first-child) {
-    display: none;
-}
-
-.bzc-carousel-box[data-variant="cards"] ::deep .swiper-container {
-    width: min(var(--bzc-slide-width, 250px), 75%);
-    overflow: visible;
-}
-
-.bzc-navigation {
-    position: absolute;
-    bottom: 12px;
-    left: 50%;
-    transform: translateX(-50%);
+    width: var(--bzc-slide-width);
+    height: auto;
+    max-height: 100%;
     display: flex;
-    gap: 12px;
-}
-
-.bzc-navigation button {
-    width: 44px;
-    height: 44px;
-    border: 1px solid currentColor;
-    border-radius: 50%;
-    background: transparent;
-    color: inherit;
-    font: inherit;
-    font-size: 22px;
+    align-items: center;
+    justify-content: center;
+    position: relative;
+    border-radius: var(--bzc-card-radius);
     cursor: pointer;
 }
 
-.bzc-carousel-box:not(.bzc-theme-light) { color: #f1f5f9; }
-.bzc-navigation button:disabled { opacity: .4; cursor: default; }
-.bzc-navigation button:hover:not(:disabled) { background: rgb(128 128 128 / 15%); }
-.bzc-carousel-box:focus-visible,
-.bzc-navigation button:focus-visible {
-    outline: 3px solid var(--bzc-focus-color);
-    outline-offset: 4px;
-}
-
-.bzc-status {
-    position: absolute;
-    width: 1px;
-    height: 1px;
-    padding: 0;
+.bzc-slide-inner {
+    position: relative;
+    width: 100%;
     overflow: hidden;
-    clip-path: inset(50%);
-    white-space: nowrap;
+    border-radius: inherit;
+    box-shadow: var(--bzc-card-shadow);
 }
 
-@media (prefers-reduced-motion: reduce) {
-    ::deep .swiper-container,
-    ::deep .swiper-slide,
-    ::deep .swiper-slide img,
-    .bzc-overlay {
-        transition: none !important;
-        animation: none !important;
-    }
-    ::deep .swiper-slide img:hover,
-    ::deep .swiper-slide-active img { transform: none; }
+::deep .swiper-slide img {
+    display: block;
+    width: 100%;
+    max-width: var(--bzc-image-max-width);
+    max-height: var(--bzc-swiper-height);
+    height: auto;
+    margin: auto;
+    object-fit: contain;
+    border-radius: inherit;
 }
 
+::deep .swiper-slide-active .bzc-slide-inner {
+    outline: 1px solid var(--bzc-card-edge);
+    outline-offset: -1px;
+}
+
+.bzc-overlay {
+    position: absolute;
+    inset: 0;
+    border-radius: inherit;
+    background: rgb(0 0 0 / 22%);
+    pointer-events: none;
+    transition: opacity .2s ease;
+}
+::deep .swiper-slide-active .bzc-overlay { opacity: 0; }
+::deep .swiper-slide-shadow,
+::deep .swiper-slide-shadow-left,
+::deep .swiper-slide-shadow-right { display: none; }
+
+/* A deck is a standalone surface, not a miniature carousel inside a panel. */
+.bzc-carousel-box[data-variant="cards"] {
+    background: transparent;
+    border: 0;
+    box-shadow: none;
+    backdrop-filter: none;
+    -webkit-backdrop-filter: none;
+    overflow: visible;
+    padding: 18px 30px 8px;
+    gap: 18px;
+}
+.bzc-carousel-box[data-variant="cards"]::before,
+.bzc-carousel-box[data-variant="cards"]::after { display: none; }
+.bzc-carousel-box[data-variant="cards"] ::deep .swiper-container {
+    width: min(var(--bzc-slide-width), 100%);
+    margin-inline: auto;
+    overflow: visible;
+}
+.bzc-carousel-box[data-variant="cards"].bzc-theme-glass .bzc-slide-inner {
+    background: rgb(255 255 255 / 8%);
+    border: 1px solid rgb(255 255 255 / 22%);
+}
+.bzc-carousel-box[data-variant="cards"].bzc-theme-dark .bzc-slide-inner {
+    background: #151722;
+    border: 1px solid rgb(165 180 252 / 22%);
+}
+.bzc-carousel-box[data-variant="cards"].bzc-theme-light .bzc-slide-inner {
+    background: #fff;
+    border: 2px solid #fff;
+}
+.bzc-carousel-box[data-variant="cards"].bzc-theme-light .bzc-navigation button { background: #fff; color: #172033; border-color: #cbd5e1; }
+
+.bzc-navigation { display: flex; justify-content: center; gap: 8px; }
+.bzc-navigation button {
+    width: 44px;
+    height: 44px;
+    border: 1px solid var(--bzc-card-edge);
+    border-radius: 12px;
+    background: rgb(128 128 128 / 8%);
+    color: inherit;
+    font: inherit;
+    font-size: 19px;
+    cursor: pointer;
+}
+.bzc-navigation button:disabled { opacity: .4; cursor: default; }
+.bzc-navigation button:hover:not(:disabled) { background: rgb(128 128 128 / 18%); }
+.bzc-carousel-box:focus-visible,
+.bzc-navigation button:focus-visible { outline: 3px solid var(--bzc-focus-color); outline-offset: 3px; }
+
+.bzc-status { position: absolute; width: 1px; height: 1px; overflow: hidden; clip-path: inset(50%); white-space: nowrap; }
 .bzc-select {
     position: absolute;
-    top: 8px;
-    right: 8px;
+    top: 6px;
+    right: 6px;
     width: 44px;
     height: 44px;
     border: 1px solid #e2e8f0;
-    border-radius: 50%;
+    border-radius: 10px;
     background: #172033;
     color: #f8fafc;
     opacity: 0;
     cursor: pointer;
 }
+.bzc-select:focus-visible { opacity: 1; outline: 3px solid #67e8f9; outline-offset: -4px; }
 
-.bzc-select:focus-visible {
-    opacity: 1;
-    outline: 3px solid #67e8f9;
-    outline-offset: -4px;
+/* Keep an actual item visible before initialization and when JS is unavailable. */
+::deep .swiper-container.bzc-pending .swiper-wrapper { justify-content: center; }
+::deep .swiper-container.bzc-pending .swiper-slide:not(:first-child) { display: none; }
+::deep .swiper-container.bzc-hidden { opacity: 0; visibility: hidden; }
+::deep .swiper-container.bzc-visible { opacity: 1; visibility: visible; }
+::deep .bzc-fallback-item { min-height: 160px; padding: 16px; }
+
+@media (max-width: 600px) {
+    .bzc-carousel-box { padding: 12px; gap: 10px; }
+    .bzc-carousel-box[data-variant="cards"] { padding: 12px 30px 8px; gap: 16px; }
 }
-
-/* Let the artwork define the card bounds instead of stretching empty surfaces. */
-::deep .swiper-wrapper { align-items: center; }
-::deep .swiper-slide { height: auto; max-height: 100%; }
-.bzc-slide-inner { display: flex; align-items: center; justify-content: center; }
-::deep .swiper-slide img { max-height: var(--bzc-swiper-height, 400px); }
+@media (prefers-reduced-motion: reduce) {
+    ::deep .swiper-container, ::deep .swiper-slide, .bzc-overlay { transition: none !important; animation: none !important; }
+}

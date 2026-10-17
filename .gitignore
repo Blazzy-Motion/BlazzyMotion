@@ -367,3 +367,6 @@ FodyWeavers.xsd
 TestResults/
 .vs/
 .vscode/
+# Browser regression dependencies and generated artifacts
+tests/browser/node_modules/
+tests/browser/artifacts/
