@@ -2,7 +2,7 @@
 
 <div class="bz-install-box">
     <span class="bz-install-box__prompt">$</span>
-    <code class="bz-install-box__command">dotnet add package @PackageName</code>
+    <code class="bz-install-box__command">@InstallCommand</code>
     <button class="bz-install-box__copy" @onclick="CopyToClipboard" title="Copy to clipboard">
         @if (_copied)
         {
@@ -25,16 +25,22 @@
 </div>
 
 @code {
+    /// <summary>Gets or sets the package identifier to install from NuGet.</summary>
     [Parameter]
     public string PackageName { get; set; } = "BlazzyMotion.Carousel";
 
+    /// <summary>Gets the unversioned command so NuGet selects the latest stable package.</summary>
+    private string InstallCommand => $"dotnet add package {PackageName}";
+
     private bool _copied = false;
 
+    /// <summary>Copies the displayed command and briefly confirms the action.</summary>
+    /// <returns>A task representing clipboard writing and confirmation feedback.</returns>
     private async Task CopyToClipboard()
     {
         try
         {
-            await JS.InvokeVoidAsync("navigator.clipboard.writeText", $"dotnet add package {PackageName}");
+            await JS.InvokeVoidAsync("navigator.clipboard.writeText", InstallCommand);
             _copied = true;
             StateHasChanged();
 
