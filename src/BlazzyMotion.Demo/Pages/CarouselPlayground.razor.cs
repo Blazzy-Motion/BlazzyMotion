@@ -9,17 +9,7 @@ public partial class CarouselPlayground
 {
     private BzTheme _currentTheme = BzTheme.Glass;
     private Movie? _selectedMovie;
-    private readonly List<Movie> _movies = new()
-    {
-        new() { Title = "Despicable Me 4", ImageUrl = "images/despicableme.webp" },
-        new() { Title = "Joker", ImageUrl = "images/joker.webp" },
-        new() { Title = "The Platform 2", ImageUrl = "images/the-platform.webp" },
-        new() { Title = "The Substance", ImageUrl = "images/thesubstance.webp" },
-        new() { Title = "Venom", ImageUrl = "images/venom.webp" },
-        new() { Title = "Survive", ImageUrl = "images/survive.webp" },
-        new() { Title = "The Wild Robot", ImageUrl = "images/wild-robot.webp" },
-        new() { Title = "Deadpool & Wolverine", ImageUrl = "images/wolwerine.webp" }
-    };
+    private readonly List<Movie> _movies = BlazzyMotion.Demo.Services.MovieExamples.CreateMovies();
 
     /// <summary>Gets a standalone Razor example generated from the same items and theme as the preview.</summary>
     private string ComponentCode
