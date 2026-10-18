@@ -322,10 +322,22 @@ async function inspectAllComponentExamples(browser) {
           for (const id of ids) assert((await page.locator(`[data-example="${id}"] .example-source__component code`).textContent()).includes('BzDirection.Right'));
         }
         if (route === 'bento') {
-          const swiper = page.locator('.swiper-initialized');
-          await swiper.waitFor();
-          await swiper.evaluate(element => { window.examplesSwiper = element.swiper; });
-          await page.locator('.bzc-carousel-box').focus();
+          const root = page.locator('.bzc-carousel-box');
+          await root.scrollIntoViewIfNeeded();
+          await root.locator('.swiper-slide-active[data-bzc-media=ready]').waitFor();
+          await page.waitForFunction(() => {
+            const root = document.querySelector('.bzc-carousel-box');
+            const swiper = root?.querySelector('.swiper-initialized')?.swiper;
+            return swiper?.initialized && !swiper.destroyed && !swiper.animating && !root.querySelector('[data-bzc-direction=next]').disabled;
+          });
+          // Image preparation and scroll-triggered entrance complete before capturing the instance.
+          await root.evaluate(element => new Promise(resolve => requestAnimationFrame(() => requestAnimationFrame(() => {
+            window.examplesSwiper = element.querySelector('.swiper-initialized').swiper;
+            resolve();
+          }))));
+          assert.equal(await root.evaluate(() => window.examplesSwiper.realIndex), 0);
+          await root.focus();
+          assert(await root.evaluate(element => document.activeElement === element), 'Nested Carousel owns keyboard focus before input');
           await page.keyboard.press('ArrowRight');
           await page.waitForFunction(() => window.examplesSwiper.realIndex === 1);
         }
