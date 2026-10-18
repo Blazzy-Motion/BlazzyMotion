@@ -367,3 +367,7 @@ FodyWeavers.xsd
 TestResults/
 .vs/
 .vscode/
+# Release automation test caches and coverage
+__pycache__/
+.coverage
+coverage/release-metadata.xml
