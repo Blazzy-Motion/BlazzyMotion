@@ -18,7 +18,7 @@ The publication workflow can rebuild production after successful manual publicat
 
 ## Component playgrounds
 
-`/carousel`, `/bento`, `/gallery` and `/marquee` share a compact component introduction, build-version badge, installation command and local **Playground / Documentation / API** navigation. Centered theme controls and existing component settings remain available. The landing page and package libraries retain their existing behavior.
+`/carousel`, `/bento`, `/gallery` and `/marquee` share a compact component introduction, build-version badge, installation command and local **Playground / Documentation / API** navigation. Centered theme controls and existing component settings remain available. Package libraries retain their existing behavior.
 
 Each live example has a title toolbar with **Code** and **Copy example code** actions. Code starts hidden and opens beneath the live component; opening, closing or copying code does not replace the preview. Opening code focuses its heading, while **Close** or **Escape** returns focus to its toolbar. Copy works before opening the source and reports unavailable clipboard access without disrupting the example. Model attributes are in a nested native disclosure.
 
@@ -31,3 +31,7 @@ Secondary Gallery/Marquee settings are grouped under a native **Advanced options
 ## Footer and return navigation
 
 The shared footer stays in document flow, with brand information and links to Components, Docs, API reference, GitHub, NuGet and the license. Short pages keep it at the viewport floor without forcing an extra screen of empty space. A 44 px **Back to top** control appears after 600 px of document scrolling. It returns focus to the main content and scrolls smoothly unless the visitor requests reduced motion. Its passive scroll listener is removed when a layout is disposed; no component package changes are required.
+
+## Landing page
+
+The landing page pairs a concise introduction with the real Carousel on wide screens and stacks them on smaller screens. The showcase retains package geometry and theme controls. A static layered brand mark echoes the logo; the existing startup animation remains unchanged. Compact workflow notes replace oversized feature cards. Visitors can explore all four components, copy the introductory Razor example and reveal its separate attributed model, or follow the installation guide. Footer links are grouped into Explore and Resources on every layout. Browser checks cover 320, 390, 980 and 1440 px, component bounds, discovery, keyboard model disclosure and WCAG scans.

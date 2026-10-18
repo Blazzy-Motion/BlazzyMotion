@@ -212,3 +212,15 @@ body .bz-main__content { flex: 1; width: 100%; }
     .site-footer { align-items: flex-start; padding: 24px 20px 76px; }
     .site-footer nav { margin-left: 0; }
 }
+
+/* Group footer destinations so narrow screens never leave an isolated final link. */
+.site-footer { align-items: flex-start; }
+.site-footer > nav { display: grid; grid-template-columns: repeat(2, minmax(110px, 1fr)); gap: 40px; }
+.site-footer__group { display: flex; flex-direction: column; }
+.site-footer__group > p { margin: 0 0 8px; font-size: 12px; font-weight: 600; color: #f4f4f5; }
+.site-footer__group > a { width: fit-content; }
+.site-footer__brand { text-decoration: none; }
+@media (max-width: 768px) {
+    .site-footer { gap: 28px; }
+    .site-footer > nav { width: 100%; gap: 24px; }
+}

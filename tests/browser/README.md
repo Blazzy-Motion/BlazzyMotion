@@ -50,3 +50,5 @@ Compact playground checks also verify local navigation beneath the component int
 Density checks verify Carousel toolbar/source alignment with the unchanged desktop 800 × 450 px frame, a compact preview/source gap, keyboard access to Advanced options, retained secondary settings after closing/reopening, and expanded-controls accessibility at 320, 390 and 1440 px.
 
 Footer coverage checks document flow and short-page placement on both layouts at mobile and desktop widths, keyboard return with restored content focus, smooth/reduced-motion scrolling, responsive bounds and scoped WCAG scans.
+
+Landing-page coverage checks the real first-screen desktop showcase with unchanged 800 × 450 px geometry, responsive bounds at 320/390/980/1440 px, component discovery, grouped footer links, keyboard model disclosure and whole-page WCAG scans. Introductory source/model files are saved in browser artifacts for standalone stable-consumer validation.

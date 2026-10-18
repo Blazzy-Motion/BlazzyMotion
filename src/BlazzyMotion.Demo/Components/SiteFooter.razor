@@ -10,12 +10,18 @@
         <p>Motion and layouts, made for Blazor.</p>
     </div>
     <nav aria-label="Footer navigation">
-        <a href="/components">Components</a>
-        <a href="/docs/quick-start">Docs</a>
-        <a href="/docs/api">API reference</a>
-        <a href="https://github.com/Blazzy-Motion/BlazzyMotion">GitHub</a>
-        <a href="https://www.nuget.org/packages?q=BlazzyMotion">NuGet</a>
-        <a href="https://github.com/Blazzy-Motion/BlazzyMotion/blob/main/LICENSE.txt">License</a>
+        <div class="site-footer__group">
+            <p>Explore</p>
+            <a href="/components">Components</a>
+            <a href="/docs/quick-start">Docs</a>
+            <a href="/docs/api">API reference</a>
+        </div>
+        <div class="site-footer__group">
+            <p>Resources</p>
+            <a href="https://github.com/Blazzy-Motion/BlazzyMotion">GitHub</a>
+            <a href="https://www.nuget.org/packages?q=BlazzyMotion">NuGet</a>
+            <a href="https://github.com/Blazzy-Motion/BlazzyMotion/blob/main/LICENSE.txt">License</a>
+        </div>
     </nav>
 </footer>
 <button class="site-back-to-top" type="button" hidden @ref="_backToTop" aria-label="Back to top">

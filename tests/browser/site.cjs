@@ -464,6 +464,50 @@ async function inspectAllComponentExamples(browser) {
   }
 }
 
+/** Verify the landing page exposes a real showcase, working source and grouped footer at all sizes. */
+async function inspectLanding(browser) {
+  for (const width of [320, 390, 980, 1440]) {
+    const context = await browser.newContext({ viewport: { width, height: 960 } });
+    const page = await context.newPage();
+    try {
+      await page.goto(baseURL);
+      await page.getByRole('heading', { name: 'Make room for motion.' }).waitFor();
+      await page.locator('#splash').waitFor({ state: 'hidden' });
+      const root = page.locator('.home-showcase .bzc-carousel-box');
+      await root.locator('.swiper-slide-active[data-bzc-media=ready]').waitFor();
+      const frame = await root.boundingBox();
+      if (width === 1440) {
+        assert.equal(frame.width, 800);
+        assert.equal(frame.height, 450);
+        const intro = await page.locator('.home-intro').boundingBox();
+        assert(intro.x + intro.width < frame.x, 'Desktop introduction sits beside the full-size component');
+        assert(frame.y + frame.height < 960, 'Desktop showcase fits the first screen');
+      }
+      assert(await page.evaluate(() => document.documentElement.scrollWidth <= innerWidth + 1), `Landing fits ${width}px`);
+      assert.equal(await page.locator('.home-principles > div').count(), 3);
+      assert.equal(await page.locator('.site-footer__group').count(), 2);
+      assert.equal(await page.locator('.site-footer__group').first().getByRole('link').count(), 3);
+      const model = page.locator('.home-model');
+      await model.locator('summary').focus();
+      await page.keyboard.press('Enter');
+      await model.locator('code').waitFor();
+      assert((await model.locator('code').textContent()).includes('[BzImage]'));
+      const componentCode = await page.locator('.home-developer__code > .bz-code-block code').textContent();
+      assert(componentCode.includes('<BzCarousel Items="@movies" />'));
+      const directory = path.join(__dirname, 'artifacts', 'landing');
+      fs.mkdirSync(directory, { recursive: true });
+      fs.writeFileSync(path.join(directory, 'Example.razor'), componentCode);
+      fs.writeFileSync(path.join(directory, 'Movie.cs'), await model.locator('code').textContent());
+      const audit = await new AxeBuilder({ page }).withTags(['wcag2a', 'wcag2aa', 'wcag21a', 'wcag21aa', 'wcag22aa']).analyze();
+      assert.deepEqual(audit.violations.map(item => ({id:item.id,targets:item.nodes.map(node=>node.target)})), [], `Landing accessibility ${width}px`);
+      await page.getByRole('link', { name: 'Explore components', exact: false }).first().click();
+      await page.waitForURL('**/components');
+      assert.equal(await page.locator('.component-entry').count(), 4);
+      console.log(`PASS landing ${width}px: first-screen showcase, unchanged geometry, model disclosure, discovery and WCAG checks`);
+    } finally { await context.close(); }
+  }
+}
+
 /** Verify footer flow, short-page placement, keyboard return and reduced motion across layouts. */
 async function inspectFooter(browser) {
   for (const width of [390, 1440]) {
@@ -522,6 +566,6 @@ async function inspectFooter(browser) {
 
 (async () => {
   const browser = await chromium.launch({ executablePath: process.env.CHROMIUM_PATH || undefined, headless: true, args: ['--no-sandbox'] });
-  try { await inspectFooter(browser); await inspectSite(browser, 1440); await inspectSite(browser, 390); await inspectDocumentationNavigation(browser, 390); await inspectDocumentationNavigation(browser, 980); await inspectDocumentationNavigation(browser, 1440); await inspectDemoControls(browser); await inspectVersionMetadata(browser); await inspectTouchNavigation(browser); await inspectDocumentTouchScrolling(browser); await inspectCarouselCodeExample(browser); await inspectAllComponentExamples(browser); }
+  try { await inspectLanding(browser); await inspectFooter(browser); await inspectSite(browser, 1440); await inspectSite(browser, 390); await inspectDocumentationNavigation(browser, 390); await inspectDocumentationNavigation(browser, 980); await inspectDocumentationNavigation(browser, 1440); await inspectDemoControls(browser); await inspectVersionMetadata(browser); await inspectTouchNavigation(browser); await inspectDocumentTouchScrolling(browser); await inspectCarouselCodeExample(browser); await inspectAllComponentExamples(browser); }
   finally { await browser.close(); }
 })().catch(error => { console.error(error); process.exit(1); });
