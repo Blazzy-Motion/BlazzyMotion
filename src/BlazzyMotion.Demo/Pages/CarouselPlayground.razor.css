@@ -1,37 +1,6 @@
-.carousel-example { max-width: 1280px; margin: 0 auto; padding: 36px 24px 72px; }
-.carousel-example__intro { display: flex; align-items: center; justify-content: space-between; gap: 40px; padding-bottom: 32px; border-bottom: 1px solid #303136; }
-h1 { margin: 10px 0 12px; font-size: clamp(32px, 4vw, 46px); letter-spacing: -.04em; }
-.carousel-example__intro p { max-width: 520px; margin: 0; color: #b7b8c0; line-height: 1.6; }
-.carousel-example__installation { min-width: 0; max-width: 440px; }
-.carousel-example__version { display: block; margin-bottom: 12px; font-size: 12px; color: #b7b8c0; }
-.carousel-example__layout { display: grid; grid-template-columns: minmax(0, 1fr); gap: 32px; padding-top: 32px; max-width: 1000px; margin-inline: auto; }
-.carousel-example__preview { min-width: 0; }
-.carousel-example__heading { display: flex; flex-wrap: wrap; align-items: baseline; justify-content: space-between; gap: 12px; margin-bottom: 24px; }
-h2 { margin: 0; font-size: 22px; letter-spacing: -.025em; }
-.carousel-example__heading span { color: #b7b8c0; font-size: 13px; }
-.carousel-example__preview ::deep .bz-theme-pills { margin: 0 auto 24px; }
-.carousel-example__stage { padding: 16px 0; }
-.carousel-example__selection { text-align: center; font-size: 20px; font-weight: 550; margin: 20px 0 8px; }
+.carousel-example { max-width: 1280px; margin: 0 auto; padding: 0 24px 48px; }
+.carousel-example__layout { padding-top: 20px; max-width: 1000px; margin-inline: auto; }
+.carousel-example__stage { padding: 8px 0; }
+.carousel-example__selection { text-align: center; font-size: 20px; font-weight: 550; margin: 16px 0 6px; }
 .carousel-example__hint { text-align: center; color: #b7b8c0; font-size: 13px; line-height: 1.6; }
-.carousel-example__code { min-width: 0; align-self: start; padding: 24px; background: #191a1e; border: 1px solid #303136; border-radius: 12px; }
-.carousel-example__code h2 { margin-top: 10px; }
-.carousel-example__code p { color: #b7b8c0; font-size: 14px; line-height: 1.65; }
-.carousel-example__code ::deep .bz-code-block { min-width: 0; max-width: 100%; margin: 20px 0; }
-.carousel-example__code ::deep pre { max-height: 460px; overflow: auto; font-size: 12px; text-align: left; }
-.carousel-example__code summary { padding: 12px 0; cursor: pointer; font-size: 14px; color: #e1d7fa; }
-.carousel-example__code a { font-size: 14px; color: #e1d7fa; text-underline-offset: 4px; }
-.carousel-example__code .carousel-example__assets { font-size: 12px; }
-@media (max-width: 768px) {
-    .carousel-example { padding: 24px 18px 48px; }
-    .carousel-example__intro { flex-direction: column; align-items: stretch; gap: 24px; padding-bottom: 24px; }
-    .carousel-example__installation { max-width: none; }
-    .carousel-example__layout { gap: 24px; padding-top: 24px; }
-    .carousel-example__code { padding: 20px; }
-    .carousel-example__code ::deep pre { max-height: 360px; }
-}
-
-.carousel-example__source { min-width: 0; border: 1px solid #303136; border-radius: 12px; background: #191a1e; }
-.carousel-example__source > summary { padding: 20px 24px; cursor: pointer; font-size: 15px; font-weight: 600; }
-.carousel-example__source > summary:focus-visible { outline: 2px solid #d6c6ff; outline-offset: 4px; border-radius: 12px; }
-.carousel-example__source[open] > summary { border-bottom: 1px solid #303136; }
-.carousel-example__source .carousel-example__code { border: 0; background: transparent; }
+@media (max-width: 768px) { .carousel-example { padding: 0 18px 32px; } .carousel-example__layout { padding-top: 16px; } }

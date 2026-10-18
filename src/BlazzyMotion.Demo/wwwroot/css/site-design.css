@@ -162,3 +162,13 @@ body .demo-example .bzb-presentation { max-width: 1232px; margin-inline: auto; p
 .demo-example .bzb-presentation__stage { text-align: left; }
 .carousel-example .demo-surface-controls { text-align: center; }
 @media (max-width: 768px) { .demo-example { padding-inline: 18px; } }
+
+/* Compact component documentation navigation and live-example toolbars. */
+:is(.demo-example, .carousel-example) .component-links { max-width: 1232px; margin: 18px auto 0; padding: 0; justify-content: flex-start; gap: 24px; border-bottom: 1px solid #303136; }
+:is(.demo-example, .carousel-example) .component-links a { padding: 10px 0 12px; text-decoration: none; border-bottom: 2px solid transparent; }
+:is(.demo-example, .carousel-example) .component-links a.active { color: #f4f4f5; border-bottom-color: #c3b4ed; }
+body .demo-example .bzb-presentation { padding: 20px 0; }
+.demo-example .bzb-presentation__stage { padding: 12px 0; }
+.demo-example .bzg-demo-controls { padding: 16px; margin-bottom: 12px; border-radius: 10px; }
+:is(.demo-example, .carousel-example) .example-theme-controls .bz-theme-pills { margin-bottom: 16px; }
+@media (max-width: 768px) { :is(.demo-example, .carousel-example) .component-links { margin-top: 12px; gap: 22px; } body .demo-example .bzb-presentation { padding: 16px 0; } }

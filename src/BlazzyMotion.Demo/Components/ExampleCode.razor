@@ -1,9 +1,42 @@
-<details class="example-source" data-example="@ExampleId">
-    <summary>View code</summary>
-    <div class="example-source__content">
-        <span class="site-eyebrow">Use this example</span>
-        <h3>Razor example</h3>
-        <p>The code follows the current controls. Copy it into a Razor component@(string.IsNullOrEmpty(ModelCode) ? "." : ", then add the model below.")</p>
+@inject IJSRuntime JS
+
+<div class="example-source" data-example="@ExampleId">
+    <header class="example-source__toolbar">
+        <h2 id="@(ExampleId + "-title")">@Title</h2>
+        <div class="example-source__actions">
+            <button type="button" class="example-source__toggle @(_showCode ? "is-active" : "")"
+                    aria-expanded="@_showCode.ToString().ToLowerInvariant()"
+                    aria-controls="@(ExampleId + "-source")" @ref="_toggleElement" @onclick="ToggleCode">Code</button>
+            <button type="button" class="example-source__copy" aria-label="Copy example code" title="Copy example code" @onclick="CopyCode">
+                @if (_copied)
+                {
+                    <span aria-hidden="true">✓</span>
+                }
+                else
+                {
+                    <svg aria-hidden="true" width="18" height="18" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="1.5"><rect x="8" y="8" width="12" height="12" rx="2" /><path d="M16 8V4a1 1 0 0 0-1-1H4a1 1 0 0 0-1 1v11a1 1 0 0 0 1 1h4" /></svg>
+                }
+            </button>
+            <span class="example-source__status" role="status">@(_copied ? "Example code copied." : "")</span>
+        </div>
+    </header>
+    @if (!string.IsNullOrWhiteSpace(Description))
+    {
+        <p class="example-source__description">@Description</p>
+    }
+    @if (_copyFailed)
+    {
+        <p role="status">Copy is unavailable. Open Code and copy the text directly.</p>
+    }
+    <div class="example-source__preview" role="region" aria-label="@(PreviewLabel ?? Title)">
+        @ChildContent
+    </div>
+    <section class="example-source__content" id="@(ExampleId + "-source")" hidden="@(!_showCode)" tabindex="-1" @onkeydown="HandleSourceKeys" aria-labelledby="@(ExampleId + "-code-title")">
+        <div class="example-source__heading">
+            <h3 id="@(ExampleId + "-code-title")" tabindex="-1" @ref="_sourceElement">Razor example</h3>
+            <button type="button" aria-label="Close code" @onclick="CloseCode">Close</button>
+        </div>
+        <p>Code follows your current settings. Copy the component@(string.IsNullOrEmpty(ModelCode) ? "." : " and add the model below.")</p>
         <div class="example-source__component"><CodeBlock Language="Example.razor" Code="@Code" /></div>
         @if (!string.IsNullOrEmpty(ModelCode))
         {
@@ -12,18 +45,95 @@
                 <CodeBlock Language="Models.cs" Code="@ModelCode" />
             </details>
         }
-        <p>Sample artwork uses public Demo URLs. Replace it with your own assets. Presentation-only Demo icons are omitted.</p>
-        <a href="@DocumentationUrl">Setup and API documentation →</a>
-    </div>
-</details>
+        <p>Replace the public sample artwork with your own assets. Optional Demo icons are omitted.</p>
+        <a href="@DocumentationUrl">Component documentation →</a>
+    </section>
+</div>
 
 @code {
-    /// <summary>Gets or sets a stable identifier for this live example.</summary>
+    private ElementReference _toggleElement;
+    private ElementReference _sourceElement;
+    private bool _focusSource;
+    private bool _showCode;
+    private bool _copied;
+    private bool _copyFailed;
+    private string? _lastCode;
+
+    /// <summary>Gets or sets a stable identifier for the example and its controlled source region.</summary>
     [Parameter, EditorRequired] public string ExampleId { get; set; } = "";
+    /// <summary>Gets or sets the example title displayed beside the source actions.</summary>
+    [Parameter, EditorRequired] public string Title { get; set; } = "";
+    /// <summary>Gets or sets an optional short explanation of the example.</summary>
+    [Parameter] public string? Description { get; set; }
+    /// <summary>Gets or sets the optional accessible name of the live preview region.</summary>
+    [Parameter] public string? PreviewLabel { get; set; }
     /// <summary>Gets or sets the complete Razor example matching the current controls.</summary>
     [Parameter, EditorRequired] public string Code { get; set; } = "";
     /// <summary>Gets or sets the optional attribute-based models used by the example.</summary>
     [Parameter] public string? ModelCode { get; set; }
     /// <summary>Gets or sets the documentation route for the component.</summary>
     [Parameter, EditorRequired] public string DocumentationUrl { get; set; } = "";
+    /// <summary>Gets or sets the live example, retained while source visibility changes.</summary>
+    [Parameter] public RenderFragment? ChildContent { get; set; }
+
+    /// <summary>Clears clipboard feedback when the copied settings change, preserving source visibility.</summary>
+    protected override void OnParametersSet()
+    {
+        if (_lastCode == Code) return;
+        _lastCode = Code;
+        _copied = false;
+        _copyFailed = false;
+    }
+
+    /// <summary>Toggles the source region without replacing or hiding the live preview.</summary>
+    private void ToggleCode()
+    {
+        _showCode = !_showCode;
+        _focusSource = _showCode;
+    }
+
+    /// <summary>Focuses newly opened source so the requested code is visible without replacing the preview.</summary>
+    /// <param name="firstRender">Whether this is the component's initial render.</param>
+    /// <returns>A task representing focus placement after the source becomes visible.</returns>
+    protected override async Task OnAfterRenderAsync(bool firstRender)
+    {
+        if (!_focusSource || !_showCode) return;
+        _focusSource = false;
+        await _sourceElement.FocusAsync();
+    }
+
+    /// <summary>Closes source with Escape and returns focus to its toolbar control.</summary>
+    /// <param name="args">The keyboard event raised inside the source region.</param>
+    /// <returns>A task representing focus restoration when source is closed.</returns>
+    private async Task HandleSourceKeys(KeyboardEventArgs args)
+    {
+        if (args.Key != "Escape") return;
+        await CloseCode();
+    }
+
+    /// <summary>Closes source and returns keyboard or touch users to the example toolbar.</summary>
+    /// <returns>A task representing toolbar focus restoration.</returns>
+    private async Task CloseCode()
+    {
+        _showCode = false;
+        _focusSource = false;
+        await _toggleElement.FocusAsync();
+    }
+
+    /// <summary>Copies the current Razor example and exposes clipboard success or failure feedback.</summary>
+    /// <returns>A task representing the clipboard operation.</returns>
+    private async Task CopyCode()
+    {
+        try
+        {
+            await JS.InvokeVoidAsync("navigator.clipboard.writeText", Code);
+            _copied = true;
+            _copyFailed = false;
+        }
+        catch (JSException)
+        {
+            _copied = false;
+            _copyFailed = true;
+        }
+    }
 }

@@ -6,27 +6,14 @@
 @using BlazzyMotion.Demo.Services
 
 <PageTitle>Carousel Playground - BlazzyMotion</PageTitle>
-<ComponentLinks ComponentId="carousel" />
 
 <div class="carousel-example">
-    <header class="carousel-example__intro">
-        <div>
-            <span class="site-eyebrow">Interactive example</span>
-            <h1>Carousel</h1>
-            <p>Browse a movie collection with 3D Coverflow. Choose a theme and copy the matching example.</p>
-        </div>
-        <div class="carousel-example__installation">
-            <span class="carousel-example__version">@(AppVersions.IsPrerelease(AppVersions.Carousel) ? "Preview" : "Stable") @AppVersions.Carousel</span>
-            <BzInstallBox PackageName="BlazzyMotion.Carousel" />
-        </div>
-    </header>
+    <ExampleHeader Title="Carousel" Description="A 3D movie collection with responsive themes and keyboard navigation."
+                   PackageName="BlazzyMotion.Carousel" Version="@AppVersions.Carousel" />
 
     <div class="carousel-example__layout">
-        <section class="carousel-example__preview" aria-labelledby="carousel-preview-title">
-            <div class="carousel-example__heading">
-                <h2 id="carousel-preview-title">Live preview</h2>
-                <span>Movie collection</span>
-            </div>
+        <ExampleCode ExampleId="carousel-movies" Title="Movie collection" PreviewLabel="Live preview"
+                     Code="@ComponentCode" ModelCode="@ModelCode" DocumentationUrl="/docs/carousel">
             <div class="example-theme-controls"><BzThemePicker @bind-CurrentTheme="_currentTheme" /></div>
             <DemoSurface>
                 <div class="carousel-example__stage">
@@ -35,24 +22,6 @@
             </DemoSurface>
             <p class="carousel-example__selection">@(_selectedMovie?.Title ?? _movies[0].Title)</p>
             <p class="carousel-example__hint">Swipe to browse, or focus the carousel and use the arrow keys.</p>
-        </section>
-
-        <details class="carousel-example__source">
-            <summary>View code</summary>
-            <section class="carousel-example__code" aria-labelledby="carousel-code-title">
-                <span class="site-eyebrow">Use this example</span>
-                <h2 id="carousel-code-title">Razor example</h2>
-                <p>The theme in this code follows your selection. Copy it into a Razor component, then add the model below.</p>
-                <div class="carousel-example__component-code">
-                    <CodeBlock Language="CarouselDemo.razor" Code="@ComponentCode" />
-                </div>
-                <details class="carousel-example__model">
-                    <summary>Movie.cs — model attributes</summary>
-                    <CodeBlock Language="Movie.cs" Code="@ModelCode" />
-                </details>
-                <p class="carousel-example__assets">Sample images use the public Demo URLs. Replace them with your own artwork.</p>
-                <a href="/docs/carousel">Setup and API documentation →</a>
-            </section>
-        </details>
+        </ExampleCode>
     </div>
 </div>

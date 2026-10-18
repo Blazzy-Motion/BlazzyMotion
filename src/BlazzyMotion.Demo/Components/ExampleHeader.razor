@@ -1,15 +1,16 @@
 @using BlazzyMotion.Demo.Services
 <header class="example-header">
     <div>
-        <span class="site-eyebrow">Interactive example</span>
-        <h1>@Title</h1>
+        <div class="example-header__title"><h1>@Title</h1>
+            <span class="example-header__version">@(AppVersions.IsPrerelease(Version) ? "Preview" : "Stable") @Version</span>
+        </div>
         <p>@Description</p>
     </div>
     <div class="example-header__installation">
-        <span class="example-header__version">@(AppVersions.IsPrerelease(Version) ? "Preview" : "Stable") @Version</span>
         <BzInstallBox PackageName="@PackageName" />
     </div>
 </header>
+<ComponentLinks ComponentId="@Title.ToLowerInvariant()" />
 
 @code {
     /// <summary>Gets or sets the component name displayed as the page heading.</summary>

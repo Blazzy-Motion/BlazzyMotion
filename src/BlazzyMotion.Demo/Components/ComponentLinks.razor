@@ -1,7 +1,7 @@
 <nav class="component-links" aria-label="Component resources">
-    <a href="@($"/{ComponentId}")">Demo</a>
+    <NavLink href="@($"/{ComponentId}")" Match="NavLinkMatch.All">Playground</NavLink>
     <a href="@($"/docs/{ComponentId}")">Documentation</a>
-    <a href="@($"/docs/{ComponentId}#component-api")">API reference</a>
+    <a href="@($"/docs/{ComponentId}#component-api")">API</a>
 </nav>
 
 @code {

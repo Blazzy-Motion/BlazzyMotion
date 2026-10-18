@@ -9,179 +9,154 @@
 <PageTitle>BzBento Demo - BlazzyMotion</PageTitle>
 
 <div class="bz-home demo-example">
-    <ComponentLinks ComponentId="bento" />
 
-    <ExampleHeader Title="Bento" Description="Build grids from attributed items, compose cards and metrics, or connect a live dashboard."
+    <ExampleHeader Title="Bento" Description="Responsive grids for cards, metrics and connected dashboards."
                    PackageName="BlazzyMotion.Bento" Version="@BlazzyMotion.Demo.Services.AppVersions.Bento" />
 
     @* ==================== ITEMS MODE ==================== *@
     <section class="bzb-presentation">
+        <ExampleCode ExampleId="bento-items" Code="@ItemsCode" ModelCode="@ItemModelCode" DocumentationUrl="/docs/bento" Title="Movie grid">
+            <div class="example-theme-controls"><BzThemePicker @bind-CurrentTheme="_currentTheme" /></div>
+            <div class="bzb-presentation__stage">
+                <BzBento TItem="BentoItem"
+                         Items="@_bentoItems"
+                         Theme="@_currentTheme"
+                         OnItemSelected="@OnItemSelected" />
+            </div>
 
-        <span class="bzb-presentation__label">Items Mode - Zero Config</span>
-
-        <h2 class="bzb-presentation__title">Uniform Grid Layout</h2>
-
-        <div class="example-theme-controls"><BzThemePicker @bind-CurrentTheme="_currentTheme" /></div>
-
-        <h4 class="demo-example-title">Movie collection</h4>
-        <div class="bzb-presentation__stage">
-            <BzBento TItem="BentoItem"
-                     Items="@_bentoItems"
-                     Theme="@_currentTheme"
-                     OnItemSelected="@OnItemSelected" />
-        </div>
-
-        @if (_selectedItem != null)
-        {
-            <h4 class="bz-selected-title">Selected: @_selectedItem.Title</h4>
-        }
-
-        <ExampleCode ExampleId="bento-items" Code="@ItemsCode" ModelCode="@ItemModelCode" DocumentationUrl="/docs/bento" />
-
+            @if (_selectedItem != null)
+            {
+                <h4 class="bz-selected-title">Selected: @_selectedItem.Title</h4>
+            }
+        </ExampleCode>
     </section>
 
     @* ==================== INTERACTIVE DASHBOARD ==================== *@
-    <section class="bzb-presentation" style="padding-top: 40px;">
+    <section class="bzb-presentation">
+        <ExampleCode ExampleId="bento-dashboard" Code="@DashboardCode" ModelCode="@CompanyModelCode" DocumentationUrl="/docs/bento" Title="Company dashboard" Description="Browse companies to update the metrics.">
+            <div class="bzb-presentation__stage">
+                <BzBento TItem="object" Theme="@_currentTheme">
 
-        <span class="bzb-presentation__label">Interactive Dashboard</span>
+                    @* Company Carousel - 2x2 *@
+                    <BzBentoItem ColSpan="2" RowSpan="2">
+                        <BzCarousel TItem="CompanyData"
+                                    Items="@_companies"
+                                    Theme="@_currentTheme"
+                                    OnItemSelected="@OnCompanyChanged" />
+                    </BzBentoItem>
 
-        <h2 class="bzb-presentation__title">Swipe to Explore Companies</h2>
-        <p style="color: rgba(255,255,255,0.7); text-align: center; margin-bottom: 30px;">
-            All metrics update in real-time as you browse
-        </p>
+                    @* Dynamic Company Name - shows company logo *@
+                    <BzBentoMetric Value="@(_activeCompany?.Name ?? "Swipe")"
+                                   Label="Company">
+                        <Icon>@Icons.GetCompanyLogo(_activeCompany?.Name)</Icon>
+                    </BzBentoMetric>
 
-        <div class="bzb-presentation__stage">
-            <BzBento TItem="object" Theme="@_currentTheme">
+                    @* Dynamic Revenue *@
+                    <BzBentoMetric Value="@(_activeCompany?.Revenue ?? "$0")"
+                                   Label="Revenue"
+                                   Trend="@(_activeCompany?.RevenueTrend ?? "")">
+                        <Icon>@Icons.Revenue</Icon>
+                    </BzBentoMetric>
 
-                @* Company Carousel - 2x2 *@
-                <BzBentoItem ColSpan="2" RowSpan="2">
-                    <BzCarousel TItem="CompanyData"
-                                Items="@_companies"
-                                Theme="@_currentTheme"
-                                OnItemSelected="@OnCompanyChanged" />
-                </BzBentoItem>
+                    @* Dynamic Users *@
+                    <BzBentoMetric Value="@(_activeCompany?.Users ?? "0")"
+                                   Label="Users"
+                                   Trend="@(_activeCompany?.UsersTrend ?? "")">
+                        <Icon>@Icons.Users</Icon>
+                    </BzBentoMetric>
 
-                @* Dynamic Company Name - shows company logo *@
-                <BzBentoMetric Value="@(_activeCompany?.Name ?? "Swipe")"
-                               Label="Company">
-                    <Icon>@Icons.GetCompanyLogo(_activeCompany?.Name)</Icon>
-                </BzBentoMetric>
+                    @* Dynamic Growth *@
+                    <BzBentoMetric Value="@(_activeCompany?.Growth ?? "0%")"
+                                   Label="Growth"
+                                   Trend="@(_activeCompany?.GrowthTrend ?? "")">
+                        <Icon>@Icons.Growth</Icon>
+                    </BzBentoMetric>
 
-                @* Dynamic Revenue *@
-                <BzBentoMetric Value="@(_activeCompany?.Revenue ?? "$0")"
-                               Label="Revenue"
-                               Trend="@(_activeCompany?.RevenueTrend ?? "")">
-                    <Icon>@Icons.Revenue</Icon>
-                </BzBentoMetric>
+                    @* Company Description - shows company logo *@
+                    <BzBentoFeature ColSpan="2"
+                                    Label="@(_activeCompany?.Name ?? "Select Company")"
+                                    Description="@(_activeCompany?.Description ?? "Swipe the carousel to see company details")">
+                        <Icon>@Icons.GetCompanyLogo(_activeCompany?.Name)</Icon>
+                    </BzBentoFeature>
 
-                @* Dynamic Users *@
-                <BzBentoMetric Value="@(_activeCompany?.Users ?? "0")"
-                               Label="Users"
-                               Trend="@(_activeCompany?.UsersTrend ?? "")">
-                    <Icon>@Icons.Users</Icon>
-                </BzBentoMetric>
+                    @* Dynamic Rating *@
+                    <BzBentoMetric Value="@(_activeCompany?.Rating ?? "0")"
+                                   Label="Rating">
+                        <Icon>@Icons.Rating</Icon>
+                    </BzBentoMetric>
 
-                @* Dynamic Growth *@
-                <BzBentoMetric Value="@(_activeCompany?.Growth ?? "0%")"
-                               Label="Growth"
-                               Trend="@(_activeCompany?.GrowthTrend ?? "")">
-                    <Icon>@Icons.Growth</Icon>
-                </BzBentoMetric>
+                    @* Dynamic Market Cap *@
+                    <BzBentoMetric Value="@(_activeCompany?.MarketCap ?? "$0")"
+                                   Label="Market Cap">
+                        <Icon>@Icons.MarketCap</Icon>
+                    </BzBentoMetric>
 
-                @* Company Description - shows company logo *@
-                <BzBentoFeature ColSpan="2"
-                                Label="@(_activeCompany?.Name ?? "Select Company")"
-                                Description="@(_activeCompany?.Description ?? "Swipe the carousel to see company details")">
-                    <Icon>@Icons.GetCompanyLogo(_activeCompany?.Name)</Icon>
-                </BzBentoFeature>
-
-                @* Dynamic Rating *@
-                <BzBentoMetric Value="@(_activeCompany?.Rating ?? "0")"
-                               Label="Rating">
-                    <Icon>@Icons.Rating</Icon>
-                </BzBentoMetric>
-
-                @* Dynamic Market Cap *@
-                <BzBentoMetric Value="@(_activeCompany?.MarketCap ?? "$0")"
-                               Label="Market Cap">
-                    <Icon>@Icons.MarketCap</Icon>
-                </BzBentoMetric>
-
-            </BzBento>
-        </div>
-
-        <ExampleCode ExampleId="bento-dashboard" Code="@DashboardCode" ModelCode="@CompanyModelCode" DocumentationUrl="/docs/bento" />
-
+                </BzBento>
+            </div>
+        </ExampleCode>
     </section>
 
     @* ==================== COMPOSITION MODE - Manual Layout ==================== *@
-    <section class="bzb-presentation" style="padding-top: 40px;">
+    <section class="bzb-presentation">
+        <ExampleCode ExampleId="bento-composition" Code="@CompositionCode" DocumentationUrl="/docs/bento" Title="Card composition" Description="Compose cards, metrics and features in your own layout.">
+            <div class="bzb-presentation__stage">
+                <BzBento TItem="object" Theme="@_currentTheme">
+                    <BzBentoCard TItem="object"
+                                 ColSpan="2" RowSpan="2"
+                                 Image="images/joker.webp"
+                                 Title="Featured"
+                                 Description="Hero card with 2x2 span" />
 
-        <h2 class="bzb-presentation__title">Composition Mode</h2>
-        <p style="color: rgba(255,255,255,0.7); text-align: center; margin-bottom: 30px;">
-            Use ChildContent with BzBentoCard, BzBentoMetric, BzBentoFeature for complete control
-        </p>
+                    <BzBentoMetric Value="8" Label="Movies">
+                        <Icon>@Icons.Movies</Icon>
+                    </BzBentoMetric>
 
-        <div class="bzb-presentation__stage">
-            <BzBento TItem="object" Theme="@_currentTheme">
-                <BzBentoCard TItem="object"
-                             ColSpan="2" RowSpan="2"
-                             Image="images/joker.webp"
-                             Title="Featured"
-                             Description="Hero card with 2x2 span" />
+                    <BzBentoMetric Value="4" Label="Themes">
+                        <Icon>@Icons.Themes</Icon>
+                    </BzBentoMetric>
 
-                <BzBentoMetric Value="8" Label="Movies">
-                    <Icon>@Icons.Movies</Icon>
-                </BzBentoMetric>
+                    <BzBentoCard TItem="object"
+                                 Image="images/venom.webp"
+                                 Title="Venom" />
 
-                <BzBentoMetric Value="4" Label="Themes">
-                    <Icon>@Icons.Themes</Icon>
-                </BzBentoMetric>
+                    <BzBentoCard TItem="object"
+                                 Image="images/wild-robot.webp"
+                                 Title="Wild Robot" />
 
-                <BzBentoCard TItem="object"
-                             Image="images/venom.webp"
-                             Title="Venom" />
+                    <BzBentoQuote TItem="object"
+                                  Text="Amazing UI components!"
+                                  Author="Dev Community"
+                                  Role="GitHub Stars"
+                                  Avatar="images/avatar.webp" />
 
-                <BzBentoCard TItem="object"
-                             Image="images/wild-robot.webp"
-                             Title="Wild Robot" />
+                    <BzBentoMetric Value="60" Label="FPS">
+                        <Icon>@Icons.FPS</Icon>
+                    </BzBentoMetric>
 
-                <BzBentoQuote TItem="object"
-                              Text="Amazing UI components!"
-                              Author="Dev Community"
-                              Role="GitHub Stars"
-                              Avatar="images/avatar.webp" />
+                    <BzBentoFeature ColSpan="2"
+                                    Label="Wide Card (2x1)"
+                                    Description="Perfect for CTAs or descriptions">
+                        <Icon>@Icons.Layout</Icon>
+                    </BzBentoFeature>
 
-                <BzBentoMetric Value="60" Label="FPS">
-                    <Icon>@Icons.FPS</Icon>
-                </BzBentoMetric>
+                    <BzBentoMetric Value="99.9" Label="Uptime" Trend="+2%">
+                        <Icon>@Icons.Uptime</Icon>
+                    </BzBentoMetric>
 
-                <BzBentoFeature ColSpan="2"
-                                Label="Wide Card (2x1)"
-                                Description="Perfect for CTAs or descriptions">
-                    <Icon>@Icons.Layout</Icon>
-                </BzBentoFeature>
+                    <BzBentoMetric Value="24/7" Label="Support">
+                        <Icon>@Icons.Support</Icon>
+                    </BzBentoMetric>
 
-                <BzBentoMetric Value="99.9" Label="Uptime" Trend="+2%">
-                    <Icon>@Icons.Uptime</Icon>
-                </BzBentoMetric>
+                    <BzBentoMetric Value="50+" Label="Components">
+                        <Icon>@Icons.Components</Icon>
+                    </BzBentoMetric>
 
-                <BzBentoMetric Value="24/7" Label="Support">
-                    <Icon>@Icons.Support</Icon>
-                </BzBentoMetric>
-
-                <BzBentoMetric Value="50+" Label="Components">
-                    <Icon>@Icons.Components</Icon>
-                </BzBentoMetric>
-
-                <BzBentoMetric Value="0" Label="Dependencies">
-                    <Icon>@Icons.Dependencies</Icon>
-                </BzBentoMetric>
-            </BzBento>
-        </div>
-
-        <ExampleCode ExampleId="bento-composition" Code="@CompositionCode" DocumentationUrl="/docs/bento" />
-
+                    <BzBentoMetric Value="0" Label="Dependencies">
+                        <Icon>@Icons.Dependencies</Icon>
+                    </BzBentoMetric>
+                </BzBento>
+            </div>
+        </ExampleCode>
     </section>
 
 </div>
