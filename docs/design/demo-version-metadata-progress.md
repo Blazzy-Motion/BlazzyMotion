@@ -12,7 +12,7 @@ Branch: `feat/demo-version-metadata`. Base: `a366480`.
 
 ## Validation checkpoint
 
-Release solution build passed. All 1,117 tests passed. A synthetic `BlazzyCarouselVersion=1.5.0-preview.999` build passed all seven version tests; no package was published. A subsequent default Release publish restored central versions and completed successfully. Published-asset browser checks are in progress.
+Release solution build passed. All 1,117 tests passed. A synthetic `BlazzyCarouselVersion=1.5.0-preview.999` build passed all seven version tests; no package was published. A subsequent default Release publish restored central versions and completed successfully. Published-asset browser checks passed: all 16 routes at desktop/mobile widths with WCAG scans, keyboard navigation, component regressions, actual preview badges and pinned commands. PR #10 provides the Azure preview and current remote check status.
 
 ## Scope and remaining work
 

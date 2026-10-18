@@ -16,6 +16,7 @@ public class ComponentInfo
     public string? DocsUrl { get; init; }
     public string? NuGetPackage { get; init; }
     
+    /// <summary>Gets the release-channel label shown in the component directory.</summary>
     public string StatusBadge => Status switch
     {
         ComponentStatus.Stable => "stable",
@@ -35,5 +36,6 @@ public enum ComponentStatus
     Beta,
     Alpha,
     ComingSoon,
+    /// <summary>A prerelease component build.</summary>
     Preview
 }

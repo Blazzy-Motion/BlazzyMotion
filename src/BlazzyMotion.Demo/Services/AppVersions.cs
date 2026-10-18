@@ -5,10 +5,15 @@ namespace BlazzyMotion.Demo.Services;
 /// <summary>Provides the component versions embedded in this Demo build by MSBuild.</summary>
 public static class AppVersions
 {
+    /// <summary>The Carousel package version used by this Demo build.</summary>
     public static readonly string Carousel = ReadVersion("Carousel");
+    /// <summary>The Core package version used by this Demo build.</summary>
     public static readonly string Core = ReadVersion("Core");
+    /// <summary>The Bento package version used by this Demo build.</summary>
     public static readonly string Bento = ReadVersion("Bento");
+    /// <summary>The Gallery package version used by this Demo build.</summary>
     public static readonly string Gallery = ReadVersion("Gallery");
+    /// <summary>The Marquee package version used by this Demo build.</summary>
     public static readonly string Marquee = ReadVersion("Marquee");
     public const string DotNetVersion = ".NET 8";
 
