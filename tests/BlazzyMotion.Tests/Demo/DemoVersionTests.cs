@@ -33,15 +33,15 @@ public sealed class DemoVersionTests : TestContext
         AppVersions.IsPrerelease(version).Should().Be(expected);
     }
 
-    /// <summary>Ensures users copy exactly the version-pinned command visible in the Demo.</summary>
+    /// <summary>Ensures installation defaults to stable NuGet resolution even when the Demo uses a preview.</summary>
     [Fact]
-    public void InstallationCopiesTheDisplayedComponentVersion()
+    public void InstallationCopiesTheUnversionedStableCommand()
     {
         JSInterop.SetupVoid("navigator.clipboard.writeText", _ => true);
         var cut = RenderComponent<BzInstallBox>(parameters => parameters
             .Add(component => component.PackageName, "BlazzyMotion.Carousel"));
         var displayed = cut.Find("code").TextContent;
-        displayed.Should().Contain($"--version {AppVersions.Carousel}");
+        displayed.Should().Be("dotnet add package BlazzyMotion.Carousel");
         cut.Find("button").Click();
         JSInterop.VerifyInvoke("navigator.clipboard.writeText").Arguments[0].Should().Be(displayed);
     }

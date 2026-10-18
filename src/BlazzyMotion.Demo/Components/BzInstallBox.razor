@@ -1,5 +1,4 @@
 @inject IJSRuntime JS
-@using BlazzyMotion.Demo.Services
 
 <div class="bz-install-box">
     <span class="bz-install-box__prompt">$</span>
@@ -26,14 +25,12 @@
 </div>
 
 @code {
-    /// <summary>Gets or sets the package identifier; built-in packages use their Demo build version.</summary>
+    /// <summary>Gets or sets the package identifier to install from NuGet.</summary>
     [Parameter]
     public string PackageName { get; set; } = "BlazzyMotion.Carousel";
 
-    /// <summary>Gets the command for the exact version demonstrated by this build.</summary>
-    private string InstallCommand => AppVersions.GetPackageVersion(PackageName) is { } version
-        ? $"dotnet add package {PackageName} --version {version}"
-        : $"dotnet add package {PackageName}";
+    /// <summary>Gets the unversioned command so NuGet selects the latest stable package.</summary>
+    private string InstallCommand => $"dotnet add package {PackageName}";
 
     private bool _copied = false;
 

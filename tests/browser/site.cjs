@@ -122,7 +122,7 @@ async function inspectDemoControls(browser) {
   } finally { await page.close(); }
 }
 
-/** Require the published Demo to expose central build versions and install matching packages. */
+/** Require the published Demo to expose central build versions and default to stable installation. */
 async function inspectVersionMetadata(browser) {
   const props = fs.readFileSync(path.join(__dirname, '../../Directory.Build.props'), 'utf8');
   const versions = Object.fromEntries(['Carousel', 'Bento', 'Gallery', 'Marquee'].map(name => {
@@ -141,16 +141,51 @@ async function inspectVersionMetadata(browser) {
       await page.goto(baseURL + '/' + name.toLowerCase());
       const command = page.locator('.bz-install-box__command').first();
       await command.waitFor();
-      assert.equal((await command.textContent()).trim(), `dotnet add package BlazzyMotion.${name} --version ${version}`);
+      assert.equal((await command.textContent()).trim(), `dotnet add package BlazzyMotion.${name}`);
       await page.goto(baseURL + '/components');
       await page.locator('.component-entry').first().waitFor();
     }
-    console.log('PASS Demo versions: central metadata, accurate preview badges and pinned installation commands');
+    console.log('PASS Demo versions: central metadata, accurate preview badges and unversioned stable installation commands');
   } finally { await page.close(); }
+}
+
+/** Verify real touch scrolling reaches the end of documentation navigation without moving the page. */
+async function inspectTouchNavigation(browser) {
+  const context = await browser.newContext({ viewport: { width: 390, height: 650 }, isMobile: true, hasTouch: true });
+  const page = await context.newPage();
+  const input = await context.newCDPSession(page);
+  try {
+    for (const route of ['/docs/quick-start', '/docs/api']) {
+      await page.goto(baseURL + route);
+      const trigger = page.getByRole('button', { name: 'On this site: open documentation navigation' });
+      await trigger.click();
+      const drawer = page.locator('#mobile-docs-navigation');
+      const backgroundScroll = await page.evaluate(() => window.scrollY);
+      for (let swipe = 0; swipe < 7; swipe++) {
+        await input.send('Input.dispatchTouchEvent', { type: 'touchStart', touchPoints: [{ x: 170, y: 500 }] });
+        for (let y = 480; y >= 160; y -= 20) {
+          await input.send('Input.dispatchTouchEvent', { type: 'touchMove', touchPoints: [{ x: 170, y }] });
+          await page.waitForTimeout(16);
+        }
+        await input.send('Input.dispatchTouchEvent', { type: 'touchEnd', touchPoints: [] });
+        await page.waitForTimeout(100);
+      }
+      await page.waitForFunction(() => {
+        const drawer = document.querySelector('#mobile-docs-navigation');
+        return drawer.scrollTop > 0 && drawer.scrollTop + drawer.clientHeight >= drawer.scrollHeight - 2;
+      });
+      const footer = await drawer.locator('.bz-sidebar__footer').boundingBox();
+      assert(footer && footer.y >= 0 && footer.y + footer.height <= 651, `Footer reachable by touch on ${route}`);
+      assert.equal(await page.evaluate(() => window.scrollY), backgroundScroll, 'Background remains stationary');
+      await page.keyboard.press('Escape');
+      await page.getByRole('dialog').waitFor({ state: 'hidden' });
+    }
+    console.log('PASS documentation touch: short mobile viewport, Docs/API end links and stationary background');
+  } finally { await context.close(); }
 }
 
 (async () => {
   const browser = await chromium.launch({ executablePath: process.env.CHROMIUM_PATH || undefined, headless: true, args: ['--no-sandbox'] });
-  try { await inspectSite(browser, 1440); await inspectSite(browser, 390); await inspectDocumentationNavigation(browser, 390); await inspectDocumentationNavigation(browser, 980); await inspectDocumentationNavigation(browser, 1440); await inspectDemoControls(browser); await inspectVersionMetadata(browser); }
+  try { await inspectSite(browser, 1440); await inspectSite(browser, 390); await inspectDocumentationNavigation(browser, 390); await inspectDocumentationNavigation(browser, 980); await inspectDocumentationNavigation(browser, 1440); await inspectDemoControls(browser); await inspectVersionMetadata(browser); await inspectTouchNavigation(browser); }
   finally { await browser.close(); }
 })().catch(error => { console.error(error); process.exit(1); });

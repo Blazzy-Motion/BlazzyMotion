@@ -116,10 +116,12 @@ body .bz-sidebar { height: calc(100dvh - 76px); }
 body .bz-main { margin-left: 248px; }
 body .bz-main__content { min-width: 0; }
 body .bz-mobile-toggle { display: none; }
-.docs-dialog { margin: 0; padding: 0; border: 1px solid #3b3c43; background: #16171a; color: #f4f4f5; max-width: min(360px, 90vw); width: 360px; height: 100dvh; max-height: 100dvh; }
+.docs-dialog { margin: 0; padding: 0; border: 1px solid #3b3c43; background: #16171a; color: #f4f4f5; max-width: min(360px, 90vw); width: 360px; height: 100dvh; max-height: 100dvh; overflow: hidden; }
 .docs-dialog::backdrop { background: rgb(0 0 0 / 65%); }
-.docs-dialog .bz-sidebar { position: static; width: 100%; max-width: none; height: 100%; transform: none; background: #16171a; }
+.docs-dialog .bz-sidebar { position: static; width: 100%; max-width: none; height: 100%; transform: none; background: #16171a; overflow-y: auto; overscroll-behavior-y: contain; touch-action: pan-y; }
 .docs-dialog .bz-sidebar__close { display: flex; }
+/* Keep one touch scroll surface so the entire navigation and footer remain reachable. */
+.docs-dialog .bz-sidebar__nav { flex: 0 0 auto; overflow: visible; }
 body :is(.bz-demo, .bzb-presentation, .component-directory, .bz-doc-section, h1, h2, h3) { scroll-margin-top: 16px; }
 body .bz-demo { padding-top: 24px; padding-bottom: 24px; }
 body .bz-demo__stage { padding-top: 12px; padding-bottom: 12px; }
