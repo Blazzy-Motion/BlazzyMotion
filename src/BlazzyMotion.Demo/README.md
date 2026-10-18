@@ -15,3 +15,23 @@ The mobile documentation dialog uses one scrolling sidebar for its links and foo
 Document scroll locking depends only on an actually open native dialog. A hidden navigation instance must never lock the mobile document through its sidebar state class. Browser coverage verifies touch scrolling on entry, after dismissal and after modal link navigation.
 
 The publication workflow can rebuild production after successful manual publication from `main`, using the same central versions and existing Azure secret. Feature publications cannot refresh production, and outdated version metadata prevents an old publication from redeploying. See [package publication and Demo refresh](../../docs/package-publication.md) for the dispatch inputs, NuGet visibility checks and deployment boundaries.
+
+## Component playgrounds
+
+`/carousel`, `/bento`, `/gallery` and `/marquee` share a compact component introduction, build-version badge, installation command and local **Playground / Documentation / API** navigation. Centered theme controls and existing component settings remain available. Package libraries retain their existing behavior.
+
+Each live example has a title toolbar with **Code** and **Copy example code** actions. Code starts hidden and opens beneath the live component; opening, closing or copying code does not replace the preview. Opening code focuses its heading, while **Close** or **Escape** returns focus to its toolbar. Copy works before opening the source and reports unavailable clipboard access without disrupting the example. Model attributes are in a nested native disclosure.
+
+The complete Razor snippets follow the live datasets and selected settings. Gallery layout, columns, gap, aspect ratio, lightbox and filtering options are reflected in copied code; Marquee direction, speed, rows and applicable options are reflected as well. The Bento dashboard includes company data and its selection callback. Public Demo image URLs make the samples usable without local artwork copies; optional site-specific icons are omitted.
+
+Browser checks cover compact navigation order, responsive bounds, toolbar clipboard output, clipboard denial/recovery, keyboard/touch close actions, focus visibility, source visibility semantics, selected-item and instance preservation, and expanded source accessibility. Copied examples and models are saved in ignored browser artifacts for standalone consumer compilation. The known pre-existing Gallery List accessible-name finding remains documented separately in the design checkpoint.
+
+Secondary Gallery/Marquee settings are grouped under a native **Advanced options** disclosure, closed by default. Layout/columns and direction/speed remain visible. Closing the disclosure retains applied values, and copied code continues to include them. Carousel toolbar/source widths follow the existing responsive Core container token; the desktop frame remains 800 × 450 px. Source follows previews with a 12 px gap.
+
+## Footer and return navigation
+
+The shared footer stays in document flow, with brand information and links to Components, Docs, API reference, GitHub, NuGet and the license. Short pages keep it at the viewport floor without forcing an extra screen of empty space. A 44 px **Back to top** control appears after 600 px of document scrolling. It returns focus to the main content and scrolls smoothly unless the visitor requests reduced motion. Its passive scroll listener is removed when a layout is disposed; no component package changes are required.
+
+## Landing page
+
+The landing page pairs a concise introduction with the real Carousel on wide screens and stacks them on smaller screens. The showcase retains package geometry and theme controls. A static layered brand mark echoes the logo; the existing startup animation remains unchanged. Compact workflow notes replace oversized feature cards. Visitors can explore all four components, copy the introductory Razor example and reveal its separate attributed model, or follow the installation guide. Footer links are grouped into Explore and Resources on every layout. Browser checks cover 320, 390, 980 and 1440 px, component bounds, discovery, keyboard model disclosure and WCAG scans.

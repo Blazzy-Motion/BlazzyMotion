@@ -1,9 +1,53 @@
+@implements IAsyncDisposable
+@inject IJSRuntime JS
+
 <footer class="site-footer">
-    <a href="/">BlazzyMotion</a>
-    <span>Motion and layouts, made for Blazor.</span>
+    <div class="site-footer__identity">
+        <a class="site-footer__brand" href="/">
+            <img src="images/bm-logo.png" width="28" height="28" alt="" />
+            <span>BlazzyMotion</span>
+        </a>
+        <p>Motion and layouts, made for Blazor.</p>
+    </div>
     <nav aria-label="Footer navigation">
-        <a href="/docs/installation">Installation</a>
-        <a href="/docs/theming">Theming</a>
-        <a href="https://github.com/Blazzy-Motion/BlazzyMotion/blob/main/LICENSE.txt">License</a>
+        <div class="site-footer__group">
+            <p>Explore</p>
+            <a href="/components">Components</a>
+            <a href="/docs/quick-start">Docs</a>
+            <a href="/docs/api">API reference</a>
+        </div>
+        <div class="site-footer__group">
+            <p>Resources</p>
+            <a href="https://github.com/Blazzy-Motion/BlazzyMotion">GitHub</a>
+            <a href="https://www.nuget.org/packages?q=BlazzyMotion">NuGet</a>
+            <a href="https://github.com/Blazzy-Motion/BlazzyMotion/blob/main/LICENSE.txt">License</a>
+        </div>
     </nav>
 </footer>
+<button class="site-back-to-top" type="button" hidden @ref="_backToTop" aria-label="Back to top">
+    <svg width="20" height="20" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="1.8" aria-hidden="true"><path d="m6 12 6-6 6 6M12 6v14" /></svg>
+</button>
+
+@code {
+    private ElementReference _backToTop;
+    private IJSObjectReference? _scroll;
+
+    /// <summary>Attaches the scroll control after its DOM element becomes available.</summary>
+    /// <param name="firstRender">Whether this is the first render of the footer.</param>
+    /// <returns>A task representing module initialization.</returns>
+    protected override async Task OnAfterRenderAsync(bool firstRender)
+    {
+        if (!firstRender) return;
+        _scroll = await JS.InvokeAsync<IJSObjectReference>("import", "./js/site-scroll.js");
+        await _scroll.InvokeVoidAsync("attach", _backToTop);
+    }
+
+    /// <summary>Removes scroll listeners when navigation replaces the layout.</summary>
+    /// <returns>A task representing listener cleanup and module disposal.</returns>
+    public async ValueTask DisposeAsync()
+    {
+        if (_scroll is null) return;
+        await _scroll.InvokeVoidAsync("detach", _backToTop);
+        await _scroll.DisposeAsync();
+    }
+}

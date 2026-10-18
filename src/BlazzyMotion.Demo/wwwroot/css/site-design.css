@@ -153,3 +153,74 @@ body:has(.docs-dialog[open]) { overflow: hidden; }
 /* Version-pinned commands remain readable on narrow screens. */
 body .bz-install-box__command { min-width: 0; white-space: normal; overflow-wrap: anywhere; }
 body .bz-install-box__copy { flex-shrink: 0; }
+
+/* Shared Demo example layout; component package styles remain independent. */
+.example-theme-controls { display: flex; justify-content: center; min-width: 0; }
+.example-theme-controls .bz-theme-pills { margin-inline: 0; }
+.demo-example { padding-inline: 24px; }
+body .demo-example .bzb-presentation { max-width: 1232px; margin-inline: auto; padding: 32px 0; }
+.demo-example .bzb-presentation__stage { text-align: left; }
+.carousel-example .demo-surface-controls { text-align: center; }
+@media (max-width: 768px) { .demo-example { padding-inline: 18px; } }
+
+/* Compact component documentation navigation and live-example toolbars. */
+:is(.demo-example, .carousel-example) .component-links { max-width: 1232px; margin: 18px auto 0; padding: 0; justify-content: flex-start; gap: 24px; border-bottom: 1px solid #303136; }
+:is(.demo-example, .carousel-example) .component-links a { padding: 10px 0 12px; text-decoration: none; border-bottom: 2px solid transparent; }
+:is(.demo-example, .carousel-example) .component-links a.active { color: #f4f4f5; border-bottom-color: #c3b4ed; }
+body .demo-example .bzb-presentation { padding: 20px 0; }
+.demo-example .bzb-presentation__stage { padding: 12px 0; }
+.demo-example .bzg-demo-controls { padding: 16px; margin-bottom: 12px; border-radius: 10px; }
+:is(.demo-example, .carousel-example) .example-theme-controls .bz-theme-pills { margin-bottom: 16px; }
+@media (max-width: 768px) { :is(.demo-example, .carousel-example) .component-links { margin-top: 12px; gap: 22px; } body .demo-example .bzb-presentation { padding: 16px 0; } }
+
+/* Keep secondary settings available without delaying the live examples. */
+body .demo-example .bzb-presentation { padding: 12px 0; }
+.demo-example .bzb-presentation__stage { padding: 8px 0; }
+body .demo-example .bz-selected-title { margin: 8px 0 0; }
+.demo-example .bzg-demo-controls { gap: 12px; }
+.demo-example .bzg-demo-controls__row { gap: 14px; }
+.playground-options { margin-top: 0; border-top: 1px solid #34353c; text-align: left; }
+.playground-options > summary { padding: 12px 0 0; cursor: pointer; color: #c9c9d1; font-size: 13px; }
+.playground-options > summary:focus-visible { outline: 2px solid #d6c6ff; outline-offset: 4px; border-radius: 4px; }
+.playground-options__content { padding-top: 16px; }
+@media (max-width: 768px) { body .demo-example .bzb-presentation { padding: 10px 0; } .playground-options > summary { min-height: 44px; padding-top: 12px; } }
+
+.demo-example .bzg-demo-control label, .demo-example .playground-control-label { color: #b7b8c0; }
+.demo-example .bzg-demo-pill { color: #b7b8c0; }
+.demo-example .bzg-demo-pill.active { color: #f1ebff; background: #38303f; border-color: #71617f; }
+
+/* Conditional controls must stay hidden even when their normal layout uses flex. */
+.demo-example .bzg-demo-control[hidden] { display: none; }
+
+/* Keep the footer in document flow, including pages shorter than the viewport. */
+.site-page-shell { min-height: 100dvh; display: flex; flex-direction: column; }
+.site-page-shell > .bz-home-layout { flex: 1; min-height: 0; }
+.site-page-shell .bz-home-layout__content { min-height: 0; }
+body .bz-main { display: flex; flex-direction: column; min-height: calc(100dvh - 76px); }
+body .bz-main__content { flex: 1; width: 100%; }
+.site-footer { width: 100%; box-sizing: border-box; align-items: center; gap: 24px 40px; margin-top: 24px; padding: 28px 24px; }
+.site-footer__brand { display: inline-flex; align-items: center; gap: 10px; font-size: 16px; font-weight: 600; }
+.site-footer__identity p { margin: 8px 0 0; color: #b7b8c0; }
+.site-footer nav { gap: 4px 20px; }
+.site-footer nav a { display: inline-flex; align-items: center; min-height: 44px; }
+.site-footer a:hover { color: #fff; text-decoration: underline; text-underline-offset: 4px; }
+.site-back-to-top { position: fixed; right: max(20px, env(safe-area-inset-right)); bottom: max(20px, env(safe-area-inset-bottom)); z-index: 800; width: 44px; height: 44px; display: grid; place-items: center; border: 1px solid #62636d; border-radius: 12px; background: #26272e; color: #f4f4f5; cursor: pointer; box-shadow: 0 4px 16px #0004; }
+.site-back-to-top[hidden] { display: none; }
+.site-back-to-top:hover { background: #36373f; }
+@media (max-width: 768px) {
+    body .bz-main { min-height: calc(100dvh - 104px); }
+    .site-footer { align-items: flex-start; padding: 24px 20px 76px; }
+    .site-footer nav { margin-left: 0; }
+}
+
+/* Group footer destinations so narrow screens never leave an isolated final link. */
+.site-footer { align-items: flex-start; }
+.site-footer > nav { display: grid; grid-template-columns: repeat(2, minmax(110px, 1fr)); gap: 40px; }
+.site-footer__group { display: flex; flex-direction: column; }
+.site-footer__group > p { margin: 0 0 8px; font-size: 12px; font-weight: 600; color: #f4f4f5; }
+.site-footer__group > a { width: fit-content; }
+.site-footer__brand { text-decoration: none; }
+@media (max-width: 768px) {
+    .site-footer { gap: 28px; }
+    .site-footer > nav { width: 100%; gap: 24px; }
+}

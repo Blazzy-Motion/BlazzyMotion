@@ -8,202 +8,165 @@
 
 <PageTitle>BzMarquee Demo - BlazzyMotion</PageTitle>
 
-<div class="bz-home">
-    <ComponentLinks ComponentId="marquee" />
+<div class="bz-home demo-example">
 
-    <section class="bz-hero" style="min-height: auto; padding: 60px 20px;">
-        <div class="bz-hero__content">
-            <h1 class="bz-hero__brand">BzMarquee</h1>
-            <h2 class="bz-hero__title">Infinite Scrolling Content</h2>
-            <p class="bz-hero__subtitle">
-                CSS-driven marquee with logo bars, testimonials and text tickers.
-            </p>
-            <BzInstallBox PackageName="BlazzyMotion.Marquee" />
-            <div class="bz-hero__actions">
-                <a href="/docs/marquee" class="bz-btn bz-btn--primary">
-                    @Icons.Lightning
-                    Get Started
-                </a>
-                <a href="https://github.com/Blazzy-Motion/BlazzyMotion" target="_blank" rel="noopener noreferrer" class="bz-btn bz-btn--secondary">
-                    @Icons.GitHub
-                    Star on GitHub
-                </a>
-            </div>
-        </div>
-    </section>
+    <ExampleHeader Title="Marquee" Description="Continuous motion for logos, testimonials and text."
+                   PackageName="BlazzyMotion.Marquee" Version="@BlazzyMotion.Demo.Services.AppVersions.Marquee" />
 
     @* ==================== LOGO BAR ==================== *@
-    <section class="bzb-presentation" aria-labelledby="logo-heading">
+    <section class="bzb-presentation">
+        <ExampleCode ExampleId="marquee-logos" Code="@LogoCode" ModelCode="@LogoModelCode" DocumentationUrl="/docs/marquee" Title="Logo bar" Description="Settings apply to all examples.">
+            <div class="example-theme-controls"><BzThemePicker @bind-CurrentTheme="_currentTheme" /></div>
 
-        <span class="bzb-presentation__label">Logo Bar — Multi-Row</span>
+            <div class="bzg-demo-controls" role="group" aria-label="Marquee settings">
+                <div class="bzg-demo-controls__row bzg-demo-controls__row--primary">
+                    <div class="bzg-demo-control">
+                        <label id="direction-label">Direction</label>
+                        <div class="bzg-demo-pills" role="group" aria-labelledby="direction-label">
+                            <button class="bzg-demo-pill @(_direction == BzDirection.Left ? "active" : "")"
+                                    aria-pressed="@((_direction == BzDirection.Left).ToString().ToLowerInvariant())"
+                                    @onclick="@(() => _direction = BzDirection.Left)">Left</button>
+                            <button class="bzg-demo-pill @(_direction == BzDirection.Right ? "active" : "")"
+                                    aria-pressed="@((_direction == BzDirection.Right).ToString().ToLowerInvariant())"
+                                    @onclick="@(() => _direction = BzDirection.Right)">Right</button>
+                        </div>
+                    </div>
 
-        <h3 id="logo-heading" class="bzb-presentation__title">Company Logo Marquee</h3>
-        <p style="color: rgba(255,255,255,0.7); text-align: center; margin-bottom: 24px;">
-            Controls affect all examples below — adjust in real-time
-        </p>
-
-        <BzThemePicker @bind-CurrentTheme="_currentTheme" />
-
-        <div class="bzg-demo-controls" role="group" aria-label="Marquee settings">
-            <div class="bzg-demo-controls__row bzg-demo-controls__row--primary">
-                <div class="bzg-demo-control">
-                    <label id="direction-label">Direction</label>
-                    <div class="bzg-demo-pills" role="group" aria-labelledby="direction-label">
-                        <button class="bzg-demo-pill @(_direction == BzDirection.Left ? "active" : "")"
-                                aria-pressed="@((_direction == BzDirection.Left).ToString().ToLowerInvariant())"
-                                @onclick="@(() => _direction = BzDirection.Left)">Left</button>
-                        <button class="bzg-demo-pill @(_direction == BzDirection.Right ? "active" : "")"
-                                aria-pressed="@((_direction == BzDirection.Right).ToString().ToLowerInvariant())"
-                                @onclick="@(() => _direction = BzDirection.Right)">Right</button>
+                    <div class="bzg-demo-control">
+                        <label for="speed-range">Speed: @_speed</label>
+                        <input id="speed-range" type="range" min="10" max="200" step="10"
+                               aria-valuemin="10" aria-valuemax="200" aria-valuenow="@_speed"
+                               @bind="_speed" @bind:event="oninput" />
                     </div>
                 </div>
+                <details class="playground-options">
+                    <summary>Advanced options</summary>
+                    <div class="playground-options__content">
+                        <div class="bzg-demo-controls__row bzg-demo-controls__row--secondary">
+                            <div class="bzg-demo-control">
+                                <label for="gap-range">Gap: @(_gap)px</label>
+                                <input id="gap-range" type="range" min="10" max="100" step="5"
+                                       aria-valuemin="10" aria-valuemax="100" aria-valuenow="@_gap"
+                                       @bind="_gap" @bind:event="oninput" />
+                            </div>
 
-                <div class="bzg-demo-control">
-                    <label for="speed-range">Speed: @_speed</label>
-                    <input id="speed-range" type="range" min="10" max="200" step="10"
-                           aria-valuemin="10" aria-valuemax="200" aria-valuenow="@_speed"
-                           @bind="_speed" @bind:event="oninput" />
-                </div>
+                            <div class="bzg-demo-control">
+                                <label for="rows-range">Rows: @_rows</label>
+                                <input id="rows-range" type="range" min="1" max="4" step="1"
+                                       aria-valuemin="1" aria-valuemax="4" aria-valuenow="@_rows"
+                                       @bind="_rows" @bind:event="oninput" />
+                            </div>
+                            <div class="bzg-demo-control">
+                                <label id="pause-label">Pause on Hover</label>
+                                <div class="bzg-demo-pills" role="group" aria-labelledby="pause-label">
+                                    <button class="bzg-demo-pill @(_pauseOnHover ? "active" : "")"
+                                            aria-pressed="@((_pauseOnHover).ToString().ToLowerInvariant())"
+                                            @onclick="@(() => _pauseOnHover = true)">On</button>
+                                    <button class="bzg-demo-pill @(!_pauseOnHover ? "active" : "")"
+                                            aria-pressed="@((!_pauseOnHover).ToString().ToLowerInvariant())"
+                                            @onclick="@(() => _pauseOnHover = false)">Off</button>
+                                </div>
+                            </div>
 
-                <div class="bzg-demo-control">
-                    <label for="gap-range">Gap: @(_gap)px</label>
-                    <input id="gap-range" type="range" min="10" max="100" step="5"
-                           aria-valuemin="10" aria-valuemax="100" aria-valuenow="@_gap"
-                           @bind="_gap" @bind:event="oninput" />
-                </div>
+                            <div class="bzg-demo-control">
+                                <label id="gradient-label">Gradients</label>
+                                <div class="bzg-demo-pills" role="group" aria-labelledby="gradient-label">
+                                    <button class="bzg-demo-pill @(_showGradients ? "active" : "")"
+                                            aria-pressed="@((_showGradients).ToString().ToLowerInvariant())"
+                                            @onclick="@(() => _showGradients = true)">On</button>
+                                    <button class="bzg-demo-pill @(!_showGradients ? "active" : "")"
+                                            aria-pressed="@((!_showGradients).ToString().ToLowerInvariant())"
+                                            @onclick="@(() => _showGradients = false)">Off</button>
+                                </div>
+                            </div>
 
-                <div class="bzg-demo-control">
-                    <label for="rows-range">Rows: @_rows</label>
-                    <input id="rows-range" type="range" min="1" max="4" step="1"
-                           aria-valuemin="1" aria-valuemax="4" aria-valuenow="@_rows"
-                           @bind="_rows" @bind:event="oninput" />
-                </div>
+                            <div class="bzg-demo-control">
+                                <label id="fullwidth-label">Full Width</label>
+                                <div class="bzg-demo-pills" role="group" aria-labelledby="fullwidth-label">
+                                    <button class="bzg-demo-pill @(_fullWidth ? "active" : "")"
+                                            aria-pressed="@((_fullWidth).ToString().ToLowerInvariant())"
+                                            @onclick="@(() => _fullWidth = true)">On</button>
+                                    <button class="bzg-demo-pill @(!_fullWidth ? "active" : "")"
+                                            aria-pressed="@((!_fullWidth).ToString().ToLowerInvariant())"
+                                            @onclick="@(() => _fullWidth = false)">Off</button>
+                                </div>
+                            </div>
+
+                            <div class="bzg-demo-control">
+                                <label for="variation-range">Speed Var: @(_speedVariation.ToString("F1"))</label>
+                                <input id="variation-range" type="range" min="0" max="0.5" step="0.1"
+                                       aria-valuemin="0" aria-valuemax="0.5" aria-valuenow="@_speedVariation"
+                                       @bind="_speedVariation" @bind:event="oninput" />
+                            </div>
+
+                            <div class="bzg-demo-control">
+                                <label id="stagger-label">Stagger Entrance</label>
+                                <div class="bzg-demo-pills" role="group" aria-labelledby="stagger-label">
+                                    <button class="bzg-demo-pill @(_staggerEntrance ? "active" : "")"
+                                            aria-pressed="@((_staggerEntrance).ToString().ToLowerInvariant())"
+                                            @onclick="@(() => _staggerEntrance = true)">On</button>
+                                    <button class="bzg-demo-pill @(!_staggerEntrance ? "active" : "")"
+                                            aria-pressed="@((!_staggerEntrance).ToString().ToLowerInvariant())"
+                                            @onclick="@(() => _staggerEntrance = false)">Off</button>
+                                </div>
+                            </div>
+                        </div>
+                    </div>
+                </details>
             </div>
 
-            <div class="bzg-demo-controls__row bzg-demo-controls__row--secondary">
-                <div class="bzg-demo-control">
-                    <label id="pause-label">Pause on Hover</label>
-                    <div class="bzg-demo-pills" role="group" aria-labelledby="pause-label">
-                        <button class="bzg-demo-pill @(_pauseOnHover ? "active" : "")"
-                                aria-pressed="@((_pauseOnHover).ToString().ToLowerInvariant())"
-                                @onclick="@(() => _pauseOnHover = true)">On</button>
-                        <button class="bzg-demo-pill @(!_pauseOnHover ? "active" : "")"
-                                aria-pressed="@((!_pauseOnHover).ToString().ToLowerInvariant())"
-                                @onclick="@(() => _pauseOnHover = false)">Off</button>
-                    </div>
-                </div>
-
-                <div class="bzg-demo-control">
-                    <label id="gradient-label">Gradients</label>
-                    <div class="bzg-demo-pills" role="group" aria-labelledby="gradient-label">
-                        <button class="bzg-demo-pill @(_showGradients ? "active" : "")"
-                                aria-pressed="@((_showGradients).ToString().ToLowerInvariant())"
-                                @onclick="@(() => _showGradients = true)">On</button>
-                        <button class="bzg-demo-pill @(!_showGradients ? "active" : "")"
-                                aria-pressed="@((!_showGradients).ToString().ToLowerInvariant())"
-                                @onclick="@(() => _showGradients = false)">Off</button>
-                    </div>
-                </div>
-
-                <div class="bzg-demo-control">
-                    <label id="fullwidth-label">Full Width</label>
-                    <div class="bzg-demo-pills" role="group" aria-labelledby="fullwidth-label">
-                        <button class="bzg-demo-pill @(_fullWidth ? "active" : "")"
-                                aria-pressed="@((_fullWidth).ToString().ToLowerInvariant())"
-                                @onclick="@(() => _fullWidth = true)">On</button>
-                        <button class="bzg-demo-pill @(!_fullWidth ? "active" : "")"
-                                aria-pressed="@((!_fullWidth).ToString().ToLowerInvariant())"
-                                @onclick="@(() => _fullWidth = false)">Off</button>
-                    </div>
-                </div>
-
-                <div class="bzg-demo-control">
-                    <label for="variation-range">Speed Var: @(_speedVariation.ToString("F1"))</label>
-                    <input id="variation-range" type="range" min="0" max="0.5" step="0.1"
-                           aria-valuemin="0" aria-valuemax="0.5" aria-valuenow="@_speedVariation"
-                           @bind="_speedVariation" @bind:event="oninput" />
-                </div>
-
-                <div class="bzg-demo-control">
-                    <label id="stagger-label">Stagger Entrance</label>
-                    <div class="bzg-demo-pills" role="group" aria-labelledby="stagger-label">
-                        <button class="bzg-demo-pill @(_staggerEntrance ? "active" : "")"
-                                aria-pressed="@((_staggerEntrance).ToString().ToLowerInvariant())"
-                                @onclick="@(() => _staggerEntrance = true)">On</button>
-                        <button class="bzg-demo-pill @(!_staggerEntrance ? "active" : "")"
-                                aria-pressed="@((!_staggerEntrance).ToString().ToLowerInvariant())"
-                                @onclick="@(() => _staggerEntrance = false)">Off</button>
-                    </div>
-                </div>
+            <div class="bzb-presentation__stage">
+                <BzMarquee TItem="LogoItem"
+                           Items="@_logos"
+                           Theme="@_currentTheme"
+                           Direction="@_direction"
+                           Speed="@_speed"
+                           Gap="@_gap"
+                           Rows="@_rows"
+                           AlternateDirection="true"
+                           SpeedVariation="@_speedVariation"
+                           PauseOnHover="@_pauseOnHover"
+                           ShowGradientEdges="@_showGradients"
+                           FullWidth="@_fullWidth"
+                           StaggerEntrance="@_staggerEntrance" />
             </div>
-        </div>
-
-        <div class="bzb-presentation__stage">
-            <BzMarquee TItem="LogoItem"
-                       Items="@_logos"
-                       Theme="@_currentTheme"
-                       Direction="@_direction"
-                       Speed="@_speed"
-                       Gap="@_gap"
-                       Rows="@_rows"
-                       AlternateDirection="true"
-                       SpeedVariation="@_speedVariation"
-                       PauseOnHover="@_pauseOnHover"
-                       ShowGradientEdges="@_showGradients"
-                       FullWidth="@_fullWidth"
-                       StaggerEntrance="@_staggerEntrance" />
-        </div>
-
+        </ExampleCode>
     </section>
 
     @* ==================== TESTIMONIALS ==================== *@
-    <section class="bzb-presentation" style="padding-top: 40px;" aria-labelledby="testimonial-heading">
-
-        <span class="bzb-presentation__label">Testimonials</span>
-
-        <h3 id="testimonial-heading" class="bzb-presentation__title">Customer Reviews Marquee</h3>
-        <p style="color: rgba(255,255,255,0.7); text-align: center; margin-bottom: 30px;">
-            Auto-detects name + description as testimonial cards — hover to lift
-        </p>
-
-        <div class="bzb-presentation__stage">
-            <BzMarquee TItem="TestimonialItem"
-                       Items="@_testimonials"
-                       Theme="@_currentTheme"
-                       Direction="@_direction"
-                       Speed="@_speed"
-                       Gap="@_gap"
-                       PauseOnHover="@_pauseOnHover"
-                       ShowGradientEdges="@_showGradients"
-                       FullWidth="@_fullWidth"
-                       StaggerEntrance="@_staggerEntrance" />
-        </div>
-
+    <section class="bzb-presentation">
+        <ExampleCode ExampleId="marquee-testimonials" Code="@TestimonialCode" ModelCode="@TestimonialModelCode" DocumentationUrl="/docs/marquee" Title="Testimonials" Description="Scrolling cards mapped from name, avatar and quote.">
+            <div class="bzb-presentation__stage">
+                <BzMarquee TItem="TestimonialItem"
+                           Items="@_testimonials"
+                           Theme="@_currentTheme"
+                           Direction="@_direction"
+                           Speed="@_speed"
+                           Gap="@_gap"
+                           PauseOnHover="@_pauseOnHover"
+                           ShowGradientEdges="@_showGradients"
+                           FullWidth="@_fullWidth"
+                           StaggerEntrance="@_staggerEntrance" />
+            </div>
+        </ExampleCode>
     </section>
 
     @* ==================== TEXT TICKER ==================== *@
-    <section class="bzb-presentation" style="padding-top: 40px;" aria-labelledby="ticker-heading">
-
-        <span class="bzb-presentation__label">Text Ticker</span>
-
-        <h3 id="ticker-heading" class="bzb-presentation__title">Breaking News Ticker</h3>
-        <p style="color: rgba(255,255,255,0.7); text-align: center; margin-bottom: 30px;">
-            Simple text mode with just the Text parameter — no Items needed
-        </p>
-
-        <div class="bzb-presentation__stage">
-            <BzMarquee TItem="object"
-                       Text="@_tickerText"
-                       Theme="@_currentTheme"
-                       Direction="@_direction"
-                       Speed="@_speed"
-                       Gap="@_gap"
-                       PauseOnHover="@_pauseOnHover"
-                       ShowGradientEdges="@_showGradients"
-                       FullWidth="@_fullWidth"
-                       StaggerEntrance="@_staggerEntrance" />
-        </div>
-
+    <section class="bzb-presentation">
+        <ExampleCode ExampleId="marquee-ticker" Code="@TickerCode" DocumentationUrl="/docs/marquee" Title="Text ticker" Description="A text-only example without an item model.">
+            <div class="bzb-presentation__stage">
+                <BzMarquee TItem="object"
+                           Text="@_tickerText"
+                           Theme="@_currentTheme"
+                           Direction="@_direction"
+                           Speed="@_speed"
+                           Gap="@_gap"
+                           PauseOnHover="@_pauseOnHover"
+                           ShowGradientEdges="@_showGradients"
+                           FullWidth="@_fullWidth"
+                           StaggerEntrance="@_staggerEntrance" />
+            </div>
+        </ExampleCode>
     </section>
 
 </div>

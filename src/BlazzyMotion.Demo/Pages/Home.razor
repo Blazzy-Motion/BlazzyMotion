@@ -1,187 +1,67 @@
 @page "/"
-@page "/carousel"
 @layout HomeLayout
 @using BlazzyMotion.Core.Models
-@using BlazzyMotion.Core.Attributes
 @using BlazzyMotion.Carousel.Components
 @using BlazzyMotion.Demo.Model
 @using BlazzyMotion.Demo.Components
 @using BlazzyMotion.Demo.Icons
 
-<PageTitle>BlazzyMotion - Beautiful Blazor UI Components</PageTitle>
+<PageTitle>BlazzyMotion - Expressive Blazor Components</PageTitle>
 
-<div class="bz-home">
-    <ComponentLinks ComponentId="carousel" />
-
-    <section class="bz-hero">
-        <div class="bz-hero__content">
-
-         
-            <h1 class="bz-hero__brand">BlazzyMotion</h1>
-            
-            <h2 class="bz-hero__title">Give your interface a little motion.</h2>
-           
-            <p class="bz-hero__subtitle">
-                Expressive Blazor components. Your models, four built-in themes, and less configuration.
-            </p>
-          
-            <BzInstallBox PackageName="BlazzyMotion.Carousel" />
-           
-            <div class="bz-hero__actions">
-                <a href="/docs/installation" class="bz-btn bz-btn--primary">
-                    <svg xmlns="http://www.w3.org/2000/svg" width="18" height="18" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2" stroke-linecap="round" stroke-linejoin="round">
-                        <polygon points="13 2 3 14 12 14 11 22 21 10 12 10 13 2"></polygon>
-                    </svg>
-                    Get Started
-                </a>
-                <a href="https://github.com/Blazzy-Motion/BlazzyMotion" target="_blank" rel="noopener noreferrer" class="bz-btn bz-btn--secondary">
-                    <svg xmlns="http://www.w3.org/2000/svg" width="18" height="18" viewBox="0 0 24 24" fill="currentColor">
-                        <path d="M12 0c-6.626 0-12 5.373-12 12 0 5.302 3.438 9.8 8.207 11.387.599.111.793-.261.793-.577v-2.234c-3.338.726-4.033-1.416-4.033-1.416-.546-1.387-1.333-1.756-1.333-1.756-1.089-.745.083-.729.083-.729 1.205.084 1.839 1.237 1.839 1.237 1.07 1.834 2.807 1.304 3.492.997.107-.775.418-1.305.762-1.604-2.665-.305-5.467-1.334-5.467-5.931 0-1.311.469-2.381 1.236-3.221-.124-.303-.535-1.524.117-3.176 0 0 1.008-.322 3.301 1.23.957-.266 1.983-.399 3.003-.404 1.02.005 2.047.138 3.006.404 2.291-1.552 3.297-1.23 3.297-1.23.653 1.653.242 2.874.118 3.176.77.84 1.235 1.911 1.235 3.221 0 4.609-2.807 5.624-5.479 5.921.43.372.823 1.102.823 2.222v3.293c0 .319.192.694.801.576 4.765-1.589 8.199-6.086 8.199-11.386 0-6.627-5.373-12-12-12z" />
-                    </svg>
-                    Star on GitHub
-                </a>
+<div class="bz-home home-editorial">
+    <div class="home-introduction">
+        <section class="home-intro" aria-labelledby="home-title">
+            <span class="site-eyebrow home-intro__eyebrow"><span class="home-mark" aria-hidden="true"><i></i><i></i><i></i></span> Crafted for Blazor</span>
+            <h1 id="home-title">Make room <br />for motion.</h1>
+            <p>Bring your models to life with expressive components, four built-in themes, and less configuration.</p>
+            <div class="home-intro__actions">
+                <a href="/components" class="bz-btn bz-btn--primary">Explore components <svg aria-hidden="true" width="14" height="14" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="1.6"><path d="M7 17 17 7M7 7h10v10" /></svg></a>
+                <a href="/docs/installation" class="bz-btn bz-btn--secondary">Get started</a>
             </div>
-           
-            <button class="bz-scroll-indicator" @onclick="ScrollToDemo">
-                <span>View Demo</span>
-                <svg xmlns="http://www.w3.org/2000/svg" width="20" height="20" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2" stroke-linecap="round" stroke-linejoin="round">
-                    <polyline points="6 9 12 15 18 9"></polyline>
-                </svg>
-            </button>
+            <div class="home-intro__note"><span>Carousel</span><span>Bento</span><span>Gallery</span><span>Marquee</span></div>
+        </section>
 
-        </div>
-    </section>
+        <section class="bz-demo home-showcase" id="demo" aria-labelledby="home-demo-title">
+            <div class="home-showcase__heading">
+                <div><span class="site-eyebrow">Touch. Swipe. Explore.</span><h2 id="home-demo-title">A different perspective.</h2></div>
+                <a href="/carousel">Carousel playground <svg aria-hidden="true" width="14" height="14" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="1.6"><path d="M7 17 17 7M7 7h10v10" /></svg></a>
+            </div>
+            <BzThemePicker @bind-CurrentTheme="_currentTheme" />
+            <DemoSurface>
+                <div class="bz-demo__stage">
+                    <BzCarousel TItem="Movie" Items="@_movies" Theme="@_currentTheme" OnItemSelected="@OnItemSelected" />
+                </div>
+            </DemoSurface>
+            <div class="home-showcase__caption">
+                <span class="bz-selected-title">@(_selectedMovie?.Title ?? "Movie collection")</span>
+                <span>Swipe, or focus and use the arrow keys.</span>
+            </div>
+        </section>
+    </div>
 
-   
-    <section class="bz-demo" id="demo">
-
-        
-        <span class="bz-demo__label">Live Preview</span>
-
-      
-        <h3 class="bz-demo__title"><span class="bz-demo__title-icon">@Icons.Carousel</span> BzCarousel</h3>
-
-        
-        <BzThemePicker @bind-CurrentTheme="_currentTheme" />
-
-      
-        <DemoSurface>
-        <div class="bz-demo__stage">
-            <BzCarousel TItem="Movie"
-                        Items="@_movies"
-                        Theme="@_currentTheme"
-                        OnItemSelected="@OnItemSelected" />
-        </div>
-
-      
-        </DemoSurface>
-
-        @if (_selectedMovie != null)
-        {
-            <h4 class="bz-selected-title">@_selectedMovie.Title</h4>
-        }
-
+    <section class="home-principles" aria-label="Built for your workflow">
+        <div><span class="home-principles__number">01</span><div><h2>Your data, on display.</h2><p>Map model properties with attributes and let source generators create the templates.</p></div></div>
+        <div><span class="home-principles__number">02</span><div><h2>One component. Your style.</h2><p>Choose Glass, Dark, Light or Minimal, then explore the settings in each playground.</p></div></div>
+        <div><span class="home-principles__number">03</span><div><h2>Try it. Take the code.</h2><p>Adjust a working example and copy the matching Razor into your project.</p></div></div>
     </section>
 
     <ComponentDirectory />
 
-    <section class="bz-features">
-
-        <h3 class="bz-features__heading">Why BlazzyMotion?</h3>
-
-        <div class="bz-features__grid">
-
-          
-            <div class="bz-feature-card">
-                <div class="bz-feature__icon">
-                    <svg xmlns="http://www.w3.org/2000/svg" width="48" height="48" viewBox="0 0 24 24" fill="none" stroke="url(#gradient1)" stroke-width="1.5" stroke-linecap="round" stroke-linejoin="round">
-                        <defs>
-                            <linearGradient id="gradient1" x1="0%" y1="0%" x2="100%" y2="100%">
-                                <stop offset="0%" stop-color="#8b5cf6" />
-                                <stop offset="100%" stop-color="#22d3ee" />
-                            </linearGradient>
-                        </defs>
-                        <polygon points="12 2 2 7 12 12 22 7 12 2"></polygon>
-                        <polyline points="2 17 12 22 22 17"></polyline>
-                        <polyline points="2 12 12 17 22 12"></polyline>
-                    </svg>
-                </div>
-                <h4 class="bz-feature__title">Source Generators</h4>
-                <p class="bz-feature__desc">
-                    Compile-time template generation. No reflection, no runtime overhead.
-                </p>
-            </div>
-
-         
-            <div class="bz-feature-card">
-                <div class="bz-feature__icon">
-                    <svg xmlns="http://www.w3.org/2000/svg" width="48" height="48" viewBox="0 0 24 24" fill="none" stroke="url(#gradient2)" stroke-width="1.5" stroke-linecap="round" stroke-linejoin="round">
-                        <defs>
-                            <linearGradient id="gradient2" x1="0%" y1="0%" x2="100%" y2="100%">
-                                <stop offset="0%" stop-color="#8b5cf6" />
-                                <stop offset="100%" stop-color="#22d3ee" />
-                            </linearGradient>
-                        </defs>
-                        <polygon points="13 2 3 14 12 14 11 22 21 10 12 10 13 2"></polygon>
-                    </svg>
-                </div>
-                <h4 class="bz-feature__title">Zero Config</h4>
-                <p class="bz-feature__desc">
-                    Just add the <code>[BzImage]</code> attribute to your model. That's it.
-                </p>
-            </div>
-
-            
-            <div class="bz-feature-card">
-                <div class="bz-feature__icon">
-                    <svg xmlns="http://www.w3.org/2000/svg" width="48" height="48" viewBox="0 0 24 24" fill="none" stroke="url(#gradient3)" stroke-width="1.5" stroke-linecap="round" stroke-linejoin="round">
-                        <defs>
-                            <linearGradient id="gradient3" x1="0%" y1="0%" x2="100%" y2="100%">
-                                <stop offset="0%" stop-color="#8b5cf6" />
-                                <stop offset="100%" stop-color="#22d3ee" />
-                            </linearGradient>
-                        </defs>
-                        <circle cx="12" cy="12" r="10"></circle>
-                        <polyline points="12 6 12 12 16 14"></polyline>
-                    </svg>
-                </div>
-                <h4 class="bz-feature__title">High Performance</h4>
-                <p class="bz-feature__desc">
-                    Responsive motion with reduced-motion support.
-                </p>
-            </div>
-
+    <section class="home-developer" aria-labelledby="home-developer-title">
+        <div>
+            <span class="site-eyebrow">From model to motion</span>
+            <h2 id="home-developer-title">Keep your data.<br />Skip the repetitive markup.</h2>
+            <p>Mark the properties you want to show. Bind your collection. Start with the generated template or provide your own.</p>
+            <a href="/docs/quick-start">Build your first example <svg aria-hidden="true" width="14" height="14" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="1.6"><path d="M7 17 17 7M7 7h10v10" /></svg></a>
         </div>
-
+        <div class="home-developer__code">
+            <CodeBlock Language="razor" Code="@QuickExample" />
+            <details class="home-model"><summary>Model attributes</summary><CodeBlock Language="csharp" Code="@ModelExample" /></details>
+        </div>
     </section>
 
+    <section class="home-next" aria-labelledby="home-next-title">
+        <div><span class="site-eyebrow">Make it yours</span><h2 id="home-next-title">Find the right motion for your next idea.</h2></div>
+        <a href="/components" class="bz-btn bz-btn--primary">Explore the collection <svg aria-hidden="true" width="14" height="14" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="1.6"><path d="M7 17 17 7M7 7h10v10" /></svg></a>
+    </section>
 </div>
-
-@code {
-    [Inject] private IJSRuntime JS { get; set; } = default!;
-
-    private BzTheme _currentTheme = BzTheme.Glass;
-    private Movie? _selectedMovie;
-
-    private List<Movie> _movies = new()
-    {
-        new() { Title = "Despicable Me 4", ImageUrl = "images/despicableme.webp" },
-        new() { Title = "Joker", ImageUrl = "images/joker.webp" },
-        new() { Title = "The Platform 2", ImageUrl = "images/the-platform.webp" },
-        new() { Title = "The Substance", ImageUrl = "images/thesubstance.webp" },
-        new() { Title = "Venom", ImageUrl = "images/venom.webp" },
-        new() { Title = "Survive", ImageUrl = "images/survive.webp" },
-        new() { Title = "The Wild Robot", ImageUrl = "images/wild-robot.webp" },
-        new() { Title = "Deadpool & Wolverine", ImageUrl = "images/wolwerine.webp" }
-    };
-
-    private void OnItemSelected(Movie selectedItem)
-    {
-        _selectedMovie = selectedItem;
-    }
-
-    private async Task ScrollToDemo()
-    {
-        await JS.InvokeVoidAsync("eval", "document.getElementById('demo').scrollIntoView({ behavior: 'smooth' })");
-    }
-}

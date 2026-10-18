@@ -1,0 +1,28 @@
+.example-source { max-width: 1200px; margin: 0 auto; min-width: 0; text-align: left; }
+.example-source__toolbar { display: flex; align-items: center; justify-content: space-between; flex-wrap: wrap; gap: 12px; min-height: 56px; padding: 0 0 12px; border-bottom: 1px solid #303136; }
+h2 { margin: 0; font-size: 20px; font-weight: 550; letter-spacing: -.025em; line-height: 1.3; }
+.example-source__actions { display: flex; align-items: center; gap: 6px; margin-left: auto; }
+button { display: inline-flex; align-items: center; justify-content: center; min-height: 40px; min-width: 40px; border: 1px solid #3c3d45; border-radius: 7px; background: #191a1e; color: #c9c9d1; font: inherit; font-size: 13px; cursor: pointer; }
+.example-source__toggle { padding: 8px 16px; }
+button:hover, button.is-active { color: #f7f7f8; background: #2c2d34; border-color: #686973; }
+button:focus-visible, summary:focus-visible { outline: 2px solid #d6c6ff; outline-offset: 4px; }
+.example-source__description { margin: 8px 0 12px; }
+.example-source__preview { min-width: 0; padding-top: 12px; }
+.example-source__content { margin-top: 12px; padding: 24px; min-width: 0; border: 1px solid #303136; border-radius: 10px; background: #191a1e; }
+h3 { margin: 0 0 10px; font-size: 18px; letter-spacing: -.025em; }
+p { color: #b7b8c0; font-size: 14px; line-height: 1.6; }
+.example-source__content ::deep .bz-code-block { min-width: 0; max-width: 100%; margin: 16px 0; }
+.example-source__content ::deep pre { max-height: 420px; overflow: auto; font-size: 12px; text-align: left; }
+.example-source__model summary { padding: 10px 0; cursor: pointer; font-size: 14px; color: #e1d7fa; }
+a { color: #e1d7fa; font-size: 14px; text-underline-offset: 4px; }
+.example-source__status { position: absolute; width: 1px; height: 1px; padding: 0; overflow: hidden; clip-path: inset(50%); white-space: nowrap; }
+@media (max-width: 768px) { .example-source__content { padding: 16px; } .example-source__content ::deep pre { max-height: 320px; } button { min-height: 44px; min-width: 44px; } }
+
+.example-source__content:focus-visible { outline: 2px solid #d6c6ff; outline-offset: 3px; }
+
+.example-source__heading { display: flex; justify-content: space-between; align-items: center; gap: 12px; margin-bottom: 12px; }
+.example-source__heading h3 { margin: 0; }
+.example-source__heading button { padding: 6px 12px; }
+
+.example-source__toggle, .example-source__heading h3 { scroll-margin-top: 140px; }
+.example-source__heading h3:focus-visible { outline: 2px solid #d6c6ff; outline-offset: 4px; border-radius: 3px; }

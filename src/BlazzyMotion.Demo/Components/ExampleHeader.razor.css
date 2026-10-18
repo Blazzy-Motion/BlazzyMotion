@@ -1,0 +1,11 @@
+.example-header { display: flex; align-items: center; justify-content: space-between; gap: 32px; max-width: 1232px; margin: 0 auto; padding: 28px 0 0; text-align: left; }
+.example-header__title { display: flex; flex-wrap: wrap; align-items: center; gap: 12px; margin-bottom: 10px; }
+h1 { margin: 0; font-size: clamp(30px, 3.2vw, 40px); line-height: 1.15; letter-spacing: -.04em; }
+p { max-width: 580px; margin: 0; color: #b7b8c0; font-size: 15px; line-height: 1.5; }
+.example-header__installation { min-width: 0; max-width: 440px; }
+.example-header__version { display: inline-block; padding: 4px 8px; border: 1px solid #34353c; border-radius: 6px; font-size: 11px; color: #b7b8c0; white-space: nowrap; }
+@media (max-width: 768px) {
+    .example-header { flex-direction: column; align-items: stretch; gap: 16px; padding-top: 20px; }
+    .example-header__installation { max-width: none; }
+    .example-header__installation ::deep .bz-install-box { padding: 12px 14px; margin: 0; }
+}

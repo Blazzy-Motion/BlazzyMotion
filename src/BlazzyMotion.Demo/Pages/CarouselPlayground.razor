@@ -1,0 +1,27 @@
+@page "/carousel"
+@layout HomeLayout
+@using BlazzyMotion.Carousel.Components
+@using BlazzyMotion.Demo.Components
+@using BlazzyMotion.Demo.Model
+@using BlazzyMotion.Demo.Services
+
+<PageTitle>Carousel Playground - BlazzyMotion</PageTitle>
+
+<div class="carousel-example">
+    <ExampleHeader Title="Carousel" Description="A 3D movie collection with responsive themes and keyboard navigation."
+                   PackageName="BlazzyMotion.Carousel" Version="@AppVersions.Carousel" />
+
+    <div class="carousel-example__layout">
+        <ExampleCode ExampleId="carousel-movies" Title="Movie collection" PreviewLabel="Live preview"
+                     Code="@ComponentCode" ModelCode="@ModelCode" DocumentationUrl="/docs/carousel">
+            <div class="example-theme-controls"><BzThemePicker @bind-CurrentTheme="_currentTheme" /></div>
+            <DemoSurface>
+                <div class="carousel-example__stage">
+                    <BzCarousel TItem="Movie" Items="@_movies" Theme="@_currentTheme" OnItemSelected="@OnItemSelected" />
+                </div>
+            </DemoSurface>
+            <p class="carousel-example__selection">@(_selectedMovie?.Title ?? _movies[0].Title)</p>
+            <p class="carousel-example__hint">Swipe to browse, or focus the carousel and use the arrow keys.</p>
+        </ExampleCode>
+    </div>
+</div>

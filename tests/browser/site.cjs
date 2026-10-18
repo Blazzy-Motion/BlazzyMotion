@@ -85,7 +85,7 @@ async function inspectDocumentationNavigation(browser, width) {
     await page.getByLabel('Preview background').selectOption('tinted');
     assert.equal(await surface.getAttribute('data-preview-background'), 'tinted');
     assert(await surface.locator('.swiper-container').evaluate(element => element.swiper === window.previewSwiper), 'Changing host background preserves the component instance');
-    assert.equal(await page.getByRole('navigation', { name: 'Component resources' }).getByRole('link', { name: 'API reference', exact: true }).getAttribute('href'), '/docs/carousel#component-api');
+    assert.equal(await page.getByRole('navigation', { name: 'Component resources' }).getByRole('link', { name: 'API', exact: true }).getAttribute('href'), '/docs/carousel#component-api');
     console.log(`PASS documentation ${width}px: responsive navigation, keyboard focus and independent host background`);
   } finally { await page.close(); }
 }
@@ -102,6 +102,8 @@ async function inspectDemoControls(browser) {
     await columns.focus();
     await page.keyboard.press(previous < 5 ? 'ArrowRight' : 'ArrowLeft');
     assert.notEqual(Number(await columns.inputValue()), previous);
+    await page.locator('.playground-options > summary').focus();
+    await page.keyboard.press('Enter');
     assert.equal(await page.getByRole('slider', { name: /^Gap:/ }).count(), 1);
     await page.goto(baseURL + '/marquee');
     const direction = page.getByRole('group', { name: 'Direction', exact: true });
@@ -228,8 +230,342 @@ async function inspectTouchNavigation(browser) {
   } finally { await context.close(); }
 }
 
+/** Verify the isolated Carousel page keeps copied code, theme state and the real preview in sync. */
+async function inspectCarouselCodeExample(browser) {
+  for (const width of [320, 390, 1440]) {
+    const context = await browser.newContext({ viewport: { width, height: 960 }, permissions: ['clipboard-read', 'clipboard-write'] });
+    const page = await context.newPage();
+    try {
+      await page.goto(baseURL + '/carousel');
+      await page.locator('#splash').waitFor({ state: 'hidden' });
+      const themeBounds = await page.getByRole('group', { name: 'Component theme', exact: true }).boundingBox();
+      assert(themeBounds && Math.abs(themeBounds.x + themeBounds.width / 2 - width / 2) <= 2, `Centered Carousel themes at ${width}px`);
+      const preview = page.getByRole('region', { name: 'Live preview', exact: true });
+      const swiper = preview.locator('.swiper-initialized');
+      await swiper.waitFor();
+      await swiper.evaluate(element => { window.codeExampleSwiper = element.swiper; });
+      await preview.locator('.bzc-carousel-box').focus();
+      await page.keyboard.press('ArrowRight');
+      await page.waitForFunction(() => window.codeExampleSwiper.realIndex === 1 && document.querySelector('.carousel-example__selection').textContent.trim() === 'Joker');
+      const code = page.locator('[data-example="carousel-movies"] .example-source__component code');
+      assert.equal((await code.textContent()).match(/new\(\) \{ Title =/g).length, Number(await preview.locator('.bzc-carousel-box').getAttribute('data-item-count')));
+      for (const theme of ['Dark', 'Light', 'Minimal', 'Glass']) {
+        await page.getByRole('group', { name: 'Component theme' }).getByRole('button', { name: theme, exact: true }).click();
+        await page.waitForFunction(theme => document.querySelector('[data-example="carousel-movies"] .example-source__component code').textContent.includes(`BzTheme.${theme}`), theme);
+        assert(await swiper.evaluate(element => element.swiper === window.codeExampleSwiper && element.swiper.realIndex === 1), 'Theme changes retain the live component instance and selected movie');
+      }
+      assert(!await code.isVisible(), 'Code starts collapsed so the live preview remains the focus');
+      const previewBefore = await preview.boundingBox();
+      const frame = await preview.locator('.bzc-carousel-box').boundingBox();
+      const toolbar = await page.locator('[data-example="carousel-movies"] .example-source__toolbar').boundingBox();
+      assert(frame && toolbar && Math.abs(frame.x - toolbar.x) < 1 && Math.abs(frame.width - toolbar.width) < 1, 'Carousel toolbar follows the original component edges');
+      if (width === 1440) { assert.equal(frame.width, 800); assert.equal(frame.height, 450); }
+      const disclosure = page.locator('[data-example="carousel-movies"] .example-source__toggle');
+      await disclosure.focus();
+      await page.keyboard.press('Enter');
+      await code.waitFor();
+      await page.waitForFunction(() => {
+        const heading = document.getElementById('carousel-movies-code-title');
+        const bounds = heading.getBoundingClientRect();
+        const header = document.querySelector('.site-header').getBoundingClientRect();
+        const stable = Math.abs(bounds.y - window.exampleSourceY) < 0.25;
+        window.exampleSourceY = bounds.y;
+        window.exampleSourceTicks = stable ? (window.exampleSourceTicks || 0) + 1 : 0;
+        return document.activeElement === heading && window.exampleSourceTicks >= 3 && bounds.y >= header.bottom && bounds.bottom <= innerHeight;
+      });
+      const codeHeading = await page.locator('#carousel-movies-code-title').boundingBox();
+      const siteHeader = await page.locator('.site-header').boundingBox();
+      assert(codeHeading && siteHeader && codeHeading.y >= siteHeader.y + siteHeader.height, 'Opened source focus is visible below the sticky header');
+      const displayed = await code.textContent();
+      if (width === 390) {
+        await page.evaluate(() => { window.originalExampleCopy = navigator.clipboard.writeText.bind(navigator.clipboard); window.denyExampleCopy = true; navigator.clipboard.writeText = text => window.denyExampleCopy ? Promise.reject(new DOMException('Denied', 'NotAllowedError')) : window.originalExampleCopy(text); });
+        await page.getByRole('button', { name: 'Copy example code', exact: true }).click();
+        await page.getByRole('status').filter({ hasText: 'Copy is unavailable.' }).waitFor();
+        assert(await preview.isVisible(), 'Clipboard denial preserves the live preview');
+        await page.evaluate(() => { window.denyExampleCopy = false; });
+        await page.getByRole('button', { name: 'Copy example code', exact: true }).click();
+        await page.waitForFunction(expected => navigator.clipboard.readText().then(actual => actual === expected), displayed);
+        await page.getByRole('status').filter({ hasText: 'Copy is unavailable.' }).waitFor({ state: 'hidden' });
+      }
+      await page.locator('[data-example="carousel-movies"] .example-source__component').getByRole('button', { name: 'Copy', exact: true }).click();
+      await page.waitForFunction(expected => navigator.clipboard.readText().then(actual => actual === expected), displayed);
+      await page.getByText('Model attributes', { exact: true }).click();
+      const model = page.locator('.example-source__model code');
+      await model.waitFor();
+      assert((await model.textContent()).includes('[BzImage]'));
+      assert((await model.textContent()).includes('namespace YourApp.Models;'));
+      const before = await preview.boundingBox();
+      const source = await page.getByRole('region', { name: 'Razor example', exact: true }).boundingBox();
+      assert(before && source && source.y > before.y + before.height - 1 && source.y - before.y - before.height <= 13, 'Source follows the live preview with a compact gap');
+      assert(Math.abs(source.x - frame.x) < 1 && Math.abs(source.width - frame.width) < 1, 'Carousel source follows the original component edges');
+      assert(await page.evaluate(() => document.documentElement.scrollWidth <= innerWidth + 1), 'Long code stays inside its scroll region');
+      const artifacts = path.join(__dirname, 'artifacts');
+      fs.mkdirSync(artifacts, { recursive: true });
+      fs.writeFileSync(path.join(artifacts, 'CarouselDemo.razor'), displayed);
+      fs.writeFileSync(path.join(artifacts, 'Movie.cs'), await model.textContent());
+      const audit = await new AxeBuilder({ page }).withTags(['wcag2a', 'wcag2aa', 'wcag21a', 'wcag21aa', 'wcag22aa']).analyze();
+      assert.deepEqual(audit.violations.map(violation => violation.id), [], `Expanded code accessibility at ${width}px`);
+      if (width === 390) {
+        await page.locator('.example-source__content').focus();
+        await page.keyboard.press('Escape');
+        assert(!await code.isVisible(), 'Escape closes the source region');
+        assert(await disclosure.evaluate(element => document.activeElement === element), 'Escape restores toolbar focus');
+        await page.keyboard.press('Enter');
+        await code.waitFor();
+      }
+      if (width === 320) {
+        await page.getByRole('button', { name: 'Close code', exact: true }).click();
+      } else {
+        await disclosure.focus();
+        await page.keyboard.press('Enter');
+      }
+      assert(!await code.isVisible(), 'Keyboard and touch controls close the code disclosure');
+      assert(await disclosure.evaluate(element => document.activeElement === element), 'Focus remains on the disclosure');
+      assert(await swiper.evaluate(element => element.swiper === window.codeExampleSwiper && element.swiper.realIndex === 1), 'Opening and closing code preserves the live preview');
+      const previewAfter = await preview.boundingBox();
+      assert.equal(previewAfter.width, previewBefore.width);
+      assert.equal(previewAfter.height, previewBefore.height);
+      console.log(`PASS Carousel example ${width}px: exact clipboard, four synchronized themes, model disclosure and responsive code layout`);
+    } finally { await context.close(); }
+  }
+}
+
+/** Verify every Demo example exposes usable code without replacing its live component. */
+async function inspectAllComponentExamples(browser) {
+  const examples = { bento: ['bento-items', 'bento-dashboard', 'bento-composition'], gallery: ['gallery-layout'], marquee: ['marquee-logos', 'marquee-testimonials', 'marquee-ticker'] };
+  for (const width of [320, 390, 1440]) {
+    const context = await browser.newContext({ viewport: { width, height: 960 }, permissions: ['clipboard-read', 'clipboard-write'] });
+    const page = await context.newPage();
+    try {
+      for (const [route, ids] of Object.entries(examples)) {
+        await page.goto(baseURL + '/' + route);
+        await page.locator('#splash').waitFor({ state: 'hidden' });
+        const resources = page.getByRole('navigation', { name: 'Component resources', exact: true });
+        assert.equal(await resources.getByRole('link', { name: 'Playground', exact: true }).getAttribute('aria-current'), 'page');
+        assert.equal(await resources.getByRole('link', { name: 'Documentation', exact: true }).getAttribute('href'), `/docs/${route}`);
+        assert.equal(await resources.getByRole('link', { name: 'API', exact: true }).getAttribute('href'), `/docs/${route}#component-api`);
+        const intro = await page.locator('.example-header').boundingBox();
+        const navigation = await resources.boundingBox();
+        const toolbar = await page.locator('.example-source__toolbar').first().boundingBox();
+        assert(intro && navigation && toolbar && navigation.y >= intro.y + intro.height - 1 && toolbar.y >= navigation.y, 'Component resources follow the introduction');
+        assert(toolbar.y < 500, 'Compact introduction exposes the example toolbar without excessive scrolling');
+        const themes = page.getByRole('group', { name: 'Component theme', exact: true });
+        const bounds = await themes.boundingBox();
+        assert(bounds && Math.abs(bounds.x + bounds.width / 2 - width / 2) <= 2, `Centered ${route} themes at ${width}px`);
+        for (const theme of ['Dark', 'Light', 'Minimal', 'Glass']) {
+          await themes.getByRole('button', { name: theme, exact: true }).click();
+          await page.waitForFunction(({ ids, theme }) => ids.every(id => document.querySelector(`[data-example="${id}"] .example-source__component code`).textContent.includes(`BzTheme.${theme}`)), { ids, theme });
+        }
+        if (route === 'gallery') {
+          assert(!await page.locator('#gallery-gap').isVisible(), 'Secondary Gallery settings start collapsed');
+          await page.locator('.playground-options > summary').focus();
+          await page.keyboard.press('Enter');
+          const layout = width >= 768 ? 'Masonry' : 'List';
+          await page.getByRole('button', { name: layout, exact: true }).click();
+          await page.waitForFunction(() => { const control = document.querySelector('.bzg-demo-control--aspect'); return control.hidden && getComputedStyle(control).display === 'none'; });
+          assert(!await page.locator('.bzg-demo-control--aspect').isVisible(), 'Non-Grid aspect controls are hidden instead of fading at low contrast');
+          await page.getByRole('slider', { name: /^Gap:/ }).focus();
+          await page.keyboard.press('ArrowRight');
+          await page.waitForFunction(() => document.querySelector('.example-source__component code').textContent.includes('Gap="20"'));
+          assert((await page.locator('.example-source__component code').textContent()).includes(`BzGalleryLayout.${layout}`));
+        }
+        if (route === 'marquee') {
+          assert(!await page.locator('#variation-range').isVisible(), 'Secondary Marquee settings start collapsed');
+          await page.locator('.playground-options > summary').focus();
+          await page.keyboard.press('Enter');
+          await page.getByRole('group', { name: 'Direction', exact: true }).getByRole('button', { name: 'Right', exact: true }).click();
+          await page.getByRole('slider', { name: /^Speed Var:/ }).focus();
+          await page.keyboard.press('ArrowRight');
+          await page.waitForFunction(() => document.querySelector('[data-example="marquee-logos"] code').textContent.includes('SpeedVariation="0.1"'));
+          for (const id of ids) assert((await page.locator(`[data-example="${id}"] .example-source__component code`).textContent()).includes('BzDirection.Right'));
+        }
+        if (route === 'gallery' || route === 'marquee') {
+          const field = page.locator(route === 'gallery' ? '#gallery-gap' : '#variation-range');
+          const value = await field.inputValue();
+          const summary = page.locator('.playground-options > summary');
+          const audit = await new AxeBuilder({ page }).include('.bzg-demo-controls').withTags(['wcag2a', 'wcag2aa', 'wcag21a', 'wcag21aa', 'wcag22aa']).analyze();
+          assert.deepEqual(audit.violations.map(violation => ({ id: violation.id, nodes: violation.nodes.map(node => ({ target: node.target, reason: node.failureSummary })) })), [], `Expanded advanced controls accessibility: ${route}`);
+          await summary.focus();
+          await page.keyboard.press('Enter');
+          assert(!await field.isVisible());
+          await page.keyboard.press('Enter');
+          assert.equal(await field.inputValue(), value, 'Secondary settings survive closing and reopening options');
+          await page.keyboard.press('Enter');
+          assert(!await field.isVisible());
+        }
+        if (route === 'bento') {
+          const root = page.locator('.bzc-carousel-box');
+          await root.scrollIntoViewIfNeeded();
+          await root.locator('.swiper-slide-active[data-bzc-media=ready]').waitFor();
+          await page.waitForFunction(() => {
+            const root = document.querySelector('.bzc-carousel-box');
+            const swiper = root?.querySelector('.swiper-initialized')?.swiper;
+            return swiper?.initialized && !swiper.destroyed && !swiper.animating && !root.querySelector('[data-bzc-direction=next]').disabled;
+          });
+          // Image preparation and scroll-triggered entrance complete before capturing the instance.
+          await root.evaluate(element => new Promise(resolve => requestAnimationFrame(() => requestAnimationFrame(() => {
+            window.examplesSwiper = element.querySelector('.swiper-initialized').swiper;
+            resolve();
+          }))));
+          assert.equal(await root.evaluate(() => window.examplesSwiper.realIndex), 0);
+          await root.focus();
+          assert(await root.evaluate(element => document.activeElement === element), 'Nested Carousel owns keyboard focus before input');
+          await page.keyboard.press('ArrowRight');
+          await page.waitForFunction(() => window.examplesSwiper.realIndex === 1);
+        }
+        for (const id of ids) {
+          const source = page.locator(`[data-example="${id}"]`);
+          const code = source.locator('.example-source__component code');
+          assert(!await code.isVisible(), `${id} starts collapsed`);
+          const summary = source.locator('.example-source__toggle');
+          const preview = source.locator('.example-source__preview');
+          const previewBefore = await preview.boundingBox();
+          assert.equal(await summary.getAttribute('aria-expanded'), 'false');
+          const displayedBefore = await code.textContent();
+          await source.getByRole('button', { name: 'Copy example code', exact: true }).click();
+          await page.waitForFunction(expected => navigator.clipboard.readText().then(actual => actual === expected), displayedBefore);
+          assert(!await code.isVisible(), 'Toolbar copy does not open the source or hide the preview');
+          await summary.focus();
+          await page.keyboard.press('Enter');
+          await code.waitFor();
+          assert.equal(await summary.getAttribute('aria-expanded'), 'true');
+          assert.equal(await source.locator('.example-source__content').getAttribute('id'), await summary.getAttribute('aria-controls'));
+          assert(await preview.isVisible(), 'Opening code retains the live preview');
+          const displayed = await code.textContent();
+          await source.locator('.example-source__component').getByRole('button', { name: 'Copy', exact: true }).click();
+          await page.waitForFunction(expected => navigator.clipboard.readText().then(actual => actual === expected), displayed);
+          const modelDisclosure = source.locator('.example-source__model');
+          let model = '';
+          if (await modelDisclosure.count()) {
+            await modelDisclosure.locator('summary').click();
+            model = await modelDisclosure.locator('code').textContent();
+            assert(model.includes('[BzTitle]') && model.includes('[BzImage]'));
+          }
+          const directory = path.join(__dirname, 'artifacts', 'examples', String(width), id);
+          fs.mkdirSync(directory, { recursive: true });
+          fs.writeFileSync(path.join(directory, 'Example.razor'), displayed);
+          if (model) fs.writeFileSync(path.join(directory, 'Models.cs'), model);
+          const audit = await new AxeBuilder({ page }).include(`[data-example="${id}"] .example-source__toolbar`).include(`[data-example="${id}"] .example-source__content`).withTags(['wcag2a', 'wcag2aa', 'wcag21a', 'wcag21aa', 'wcag22aa']).analyze();
+          assert.deepEqual(audit.violations.map(violation => violation.id), [], `Expanded ${id} source accessibility at ${width}px`);
+          assert(await page.evaluate(() => document.documentElement.scrollWidth <= innerWidth + 1), `${id} fits the viewport`);
+          await summary.focus();
+          await page.keyboard.press('Enter');
+          assert(!await code.isVisible());
+          assert(await summary.evaluate(element => document.activeElement === element));
+          assert.equal(await summary.getAttribute('aria-expanded'), 'false');
+          const previewAfter = await preview.boundingBox();
+          assert.equal(previewAfter.width, previewBefore.width);
+          assert.equal(previewAfter.height, previewBefore.height);
+        }
+        if (route === 'bento') assert(await page.locator('.swiper-initialized').evaluate(element => element.swiper === window.examplesSwiper && element.swiper.realIndex === 1), 'Bento disclosures preserve the nested Carousel instance and selection');
+        console.log(`PASS ${route} examples ${width}px: centered themes, synchronized settings, exact clipboard, keyboard disclosure and WCAG checks`);
+      }
+    } finally { await context.close(); }
+  }
+}
+
+/** Verify the landing page exposes a real showcase, working source and grouped footer at all sizes. */
+async function inspectLanding(browser) {
+  for (const width of [320, 390, 980, 1440]) {
+    const context = await browser.newContext({ viewport: { width, height: 960 } });
+    const page = await context.newPage();
+    try {
+      await page.goto(baseURL);
+      await page.getByRole('heading', { name: 'Make room for motion.' }).waitFor();
+      await page.locator('#splash').waitFor({ state: 'hidden' });
+      const root = page.locator('.home-showcase .bzc-carousel-box');
+      await root.locator('.swiper-slide-active[data-bzc-media=ready]').waitFor();
+      const frame = await root.boundingBox();
+      if (width === 1440) {
+        assert.equal(frame.width, 800);
+        assert.equal(frame.height, 450);
+        const intro = await page.locator('.home-intro').boundingBox();
+        assert(intro.x + intro.width < frame.x, 'Desktop introduction sits beside the full-size component');
+        assert(frame.y + frame.height < 960, 'Desktop showcase fits the first screen');
+      }
+      assert(await page.evaluate(() => document.documentElement.scrollWidth <= innerWidth + 1), `Landing fits ${width}px`);
+      assert.equal(await page.locator('.home-principles > div').count(), 3);
+      assert.equal(await page.locator('.site-footer__group').count(), 2);
+      assert.equal(await page.locator('.site-footer__group').first().getByRole('link').count(), 3);
+      const model = page.locator('.home-model');
+      await model.locator('summary').focus();
+      await page.keyboard.press('Enter');
+      await model.locator('code').waitFor();
+      assert((await model.locator('code').textContent()).includes('[BzImage]'));
+      const componentCode = await page.locator('.home-developer__code > .bz-code-block code').textContent();
+      assert(componentCode.includes('<BzCarousel Items="@movies" />'));
+      const directory = path.join(__dirname, 'artifacts', 'landing');
+      fs.mkdirSync(directory, { recursive: true });
+      fs.writeFileSync(path.join(directory, 'Example.razor'), componentCode);
+      fs.writeFileSync(path.join(directory, 'Movie.cs'), await model.locator('code').textContent());
+      const audit = await new AxeBuilder({ page }).withTags(['wcag2a', 'wcag2aa', 'wcag21a', 'wcag21aa', 'wcag22aa']).analyze();
+      assert.deepEqual(audit.violations.map(item => ({id:item.id,targets:item.nodes.map(node=>node.target)})), [], `Landing accessibility ${width}px`);
+      await page.getByRole('link', { name: 'Explore components', exact: false }).first().click();
+      await page.waitForURL('**/components');
+      assert.equal(await page.locator('.component-entry').count(), 4);
+      console.log(`PASS landing ${width}px: first-screen showcase, unchanged geometry, model disclosure, discovery and WCAG checks`);
+    } finally { await context.close(); }
+  }
+}
+
+/** Verify footer flow, short-page placement, keyboard return and reduced motion across layouts. */
+async function inspectFooter(browser) {
+  for (const width of [390, 1440]) {
+    const context = await browser.newContext({ viewport: { width, height: 900 }, reducedMotion: 'reduce' });
+    const page = await context.newPage();
+    try {
+      for (const route of ['/carousel', '/docs/quick-start', '/gallery']) {
+        await page.goto(baseURL + route);
+        await page.locator('.site-footer__brand').waitFor();
+        await page.waitForFunction(() => !document.querySelector('#splash') || document.querySelector('#splash').classList.contains('bz-splash--hidden'));
+        const button = page.getByRole('button', { name: 'Back to top', exact: true });
+        assert(!await button.isVisible(), 'Return control is hidden at the top');
+        const footer = page.locator('footer.site-footer');
+        assert.equal(await footer.evaluate(element => getComputedStyle(element).position), 'static');
+        await page.evaluate(() => window.scrollTo({ top: document.documentElement.scrollHeight, behavior: 'instant' }));
+        const longPage = await page.evaluate(() => scrollY >= 600);
+        if (longPage) await button.waitFor();
+        else assert(!await button.isVisible(), 'Short pages do not need a return control');
+        await footer.scrollIntoViewIfNeeded();
+        assert(await footer.getByRole('link', { name: 'API reference', exact: true }).isVisible());
+        assert(await page.evaluate(() => document.documentElement.scrollWidth <= innerWidth + 1));
+        const audit = await new AxeBuilder({ page }).include('.site-footer').withTags(['wcag2a', 'wcag2aa', 'wcag21aa', 'wcag22aa']).analyze();
+        assert.deepEqual(audit.violations.map(item => item.id), [], 'Footer and return control accessibility');
+        if (longPage) {
+          await button.focus();
+          await page.keyboard.press('Enter');
+          await page.waitForFunction(() => scrollY === 0 && document.activeElement.id === 'main-content');
+          await button.waitFor({ state: 'hidden' });
+        } else await page.evaluate(() => window.scrollTo({ top: 0, behavior: 'instant' }));
+        // A short page must place the footer at the viewport floor without adding a blank screen.
+        await page.locator('#main-content').evaluate(element => {
+          const content = element.querySelector('.bz-main__content') || element;
+          content.replaceChildren(Object.assign(document.createElement('p'), { textContent: 'Short page' }));
+        });
+        const box = await footer.boundingBox();
+        const inset = await page.locator('#main-content').evaluate(element => element.classList.contains('bz-main') ? parseFloat(getComputedStyle(element).paddingBottom) : 0);
+        assert(box.y + box.height + inset >= 899 && box.y + box.height + inset <= 902, 'Short-page footer reaches the viewport floor within layout padding');
+      }
+      console.log(`PASS footer ${width}px: document flow, short pages, keyboard return, reduced motion and WCAG checks`);
+    } finally { await context.close(); }
+  }
+  const context = await browser.newContext({ viewport: { width: 390, height: 900 }, reducedMotion: 'no-preference' });
+  try {
+    const page = await context.newPage();
+    await page.goto(baseURL + '/docs/quick-start');
+    await page.locator('.site-footer__brand').waitFor();
+    await page.waitForFunction(() => !document.querySelector('#splash') || document.querySelector('#splash').classList.contains('bz-splash--hidden'));
+    await page.evaluate(() => window.scrollTo({ top: 800, behavior: 'instant' }));
+    const button = page.getByRole('button', { name: 'Back to top', exact: true });
+    await button.waitFor();
+    await button.click();
+    await page.waitForFunction(() => scrollY === 0 && document.activeElement.id === 'main-content');
+    console.log('PASS return control: smooth scrolling reaches the top with restored content focus');
+  } finally { await context.close(); }
+}
+
 (async () => {
   const browser = await chromium.launch({ executablePath: process.env.CHROMIUM_PATH || undefined, headless: true, args: ['--no-sandbox'] });
-  try { await inspectSite(browser, 1440); await inspectSite(browser, 390); await inspectDocumentationNavigation(browser, 390); await inspectDocumentationNavigation(browser, 980); await inspectDocumentationNavigation(browser, 1440); await inspectDemoControls(browser); await inspectVersionMetadata(browser); await inspectTouchNavigation(browser); await inspectDocumentTouchScrolling(browser); }
+  try { await inspectLanding(browser); await inspectFooter(browser); await inspectSite(browser, 1440); await inspectSite(browser, 390); await inspectDocumentationNavigation(browser, 390); await inspectDocumentationNavigation(browser, 980); await inspectDocumentationNavigation(browser, 1440); await inspectDemoControls(browser); await inspectVersionMetadata(browser); await inspectTouchNavigation(browser); await inspectDocumentTouchScrolling(browser); await inspectCarouselCodeExample(browser); await inspectAllComponentExamples(browser); }
   finally { await browser.close(); }
 })().catch(error => { console.error(error); process.exit(1); });

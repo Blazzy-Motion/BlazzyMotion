@@ -40,3 +40,15 @@ measure rAF scheduling, not displayed frames. CPU throttling and software render
 not reproduce a specific Android GPU, thermal state or browser. No fixed FPS threshold
 is used in CI. Validate physical devices separately with Chrome remote debugging and
 DevTools Performance recordings, including first load, fast swipes and theme changes.
+
+The Carousel example checks exercise `/carousel` at 320, 390 and 1440 px, including real clipboard permissions in an isolated browser context, four theme changes after keyboard navigation, selection/instance and preview-size preservation, keyboard opening/closing of initially hidden source through the example toolbar, model disclosure and expanded-content WCAG scans. The copied `CarouselDemo.razor` and `Movie.cs` are saved in `artifacts/` for optional standalone compilation.
+
+Shared example checks cover Bento, Gallery and Marquee at 320, 390 and 1440 px: centered theme controls, four synchronized themes, changed Gallery/Marquee settings, toolbar source interaction, exact clipboard contents, expanded source-content WCAG scans, horizontal overflow and retention of the nested Bento Carousel instance and index. The seven copied snippets and their models are saved under `artifacts/examples/<width>/<example>/` for standalone consumer compilation.
+
+Compact playground checks also verify local navigation beneath the component introduction, active Playground links, the first example toolbar position, copying while source is hidden, ARIA expanded/control relationships, persistent preview dimensions, clipboard denial/recovery and focus restoration through Close/Escape.
+
+Density checks verify Carousel toolbar/source alignment with the unchanged desktop 800 × 450 px frame, a compact preview/source gap, keyboard access to Advanced options, retained secondary settings after closing/reopening, and expanded-controls accessibility at 320, 390 and 1440 px.
+
+Footer coverage checks document flow and short-page placement on both layouts at mobile and desktop widths, keyboard return with restored content focus, smooth/reduced-motion scrolling, responsive bounds and scoped WCAG scans.
+
+Landing-page coverage checks the real first-screen desktop showcase with unchanged 800 × 450 px geometry, responsive bounds at 320/390/980/1440 px, component discovery, grouped footer links, keyboard model disclosure and whole-page WCAG scans. Introductory source/model files are saved in browser artifacts for standalone stable-consumer validation.
