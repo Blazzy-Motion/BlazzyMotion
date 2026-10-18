@@ -142,3 +142,9 @@ body .bz-sidebar__nav { scrollbar-width: thin; }
 .demo-surface[data-preview-background="tinted"] { background: radial-gradient(ellipse at 20% 30%, #716a88, transparent 65%), linear-gradient(130deg, #343b46, #1a2329); }
 .component-api-anchor { scroll-margin-top: 16px; }
 body:has(.docs-dialog[open]) { overflow: hidden; }
+/* Preserve compact documentation typography with a sequential heading hierarchy. */
+.bz-doc-section__content > h3 { font-size: 1rem; font-weight: 600; }
+.bz-code-block pre:focus-visible { outline: 2px solid #c4b5fd; outline-offset: -3px; }
+.collection-title { max-width: 1240px; margin: 40px auto 0; padding: 0 24px; font-size: 32px; letter-spacing: -.04em; }
+.playground-control-label { font-size: .875rem; font-weight: 500; color: var(--bz-text-secondary); }
+.demo-example-title { font-size: 1rem; font-weight: 500; color: var(--bz-text-secondary); margin-bottom: 8px; }

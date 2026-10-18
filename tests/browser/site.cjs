@@ -1,12 +1,14 @@
 const { chromium } = require('playwright');
 const assert = require('node:assert/strict');
+const AxeBuilder = require('@axe-core/playwright').default;
 const fs = require('node:fs');
 const path = require('node:path');
 const baseURL = process.env.BASE_URL || 'http://127.0.0.1:5130';
 
-/** Verify shared navigation, preserved documentation routes and mobile component discovery. */
+/** Verify shared navigation, preserved routes, WCAG checks and mobile component discovery. */
 async function inspectSite(browser, width) {
-  const page = await browser.newPage({ viewport: { width, height: 960 } });
+  const context = await browser.newContext({ viewport: { width, height: 960 } });
+  const page = await context.newPage();
   const errors = [];
   page.on('pageerror', error => errors.push(error.message));
   try {
@@ -20,6 +22,8 @@ async function inspectSite(browser, width) {
       await page.waitForFunction(() => !document.querySelector('#splash') || document.querySelector('#splash').classList.contains('bz-splash--hidden'));
       assert.equal(await page.getByRole('alert').filter({ hasText: "Sorry, there's nothing" }).count(), 0, route);
       assert.equal(await page.locator('#main-content').count(), 1);
+      const audit = await new AxeBuilder({ page }).withTags(['wcag2a', 'wcag2aa', 'wcag21a', 'wcag21aa', 'wcag22aa']).analyze();
+      assert.deepEqual(audit.violations.map(violation => ({ id: violation.id, targets: violation.nodes.map(node => node.target) })), [], `Accessibility ${width}px ${route}`);
       const navigation = page.getByRole('navigation', { name: 'Primary navigation', exact: true });
       const box = await navigation.boundingBox();
       assert(box && box.x >= 0 && box.x + box.width <= width + 1, `Navigation fits ${route}`);
@@ -36,7 +40,7 @@ async function inspectSite(browser, width) {
     fs.mkdirSync(artifacts, { recursive: true });
     await page.screenshot({ path: path.join(artifacts, `site-bento-${width}.png`), fullPage: true });
     console.log(`PASS site ${width}px: all 16 routes, shared navigation, component discovery and theme state`);
-  } finally { await page.close(); }
+  } finally { await context.close(); }
 }
 
 /** Exercise the responsive documentation rail, modal keyboard focus and independent preview surface. */
@@ -46,7 +50,7 @@ async function inspectDocumentationNavigation(browser, width) {
     await page.goto(baseURL + '/docs/bento');
     await page.locator('.site-header').waitFor();
     await page.waitForFunction(() => !document.querySelector('#splash') || document.querySelector('#splash').classList.contains('bz-splash--hidden'));
-    const trigger = page.getByRole('button', { name: 'Open documentation navigation' });
+    const trigger = page.getByRole('button', { name: 'On this site: open documentation navigation' });
     if (width <= 1024) {
       await trigger.click();
       const dialog = page.getByRole('dialog', { name: 'Documentation navigation' });
@@ -86,8 +90,40 @@ async function inspectDocumentationNavigation(browser, width) {
   } finally { await page.close(); }
 }
 
+/** Verify keyboard-operable playground controls and focusable documentation code blocks. */
+async function inspectDemoControls(browser) {
+  const page = await browser.newPage({ viewport: { width: 390, height: 900 } });
+  try {
+    await page.goto(baseURL + '/gallery');
+    const columns = page.getByRole('slider', { name: /^Columns:/ });
+    await columns.waitFor();
+    await page.waitForFunction(() => !document.querySelector('#splash') || document.querySelector('#splash').classList.contains('bz-splash--hidden'));
+    const previous = Number(await columns.inputValue());
+    await columns.focus();
+    await page.keyboard.press(previous < 5 ? 'ArrowRight' : 'ArrowLeft');
+    assert.notEqual(Number(await columns.inputValue()), previous);
+    assert.equal(await page.getByRole('slider', { name: /^Gap:/ }).count(), 1);
+    await page.goto(baseURL + '/marquee');
+    const direction = page.getByRole('group', { name: 'Direction', exact: true });
+    await direction.waitFor();
+    await page.waitForFunction(() => !document.querySelector('#splash') || document.querySelector('#splash').classList.contains('bz-splash--hidden'));
+    const right = direction.getByRole('button', { name: 'Right', exact: true });
+    await right.focus();
+    await page.keyboard.press('Space');
+    await page.waitForFunction(() => document.querySelector('[aria-labelledby="direction-label"] button:last-child').getAttribute('aria-pressed') === 'true');
+    assert.equal(await direction.getByRole('button', { name: 'Left', exact: true }).getAttribute('aria-pressed'), 'false');
+    await page.goto(baseURL + '/docs/examples');
+    await page.locator('.bz-code-block pre').first().waitFor();
+    assert(await page.locator('.bz-code-block pre').evaluateAll(elements => elements.every(element => element.tabIndex === 0)));
+    const code = page.locator('.bz-code-block pre').first();
+    await code.focus();
+    assert(await code.evaluate(element => element === document.activeElement));
+    console.log('PASS Demo controls: labeled Gallery sliders, keyboard Marquee state and code-block focus');
+  } finally { await page.close(); }
+}
+
 (async () => {
   const browser = await chromium.launch({ executablePath: process.env.CHROMIUM_PATH || undefined, headless: true, args: ['--no-sandbox'] });
-  try { await inspectSite(browser, 1440); await inspectSite(browser, 390); await inspectDocumentationNavigation(browser, 390); await inspectDocumentationNavigation(browser, 980); await inspectDocumentationNavigation(browser, 1440); }
+  try { await inspectSite(browser, 1440); await inspectSite(browser, 390); await inspectDocumentationNavigation(browser, 390); await inspectDocumentationNavigation(browser, 980); await inspectDocumentationNavigation(browser, 1440); await inspectDemoControls(browser); }
   finally { await browser.close(); }
 })().catch(error => { console.error(error); process.exit(1); });

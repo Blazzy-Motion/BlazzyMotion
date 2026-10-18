@@ -4,7 +4,7 @@
 @using BlazzyMotion.Demo.Components
 
 <SiteHeader />
-<button class="bz-mobile-toggle" @onclick="OpenSidebarAsync" aria-label="Open documentation navigation" aria-expanded="@_sidebarOpen.ToString().ToLowerInvariant()" aria-controls="docs-dialog">
+<button class="bz-mobile-toggle" @onclick="OpenSidebarAsync" aria-label="On this site: open documentation navigation" aria-expanded="@_sidebarOpen.ToString().ToLowerInvariant()" aria-controls="docs-dialog">
     <span aria-hidden="true">☰</span> <span>On this site</span>
 </button>
 <div class="docs-desktop"><NavMenu OnLinkClick="CloseSidebarAsync" /></div>

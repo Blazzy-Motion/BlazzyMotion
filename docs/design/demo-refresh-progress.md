@@ -55,3 +55,16 @@ Direct requests to the preview domain from this cloud instance are currently den
 - Release solution build and 1,110 tests passed. Existing component browser regressions and expanded navigation tests are running. Native dialogs may permit focus to browser chrome; tests must reject background page focus rather than reject normal browser behavior.
 
 No production merge or NuGet publication is authorized for this visual iteration.
+
+## Demo-only accessibility corrections — 2026-10-18
+
+- Match visible link/button text and accessible names in the shared header and mobile navigation.
+- Associate Gallery range labels with controls and expose selected playground button states.
+- Use native toggle-button groups with explicit string aria-pressed values in the Marquee playground; library behavior is unchanged.
+- Make documentation code blocks keyboard-focusable and repair skipped heading levels. Add a meaningful Bento collection subheading to provide the existing card headings with proper Demo context.
+- Vendor unmodified Outfit and JetBrains Mono variable font subsets from Fontsource 5.3.0, retaining SIL OFL copyright/license notices and font-display: swap. Remove external Google Fonts requests. Keep the startup animation.
+- Add WCAG axe scans of all 16 routes at desktop/mobile widths to the permanent site suite, plus keyboard checks for Gallery, Marquee and code blocks.
+- Release solution build and 1,110 tests passed. Route/WCAG scans and playground keyboard checks passed on the development host. Final published-asset scans, component regressions, Lighthouse and Azure checks are in progress.
+- Nested browser tests scroll the example into view before waiting for visibility, avoiding dependence on the height of preceding Demo text.
+
+Only Demo assets, documentation and browser checks change. No library source, package versions or NuGet publication is included.

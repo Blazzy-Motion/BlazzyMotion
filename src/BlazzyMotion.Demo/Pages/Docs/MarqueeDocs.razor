@@ -30,19 +30,19 @@
 <DocSection Title="Basic Usage">
     <IconContent>@Icons.Code</IconContent>
     <ChildContent>
-        <h4>Logo Bar (Zero Config)</h4>
+        <h3>Logo Bar (Zero Config)</h3>
         <p>Just mark your model with <code>[BzImage]</code> — logos render automatically, no template needed:</p>
         <CodeBlock Language="razor" Code="@_logoBarZeroConfig" />
 
-        <h4 class="bz-mt-3">Logo Bar (Custom Template)</h4>
+        <h3 class="bz-mt-3">Logo Bar (Custom Template)</h3>
         <p>Use <code>ItemTemplate</code> for full control over logo rendering:</p>
         <CodeBlock Language="razor" Code="@_logoBarCustom" />
 
-        <h4 class="bz-mt-3">Testimonials</h4>
+        <h3 class="bz-mt-3">Testimonials</h3>
         <p>Items with <code>[BzTitle]</code> and <code>[BzDescription]</code> auto-render as testimonial cards:</p>
         <CodeBlock Language="razor" Code="@_testimonialUsage" />
 
-        <h4 class="bz-mt-3">Text Ticker</h4>
+        <h3 class="bz-mt-3">Text Ticker</h3>
         <p>Use the <code>Text</code> parameter for simple scrolling text:</p>
         <CodeBlock Language="razor" Code="@_textTickerUsage" />
     </ChildContent>
@@ -53,15 +53,15 @@
     <ChildContent>
         <p>BzMarquee auto-detects the display mode based on your data:</p>
 
-        <h4 class="bz-mt-2">Logo Bar</h4>
+        <h3 class="bz-mt-2">Logo Bar</h3>
         <p>When items have only <code>[BzImage]</code> (and optionally <code>[BzTitle]</code>), logos render automatically — zero configuration. Use <code>ItemTemplate</code> for custom rendering.</p>
         <CodeBlock Language="razor" Code="@_logoModeZeroConfig" />
 
-        <h4 class="bz-mt-3">Testimonials</h4>
+        <h3 class="bz-mt-3">Testimonials</h3>
         <p>Items with <code>Title</code> + <code>Description</code> auto-render as testimonial cards with avatars. No template needed.</p>
         <CodeBlock Language="csharp" Code="@_testimonialModel" />
 
-        <h4 class="bz-mt-3">Text Ticker</h4>
+        <h3 class="bz-mt-3">Text Ticker</h3>
         <p>Set the <code>Text</code> parameter — no items or template required.</p>
         <CodeBlock Language="razor" Code="@_textMode" />
     </ChildContent>
@@ -93,13 +93,13 @@
 <DocSection Title="API Reference">
     <IconContent>@Icons.Settings</IconContent>
     <ChildContent>
-        <h4>Data Parameters</h4>
+        <h3>Data Parameters</h3>
         <ApiTable Parameters="@_dataParams" />
 
-        <h4 class="bz-mt-3">Appearance Parameters</h4>
+        <h3 class="bz-mt-3">Appearance Parameters</h3>
         <ApiTable Parameters="@_appearanceParams" />
 
-        <h4 class="bz-mt-3">Behavior Parameters</h4>
+        <h3 class="bz-mt-3">Behavior Parameters</h3>
         <ApiTable Parameters="@_behaviorParams" />
     </ChildContent>
 </DocSection>

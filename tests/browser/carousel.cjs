@@ -250,6 +250,8 @@ async function inspectNestedBentoCarousel(browser) {
     page.on('pageerror', error => errors.push(error.message));
     await page.goto(`${baseURL.replace(/\/$/, '')}/bento`);
     const root = page.locator('.bzb-item .bzc-carousel-box');
+    // Exercise the example in view; preceding documentation may move it below the fold.
+    await root.scrollIntoViewIfNeeded();
     await root.locator('.bzc-visible').waitFor();
     await root.locator('.swiper-slide-active[data-bzc-media=ready]').waitFor();
     await root.scrollIntoViewIfNeeded();
@@ -426,8 +428,8 @@ async function inspectBentoNavigationLifecycle(browser) {
         link.remove();
       });
       const root = page.locator('.bzb-item .bzc-carousel-box');
-      await root.locator('.swiper-slide-active[data-bzc-media=ready]').waitFor();
       await root.scrollIntoViewIfNeeded();
+      await root.locator('.swiper-slide-active[data-bzc-media=ready]').waitFor();
       await page.waitForTimeout(700);
       await root.evaluate(element => { window.bzcRouteSwiper = element.querySelector('.swiper-container').swiper; });
       const initial = await root.evaluate(element => element.querySelector('.swiper-container').swiper.realIndex);
