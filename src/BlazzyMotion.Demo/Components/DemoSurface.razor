@@ -1,0 +1,21 @@
+<div class="demo-surface-controls">
+    <label>Preview background
+        <select @bind="_background">
+            <option value="page">Page</option>
+            <option value="dark">Dark</option>
+            <option value="light">Light</option>
+            <option value="tinted">Tinted</option>
+        </select>
+    </label>
+</div>
+<div class="demo-surface" data-preview-background="@_background">
+    @ChildContent
+</div>
+
+@code {
+    private string _background = "page";
+
+    /// <summary>Gets or sets the live example shown against the selected background.</summary>
+    [Parameter]
+    public RenderFragment? ChildContent { get; set; }
+}

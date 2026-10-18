@@ -9,6 +9,7 @@
 <PageTitle>BzBento Demo - BlazzyMotion</PageTitle>
 
 <div class="bz-home">
+    <ComponentLinks ComponentId="bento" />
 
     <section class="bz-hero" style="min-height: auto; padding: 60px 20px;">
         <div class="bz-hero__content">
@@ -44,6 +45,7 @@
 
         <BzThemePicker @bind-CurrentTheme="_currentTheme" />
 
+        <h4 class="demo-example-title">Movie collection</h4>
         <div class="bzb-presentation__stage">
             <BzBento TItem="BentoItem"
                      Items="@_bentoItems"

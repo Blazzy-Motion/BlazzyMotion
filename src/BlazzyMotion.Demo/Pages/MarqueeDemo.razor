@@ -9,6 +9,7 @@
 <PageTitle>BzMarquee Demo - BlazzyMotion</PageTitle>
 
 <div class="bz-home">
+    <ComponentLinks ComponentId="marquee" />
 
     <section class="bz-hero" style="min-height: auto; padding: 60px 20px;">
         <div class="bz-hero__content">
@@ -19,11 +20,11 @@
             </p>
             <BzInstallBox PackageName="BlazzyMotion.Marquee" />
             <div class="bz-hero__actions">
-                <a href="/docs/marquee" class="bz-btn bz-btn--primary" aria-label="Get started with BzMarquee documentation">
+                <a href="/docs/marquee" class="bz-btn bz-btn--primary">
                     @Icons.Lightning
                     Get Started
                 </a>
-                <a href="https://github.com/Blazzy-Motion/BlazzyMotion" target="_blank" rel="noopener noreferrer" class="bz-btn bz-btn--secondary" aria-label="Star BlazzyMotion on GitHub">
+                <a href="https://github.com/Blazzy-Motion/BlazzyMotion" target="_blank" rel="noopener noreferrer" class="bz-btn bz-btn--secondary">
                     @Icons.GitHub
                     Star on GitHub
                 </a>
@@ -47,12 +48,12 @@
             <div class="bzg-demo-controls__row bzg-demo-controls__row--primary">
                 <div class="bzg-demo-control">
                     <label id="direction-label">Direction</label>
-                    <div class="bzg-demo-pills" role="radiogroup" aria-labelledby="direction-label">
+                    <div class="bzg-demo-pills" role="group" aria-labelledby="direction-label">
                         <button class="bzg-demo-pill @(_direction == BzDirection.Left ? "active" : "")"
-                                role="radio" aria-checked="@(_direction == BzDirection.Left)"
+                                aria-pressed="@((_direction == BzDirection.Left).ToString().ToLowerInvariant())"
                                 @onclick="@(() => _direction = BzDirection.Left)">Left</button>
                         <button class="bzg-demo-pill @(_direction == BzDirection.Right ? "active" : "")"
-                                role="radio" aria-checked="@(_direction == BzDirection.Right)"
+                                aria-pressed="@((_direction == BzDirection.Right).ToString().ToLowerInvariant())"
                                 @onclick="@(() => _direction = BzDirection.Right)">Right</button>
                     </div>
                 </div>
@@ -82,36 +83,36 @@
             <div class="bzg-demo-controls__row bzg-demo-controls__row--secondary">
                 <div class="bzg-demo-control">
                     <label id="pause-label">Pause on Hover</label>
-                    <div class="bzg-demo-pills" role="radiogroup" aria-labelledby="pause-label">
+                    <div class="bzg-demo-pills" role="group" aria-labelledby="pause-label">
                         <button class="bzg-demo-pill @(_pauseOnHover ? "active" : "")"
-                                role="radio" aria-checked="@(_pauseOnHover)"
+                                aria-pressed="@((_pauseOnHover).ToString().ToLowerInvariant())"
                                 @onclick="@(() => _pauseOnHover = true)">On</button>
                         <button class="bzg-demo-pill @(!_pauseOnHover ? "active" : "")"
-                                role="radio" aria-checked="@(!_pauseOnHover)"
+                                aria-pressed="@((!_pauseOnHover).ToString().ToLowerInvariant())"
                                 @onclick="@(() => _pauseOnHover = false)">Off</button>
                     </div>
                 </div>
 
                 <div class="bzg-demo-control">
                     <label id="gradient-label">Gradients</label>
-                    <div class="bzg-demo-pills" role="radiogroup" aria-labelledby="gradient-label">
+                    <div class="bzg-demo-pills" role="group" aria-labelledby="gradient-label">
                         <button class="bzg-demo-pill @(_showGradients ? "active" : "")"
-                                role="radio" aria-checked="@(_showGradients)"
+                                aria-pressed="@((_showGradients).ToString().ToLowerInvariant())"
                                 @onclick="@(() => _showGradients = true)">On</button>
                         <button class="bzg-demo-pill @(!_showGradients ? "active" : "")"
-                                role="radio" aria-checked="@(!_showGradients)"
+                                aria-pressed="@((!_showGradients).ToString().ToLowerInvariant())"
                                 @onclick="@(() => _showGradients = false)">Off</button>
                     </div>
                 </div>
 
                 <div class="bzg-demo-control">
                     <label id="fullwidth-label">Full Width</label>
-                    <div class="bzg-demo-pills" role="radiogroup" aria-labelledby="fullwidth-label">
+                    <div class="bzg-demo-pills" role="group" aria-labelledby="fullwidth-label">
                         <button class="bzg-demo-pill @(_fullWidth ? "active" : "")"
-                                role="radio" aria-checked="@(_fullWidth)"
+                                aria-pressed="@((_fullWidth).ToString().ToLowerInvariant())"
                                 @onclick="@(() => _fullWidth = true)">On</button>
                         <button class="bzg-demo-pill @(!_fullWidth ? "active" : "")"
-                                role="radio" aria-checked="@(!_fullWidth)"
+                                aria-pressed="@((!_fullWidth).ToString().ToLowerInvariant())"
                                 @onclick="@(() => _fullWidth = false)">Off</button>
                     </div>
                 </div>
@@ -125,12 +126,12 @@
 
                 <div class="bzg-demo-control">
                     <label id="stagger-label">Stagger Entrance</label>
-                    <div class="bzg-demo-pills" role="radiogroup" aria-labelledby="stagger-label">
+                    <div class="bzg-demo-pills" role="group" aria-labelledby="stagger-label">
                         <button class="bzg-demo-pill @(_staggerEntrance ? "active" : "")"
-                                role="radio" aria-checked="@(_staggerEntrance)"
+                                aria-pressed="@((_staggerEntrance).ToString().ToLowerInvariant())"
                                 @onclick="@(() => _staggerEntrance = true)">On</button>
                         <button class="bzg-demo-pill @(!_staggerEntrance ? "active" : "")"
-                                role="radio" aria-checked="@(!_staggerEntrance)"
+                                aria-pressed="@((!_staggerEntrance).ToString().ToLowerInvariant())"
                                 @onclick="@(() => _staggerEntrance = false)">Off</button>
                     </div>
                 </div>

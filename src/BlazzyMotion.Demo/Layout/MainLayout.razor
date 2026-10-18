@@ -1,48 +1,53 @@
-﻿@inherits LayoutComponentBase
+@inherits LayoutComponentBase
+@implements IAsyncDisposable
+@inject IJSRuntime JS
+@using BlazzyMotion.Demo.Components
 
-<!-- Mobile Menu Toggle Button -->
-<button class="bz-mobile-toggle" @onclick="ToggleSidebar" aria-label="Toggle navigation menu">
-    <svg xmlns="http://www.w3.org/2000/svg" width="24" height="24" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2" stroke-linecap="round" stroke-linejoin="round">
-        @if (_sidebarOpen)
-        {
-            <line x1="18" y1="6" x2="6" y2="18"></line>
-            <line x1="6" y1="6" x2="18" y2="18"></line>
-        }
-        else
-        {
-            <line x1="3" y1="12" x2="21" y2="12"></line>
-            <line x1="3" y1="6" x2="21" y2="6"></line>
-            <line x1="3" y1="18" x2="21" y2="18"></line>
-        }
-    </svg>
+<SiteHeader />
+<button class="bz-mobile-toggle" @onclick="OpenSidebarAsync" aria-label="On this site: open documentation navigation" aria-expanded="@_sidebarOpen.ToString().ToLowerInvariant()" aria-controls="docs-dialog">
+    <span aria-hidden="true">☰</span> <span>On this site</span>
 </button>
-
-<!-- Mobile Overlay -->
-@if (_sidebarOpen)
-{
-    <div class="bz-sidebar-overlay" @onclick="CloseSidebar"></div>
-}
-
-<!-- Sidebar Navigation -->
-<NavMenu IsOpen="_sidebarOpen" OnLinkClick="CloseSidebar" />
-
-<!-- Main Content Area -->
-<main class="bz-main">
-    <div class="bz-main__content">
-        @Body
-    </div>
+<div class="docs-desktop"><NavMenu OnLinkClick="CloseSidebarAsync" /></div>
+<dialog id="docs-dialog" class="docs-dialog" @ref="_dialog" @oncancel="CloseSidebarAsync" aria-label="Documentation navigation">
+    <NavMenu NavigationId="mobile-docs-navigation" IsOpen="true" OnLinkClick="CloseSidebarAsync" />
+</dialog>
+<main id="main-content" tabindex="-1" class="bz-main">
+    <div class="bz-main__content">@Body</div>
+    <SiteFooter />
 </main>
 
 @code {
-    private bool _sidebarOpen = false;
+    private bool _sidebarOpen;
+    private ElementReference _dialog;
+    private IJSObjectReference? _navigation;
 
-    private void ToggleSidebar()
+    /// <summary>Opens the native modal navigation, containing keyboard focus until it closes.</summary>
+    /// <returns>A task representing module loading and opening the navigation.</returns>
+    private async Task OpenSidebarAsync()
     {
-        _sidebarOpen = !_sidebarOpen;
+        _navigation ??= await JS.InvokeAsync<IJSObjectReference>("import", "./js/site-navigation.js");
+        await _navigation.InvokeVoidAsync("openNavigation", _dialog);
+        _sidebarOpen = true;
     }
 
-    private void CloseSidebar()
+    /// <summary>Closes mobile navigation and restores the browser-managed invoking focus.</summary>
+    /// <returns>A task representing closing the navigation.</returns>
+    private async Task CloseSidebarAsync()
     {
+        if (_navigation is not null)
+        {
+            await _navigation.InvokeVoidAsync("closeNavigation", _dialog);
+        }
         _sidebarOpen = false;
+    }
+
+    /// <summary>Releases the Demo navigation module when the layout is removed.</summary>
+    /// <returns>A task representing module disposal.</returns>
+    public async ValueTask DisposeAsync()
+    {
+        if (_navigation is not null)
+        {
+            await _navigation.DisposeAsync();
+        }
     }
 }

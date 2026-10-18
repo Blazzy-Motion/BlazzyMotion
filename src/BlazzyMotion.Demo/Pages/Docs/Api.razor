@@ -78,14 +78,14 @@
     <p>Marks a property as the image source for carousel items. The Source Generator creates a default template using this
       property.</p>
 
-    <h4 class="bz-mt-2">Requirements</h4>
+    <h3 class="bz-mt-2">Requirements</h3>
     <ul class="bz-list">
       <li>Property must be <code>public</code></li>
       <li>Property must be of type <code>string</code></li>
       <li>Only one property per class should have this attribute</li>
     </ul>
 
-    <h4 class="bz-mt-2">Usage</h4>
+    <h3 class="bz-mt-2">Usage</h3>
     <CodeBlock Language="csharp" Code="@_bzImageExample" />
   </ChildContent>
 </DocSection>
@@ -124,11 +124,11 @@
   <ChildContent>
     <p>The Source Generator provides compile-time validation with helpful error messages.</p>
 
-    <h4 class="bz-mt-2">BZC001: Non-Public Property</h4>
+    <h3 class="bz-mt-2">BZC001: Non-Public Property</h3>
     <CodeBlock Language="text" Code="Error BZC001: Property 'ImageUrl' with [BzImage] attribute must be public" />
     <p><strong>Fix:</strong> Change property accessibility to <code>public</code>.</p>
 
-    <h4 class="bz-mt-2">BZC002: Non-String Property</h4>
+    <h3 class="bz-mt-2">BZC002: Non-String Property</h3>
     <CodeBlock Language="text"
       Code="Error BZC002: Property 'ImageData' with [BzImage] attribute must be of type 'string'" />
     <p><strong>Fix:</strong> Ensure the property is of type <code>string</code> (URL or path).</p>
