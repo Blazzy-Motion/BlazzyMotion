@@ -3,7 +3,7 @@
 @using BlazzyMotion.Demo.Models
 @using BlazzyMotion.Demo.Icons
 
-<aside id="docs-navigation" class="bz-sidebar @(IsOpen ? "bz-sidebar--open" : "")">
+<aside id="@NavigationId" class="bz-sidebar @(IsOpen ? "bz-sidebar--open" : "")">
 
     <header class="bz-sidebar__header">
         <button class="bz-sidebar__close" @onclick="HandleLinkClick" aria-label="Close menu">
@@ -137,6 +137,10 @@
 </aside>
 
 @code {
+    /// <summary>Gets or sets the unique navigation container identifier.</summary>
+    [Parameter]
+    public string NavigationId { get; set; } = "docs-navigation";
+
     [Parameter]
     public bool IsOpen { get; set; }
 

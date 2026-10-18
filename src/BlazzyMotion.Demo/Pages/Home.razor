@@ -11,6 +11,7 @@
 <PageTitle>BlazzyMotion - Beautiful Blazor UI Components</PageTitle>
 
 <div class="bz-home">
+    <ComponentLinks ComponentId="carousel" />
 
     <section class="bz-hero">
         <div class="bz-hero__content">
@@ -64,6 +65,7 @@
         <BzThemePicker @bind-CurrentTheme="_currentTheme" />
 
       
+        <DemoSurface>
         <div class="bz-demo__stage">
             <BzCarousel TItem="Movie"
                         Items="@_movies"
@@ -72,6 +74,8 @@
         </div>
 
       
+        </DemoSurface>
+
         @if (_selectedMovie != null)
         {
             <h4 class="bz-selected-title">@_selectedMovie.Title</h4>

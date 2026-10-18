@@ -110,3 +110,35 @@ body .bz-sidebar .bz-sidebar__link.active { background: #2b2636; color: #e1d7fa;
 body .bz-sidebar .bz-sidebar__link.active::before { background: #b3a0f4; }
 body .bz-sidebar { height: calc(100dvh - 76px); }
 @media (max-width: 768px) { body .bz-sidebar { height: calc(100dvh - 104px); } }
+
+/* Keep the documentation rail independent from page scrolling and mobile zoom. */
+#docs-navigation { top: 76px; bottom: 0; height: auto; width: 248px; background: #16171a; border-right: 1px solid #303136; transform: none; }
+body .bz-main { margin-left: 248px; }
+body .bz-main__content { min-width: 0; }
+body .bz-mobile-toggle { display: none; }
+.docs-dialog { margin: 0; padding: 0; border: 1px solid #3b3c43; background: #16171a; color: #f4f4f5; max-width: min(360px, 90vw); width: 360px; height: 100dvh; max-height: 100dvh; }
+.docs-dialog::backdrop { background: rgb(0 0 0 / 65%); }
+.docs-dialog .bz-sidebar { position: static; width: 100%; max-width: none; height: 100%; transform: none; background: #16171a; }
+.docs-dialog .bz-sidebar__close { display: flex; }
+body :is(.bz-demo, .bzb-presentation, .component-directory, .bz-doc-section, h1, h2, h3) { scroll-margin-top: 16px; }
+body .bz-demo { padding-top: 24px; padding-bottom: 24px; }
+body .bz-demo__stage { padding-top: 12px; padding-bottom: 12px; }
+body .bz-selected-title { margin-top: 16px; }
+body .bz-sidebar__nav { scrollbar-width: thin; }
+@media (max-width: 1024px) {
+    .docs-desktop { display: none; }
+    body .bz-main { margin-left: 0; padding-top: 72px; }
+    body .bz-mobile-toggle { display: flex; gap: 8px; align-items: center; width: auto; height: auto; padding: 10px 14px; font: inherit; font-size: 13px; z-index: 900; }
+}
+.component-links { display: flex; flex-wrap: wrap; justify-content: center; gap: 24px; padding: 18px 20px 0; }
+.component-links a { font-size: 13px; color: #b7b8c0; text-underline-offset: 5px; }
+.component-links a:hover { color: #f4f4f5; }
+.demo-surface-controls { max-width: 1000px; margin: 0 auto 12px; text-align: right; }
+.demo-surface-controls label { display: inline-flex; align-items: center; gap: 10px; color: #b7b8c0; font-size: 12px; }
+.demo-surface-controls select { font: inherit; color: #e4e4e7; background: #191a1e; border: 1px solid #45464e; border-radius: 6px; padding: 8px 12px; }
+.demo-surface { max-width: 1000px; margin: auto; border-radius: 16px; }
+.demo-surface[data-preview-background="dark"] { background: #16171b; }
+.demo-surface[data-preview-background="light"] { background: #eceef1; }
+.demo-surface[data-preview-background="tinted"] { background: radial-gradient(ellipse at 20% 30%, #716a88, transparent 65%), linear-gradient(130deg, #343b46, #1a2329); }
+.component-api-anchor { scroll-margin-top: 16px; }
+body:has(.docs-dialog[open]) { overflow: hidden; }

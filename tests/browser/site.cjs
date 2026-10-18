@@ -39,8 +39,55 @@ async function inspectSite(browser, width) {
   } finally { await page.close(); }
 }
 
+/** Exercise the responsive documentation rail, modal keyboard focus and independent preview surface. */
+async function inspectDocumentationNavigation(browser, width) {
+  const page = await browser.newPage({ viewport: { width, height: 900 } });
+  try {
+    await page.goto(baseURL + '/docs/bento');
+    await page.locator('.site-header').waitFor();
+    await page.waitForFunction(() => !document.querySelector('#splash') || document.querySelector('#splash').classList.contains('bz-splash--hidden'));
+    const trigger = page.getByRole('button', { name: 'Open documentation navigation' });
+    if (width <= 1024) {
+      await trigger.click();
+      const dialog = page.getByRole('dialog', { name: 'Documentation navigation' });
+      await dialog.waitFor();
+      assert.equal(await trigger.getAttribute('aria-expanded'), 'true');
+      for (let index = 0; index < 24; index++) {
+        await page.keyboard.press('Tab');
+        // Native dialogs may move focus into browser chrome; background page controls must remain inert.
+        assert(await dialog.evaluate(element => document.activeElement === document.body || element.contains(document.activeElement)), 'Modal excludes background controls');
+      }
+      await page.locator('.site-brand').evaluate(element => element.focus());
+      assert.equal(await page.locator('.site-brand').evaluate(element => document.activeElement === element), false, 'Background links cannot receive focus while modal is open');
+      await page.keyboard.press('Escape');
+      await dialog.waitFor({ state: 'hidden' });
+      await page.waitForFunction(() => document.activeElement?.getAttribute('aria-controls') === 'docs-dialog');
+      assert.equal(await trigger.getAttribute('aria-expanded'), 'false');
+      await trigger.click();
+      await dialog.getByRole('link', { name: 'Gallery Docs', exact: true }).click();
+      await page.waitForURL('**/docs/gallery');
+      await dialog.waitFor({ state: 'hidden' });
+    } else {
+      assert.equal(await trigger.isVisible(), false);
+      const rail = await page.locator('#docs-navigation').boundingBox();
+      const header = await page.locator('.site-header').boundingBox();
+      assert(rail && header && rail.y >= header.y + header.height - 1);
+      assert.equal(await page.locator('#docs-navigation').evaluate(element => getComputedStyle(element).backgroundColor), 'rgb(22, 23, 26)');
+    }
+    await page.goto(baseURL + '/carousel');
+    const surface = page.locator('.demo-surface');
+    await surface.locator('.bzc-visible').waitFor();
+    await surface.locator('.swiper-container').evaluate(element => { window.previewSwiper = element.swiper; });
+    await page.getByLabel('Preview background').selectOption('tinted');
+    assert.equal(await surface.getAttribute('data-preview-background'), 'tinted');
+    assert(await surface.locator('.swiper-container').evaluate(element => element.swiper === window.previewSwiper), 'Changing host background preserves the component instance');
+    assert.equal(await page.getByRole('navigation', { name: 'Component resources' }).getByRole('link', { name: 'API reference', exact: true }).getAttribute('href'), '/docs/carousel#component-api');
+    console.log(`PASS documentation ${width}px: responsive navigation, keyboard focus and independent host background`);
+  } finally { await page.close(); }
+}
+
 (async () => {
   const browser = await chromium.launch({ executablePath: process.env.CHROMIUM_PATH || undefined, headless: true, args: ['--no-sandbox'] });
-  try { await inspectSite(browser, 1440); await inspectSite(browser, 390); }
+  try { await inspectSite(browser, 1440); await inspectSite(browser, 390); await inspectDocumentationNavigation(browser, 390); await inspectDocumentationNavigation(browser, 980); await inspectDocumentationNavigation(browser, 1440); }
   finally { await browser.close(); }
 })().catch(error => { console.error(error); process.exit(1); });

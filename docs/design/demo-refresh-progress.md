@@ -33,7 +33,7 @@ PR #9: https://github.com/Blazzy-Motion/BlazzyMotion/pull/9. Use the PR checks f
 
 ## Remaining scope
 
-This pass refreshes presentation across all existing pages, rather than replacing documentation content. Independent site light mode, richer per-component playground controls, a documentation table of contents and a complete focus-trapped mobile documentation drawer remain follow-up work. Existing component theme controls and Gallery playground are preserved. No claim of complete site accessibility conformance or measured device FPS is made.
+This pass refreshes presentation across all existing pages, rather than replacing documentation content. Independent site light mode, richer per-component playground controls, a documentation table of contents remain follow-up work. The responsive native-modal documentation drawer has now been implemented and is being validated. Existing component theme controls and Gallery playground are preserved. No claim of complete site accessibility conformance or measured device FPS is made.
 
 ## Verified deployment checkpoint — 2026-10-18
 
@@ -44,3 +44,14 @@ Implementation commit `b776779` passed Azure deployment, the complete Quality wo
 - Preview URL reported by the successful Azure deployment: https://nice-sea-02b1e9803-9.westeurope.1.azurestaticapps.net
 
 Direct requests to the preview domain from this cloud instance are currently denied by its network policy (CONNECT 403). The current allowlist includes preview domains #6 and #7, but not #9. Production domain access succeeds. The preview address is verified from Azure's deployment annotation; live browser validation of this deployment remains pending network access. Local browser and route checks passed. Owner visual review remains required before merge. This checkpoint only changes this progress document.
+
+## Follow-up implementation — 2026-10-18
+
+- Replace the cramped documentation rail on widths up to 1024px with native modal navigation; preserve a 248px neutral rail on larger screens.
+- Support Escape, browser-managed focus restoration, inert background controls and scroll locking while the menu is open.
+- Add component-specific Demo / Documentation / API links and real API anchors on all four documentation pages.
+- Reduce Carousel section spacing and correct anchor offsets without changing component geometry.
+- Add an independent Page / Dark / Light / Tinted host background selector to the Carousel demo; preserve the running Swiper instance when changing it.
+- Release solution build and 1,110 tests passed. Existing component browser regressions and expanded navigation tests are running. Native dialogs may permit focus to browser chrome; tests must reject background page focus rather than reject normal browser behavior.
+
+No production merge or NuGet publication is authorized for this visual iteration.
