@@ -27,7 +27,7 @@
                 <h2 id="carousel-preview-title">Live preview</h2>
                 <span>Movie collection</span>
             </div>
-            <BzThemePicker @bind-CurrentTheme="_currentTheme" />
+            <div class="example-theme-controls"><BzThemePicker @bind-CurrentTheme="_currentTheme" /></div>
             <DemoSurface>
                 <div class="carousel-example__stage">
                     <BzCarousel TItem="Movie" Items="@_movies" Theme="@_currentTheme" OnItemSelected="@OnItemSelected" />

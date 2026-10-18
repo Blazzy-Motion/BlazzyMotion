@@ -42,3 +42,5 @@ is used in CI. Validate physical devices separately with Chrome remote debugging
 DevTools Performance recordings, including first load, fast swipes and theme changes.
 
 The Carousel example checks exercise `/carousel` at 320, 390 and 1440 px, including real clipboard permissions in an isolated browser context, four theme changes after keyboard navigation, selection/instance and preview-size preservation, keyboard opening/closing of the initially collapsed View code disclosure, model disclosure and expanded-content WCAG scans. The copied `CarouselDemo.razor` and `Movie.cs` are saved in `artifacts/` for optional standalone compilation.
+
+Shared example checks cover Bento, Gallery and Marquee at 320, 390 and 1440 px: centered theme controls, four synchronized themes, changed Gallery/Marquee settings, keyboard disclosure interaction, exact clipboard contents, expanded source-content WCAG scans, horizontal overflow and retention of the nested Bento Carousel instance and index. The seven copied snippets and their models are saved under `artifacts/examples/<width>/<example>/` for standalone consumer compilation.

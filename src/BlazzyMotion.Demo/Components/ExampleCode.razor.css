@@ -1,0 +1,12 @@
+.example-source { max-width: 1200px; margin: 24px auto 0; min-width: 0; border: 1px solid #303136; border-radius: 12px; background: #191a1e; text-align: left; }
+.example-source > summary { padding: 20px 24px; cursor: pointer; font-size: 15px; font-weight: 600; }
+summary:focus-visible { outline: 2px solid #d6c6ff; outline-offset: 4px; border-radius: 12px; }
+.example-source[open] > summary { border-bottom: 1px solid #303136; }
+.example-source__content { padding: 24px; min-width: 0; }
+h3 { margin: 10px 0; font-size: 22px; letter-spacing: -.025em; }
+p { color: #b7b8c0; font-size: 14px; line-height: 1.65; }
+.example-source__content ::deep .bz-code-block { min-width: 0; max-width: 100%; margin: 20px 0; }
+.example-source__content ::deep pre { max-height: 460px; overflow: auto; font-size: 12px; text-align: left; }
+.example-source__model summary { padding: 12px 0; cursor: pointer; font-size: 14px; color: #e1d7fa; }
+a { color: #e1d7fa; font-size: 14px; text-underline-offset: 4px; }
+@media (max-width: 768px) { .example-source__content { padding: 20px; } .example-source__content ::deep pre { max-height: 360px; } }

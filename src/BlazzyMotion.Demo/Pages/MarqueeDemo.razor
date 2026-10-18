@@ -8,41 +8,23 @@
 
 <PageTitle>BzMarquee Demo - BlazzyMotion</PageTitle>
 
-<div class="bz-home">
+<div class="bz-home demo-example">
     <ComponentLinks ComponentId="marquee" />
 
-    <section class="bz-hero" style="min-height: auto; padding: 60px 20px;">
-        <div class="bz-hero__content">
-            <h1 class="bz-hero__brand">BzMarquee</h1>
-            <h2 class="bz-hero__title">Infinite Scrolling Content</h2>
-            <p class="bz-hero__subtitle">
-                CSS-driven marquee with logo bars, testimonials and text tickers.
-            </p>
-            <BzInstallBox PackageName="BlazzyMotion.Marquee" />
-            <div class="bz-hero__actions">
-                <a href="/docs/marquee" class="bz-btn bz-btn--primary">
-                    @Icons.Lightning
-                    Get Started
-                </a>
-                <a href="https://github.com/Blazzy-Motion/BlazzyMotion" target="_blank" rel="noopener noreferrer" class="bz-btn bz-btn--secondary">
-                    @Icons.GitHub
-                    Star on GitHub
-                </a>
-            </div>
-        </div>
-    </section>
+    <ExampleHeader Title="Marquee" Description="Explore logo bars, testimonials and text tickers. Adjust the controls and copy the matching example."
+                   PackageName="BlazzyMotion.Marquee" Version="@BlazzyMotion.Demo.Services.AppVersions.Marquee" />
 
     @* ==================== LOGO BAR ==================== *@
     <section class="bzb-presentation" aria-labelledby="logo-heading">
 
         <span class="bzb-presentation__label">Logo Bar — Multi-Row</span>
 
-        <h3 id="logo-heading" class="bzb-presentation__title">Company Logo Marquee</h3>
+        <h2 id="logo-heading" class="bzb-presentation__title">Company Logo Marquee</h2>
         <p style="color: rgba(255,255,255,0.7); text-align: center; margin-bottom: 24px;">
             Controls affect all examples below — adjust in real-time
         </p>
 
-        <BzThemePicker @bind-CurrentTheme="_currentTheme" />
+        <div class="example-theme-controls"><BzThemePicker @bind-CurrentTheme="_currentTheme" /></div>
 
         <div class="bzg-demo-controls" role="group" aria-label="Marquee settings">
             <div class="bzg-demo-controls__row bzg-demo-controls__row--primary">
@@ -154,6 +136,8 @@
                        StaggerEntrance="@_staggerEntrance" />
         </div>
 
+        <ExampleCode ExampleId="marquee-logos" Code="@LogoCode" ModelCode="@LogoModelCode" DocumentationUrl="/docs/marquee" />
+
     </section>
 
     @* ==================== TESTIMONIALS ==================== *@
@@ -161,7 +145,7 @@
 
         <span class="bzb-presentation__label">Testimonials</span>
 
-        <h3 id="testimonial-heading" class="bzb-presentation__title">Customer Reviews Marquee</h3>
+        <h2 id="testimonial-heading" class="bzb-presentation__title">Customer Reviews Marquee</h2>
         <p style="color: rgba(255,255,255,0.7); text-align: center; margin-bottom: 30px;">
             Auto-detects name + description as testimonial cards — hover to lift
         </p>
@@ -179,6 +163,8 @@
                        StaggerEntrance="@_staggerEntrance" />
         </div>
 
+        <ExampleCode ExampleId="marquee-testimonials" Code="@TestimonialCode" ModelCode="@TestimonialModelCode" DocumentationUrl="/docs/marquee" />
+
     </section>
 
     @* ==================== TEXT TICKER ==================== *@
@@ -186,7 +172,7 @@
 
         <span class="bzb-presentation__label">Text Ticker</span>
 
-        <h3 id="ticker-heading" class="bzb-presentation__title">Breaking News Ticker</h3>
+        <h2 id="ticker-heading" class="bzb-presentation__title">Breaking News Ticker</h2>
         <p style="color: rgba(255,255,255,0.7); text-align: center; margin-bottom: 30px;">
             Simple text mode with just the Text parameter — no Items needed
         </p>
@@ -203,6 +189,8 @@
                        FullWidth="@_fullWidth"
                        StaggerEntrance="@_staggerEntrance" />
         </div>
+
+        <ExampleCode ExampleId="marquee-ticker" Code="@TickerCode" DocumentationUrl="/docs/marquee" />
 
     </section>
 

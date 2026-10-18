@@ -1,0 +1,23 @@
+@using BlazzyMotion.Demo.Services
+<header class="example-header">
+    <div>
+        <span class="site-eyebrow">Interactive example</span>
+        <h1>@Title</h1>
+        <p>@Description</p>
+    </div>
+    <div class="example-header__installation">
+        <span class="example-header__version">@(AppVersions.IsPrerelease(Version) ? "Preview" : "Stable") @Version</span>
+        <BzInstallBox PackageName="@PackageName" />
+    </div>
+</header>
+
+@code {
+    /// <summary>Gets or sets the component name displayed as the page heading.</summary>
+    [Parameter, EditorRequired] public string Title { get; set; } = "";
+    /// <summary>Gets or sets the explanation of the live examples.</summary>
+    [Parameter, EditorRequired] public string Description { get; set; } = "";
+    /// <summary>Gets or sets the package identifier used by the installation command.</summary>
+    [Parameter, EditorRequired] public string PackageName { get; set; } = "";
+    /// <summary>Gets or sets the package version embedded in this Demo build.</summary>
+    [Parameter, EditorRequired] public string Version { get; set; } = "";
+}

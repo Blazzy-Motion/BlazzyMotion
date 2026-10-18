@@ -1,0 +1,29 @@
+<details class="example-source" data-example="@ExampleId">
+    <summary>View code</summary>
+    <div class="example-source__content">
+        <span class="site-eyebrow">Use this example</span>
+        <h3>Razor example</h3>
+        <p>The code follows the current controls. Copy it into a Razor component@(string.IsNullOrEmpty(ModelCode) ? "." : ", then add the model below.")</p>
+        <div class="example-source__component"><CodeBlock Language="Example.razor" Code="@Code" /></div>
+        @if (!string.IsNullOrEmpty(ModelCode))
+        {
+            <details class="example-source__model">
+                <summary>Model attributes</summary>
+                <CodeBlock Language="Models.cs" Code="@ModelCode" />
+            </details>
+        }
+        <p>Sample artwork uses public Demo URLs. Replace it with your own assets. Presentation-only Demo icons are omitted.</p>
+        <a href="@DocumentationUrl">Setup and API documentation →</a>
+    </div>
+</details>
+
+@code {
+    /// <summary>Gets or sets a stable identifier for this live example.</summary>
+    [Parameter, EditorRequired] public string ExampleId { get; set; } = "";
+    /// <summary>Gets or sets the complete Razor example matching the current controls.</summary>
+    [Parameter, EditorRequired] public string Code { get; set; } = "";
+    /// <summary>Gets or sets the optional attribute-based models used by the example.</summary>
+    [Parameter] public string? ModelCode { get; set; }
+    /// <summary>Gets or sets the documentation route for the component.</summary>
+    [Parameter, EditorRequired] public string DocumentationUrl { get; set; } = "";
+}

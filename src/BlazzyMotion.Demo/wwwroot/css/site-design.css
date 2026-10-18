@@ -153,3 +153,12 @@ body:has(.docs-dialog[open]) { overflow: hidden; }
 /* Version-pinned commands remain readable on narrow screens. */
 body .bz-install-box__command { min-width: 0; white-space: normal; overflow-wrap: anywhere; }
 body .bz-install-box__copy { flex-shrink: 0; }
+
+/* Shared Demo example layout; component package styles remain independent. */
+.example-theme-controls { display: flex; justify-content: center; min-width: 0; }
+.example-theme-controls .bz-theme-pills { margin-inline: 0; }
+.demo-example { padding-inline: 24px; }
+body .demo-example .bzb-presentation { max-width: 1232px; margin-inline: auto; padding: 32px 0; }
+.demo-example .bzb-presentation__stage { text-align: left; }
+.carousel-example .demo-surface-controls { text-align: center; }
+@media (max-width: 768px) { .demo-example { padding-inline: 18px; } }

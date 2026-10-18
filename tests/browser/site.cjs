@@ -236,6 +236,8 @@ async function inspectCarouselCodeExample(browser) {
     try {
       await page.goto(baseURL + '/carousel');
       await page.locator('#splash').waitFor({ state: 'hidden' });
+      const themeBounds = await page.getByRole('group', { name: 'Component theme', exact: true }).boundingBox();
+      assert(themeBounds && Math.abs(themeBounds.x + themeBounds.width / 2 - width / 2) <= 2, `Centered Carousel themes at ${width}px`);
       const preview = page.getByRole('region', { name: 'Live preview', exact: true });
       const swiper = preview.locator('.swiper-initialized');
       await swiper.waitFor();
@@ -287,8 +289,85 @@ async function inspectCarouselCodeExample(browser) {
   }
 }
 
+/** Verify every Demo example exposes usable code without replacing its live component. */
+async function inspectAllComponentExamples(browser) {
+  const examples = { bento: ['bento-items', 'bento-dashboard', 'bento-composition'], gallery: ['gallery-layout'], marquee: ['marquee-logos', 'marquee-testimonials', 'marquee-ticker'] };
+  for (const width of [320, 390, 1440]) {
+    const context = await browser.newContext({ viewport: { width, height: 960 }, permissions: ['clipboard-read', 'clipboard-write'] });
+    const page = await context.newPage();
+    try {
+      for (const [route, ids] of Object.entries(examples)) {
+        await page.goto(baseURL + '/' + route);
+        await page.locator('#splash').waitFor({ state: 'hidden' });
+        const themes = page.getByRole('group', { name: 'Component theme', exact: true });
+        const bounds = await themes.boundingBox();
+        assert(bounds && Math.abs(bounds.x + bounds.width / 2 - width / 2) <= 2, `Centered ${route} themes at ${width}px`);
+        for (const theme of ['Dark', 'Light', 'Minimal', 'Glass']) {
+          await themes.getByRole('button', { name: theme, exact: true }).click();
+          await page.waitForFunction(({ ids, theme }) => ids.every(id => document.querySelector(`[data-example="${id}"] .example-source__component code`).textContent.includes(`BzTheme.${theme}`)), { ids, theme });
+        }
+        if (route === 'gallery') {
+          const layout = width >= 768 ? 'Masonry' : 'List';
+          await page.getByRole('button', { name: layout, exact: true }).click();
+          await page.getByRole('slider', { name: /^Gap:/ }).focus();
+          await page.keyboard.press('ArrowRight');
+          await page.waitForFunction(() => document.querySelector('.example-source__component code').textContent.includes('Gap="20"'));
+          assert((await page.locator('.example-source__component code').textContent()).includes(`BzGalleryLayout.${layout}`));
+        }
+        if (route === 'marquee') {
+          await page.getByRole('group', { name: 'Direction', exact: true }).getByRole('button', { name: 'Right', exact: true }).click();
+          await page.getByRole('slider', { name: /^Speed Var:/ }).focus();
+          await page.keyboard.press('ArrowRight');
+          await page.waitForFunction(() => document.querySelector('[data-example="marquee-logos"] code').textContent.includes('SpeedVariation="0.1"'));
+          for (const id of ids) assert((await page.locator(`[data-example="${id}"] .example-source__component code`).textContent()).includes('BzDirection.Right'));
+        }
+        if (route === 'bento') {
+          const swiper = page.locator('.swiper-initialized');
+          await swiper.waitFor();
+          await swiper.evaluate(element => { window.examplesSwiper = element.swiper; });
+          await page.locator('.bzc-carousel-box').focus();
+          await page.keyboard.press('ArrowRight');
+          await page.waitForFunction(() => window.examplesSwiper.realIndex === 1);
+        }
+        for (const id of ids) {
+          const source = page.locator(`[data-example="${id}"]`);
+          const code = source.locator('.example-source__component code');
+          assert(!await code.isVisible(), `${id} starts collapsed`);
+          const summary = source.locator(':scope > summary');
+          await summary.focus();
+          await page.keyboard.press('Enter');
+          await code.waitFor();
+          const displayed = await code.textContent();
+          await source.locator('.example-source__component').getByRole('button', { name: 'Copy', exact: true }).click();
+          await page.waitForFunction(expected => navigator.clipboard.readText().then(actual => actual === expected), displayed);
+          const modelDisclosure = source.locator('.example-source__model');
+          let model = '';
+          if (await modelDisclosure.count()) {
+            await modelDisclosure.locator('summary').click();
+            model = await modelDisclosure.locator('code').textContent();
+            assert(model.includes('[BzTitle]') && model.includes('[BzImage]'));
+          }
+          const directory = path.join(__dirname, 'artifacts', 'examples', String(width), id);
+          fs.mkdirSync(directory, { recursive: true });
+          fs.writeFileSync(path.join(directory, 'Example.razor'), displayed);
+          if (model) fs.writeFileSync(path.join(directory, 'Models.cs'), model);
+          const audit = await new AxeBuilder({ page }).include(`[data-example="${id}"]`).withTags(['wcag2a', 'wcag2aa', 'wcag21a', 'wcag21aa', 'wcag22aa']).analyze();
+          assert.deepEqual(audit.violations.map(violation => violation.id), [], `Expanded ${id} source accessibility at ${width}px`);
+          assert(await page.evaluate(() => document.documentElement.scrollWidth <= innerWidth + 1), `${id} fits the viewport`);
+          await summary.focus();
+          await page.keyboard.press('Enter');
+          assert(!await code.isVisible());
+          assert(await summary.evaluate(element => document.activeElement === element));
+        }
+        if (route === 'bento') assert(await page.locator('.swiper-initialized').evaluate(element => element.swiper === window.examplesSwiper && element.swiper.realIndex === 1), 'Bento disclosures preserve the nested Carousel instance and selection');
+        console.log(`PASS ${route} examples ${width}px: centered themes, synchronized settings, exact clipboard, keyboard disclosure and WCAG checks`);
+      }
+    } finally { await context.close(); }
+  }
+}
+
 (async () => {
   const browser = await chromium.launch({ executablePath: process.env.CHROMIUM_PATH || undefined, headless: true, args: ['--no-sandbox'] });
-  try { await inspectSite(browser, 1440); await inspectSite(browser, 390); await inspectDocumentationNavigation(browser, 390); await inspectDocumentationNavigation(browser, 980); await inspectDocumentationNavigation(browser, 1440); await inspectDemoControls(browser); await inspectVersionMetadata(browser); await inspectTouchNavigation(browser); await inspectDocumentTouchScrolling(browser); await inspectCarouselCodeExample(browser); }
+  try { await inspectSite(browser, 1440); await inspectSite(browser, 390); await inspectDocumentationNavigation(browser, 390); await inspectDocumentationNavigation(browser, 980); await inspectDocumentationNavigation(browser, 1440); await inspectDemoControls(browser); await inspectVersionMetadata(browser); await inspectTouchNavigation(browser); await inspectDocumentTouchScrolling(browser); await inspectCarouselCodeExample(browser); await inspectAllComponentExamples(browser); }
   finally { await browser.close(); }
 })().catch(error => { console.error(error); process.exit(1); });
