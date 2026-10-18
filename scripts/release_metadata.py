@@ -48,26 +48,33 @@ def resolve_versions(versions, environment):
     return {f"{component.upper()}_VERSION": version for component, version in versions.items()}
 
 
+def confirm_component_visible(component, version, attempts, delay, opener, sleep):
+    """Confirm one exact NuGet manifest, retrying only indexing or transient transport failures."""
+    package = f"BlazzyMotion.{component}".lower()
+    version = version.lower()
+    url = f"https://api.nuget.org/v3-flatcontainer/{package}/{version}/{package}.nuspec"
+    for attempt in range(attempts):
+        try:
+            with opener(url, timeout=20) as response:
+                metadata = ET.fromstring(response.read(1024 * 1024)).find("{*}metadata")
+            if metadata is None or metadata.findtext("{*}id", "").lower() != package or metadata.findtext("{*}version", "").lower() != version:
+                raise ValueError(f"Unexpected NuGet manifest for {package} {version}")
+            print(f"Available on NuGet: {package} {version}")
+            return
+        except (HTTPError, URLError) as error:
+            if isinstance(error, HTTPError) and error.code not in (404, 408, 429) and error.code < 500:
+                raise
+            if attempt + 1 == attempts:
+                raise RuntimeError(f"NuGet availability not confirmed: {package} {version}") from error
+            sleep(delay)
+
+
 def confirm_visible(versions, selected, attempts=30, delay=10, opener=urlopen, sleep=time.sleep):
     """Wait for selected versions on official NuGet endpoints; fail closed on invalid manifests or timeout."""
+    if attempts < 1:
+        raise ValueError("At least one NuGet availability attempt is required")
     for component in selected:
-        package = f"BlazzyMotion.{component}".lower()
-        version = versions[component].lower()
-        url = f"https://api.nuget.org/v3-flatcontainer/{package}/{version}/{package}.nuspec"
-        for attempt in range(attempts):
-            try:
-                with opener(url, timeout=20) as response:
-                    metadata = ET.fromstring(response.read(1024 * 1024)).find("{*}metadata")
-                if metadata is None or metadata.findtext("{*}id", "").lower() != package or metadata.findtext("{*}version", "").lower() != version:
-                    raise ValueError(f"Unexpected NuGet manifest for {package} {version}")
-                print(f"Available on NuGet: {package} {version}")
-                break
-            except (HTTPError, URLError) as error:
-                if isinstance(error, HTTPError) and error.code not in (404, 408, 429) and error.code < 500:
-                    raise
-                if attempt + 1 == attempts:
-                    raise RuntimeError(f"NuGet availability not confirmed: {package} {version}") from error
-                sleep(delay)
+        confirm_component_visible(component, versions[component], attempts, delay, opener, sleep)
 
 
 def main():

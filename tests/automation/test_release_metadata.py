@@ -91,6 +91,11 @@ class ReleaseMetadataTests(unittest.TestCase):
                 release.confirm_visible(self.versions, ["Carousel"], attempts=2, delay=1, opener=opener, sleep=sleep)
                 sleep.assert_called_once_with(1)
 
+    def test_disabled_availability_checks_are_rejected(self):
+        """A zero-attempt check must never report successful visibility."""
+        with self.assertRaises(ValueError):
+            release.confirm_visible(self.versions, ["Carousel"], attempts=0)
+
     def test_timeout_and_permanent_errors_fail_closed(self):
         """Do not refresh production when publication visibility cannot be established."""
         with patch.object(release, "urlopen", side_effect=URLError("offline")) as opener:
