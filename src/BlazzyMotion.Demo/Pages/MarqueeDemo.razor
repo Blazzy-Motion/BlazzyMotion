@@ -38,78 +38,81 @@
                                aria-valuemin="10" aria-valuemax="200" aria-valuenow="@_speed"
                                @bind="_speed" @bind:event="oninput" />
                     </div>
-
-                    <div class="bzg-demo-control">
-                        <label for="gap-range">Gap: @(_gap)px</label>
-                        <input id="gap-range" type="range" min="10" max="100" step="5"
-                               aria-valuemin="10" aria-valuemax="100" aria-valuenow="@_gap"
-                               @bind="_gap" @bind:event="oninput" />
-                    </div>
-
-                    <div class="bzg-demo-control">
-                        <label for="rows-range">Rows: @_rows</label>
-                        <input id="rows-range" type="range" min="1" max="4" step="1"
-                               aria-valuemin="1" aria-valuemax="4" aria-valuenow="@_rows"
-                               @bind="_rows" @bind:event="oninput" />
-                    </div>
                 </div>
+                <details class="playground-options">
+                    <summary>Advanced options</summary>
+                    <div class="playground-options__content">
+                        <div class="bzg-demo-controls__row bzg-demo-controls__row--secondary">
+                            <div class="bzg-demo-control">
+                                <label for="gap-range">Gap: @(_gap)px</label>
+                                <input id="gap-range" type="range" min="10" max="100" step="5"
+                                       aria-valuemin="10" aria-valuemax="100" aria-valuenow="@_gap"
+                                       @bind="_gap" @bind:event="oninput" />
+                            </div>
 
-                <div class="bzg-demo-controls__row bzg-demo-controls__row--secondary">
-                    <div class="bzg-demo-control">
-                        <label id="pause-label">Pause on Hover</label>
-                        <div class="bzg-demo-pills" role="group" aria-labelledby="pause-label">
-                            <button class="bzg-demo-pill @(_pauseOnHover ? "active" : "")"
-                                    aria-pressed="@((_pauseOnHover).ToString().ToLowerInvariant())"
-                                    @onclick="@(() => _pauseOnHover = true)">On</button>
-                            <button class="bzg-demo-pill @(!_pauseOnHover ? "active" : "")"
-                                    aria-pressed="@((!_pauseOnHover).ToString().ToLowerInvariant())"
-                                    @onclick="@(() => _pauseOnHover = false)">Off</button>
+                            <div class="bzg-demo-control">
+                                <label for="rows-range">Rows: @_rows</label>
+                                <input id="rows-range" type="range" min="1" max="4" step="1"
+                                       aria-valuemin="1" aria-valuemax="4" aria-valuenow="@_rows"
+                                       @bind="_rows" @bind:event="oninput" />
+                            </div>
+                            <div class="bzg-demo-control">
+                                <label id="pause-label">Pause on Hover</label>
+                                <div class="bzg-demo-pills" role="group" aria-labelledby="pause-label">
+                                    <button class="bzg-demo-pill @(_pauseOnHover ? "active" : "")"
+                                            aria-pressed="@((_pauseOnHover).ToString().ToLowerInvariant())"
+                                            @onclick="@(() => _pauseOnHover = true)">On</button>
+                                    <button class="bzg-demo-pill @(!_pauseOnHover ? "active" : "")"
+                                            aria-pressed="@((!_pauseOnHover).ToString().ToLowerInvariant())"
+                                            @onclick="@(() => _pauseOnHover = false)">Off</button>
+                                </div>
+                            </div>
+
+                            <div class="bzg-demo-control">
+                                <label id="gradient-label">Gradients</label>
+                                <div class="bzg-demo-pills" role="group" aria-labelledby="gradient-label">
+                                    <button class="bzg-demo-pill @(_showGradients ? "active" : "")"
+                                            aria-pressed="@((_showGradients).ToString().ToLowerInvariant())"
+                                            @onclick="@(() => _showGradients = true)">On</button>
+                                    <button class="bzg-demo-pill @(!_showGradients ? "active" : "")"
+                                            aria-pressed="@((!_showGradients).ToString().ToLowerInvariant())"
+                                            @onclick="@(() => _showGradients = false)">Off</button>
+                                </div>
+                            </div>
+
+                            <div class="bzg-demo-control">
+                                <label id="fullwidth-label">Full Width</label>
+                                <div class="bzg-demo-pills" role="group" aria-labelledby="fullwidth-label">
+                                    <button class="bzg-demo-pill @(_fullWidth ? "active" : "")"
+                                            aria-pressed="@((_fullWidth).ToString().ToLowerInvariant())"
+                                            @onclick="@(() => _fullWidth = true)">On</button>
+                                    <button class="bzg-demo-pill @(!_fullWidth ? "active" : "")"
+                                            aria-pressed="@((!_fullWidth).ToString().ToLowerInvariant())"
+                                            @onclick="@(() => _fullWidth = false)">Off</button>
+                                </div>
+                            </div>
+
+                            <div class="bzg-demo-control">
+                                <label for="variation-range">Speed Var: @(_speedVariation.ToString("F1"))</label>
+                                <input id="variation-range" type="range" min="0" max="0.5" step="0.1"
+                                       aria-valuemin="0" aria-valuemax="0.5" aria-valuenow="@_speedVariation"
+                                       @bind="_speedVariation" @bind:event="oninput" />
+                            </div>
+
+                            <div class="bzg-demo-control">
+                                <label id="stagger-label">Stagger Entrance</label>
+                                <div class="bzg-demo-pills" role="group" aria-labelledby="stagger-label">
+                                    <button class="bzg-demo-pill @(_staggerEntrance ? "active" : "")"
+                                            aria-pressed="@((_staggerEntrance).ToString().ToLowerInvariant())"
+                                            @onclick="@(() => _staggerEntrance = true)">On</button>
+                                    <button class="bzg-demo-pill @(!_staggerEntrance ? "active" : "")"
+                                            aria-pressed="@((!_staggerEntrance).ToString().ToLowerInvariant())"
+                                            @onclick="@(() => _staggerEntrance = false)">Off</button>
+                                </div>
+                            </div>
                         </div>
                     </div>
-
-                    <div class="bzg-demo-control">
-                        <label id="gradient-label">Gradients</label>
-                        <div class="bzg-demo-pills" role="group" aria-labelledby="gradient-label">
-                            <button class="bzg-demo-pill @(_showGradients ? "active" : "")"
-                                    aria-pressed="@((_showGradients).ToString().ToLowerInvariant())"
-                                    @onclick="@(() => _showGradients = true)">On</button>
-                            <button class="bzg-demo-pill @(!_showGradients ? "active" : "")"
-                                    aria-pressed="@((!_showGradients).ToString().ToLowerInvariant())"
-                                    @onclick="@(() => _showGradients = false)">Off</button>
-                        </div>
-                    </div>
-
-                    <div class="bzg-demo-control">
-                        <label id="fullwidth-label">Full Width</label>
-                        <div class="bzg-demo-pills" role="group" aria-labelledby="fullwidth-label">
-                            <button class="bzg-demo-pill @(_fullWidth ? "active" : "")"
-                                    aria-pressed="@((_fullWidth).ToString().ToLowerInvariant())"
-                                    @onclick="@(() => _fullWidth = true)">On</button>
-                            <button class="bzg-demo-pill @(!_fullWidth ? "active" : "")"
-                                    aria-pressed="@((!_fullWidth).ToString().ToLowerInvariant())"
-                                    @onclick="@(() => _fullWidth = false)">Off</button>
-                        </div>
-                    </div>
-
-                    <div class="bzg-demo-control">
-                        <label for="variation-range">Speed Var: @(_speedVariation.ToString("F1"))</label>
-                        <input id="variation-range" type="range" min="0" max="0.5" step="0.1"
-                               aria-valuemin="0" aria-valuemax="0.5" aria-valuenow="@_speedVariation"
-                               @bind="_speedVariation" @bind:event="oninput" />
-                    </div>
-
-                    <div class="bzg-demo-control">
-                        <label id="stagger-label">Stagger Entrance</label>
-                        <div class="bzg-demo-pills" role="group" aria-labelledby="stagger-label">
-                            <button class="bzg-demo-pill @(_staggerEntrance ? "active" : "")"
-                                    aria-pressed="@((_staggerEntrance).ToString().ToLowerInvariant())"
-                                    @onclick="@(() => _staggerEntrance = true)">On</button>
-                            <button class="bzg-demo-pill @(!_staggerEntrance ? "active" : "")"
-                                    aria-pressed="@((!_staggerEntrance).ToString().ToLowerInvariant())"
-                                    @onclick="@(() => _staggerEntrance = false)">Off</button>
-                        </div>
-                    </div>
-                </div>
+                </details>
             </div>
 
             <div class="bzb-presentation__stage">

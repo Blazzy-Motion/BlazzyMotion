@@ -6,9 +6,9 @@ button { display: inline-flex; align-items: center; justify-content: center; min
 .example-source__toggle { padding: 8px 16px; }
 button:hover, button.is-active { color: #f7f7f8; background: #2c2d34; border-color: #686973; }
 button:focus-visible, summary:focus-visible { outline: 2px solid #d6c6ff; outline-offset: 4px; }
-.example-source__description { margin: 12px 0 16px; }
-.example-source__preview { min-width: 0; padding-top: 20px; }
-.example-source__content { margin-top: 20px; padding: 24px; min-width: 0; border: 1px solid #303136; border-radius: 10px; background: #191a1e; }
+.example-source__description { margin: 8px 0 12px; }
+.example-source__preview { min-width: 0; padding-top: 12px; }
+.example-source__content { margin-top: 12px; padding: 24px; min-width: 0; border: 1px solid #303136; border-radius: 10px; background: #191a1e; }
 h3 { margin: 0 0 10px; font-size: 18px; letter-spacing: -.025em; }
 p { color: #b7b8c0; font-size: 14px; line-height: 1.6; }
 .example-source__content ::deep .bz-code-block { min-width: 0; max-width: 100%; margin: 16px 0; }

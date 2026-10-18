@@ -172,3 +172,22 @@ body .demo-example .bzb-presentation { padding: 20px 0; }
 .demo-example .bzg-demo-controls { padding: 16px; margin-bottom: 12px; border-radius: 10px; }
 :is(.demo-example, .carousel-example) .example-theme-controls .bz-theme-pills { margin-bottom: 16px; }
 @media (max-width: 768px) { :is(.demo-example, .carousel-example) .component-links { margin-top: 12px; gap: 22px; } body .demo-example .bzb-presentation { padding: 16px 0; } }
+
+/* Keep secondary settings available without delaying the live examples. */
+body .demo-example .bzb-presentation { padding: 12px 0; }
+.demo-example .bzb-presentation__stage { padding: 8px 0; }
+body .demo-example .bz-selected-title { margin: 8px 0 0; }
+.demo-example .bzg-demo-controls { gap: 12px; }
+.demo-example .bzg-demo-controls__row { gap: 14px; }
+.playground-options { margin-top: 0; border-top: 1px solid #34353c; text-align: left; }
+.playground-options > summary { padding: 12px 0 0; cursor: pointer; color: #c9c9d1; font-size: 13px; }
+.playground-options > summary:focus-visible { outline: 2px solid #d6c6ff; outline-offset: 4px; border-radius: 4px; }
+.playground-options__content { padding-top: 16px; }
+@media (max-width: 768px) { body .demo-example .bzb-presentation { padding: 10px 0; } .playground-options > summary { min-height: 44px; padding-top: 12px; } }
+
+.demo-example .bzg-demo-control label, .demo-example .playground-control-label { color: #b7b8c0; }
+.demo-example .bzg-demo-pill { color: #b7b8c0; }
+.demo-example .bzg-demo-pill.active { color: #f1ebff; background: #38303f; border-color: #71617f; }
+
+/* Conditional controls must stay hidden even when their normal layout uses flex. */
+.demo-example .bzg-demo-control[hidden] { display: none; }

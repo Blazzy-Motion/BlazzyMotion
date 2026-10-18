@@ -102,6 +102,8 @@ async function inspectDemoControls(browser) {
     await columns.focus();
     await page.keyboard.press(previous < 5 ? 'ArrowRight' : 'ArrowLeft');
     assert.notEqual(Number(await columns.inputValue()), previous);
+    await page.locator('.playground-options > summary').focus();
+    await page.keyboard.press('Enter');
     assert.equal(await page.getByRole('slider', { name: /^Gap:/ }).count(), 1);
     await page.goto(baseURL + '/marquee');
     const direction = page.getByRole('group', { name: 'Direction', exact: true });
@@ -254,6 +256,10 @@ async function inspectCarouselCodeExample(browser) {
       }
       assert(!await code.isVisible(), 'Code starts collapsed so the live preview remains the focus');
       const previewBefore = await preview.boundingBox();
+      const frame = await preview.locator('.bzc-carousel-box').boundingBox();
+      const toolbar = await page.locator('[data-example="carousel-movies"] .example-source__toolbar').boundingBox();
+      assert(frame && toolbar && Math.abs(frame.x - toolbar.x) < 1 && Math.abs(frame.width - toolbar.width) < 1, 'Carousel toolbar follows the original component edges');
+      if (width === 1440) { assert.equal(frame.width, 800); assert.equal(frame.height, 450); }
       const disclosure = page.locator('[data-example="carousel-movies"] .example-source__toggle');
       await disclosure.focus();
       await page.keyboard.press('Enter');
@@ -290,7 +296,8 @@ async function inspectCarouselCodeExample(browser) {
       assert((await model.textContent()).includes('namespace YourApp.Models;'));
       const before = await preview.boundingBox();
       const source = await page.getByRole('region', { name: 'Razor example', exact: true }).boundingBox();
-      assert(before && source && source.y > before.y + before.height - 1, 'Optional code remains below the full-width preview at every viewport');
+      assert(before && source && source.y > before.y + before.height - 1 && source.y - before.y - before.height <= 13, 'Source follows the live preview with a compact gap');
+      assert(Math.abs(source.x - frame.x) < 1 && Math.abs(source.width - frame.width) < 1, 'Carousel source follows the original component edges');
       assert(await page.evaluate(() => document.documentElement.scrollWidth <= innerWidth + 1), 'Long code stays inside its scroll region');
       const artifacts = path.join(__dirname, 'artifacts');
       fs.mkdirSync(artifacts, { recursive: true });
@@ -350,19 +357,41 @@ async function inspectAllComponentExamples(browser) {
           await page.waitForFunction(({ ids, theme }) => ids.every(id => document.querySelector(`[data-example="${id}"] .example-source__component code`).textContent.includes(`BzTheme.${theme}`)), { ids, theme });
         }
         if (route === 'gallery') {
+          assert(!await page.locator('#gallery-gap').isVisible(), 'Secondary Gallery settings start collapsed');
+          await page.locator('.playground-options > summary').focus();
+          await page.keyboard.press('Enter');
           const layout = width >= 768 ? 'Masonry' : 'List';
           await page.getByRole('button', { name: layout, exact: true }).click();
+          await page.waitForFunction(() => { const control = document.querySelector('.bzg-demo-control--aspect'); return control.hidden && getComputedStyle(control).display === 'none'; });
+          assert(!await page.locator('.bzg-demo-control--aspect').isVisible(), 'Non-Grid aspect controls are hidden instead of fading at low contrast');
           await page.getByRole('slider', { name: /^Gap:/ }).focus();
           await page.keyboard.press('ArrowRight');
           await page.waitForFunction(() => document.querySelector('.example-source__component code').textContent.includes('Gap="20"'));
           assert((await page.locator('.example-source__component code').textContent()).includes(`BzGalleryLayout.${layout}`));
         }
         if (route === 'marquee') {
+          assert(!await page.locator('#variation-range').isVisible(), 'Secondary Marquee settings start collapsed');
+          await page.locator('.playground-options > summary').focus();
+          await page.keyboard.press('Enter');
           await page.getByRole('group', { name: 'Direction', exact: true }).getByRole('button', { name: 'Right', exact: true }).click();
           await page.getByRole('slider', { name: /^Speed Var:/ }).focus();
           await page.keyboard.press('ArrowRight');
           await page.waitForFunction(() => document.querySelector('[data-example="marquee-logos"] code').textContent.includes('SpeedVariation="0.1"'));
           for (const id of ids) assert((await page.locator(`[data-example="${id}"] .example-source__component code`).textContent()).includes('BzDirection.Right'));
+        }
+        if (route === 'gallery' || route === 'marquee') {
+          const field = page.locator(route === 'gallery' ? '#gallery-gap' : '#variation-range');
+          const value = await field.inputValue();
+          const summary = page.locator('.playground-options > summary');
+          const audit = await new AxeBuilder({ page }).include('.bzg-demo-controls').withTags(['wcag2a', 'wcag2aa', 'wcag21a', 'wcag21aa', 'wcag22aa']).analyze();
+          assert.deepEqual(audit.violations.map(violation => ({ id: violation.id, nodes: violation.nodes.map(node => ({ target: node.target, reason: node.failureSummary })) })), [], `Expanded advanced controls accessibility: ${route}`);
+          await summary.focus();
+          await page.keyboard.press('Enter');
+          assert(!await field.isVisible());
+          await page.keyboard.press('Enter');
+          assert.equal(await field.inputValue(), value, 'Secondary settings survive closing and reopening options');
+          await page.keyboard.press('Enter');
+          assert(!await field.isVisible());
         }
         if (route === 'bento') {
           const root = page.locator('.bzc-carousel-box');

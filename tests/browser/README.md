@@ -46,3 +46,5 @@ The Carousel example checks exercise `/carousel` at 320, 390 and 1440 px, includ
 Shared example checks cover Bento, Gallery and Marquee at 320, 390 and 1440 px: centered theme controls, four synchronized themes, changed Gallery/Marquee settings, toolbar source interaction, exact clipboard contents, expanded source-content WCAG scans, horizontal overflow and retention of the nested Bento Carousel instance and index. The seven copied snippets and their models are saved under `artifacts/examples/<width>/<example>/` for standalone consumer compilation.
 
 Compact playground checks also verify local navigation beneath the component introduction, active Playground links, the first example toolbar position, copying while source is hidden, ARIA expanded/control relationships, persistent preview dimensions, clipboard denial/recovery and focus restoration through Close/Escape.
+
+Density checks verify Carousel toolbar/source alignment with the unchanged desktop 800 × 450 px frame, a compact preview/source gap, keyboard access to Advanced options, retained secondary settings after closing/reopening, and expanded-controls accessibility at 320, 390 and 1440 px.

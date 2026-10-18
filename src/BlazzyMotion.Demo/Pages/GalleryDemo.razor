@@ -12,7 +12,7 @@
                    PackageName="BlazzyMotion.Gallery" Version="@BlazzyMotion.Demo.Services.AppVersions.Gallery" />
 
     <section class="bzb-presentation">
-        <ExampleCode ExampleId="gallery-layout" Code="@GalleryCode" ModelCode="@PhotoModelCode" DocumentationUrl="/docs/gallery" Title="Gallery playground">
+        <ExampleCode ExampleId="gallery-layout" Code="@GalleryCode" ModelCode="@PhotoModelCode" DocumentationUrl="/docs/gallery" Title="Photo collection">
             <div class="example-theme-controls"><BzThemePicker @bind-CurrentTheme="_currentTheme" /></div>
 
             <div class="bzg-demo-controls">
@@ -36,56 +36,59 @@
                         <label for="gallery-columns">Columns: @_columns</label>
                         <input id="gallery-columns" type="range" min="1" max="5" @bind="_columns" @bind:event="oninput" />
                     </div>
-
-                    <div class="bzg-demo-control">
-                        <label for="gallery-gap">Gap: @(_gap)px</label>
-                        <input id="gallery-gap" type="range" min="4" max="32" step="4" @bind="_gap" @bind:event="oninput" />
-                    </div>
                 </div>
+                <details class="playground-options">
+                    <summary>Advanced options</summary>
+                    <div class="playground-options__content">
+                        <div class="bzg-demo-controls__row bzg-demo-controls__row--secondary">
+                            <div class="bzg-demo-control">
+                                <label for="gallery-gap">Gap: @(_gap)px</label>
+                                <input id="gallery-gap" type="range" min="4" max="32" step="4" @bind="_gap" @bind:event="oninput" />
+                            </div>
+                            <div class="bzg-demo-control bzg-demo-control--aspect @(_layout == BzGalleryLayout.Grid ? "bzg-demo-control--visible" : "bzg-demo-control--hidden")" hidden="@(_layout != BzGalleryLayout.Grid)">
+                                <span class="playground-control-label" id="gallery-aspect-label">Aspect Ratio</span>
+                                <div class="bzg-demo-pills" role="group" aria-labelledby="gallery-aspect-label">
+                                    <button class="bzg-demo-pill @(_aspectRatio == "1/1" ? "active" : "")"
+                                            aria-pressed="@((_aspectRatio == "1/1").ToString().ToLowerInvariant())"
+                                            @onclick="@(() => _aspectRatio = "1/1")">1:1</button>
+                                    <button class="bzg-demo-pill @(_aspectRatio == "4/3" ? "active" : "")"
+                                            aria-pressed="@((_aspectRatio == "4/3").ToString().ToLowerInvariant())"
+                                            @onclick="@(() => _aspectRatio = "4/3")">4:3</button>
+                                    <button class="bzg-demo-pill @(_aspectRatio == "16/9" ? "active" : "")"
+                                            aria-pressed="@((_aspectRatio == "16/9").ToString().ToLowerInvariant())"
+                                            @onclick="@(() => _aspectRatio = "16/9")">16:9</button>
+                                    <button class="bzg-demo-pill @(_aspectRatio == "3/4" ? "active" : "")"
+                                            aria-pressed="@((_aspectRatio == "3/4").ToString().ToLowerInvariant())"
+                                            @onclick="@(() => _aspectRatio = "3/4")">3:4</button>
+                                </div>
+                            </div>
 
-                <div class="bzg-demo-controls__row bzg-demo-controls__row--secondary">
-                    <div class="bzg-demo-control bzg-demo-control--aspect @(_layout == BzGalleryLayout.Grid ? "bzg-demo-control--visible" : "bzg-demo-control--hidden")">
-                        <span class="playground-control-label" id="gallery-aspect-label">Aspect Ratio</span>
-                        <div class="bzg-demo-pills" role="group" aria-labelledby="gallery-aspect-label">
-                            <button class="bzg-demo-pill @(_aspectRatio == "1/1" ? "active" : "")"
-                                    aria-pressed="@((_aspectRatio == "1/1").ToString().ToLowerInvariant())"
-                                    @onclick="@(() => _aspectRatio = "1/1")">1:1</button>
-                            <button class="bzg-demo-pill @(_aspectRatio == "4/3" ? "active" : "")"
-                                    aria-pressed="@((_aspectRatio == "4/3").ToString().ToLowerInvariant())"
-                                    @onclick="@(() => _aspectRatio = "4/3")">4:3</button>
-                            <button class="bzg-demo-pill @(_aspectRatio == "16/9" ? "active" : "")"
-                                    aria-pressed="@((_aspectRatio == "16/9").ToString().ToLowerInvariant())"
-                                    @onclick="@(() => _aspectRatio = "16/9")">16:9</button>
-                            <button class="bzg-demo-pill @(_aspectRatio == "3/4" ? "active" : "")"
-                                    aria-pressed="@((_aspectRatio == "3/4").ToString().ToLowerInvariant())"
-                                    @onclick="@(() => _aspectRatio = "3/4")">3:4</button>
+                            <div class="bzg-demo-control">
+                                <span class="playground-control-label" id="gallery-lightbox-label">Lightbox</span>
+                                <div class="bzg-demo-pills" role="group" aria-labelledby="gallery-lightbox-label">
+                                    <button class="bzg-demo-pill @(_enableLightbox ? "active" : "")"
+                                            aria-pressed="@((_enableLightbox).ToString().ToLowerInvariant())"
+                                            @onclick="@(() => _enableLightbox = true)">On</button>
+                                    <button class="bzg-demo-pill @(!_enableLightbox ? "active" : "")"
+                                            aria-pressed="@((!_enableLightbox).ToString().ToLowerInvariant())"
+                                            @onclick="@(() => _enableLightbox = false)">Off</button>
+                                </div>
+                            </div>
+
+                            <div class="bzg-demo-control">
+                                <span class="playground-control-label" id="gallery-filter-label">Filter</span>
+                                <div class="bzg-demo-pills" role="group" aria-labelledby="gallery-filter-label">
+                                    <button class="bzg-demo-pill @(_enableFilter ? "active" : "")"
+                                            aria-pressed="@((_enableFilter).ToString().ToLowerInvariant())"
+                                            @onclick="@(() => _enableFilter = true)">On</button>
+                                    <button class="bzg-demo-pill @(!_enableFilter ? "active" : "")"
+                                            aria-pressed="@((!_enableFilter).ToString().ToLowerInvariant())"
+                                            @onclick="@(() => _enableFilter = false)">Off</button>
+                                </div>
+                            </div>
                         </div>
                     </div>
-
-                    <div class="bzg-demo-control">
-                        <span class="playground-control-label" id="gallery-lightbox-label">Lightbox</span>
-                        <div class="bzg-demo-pills" role="group" aria-labelledby="gallery-lightbox-label">
-                            <button class="bzg-demo-pill @(_enableLightbox ? "active" : "")"
-                                    aria-pressed="@((_enableLightbox).ToString().ToLowerInvariant())"
-                                    @onclick="@(() => _enableLightbox = true)">On</button>
-                            <button class="bzg-demo-pill @(!_enableLightbox ? "active" : "")"
-                                    aria-pressed="@((!_enableLightbox).ToString().ToLowerInvariant())"
-                                    @onclick="@(() => _enableLightbox = false)">Off</button>
-                        </div>
-                    </div>
-
-                    <div class="bzg-demo-control">
-                        <span class="playground-control-label" id="gallery-filter-label">Filter</span>
-                        <div class="bzg-demo-pills" role="group" aria-labelledby="gallery-filter-label">
-                            <button class="bzg-demo-pill @(_enableFilter ? "active" : "")"
-                                    aria-pressed="@((_enableFilter).ToString().ToLowerInvariant())"
-                                    @onclick="@(() => _enableFilter = true)">On</button>
-                            <button class="bzg-demo-pill @(!_enableFilter ? "active" : "")"
-                                    aria-pressed="@((!_enableFilter).ToString().ToLowerInvariant())"
-                                    @onclick="@(() => _enableFilter = false)">Off</button>
-                        </div>
-                    </div>
-                </div>
+                </details>
             </div>
 
             <div class="bzb-presentation__stage">
