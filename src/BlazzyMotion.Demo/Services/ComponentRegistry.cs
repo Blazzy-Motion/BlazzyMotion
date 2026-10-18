@@ -14,6 +14,9 @@ public static class ComponentRegistry
         new()
         {
             Id = "carousel",
+            PreviewImage = "images/previews/carousel.jpg",
+            PreviewWidth = 800,
+            PreviewHeight = 451,
             Name = "Carousel",
             Icon = Icons.Icons.Carousel,
             Version = AppVersions.Carousel,
@@ -25,6 +28,9 @@ public static class ComponentRegistry
         new()
         {
             Id = "bento",
+            PreviewImage = "images/previews/bento.jpg",
+            PreviewWidth = 960,
+            PreviewHeight = 615,
             Name = "Bento Grid",
             Icon = Icons.Icons.BentoGrid,
             Version = AppVersions.Bento,
@@ -36,6 +42,9 @@ public static class ComponentRegistry
         new()
         {
             Id = "gallery",
+            PreviewImage = "images/previews/gallery.jpg",
+            PreviewWidth = 850,
+            PreviewHeight = 646,
             Name = "Gallery",
             Icon = Icons.Icons.Image,
             Version = AppVersions.Gallery,
@@ -47,6 +56,9 @@ public static class ComponentRegistry
         new()
         {
             Id = "marquee",
+            PreviewImage = "images/previews/marquee.jpg",
+            PreviewWidth = 800,
+            PreviewHeight = 202,
             Name = "Marquee",
             Icon = Icons.Icons.Marquee,
             Version = AppVersions.Marquee,

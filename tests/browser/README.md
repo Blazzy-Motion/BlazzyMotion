@@ -40,3 +40,5 @@ measure rAF scheduling, not displayed frames. CPU throttling and software render
 not reproduce a specific Android GPU, thermal state or browser. No fixed FPS threshold
 is used in CI. Validate physical devices separately with Chrome remote debugging and
 DevTools Performance recordings, including first load, fast swipes and theme changes.
+
+Catalog checks cover actual screenshot decoding, reserved image dimensions, a 260 KiB total image budget, discovery without extra live component instances, and narrow layouts at 320/390 px plus desktop at 1440 px. They also check the compact home introduction and the View Demo control. `capture-previews.cjs` is an optional authoring command for regenerating committed catalog screenshots from a matching local Demo build; see the Demo README.

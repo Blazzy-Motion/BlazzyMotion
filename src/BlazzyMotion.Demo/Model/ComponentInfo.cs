@@ -16,6 +16,15 @@ public class ComponentInfo
     public string? DocsUrl { get; init; }
     public string? NuGetPackage { get; init; }
     
+    /// <summary>Gets the optional local screenshot of the component demonstration.</summary>
+    public string? PreviewImage { get; init; }
+
+    /// <summary>Gets the screenshot's intrinsic pixel width for layout reservation.</summary>
+    public int PreviewWidth { get; init; }
+
+    /// <summary>Gets the screenshot's intrinsic pixel height for layout reservation.</summary>
+    public int PreviewHeight { get; init; }
+
     /// <summary>Gets the release-channel label shown in the component directory.</summary>
     public string StatusBadge => Status switch
     {

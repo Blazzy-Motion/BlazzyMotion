@@ -15,3 +15,17 @@ The mobile documentation dialog uses one scrolling sidebar for its links and foo
 Document scroll locking depends only on an actually open native dialog. A hidden navigation instance must never lock the mobile document through its sidebar state class. Browser coverage verifies touch scrolling on entry, after dismissal and after modal link navigation.
 
 The publication workflow can rebuild production after successful manual publication from `main`, using the same central versions and existing Azure secret. Feature publications cannot refresh production, and outdated version metadata prevents an old publication from redeploying. See [package publication and Demo refresh](../../docs/package-publication.md) for the dispatch inputs, NuGet visibility checks and deployment boundaries.
+
+## Catalog artwork
+
+Component cards use local screenshots of the actual demos rather than initializing extra component instances. Images have intrinsic dimensions, empty alternative text alongside the existing component descriptions, lazy loading and a fixed presentation frame. The four JPEGs together are approximately 203 KiB; browser checks enforce a 260 KiB combined budget.
+
+When a demo's appearance changes, publish the Demo locally and regenerate the committed screenshots:
+
+```bash
+BASE_URL=http://127.0.0.1:5130 CHROMIUM_PATH=/usr/bin/chromium node tests/browser/capture-previews.cjs
+```
+
+The script captures the Carousel, composite Bento dashboard, Gallery grid and the Light Marquee with four rows selected through its playground. It waits for component initialization and decoded images. Update `PreviewWidth` and `PreviewHeight` in `ComponentRegistry` using the printed intrinsic sizes; browser checks catch a mismatch. Do not run capture against a version of the Demo that differs from the component code being presented. Screenshot refresh is separate from automatic package-version metadata.
+
+The compact introductory layout is scoped to Home/Carousel. Other demo headers and library styles are unchanged.

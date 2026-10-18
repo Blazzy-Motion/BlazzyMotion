@@ -228,8 +228,50 @@ async function inspectTouchNavigation(browser) {
   } finally { await context.close(); }
 }
 
+/** Verify image-backed discovery stays lightweight, responsive and free of extra animated instances. */
+async function inspectCatalogPreviews(browser) {
+  for (const width of [320, 390, 1440]) {
+    const page = await browser.newPage({ viewport: { width, height: 960 } });
+    try {
+      await page.goto(baseURL + '/components');
+      await page.locator('#splash').waitFor({ state: 'hidden' });
+      const previews = page.locator('.component-entry__preview img');
+      assert.equal(await previews.count(), 4);
+      let totalBytes = 0;
+      for (const preview of await previews.all()) {
+        await preview.scrollIntoViewIfNeeded();
+        await preview.evaluate(image => image.decode());
+        const state = await preview.evaluate(image => ({
+          width: image.naturalWidth, height: image.naturalHeight,
+          reservedWidth: Number(image.getAttribute('width')), reservedHeight: Number(image.getAttribute('height')),
+          right: image.getBoundingClientRect().right, alt: image.alt,
+          bytes: performance.getEntriesByName(image.src).at(-1)?.decodedBodySize || 0
+        }));
+        assert(state.width > 0 && state.height > 0, 'Screenshot loads from published assets');
+        assert.equal(state.width, state.reservedWidth, 'Intrinsic width reserves the correct ratio');
+        assert.equal(state.height, state.reservedHeight, 'Intrinsic height reserves the correct ratio');
+        assert(state.right <= width + 1, 'Preview fits the narrow viewport');
+        assert.equal(state.alt, '', 'Adjacent component text supplies the accessible description');
+        assert(state.bytes > 0, 'Image transfer is measurable');
+        totalBytes += state.bytes;
+      }
+      assert(totalBytes < 260 * 1024, `Catalog image budget: ${totalBytes} bytes`);
+      assert.equal(await page.locator('.swiper-initialized, .bzb-grid, .bzg-grid, .bzm-container').count(), 0, 'Catalog does not start live component instances');
+      assert(await page.evaluate(() => document.documentElement.scrollWidth <= innerWidth + 1), 'Catalog has no horizontal overflow');
+      await page.goto(baseURL + '/');
+      await page.locator('#splash').waitFor({ state: 'hidden' });
+      const demo = await page.locator('#demo').boundingBox();
+      assert(demo && demo.y < 680, `Live demo begins sooner at ${width}px: ${demo?.y}`);
+      assert(await page.evaluate(() => document.documentElement.scrollWidth <= innerWidth + 1), 'Home has no horizontal overflow');
+      await page.getByRole('button', { name: 'View Demo', exact: true }).click();
+      await page.waitForFunction(() => document.querySelector('#demo').getBoundingClientRect().top < 160);
+      console.log(`PASS catalog ${width}px: decoded real previews, image budget, responsive layout and compact home introduction`);
+    } finally { await page.close(); }
+  }
+}
+
 (async () => {
   const browser = await chromium.launch({ executablePath: process.env.CHROMIUM_PATH || undefined, headless: true, args: ['--no-sandbox'] });
-  try { await inspectSite(browser, 1440); await inspectSite(browser, 390); await inspectDocumentationNavigation(browser, 390); await inspectDocumentationNavigation(browser, 980); await inspectDocumentationNavigation(browser, 1440); await inspectDemoControls(browser); await inspectVersionMetadata(browser); await inspectTouchNavigation(browser); await inspectDocumentTouchScrolling(browser); }
+  try { await inspectSite(browser, 1440); await inspectSite(browser, 390); await inspectDocumentationNavigation(browser, 390); await inspectDocumentationNavigation(browser, 980); await inspectDocumentationNavigation(browser, 1440); await inspectDemoControls(browser); await inspectVersionMetadata(browser); await inspectTouchNavigation(browser); await inspectDocumentTouchScrolling(browser); await inspectCatalogPreviews(browser); }
   finally { await browser.close(); }
 })().catch(error => { console.error(error); process.exit(1); });
