@@ -11,3 +11,5 @@ This change does not modify package versions, component library APIs or publicat
 Installation boxes display and copy `dotnet add package <PackageId>` without a pinned version. NuGet selects the latest stable release. Preview installation requires an explicit `--version <preview-version>`; the Demo build badge may therefore differ from the default installed release.
 
 The mobile documentation dialog uses one scrolling sidebar for its links and footer. Touch regression checks cover Quick Start and API navigation in a short viewport while the background remains stationary.
+
+Document scroll locking depends only on an actually open native dialog. A hidden navigation instance must never lock the mobile document through its sidebar state class. Browser coverage verifies touch scrolling on entry, after dismissal and after modal link navigation.

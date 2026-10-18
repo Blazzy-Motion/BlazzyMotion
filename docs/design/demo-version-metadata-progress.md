@@ -24,3 +24,7 @@ Automatically rebuilding production after a successful main-branch package publi
 ## Follow-up validation
 
 Release build and all 1,117 tests passed after the follow-up changes. The default Release publish and full browser suite passed, including all 16 routes at desktop/mobile widths with WCAG scans, existing component regressions, stable installation commands, and real touch scrolling to the drawer footer on Quick Start and API at 390 × 650. This is Chromium emulation, not a physical-device confirmation. No library or package changes are included.
+
+## Mobile document scroll correction
+
+The legacy index.html selector `html:has(.bz-sidebar--open)` locked mobile document scrolling even when that sidebar was inside a closed native dialog. Remove that selector and retain the actual open-dialog body lock. Add touch document scrolling regressions on Quick Start and API before opening, after Escape, and after following a modal link. The regression fails against the preceding published build at the initial document scroll assertion. Release publish passed. All 16 routes passed desktop/mobile WCAG and navigation checks. The document-touch regression passes with the correction on both routes, including modal dismissal and link navigation; existing drawer scrolling and background-lock checks also pass. The automated test waits for the asynchronous dialog opening before sending Escape. Physical-device confirmation remains with the owner.

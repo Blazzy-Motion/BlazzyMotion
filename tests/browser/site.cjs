@@ -149,6 +149,50 @@ async function inspectVersionMetadata(browser) {
   } finally { await page.close(); }
 }
 
+/** Swipe the document using trusted browser touch input rather than programmatic scrolling. */
+async function swipeDocument(page) {
+  const input = await page.context().newCDPSession(page);
+  try {
+    await input.send('Input.dispatchTouchEvent', { type: 'touchStart', touchPoints: [{ x: 300, y: 550 }] });
+    for (let y = 530; y >= 180; y -= 20) {
+      await input.send('Input.dispatchTouchEvent', { type: 'touchMove', touchPoints: [{ x: 300, y }] });
+      await page.waitForTimeout(16);
+    }
+    await input.send('Input.dispatchTouchEvent', { type: 'touchEnd', touchPoints: [] });
+  } finally { await input.detach(); }
+}
+
+/** Require mobile document scrolling before and after using the documentation modal. */
+async function inspectDocumentTouchScrolling(browser) {
+  const context = await browser.newContext({ viewport: { width: 390, height: 650 }, isMobile: true, hasTouch: true });
+  const page = await context.newPage();
+  try {
+    for (const route of ['/docs/quick-start', '/docs/api']) {
+      await page.goto(baseURL + route);
+      await page.waitForFunction(() => !document.querySelector('#splash') || document.querySelector('#splash').classList.contains('bz-splash--hidden'));
+      await swipeDocument(page);
+      await page.waitForFunction(() => window.scrollY > 50);
+      await page.evaluate(() => window.scrollTo(0, 0));
+      const trigger = page.getByRole('button', { name: 'On this site: open documentation navigation' });
+      await trigger.click();
+      await page.getByRole('dialog').waitFor();
+      await page.keyboard.press('Escape');
+      await page.getByRole('dialog').waitFor({ state: 'hidden' });
+      await swipeDocument(page);
+      await page.waitForFunction(() => window.scrollY > 50);
+      await page.evaluate(() => window.scrollTo(0, 0));
+      await trigger.click();
+      await page.getByRole('dialog').getByRole('link', { name: 'Gallery Docs', exact: true }).click();
+      await page.waitForURL('**/docs/gallery');
+      await page.getByRole('dialog').waitFor({ state: 'hidden' });
+      await page.evaluate(() => window.scrollTo(0, 0));
+      await swipeDocument(page);
+      await page.waitForFunction(() => window.scrollY > 50);
+    }
+    console.log('PASS document touch: Docs/API scroll on entry, after Escape and after modal navigation');
+  } finally { await context.close(); }
+}
+
 /** Verify real touch scrolling reaches the end of documentation navigation without moving the page. */
 async function inspectTouchNavigation(browser) {
   const context = await browser.newContext({ viewport: { width: 390, height: 650 }, isMobile: true, hasTouch: true });
@@ -186,6 +230,6 @@ async function inspectTouchNavigation(browser) {
 
 (async () => {
   const browser = await chromium.launch({ executablePath: process.env.CHROMIUM_PATH || undefined, headless: true, args: ['--no-sandbox'] });
-  try { await inspectSite(browser, 1440); await inspectSite(browser, 390); await inspectDocumentationNavigation(browser, 390); await inspectDocumentationNavigation(browser, 980); await inspectDocumentationNavigation(browser, 1440); await inspectDemoControls(browser); await inspectVersionMetadata(browser); await inspectTouchNavigation(browser); }
+  try { await inspectSite(browser, 1440); await inspectSite(browser, 390); await inspectDocumentationNavigation(browser, 390); await inspectDocumentationNavigation(browser, 980); await inspectDocumentationNavigation(browser, 1440); await inspectDemoControls(browser); await inspectVersionMetadata(browser); await inspectTouchNavigation(browser); await inspectDocumentTouchScrolling(browser); }
   finally { await browser.close(); }
 })().catch(error => { console.error(error); process.exit(1); });
