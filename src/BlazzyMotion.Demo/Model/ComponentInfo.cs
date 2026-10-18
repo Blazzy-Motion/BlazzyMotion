@@ -19,6 +19,7 @@ public class ComponentInfo
     public string StatusBadge => Status switch
     {
         ComponentStatus.Stable => "stable",
+        ComponentStatus.Preview => "preview",
         ComponentStatus.Beta => "beta",
         ComponentStatus.Alpha => "alpha",
         ComponentStatus.ComingSoon => "soon",
@@ -33,5 +34,6 @@ public enum ComponentStatus
     Stable,
     Beta,
     Alpha,
-    ComingSoon
+    ComingSoon,
+    Preview
 }

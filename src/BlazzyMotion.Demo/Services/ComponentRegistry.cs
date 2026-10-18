@@ -17,7 +17,7 @@ public static class ComponentRegistry
             Name = "Carousel",
             Icon = Icons.Icons.Carousel,
             Version = AppVersions.Carousel,
-            Status = ComponentStatus.Stable,
+            Status = AppVersions.IsPrerelease(AppVersions.Carousel) ? ComponentStatus.Preview : ComponentStatus.Stable,
             Description = "3D coverflow carousel with glassmorphism design",
             DocsUrl = "/docs/carousel",
             NuGetPackage = "BlazzyMotion.Carousel"
@@ -28,7 +28,7 @@ public static class ComponentRegistry
             Name = "Bento Grid",
             Icon = Icons.Icons.BentoGrid,
             Version = AppVersions.Bento,
-            Status = ComponentStatus.Stable,
+            Status = AppVersions.IsPrerelease(AppVersions.Bento) ? ComponentStatus.Preview : ComponentStatus.Stable,
             Description = "Responsive bento grid layout component",
             DocsUrl = "/docs/bento",
             NuGetPackage = "BlazzyMotion.Bento"
@@ -39,7 +39,7 @@ public static class ComponentRegistry
             Name = "Gallery",
             Icon = Icons.Icons.Image,
             Version = AppVersions.Gallery,
-            Status = ComponentStatus.Stable,
+            Status = AppVersions.IsPrerelease(AppVersions.Gallery) ? ComponentStatus.Preview : ComponentStatus.Stable,
             Description = "Image gallery with Grid, Masonry, and List layouts",
             DocsUrl = "/docs/gallery",
             NuGetPackage = "BlazzyMotion.Gallery"
@@ -50,7 +50,7 @@ public static class ComponentRegistry
             Name = "Marquee",
             Icon = Icons.Icons.Marquee,
             Version = AppVersions.Marquee,
-            Status = ComponentStatus.Stable,
+            Status = AppVersions.IsPrerelease(AppVersions.Marquee) ? ComponentStatus.Preview : ComponentStatus.Stable,
             Description = "Infinite scrolling content with CSS-driven animations",
             DocsUrl = "/docs/marquee",
             NuGetPackage = "BlazzyMotion.Marquee"

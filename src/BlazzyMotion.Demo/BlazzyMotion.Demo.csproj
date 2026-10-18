@@ -1,4 +1,4 @@
-﻿<Project Sdk="Microsoft.NET.Sdk.BlazorWebAssembly">
+<Project Sdk="Microsoft.NET.Sdk.BlazorWebAssembly">
 
   <PropertyGroup>
     <TargetFramework>net8.0</TargetFramework>
@@ -30,4 +30,28 @@
     <GenerateAssemblyInfo>false</GenerateAssemblyInfo>
   </PropertyGroup>
 
+
+  <!-- Demo versions follow the same MSBuild properties as the packages. -->
+  <ItemGroup>
+    <AssemblyMetadata Include="BlazzyMotion.Core.Version" Value="$(BlazzyCoreVersion)" />
+    <AssemblyMetadata Include="BlazzyMotion.Carousel.Version" Value="$(BlazzyCarouselVersion)" />
+    <AssemblyMetadata Include="BlazzyMotion.Bento.Version" Value="$(BlazzyBentoVersion)" />
+    <AssemblyMetadata Include="BlazzyMotion.Gallery.Version" Value="$(BlazzyGalleryVersion)" />
+    <AssemblyMetadata Include="BlazzyMotion.Marquee.Version" Value="$(BlazzyMarqueeVersion)" />
+  </ItemGroup>
+  <!-- This project disables the SDK assembly-info file; emit only the Demo metadata. -->
+  <Target Name="GenerateDemoPackageMetadata" BeforeTargets="CoreCompile">
+    <ItemGroup>
+      <_DemoVersionAttribute Include="System.Reflection.AssemblyMetadataAttribute">
+        <_Parameter1>%(AssemblyMetadata.Identity)</_Parameter1>
+        <_Parameter2>%(AssemblyMetadata.Value)</_Parameter2>
+      </_DemoVersionAttribute>
+    </ItemGroup>
+    <WriteCodeFragment Language="C#" AssemblyAttributes="@(_DemoVersionAttribute)"
+                       OutputFile="$(IntermediateOutputPath)DemoPackageVersions.g.cs" />
+    <ItemGroup>
+      <Compile Include="$(IntermediateOutputPath)DemoPackageVersions.g.cs" />
+      <FileWrites Include="$(IntermediateOutputPath)DemoPackageVersions.g.cs" />
+    </ItemGroup>
+  </Target>
 </Project>

@@ -148,3 +148,6 @@ body:has(.docs-dialog[open]) { overflow: hidden; }
 .collection-title { max-width: 1240px; margin: 40px auto 0; padding: 0 24px; font-size: 32px; letter-spacing: -.04em; }
 .playground-control-label { font-size: .875rem; font-weight: 500; color: var(--bz-text-secondary); }
 .demo-example-title { font-size: 1rem; font-weight: 500; color: var(--bz-text-secondary); margin-bottom: 8px; }
+/* Version-pinned commands remain readable on narrow screens. */
+body .bz-install-box__command { min-width: 0; white-space: normal; overflow-wrap: anywhere; }
+body .bz-install-box__copy { flex-shrink: 0; }

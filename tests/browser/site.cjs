@@ -122,8 +122,35 @@ async function inspectDemoControls(browser) {
   } finally { await page.close(); }
 }
 
+/** Require the published Demo to expose central build versions and install matching packages. */
+async function inspectVersionMetadata(browser) {
+  const props = fs.readFileSync(path.join(__dirname, '../../Directory.Build.props'), 'utf8');
+  const versions = Object.fromEntries(['Carousel', 'Bento', 'Gallery', 'Marquee'].map(name => {
+    const match = props.match(new RegExp(`<Blazzy${name}Version[^>]*>([^<]+)</`));
+    assert(match, `Central version exists for ${name}`);
+    return [name, match[1]];
+  }));
+  const page = await browser.newPage({ viewport: { width: 390, height: 960 } });
+  try {
+    await page.goto(baseURL + '/components');
+    await page.locator('.component-entry').first().waitFor();
+    for (const [name, version] of Object.entries(versions)) {
+      const entry = page.locator('.component-entry').filter({ has: page.locator(`h3 a[href="/${name.toLowerCase()}"]`) });
+      const status = version.split('+')[0].includes('-') ? 'preview' : 'stable';
+      assert.equal((await entry.locator('.component-entry__version').textContent()).trim(), `${status} ${version}`);
+      await page.goto(baseURL + '/' + name.toLowerCase());
+      const command = page.locator('.bz-install-box__command').first();
+      await command.waitFor();
+      assert.equal((await command.textContent()).trim(), `dotnet add package BlazzyMotion.${name} --version ${version}`);
+      await page.goto(baseURL + '/components');
+      await page.locator('.component-entry').first().waitFor();
+    }
+    console.log('PASS Demo versions: central metadata, accurate preview badges and pinned installation commands');
+  } finally { await page.close(); }
+}
+
 (async () => {
   const browser = await chromium.launch({ executablePath: process.env.CHROMIUM_PATH || undefined, headless: true, args: ['--no-sandbox'] });
-  try { await inspectSite(browser, 1440); await inspectSite(browser, 390); await inspectDocumentationNavigation(browser, 390); await inspectDocumentationNavigation(browser, 980); await inspectDocumentationNavigation(browser, 1440); await inspectDemoControls(browser); }
+  try { await inspectSite(browser, 1440); await inspectSite(browser, 390); await inspectDocumentationNavigation(browser, 390); await inspectDocumentationNavigation(browser, 980); await inspectDocumentationNavigation(browser, 1440); await inspectDemoControls(browser); await inspectVersionMetadata(browser); }
   finally { await browser.close(); }
 })().catch(error => { console.error(error); process.exit(1); });

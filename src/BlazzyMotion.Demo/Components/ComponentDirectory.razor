@@ -10,7 +10,7 @@
         @foreach (var component in ComponentRegistry.Components.Where(item => item.IsAvailable))
         {
             <article class="component-entry">
-                <div class="component-entry__top"><span class="component-entry__icon" aria-hidden="true">@component.Icon</span><span class="component-entry__version">Stable @component.Version</span></div>
+                <div class="component-entry__top"><span class="component-entry__icon" aria-hidden="true">@component.Icon</span><span class="component-entry__version">@component.StatusBadge @component.Version</span></div>
                 <h3><a href="@($"/{component.Id}")">@component.Name <svg aria-hidden="true" width="14" height="14" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="1.5"><path d="M7 17 17 7M7 7h10v10" /></svg></a></h3>
                 <p>@component.Description</p>
                 <div class="component-entry__links"><a href="@($"/{component.Id}")">Explore demo</a><a href="@component.DocsUrl">Documentation</a></div>
