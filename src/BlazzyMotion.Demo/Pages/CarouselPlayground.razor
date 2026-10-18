@@ -37,19 +37,22 @@
             <p class="carousel-example__hint">Swipe to browse, or focus the carousel and use the arrow keys.</p>
         </section>
 
-        <aside class="carousel-example__code" aria-labelledby="carousel-code-title">
-            <span class="site-eyebrow">Use this example</span>
-            <h2 id="carousel-code-title">Razor example</h2>
-            <p>The theme in this code follows your selection. Copy it into a Razor component, then add the model below.</p>
-            <div class="carousel-example__component-code">
-                <CodeBlock Language="CarouselDemo.razor" Code="@ComponentCode" />
-            </div>
-            <details>
-                <summary>Movie.cs — model attributes</summary>
-                <CodeBlock Language="Movie.cs" Code="@ModelCode" />
-            </details>
-            <p class="carousel-example__assets">Sample images use the public Demo URLs. Replace them with your own artwork.</p>
-            <a href="/docs/carousel">Setup and API documentation →</a>
-        </aside>
+        <details class="carousel-example__source">
+            <summary>View code</summary>
+            <section class="carousel-example__code" aria-labelledby="carousel-code-title">
+                <span class="site-eyebrow">Use this example</span>
+                <h2 id="carousel-code-title">Razor example</h2>
+                <p>The theme in this code follows your selection. Copy it into a Razor component, then add the model below.</p>
+                <div class="carousel-example__component-code">
+                    <CodeBlock Language="CarouselDemo.razor" Code="@ComponentCode" />
+                </div>
+                <details class="carousel-example__model">
+                    <summary>Movie.cs — model attributes</summary>
+                    <CodeBlock Language="Movie.cs" Code="@ModelCode" />
+                </details>
+                <p class="carousel-example__assets">Sample images use the public Demo URLs. Replace them with your own artwork.</p>
+                <a href="/docs/carousel">Setup and API documentation →</a>
+            </section>
+        </details>
     </div>
 </div>

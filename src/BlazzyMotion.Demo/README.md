@@ -18,6 +18,6 @@ The publication workflow can rebuild production after successful manual publicat
 
 ## Carousel example prototype
 
-`/carousel` has a focused movie-collection example with the real Carousel beside a complete copyable Razor example on wide screens, stacked below the preview on smaller screens. The four theme choices update both the live component and the example. The code uses the same movie list as the preview, with public Demo image URLs so a consumer does not need local copies of the sample artwork. A native disclosure contains the supported attribute-based Movie model.
+`/carousel` has a focused movie-collection example with a full-width live Carousel and a complete copyable Razor example under a collapsed-by-default “View code” disclosure. The code opens below the preview on every screen size. The four theme choices update both the live component and the example. The code uses the same movie list as the preview, with public Demo image URLs so a consumer does not need local copies of the sample artwork. A native disclosure contains the supported attribute-based Movie model.
 
 The landing page at `/`, component directory, other demo pages and package libraries are unchanged. Browser checks cover code/theme synchronization, selected-item and instance preservation, actual clipboard contents, model disclosure, responsive bounds and expanded-content accessibility. They save the copied example and model in the ignored browser artifacts directory for independent consumer compilation.

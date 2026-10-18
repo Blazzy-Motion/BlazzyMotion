@@ -4,7 +4,7 @@ h1 { margin: 10px 0 12px; font-size: clamp(32px, 4vw, 46px); letter-spacing: -.0
 .carousel-example__intro p { max-width: 520px; margin: 0; color: #b7b8c0; line-height: 1.6; }
 .carousel-example__installation { min-width: 0; max-width: 440px; }
 .carousel-example__version { display: block; margin-bottom: 12px; font-size: 12px; color: #b7b8c0; }
-.carousel-example__layout { display: grid; grid-template-columns: minmax(0, 1fr); gap: 32px; padding-top: 32px; }
+.carousel-example__layout { display: grid; grid-template-columns: minmax(0, 1fr); gap: 32px; padding-top: 32px; max-width: 1000px; margin-inline: auto; }
 .carousel-example__preview { min-width: 0; }
 .carousel-example__heading { display: flex; flex-wrap: wrap; align-items: baseline; justify-content: space-between; gap: 12px; margin-bottom: 24px; }
 h2 { margin: 0; font-size: 22px; letter-spacing: -.025em; }
@@ -21,9 +21,6 @@ h2 { margin: 0; font-size: 22px; letter-spacing: -.025em; }
 .carousel-example__code summary { padding: 12px 0; cursor: pointer; font-size: 14px; color: #e1d7fa; }
 .carousel-example__code a { font-size: 14px; color: #e1d7fa; text-underline-offset: 4px; }
 .carousel-example__code .carousel-example__assets { font-size: 12px; }
-@media (min-width: 1200px) {
-    .carousel-example__layout { grid-template-columns: minmax(0, 1fr) 360px; align-items: start; }
-}
 @media (max-width: 768px) {
     .carousel-example { padding: 24px 18px 48px; }
     .carousel-example__intro { flex-direction: column; align-items: stretch; gap: 24px; padding-bottom: 24px; }
@@ -32,3 +29,9 @@ h2 { margin: 0; font-size: 22px; letter-spacing: -.025em; }
     .carousel-example__code { padding: 20px; }
     .carousel-example__code ::deep pre { max-height: 360px; }
 }
+
+.carousel-example__source { min-width: 0; border: 1px solid #303136; border-radius: 12px; background: #191a1e; }
+.carousel-example__source > summary { padding: 20px 24px; cursor: pointer; font-size: 15px; font-weight: 600; }
+.carousel-example__source > summary:focus-visible { outline: 2px solid #d6c6ff; outline-offset: 4px; border-radius: 12px; }
+.carousel-example__source[open] > summary { border-bottom: 1px solid #303136; }
+.carousel-example__source .carousel-example__code { border: 0; background: transparent; }

@@ -250,17 +250,23 @@ async function inspectCarouselCodeExample(browser) {
         await page.waitForFunction(theme => document.querySelector('.carousel-example__component-code code').textContent.includes(`BzTheme.${theme}`), theme);
         assert(await swiper.evaluate(element => element.swiper === window.codeExampleSwiper && element.swiper.realIndex === 1), 'Theme changes retain the live component instance and selected movie');
       }
+      assert(!await code.isVisible(), 'Code starts collapsed so the live preview remains the focus');
+      const previewBefore = await preview.boundingBox();
+      const disclosure = page.locator('.carousel-example__source > summary');
+      await disclosure.focus();
+      await page.keyboard.press('Enter');
+      await code.waitFor();
       const displayed = await code.textContent();
       await page.locator('.carousel-example__component-code').getByRole('button', { name: 'Copy', exact: true }).click();
       await page.waitForFunction(expected => navigator.clipboard.readText().then(actual => actual === expected), displayed);
       await page.getByText('Movie.cs — model attributes', { exact: true }).click();
-      const model = page.locator('details code');
+      const model = page.locator('.carousel-example__model code');
       await model.waitFor();
       assert((await model.textContent()).includes('[BzImage]'));
       assert((await model.textContent()).includes('namespace YourApp.Models;'));
       const before = await preview.boundingBox();
-      const source = await page.getByRole('complementary', { name: 'Razor example', exact: true }).boundingBox();
-      assert(before && source && (width >= 1200 ? source.x > before.x + before.width : source.y > before.y + before.height - 1), 'Code is beside the preview on desktop and below it on mobile');
+      const source = await page.getByRole('region', { name: 'Razor example', exact: true }).boundingBox();
+      assert(before && source && source.y > before.y + before.height - 1, 'Optional code remains below the full-width preview at every viewport');
       assert(await page.evaluate(() => document.documentElement.scrollWidth <= innerWidth + 1), 'Long code stays inside its scroll region');
       const artifacts = path.join(__dirname, 'artifacts');
       fs.mkdirSync(artifacts, { recursive: true });
@@ -268,6 +274,14 @@ async function inspectCarouselCodeExample(browser) {
       fs.writeFileSync(path.join(artifacts, 'Movie.cs'), await model.textContent());
       const audit = await new AxeBuilder({ page }).withTags(['wcag2a', 'wcag2aa', 'wcag21a', 'wcag21aa', 'wcag22aa']).analyze();
       assert.deepEqual(audit.violations.map(violation => violation.id), [], `Expanded code accessibility at ${width}px`);
+      await disclosure.focus();
+      await page.keyboard.press('Enter');
+      assert(!await code.isVisible(), 'Keyboard activation closes the code disclosure');
+      assert(await disclosure.evaluate(element => document.activeElement === element), 'Focus remains on the disclosure');
+      assert(await swiper.evaluate(element => element.swiper === window.codeExampleSwiper && element.swiper.realIndex === 1), 'Opening and closing code preserves the live preview');
+      const previewAfter = await preview.boundingBox();
+      assert.equal(previewAfter.width, previewBefore.width);
+      assert.equal(previewAfter.height, previewBefore.height);
       console.log(`PASS Carousel example ${width}px: exact clipboard, four synchronized themes, model disclosure and responsive code layout`);
     } finally { await context.close(); }
   }

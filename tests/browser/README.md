@@ -41,4 +41,4 @@ not reproduce a specific Android GPU, thermal state or browser. No fixed FPS thr
 is used in CI. Validate physical devices separately with Chrome remote debugging and
 DevTools Performance recordings, including first load, fast swipes and theme changes.
 
-The Carousel example checks exercise `/carousel` at 320, 390 and 1440 px, including real clipboard permissions in an isolated browser context, four theme changes after keyboard navigation, selection/instance preservation, model disclosure and expanded-content WCAG scans. The copied `CarouselDemo.razor` and `Movie.cs` are saved in `artifacts/` for optional standalone compilation.
+The Carousel example checks exercise `/carousel` at 320, 390 and 1440 px, including real clipboard permissions in an isolated browser context, four theme changes after keyboard navigation, selection/instance and preview-size preservation, keyboard opening/closing of the initially collapsed View code disclosure, model disclosure and expanded-content WCAG scans. The copied `CarouselDemo.razor` and `Movie.cs` are saved in `artifacts/` for optional standalone compilation.
