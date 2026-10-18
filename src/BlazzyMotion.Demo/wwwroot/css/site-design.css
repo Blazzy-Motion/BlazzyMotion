@@ -191,3 +191,24 @@ body .demo-example .bz-selected-title { margin: 8px 0 0; }
 
 /* Conditional controls must stay hidden even when their normal layout uses flex. */
 .demo-example .bzg-demo-control[hidden] { display: none; }
+
+/* Keep the footer in document flow, including pages shorter than the viewport. */
+.site-page-shell { min-height: 100dvh; display: flex; flex-direction: column; }
+.site-page-shell > .bz-home-layout { flex: 1; min-height: 0; }
+.site-page-shell .bz-home-layout__content { min-height: 0; }
+body .bz-main { display: flex; flex-direction: column; min-height: calc(100dvh - 76px); }
+body .bz-main__content { flex: 1; width: 100%; }
+.site-footer { width: 100%; box-sizing: border-box; align-items: center; gap: 24px 40px; margin-top: 24px; padding: 28px 24px; }
+.site-footer__brand { display: inline-flex; align-items: center; gap: 10px; font-size: 16px; font-weight: 600; }
+.site-footer__identity p { margin: 8px 0 0; color: #b7b8c0; }
+.site-footer nav { gap: 4px 20px; }
+.site-footer nav a { display: inline-flex; align-items: center; min-height: 44px; }
+.site-footer a:hover { color: #fff; text-decoration: underline; text-underline-offset: 4px; }
+.site-back-to-top { position: fixed; right: max(20px, env(safe-area-inset-right)); bottom: max(20px, env(safe-area-inset-bottom)); z-index: 800; width: 44px; height: 44px; display: grid; place-items: center; border: 1px solid #62636d; border-radius: 12px; background: #26272e; color: #f4f4f5; cursor: pointer; box-shadow: 0 4px 16px #0004; }
+.site-back-to-top[hidden] { display: none; }
+.site-back-to-top:hover { background: #36373f; }
+@media (max-width: 768px) {
+    body .bz-main { min-height: calc(100dvh - 104px); }
+    .site-footer { align-items: flex-start; padding: 24px 20px 76px; }
+    .site-footer nav { margin-left: 0; }
+}

@@ -464,8 +464,64 @@ async function inspectAllComponentExamples(browser) {
   }
 }
 
+/** Verify footer flow, short-page placement, keyboard return and reduced motion across layouts. */
+async function inspectFooter(browser) {
+  for (const width of [390, 1440]) {
+    const context = await browser.newContext({ viewport: { width, height: 900 }, reducedMotion: 'reduce' });
+    const page = await context.newPage();
+    try {
+      for (const route of ['/carousel', '/docs/quick-start', '/gallery']) {
+        await page.goto(baseURL + route);
+        await page.locator('.site-footer__brand').waitFor();
+        await page.waitForFunction(() => !document.querySelector('#splash') || document.querySelector('#splash').classList.contains('bz-splash--hidden'));
+        const button = page.getByRole('button', { name: 'Back to top', exact: true });
+        assert(!await button.isVisible(), 'Return control is hidden at the top');
+        const footer = page.locator('footer.site-footer');
+        assert.equal(await footer.evaluate(element => getComputedStyle(element).position), 'static');
+        await page.evaluate(() => window.scrollTo({ top: document.documentElement.scrollHeight, behavior: 'instant' }));
+        const longPage = await page.evaluate(() => scrollY >= 600);
+        if (longPage) await button.waitFor();
+        else assert(!await button.isVisible(), 'Short pages do not need a return control');
+        await footer.scrollIntoViewIfNeeded();
+        assert(await footer.getByRole('link', { name: 'API reference', exact: true }).isVisible());
+        assert(await page.evaluate(() => document.documentElement.scrollWidth <= innerWidth + 1));
+        const audit = await new AxeBuilder({ page }).include('.site-footer').withTags(['wcag2a', 'wcag2aa', 'wcag21aa', 'wcag22aa']).analyze();
+        assert.deepEqual(audit.violations.map(item => item.id), [], 'Footer and return control accessibility');
+        if (longPage) {
+          await button.focus();
+          await page.keyboard.press('Enter');
+          await page.waitForFunction(() => scrollY === 0 && document.activeElement.id === 'main-content');
+          await button.waitFor({ state: 'hidden' });
+        } else await page.evaluate(() => window.scrollTo({ top: 0, behavior: 'instant' }));
+        // A short page must place the footer at the viewport floor without adding a blank screen.
+        await page.locator('#main-content').evaluate(element => {
+          const content = element.querySelector('.bz-main__content') || element;
+          content.replaceChildren(Object.assign(document.createElement('p'), { textContent: 'Short page' }));
+        });
+        const box = await footer.boundingBox();
+        const inset = await page.locator('#main-content').evaluate(element => element.classList.contains('bz-main') ? parseFloat(getComputedStyle(element).paddingBottom) : 0);
+        assert(box.y + box.height + inset >= 899 && box.y + box.height + inset <= 902, 'Short-page footer reaches the viewport floor within layout padding');
+      }
+      console.log(`PASS footer ${width}px: document flow, short pages, keyboard return, reduced motion and WCAG checks`);
+    } finally { await context.close(); }
+  }
+  const context = await browser.newContext({ viewport: { width: 390, height: 900 }, reducedMotion: 'no-preference' });
+  try {
+    const page = await context.newPage();
+    await page.goto(baseURL + '/docs/quick-start');
+    await page.locator('.site-footer__brand').waitFor();
+    await page.waitForFunction(() => !document.querySelector('#splash') || document.querySelector('#splash').classList.contains('bz-splash--hidden'));
+    await page.evaluate(() => window.scrollTo({ top: 800, behavior: 'instant' }));
+    const button = page.getByRole('button', { name: 'Back to top', exact: true });
+    await button.waitFor();
+    await button.click();
+    await page.waitForFunction(() => scrollY === 0 && document.activeElement.id === 'main-content');
+    console.log('PASS return control: smooth scrolling reaches the top with restored content focus');
+  } finally { await context.close(); }
+}
+
 (async () => {
   const browser = await chromium.launch({ executablePath: process.env.CHROMIUM_PATH || undefined, headless: true, args: ['--no-sandbox'] });
-  try { await inspectSite(browser, 1440); await inspectSite(browser, 390); await inspectDocumentationNavigation(browser, 390); await inspectDocumentationNavigation(browser, 980); await inspectDocumentationNavigation(browser, 1440); await inspectDemoControls(browser); await inspectVersionMetadata(browser); await inspectTouchNavigation(browser); await inspectDocumentTouchScrolling(browser); await inspectCarouselCodeExample(browser); await inspectAllComponentExamples(browser); }
+  try { await inspectFooter(browser); await inspectSite(browser, 1440); await inspectSite(browser, 390); await inspectDocumentationNavigation(browser, 390); await inspectDocumentationNavigation(browser, 980); await inspectDocumentationNavigation(browser, 1440); await inspectDemoControls(browser); await inspectVersionMetadata(browser); await inspectTouchNavigation(browser); await inspectDocumentTouchScrolling(browser); await inspectCarouselCodeExample(browser); await inspectAllComponentExamples(browser); }
   finally { await browser.close(); }
 })().catch(error => { console.error(error); process.exit(1); });

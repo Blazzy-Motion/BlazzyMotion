@@ -48,3 +48,5 @@ Shared example checks cover Bento, Gallery and Marquee at 320, 390 and 1440 px: 
 Compact playground checks also verify local navigation beneath the component introduction, active Playground links, the first example toolbar position, copying while source is hidden, ARIA expanded/control relationships, persistent preview dimensions, clipboard denial/recovery and focus restoration through Close/Escape.
 
 Density checks verify Carousel toolbar/source alignment with the unchanged desktop 800 × 450 px frame, a compact preview/source gap, keyboard access to Advanced options, retained secondary settings after closing/reopening, and expanded-controls accessibility at 320, 390 and 1440 px.
+
+Footer coverage checks document flow and short-page placement on both layouts at mobile and desktop widths, keyboard return with restored content focus, smooth/reduced-motion scrolling, responsive bounds and scoped WCAG scans.
