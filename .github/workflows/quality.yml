@@ -59,6 +59,7 @@ jobs:
             /d:sonar.coverage.exclusions="**Tests/**,**Demo/**,**/*JsInterop*.cs,**/SourceGen/**" \
             /d:sonar.exclusions="**/wwwroot/js/**" \
             /d:sonar.test.inclusions="tests/**/*" \
+            /d:sonar.python.coverage.reportPaths=coverage/release-metadata.xml \
             /d:sonar.qualitygate.wait=true
 
       - name: Restore Dependencies
@@ -81,6 +82,18 @@ jobs:
         uses: actions/setup-node@v4
         with:
           node-version: "22"
+
+      - name: Setup Python for Release Checks
+        uses: actions/setup-python@v5
+        with:
+          python-version: "3.12"
+
+      - name: Check Publication Automation
+        run: |
+          python -m venv "$RUNNER_TEMP/release-checks"
+          "$RUNNER_TEMP/release-checks/bin/pip" install -r scripts/requirements-ci.txt
+          "$RUNNER_TEMP/release-checks/bin/python" -m coverage run --branch --source=scripts -m unittest discover -s tests/automation -v
+          "$RUNNER_TEMP/release-checks/bin/python" -m coverage xml -o coverage/release-metadata.xml
 
       - name: Run Browser Regression Checks
         run: |

@@ -13,3 +13,5 @@ Installation boxes display and copy `dotnet add package <PackageId>` without a p
 The mobile documentation dialog uses one scrolling sidebar for its links and footer. Touch regression checks cover Quick Start and API navigation in a short viewport while the background remains stationary.
 
 Document scroll locking depends only on an actually open native dialog. A hidden navigation instance must never lock the mobile document through its sidebar state class. Browser coverage verifies touch scrolling on entry, after dismissal and after modal link navigation.
+
+The publication workflow can rebuild production after successful manual publication from `main`, using the same central versions and existing Azure secret. Feature publications cannot refresh production, and outdated version metadata prevents an old publication from redeploying. See [package publication and Demo refresh](../../docs/package-publication.md) for the dispatch inputs, NuGet visibility checks and deployment boundaries.
