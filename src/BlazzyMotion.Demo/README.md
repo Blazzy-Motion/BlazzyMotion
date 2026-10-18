@@ -15,3 +15,9 @@ The mobile documentation dialog uses one scrolling sidebar for its links and foo
 Document scroll locking depends only on an actually open native dialog. A hidden navigation instance must never lock the mobile document through its sidebar state class. Browser coverage verifies touch scrolling on entry, after dismissal and after modal link navigation.
 
 The publication workflow can rebuild production after successful manual publication from `main`, using the same central versions and existing Azure secret. Feature publications cannot refresh production, and outdated version metadata prevents an old publication from redeploying. See [package publication and Demo refresh](../../docs/package-publication.md) for the dispatch inputs, NuGet visibility checks and deployment boundaries.
+
+## Carousel example prototype
+
+`/carousel` has a focused movie-collection example with the real Carousel beside a complete copyable Razor example on wide screens, stacked below the preview on smaller screens. The four theme choices update both the live component and the example. The code uses the same movie list as the preview, with public Demo image URLs so a consumer does not need local copies of the sample artwork. A native disclosure contains the supported attribute-based Movie model.
+
+The landing page at `/`, component directory, other demo pages and package libraries are unchanged. Browser checks cover code/theme synchronization, selected-item and instance preservation, actual clipboard contents, model disclosure, responsive bounds and expanded-content accessibility. They save the copied example and model in the ignored browser artifacts directory for independent consumer compilation.

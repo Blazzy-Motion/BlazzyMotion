@@ -228,8 +228,53 @@ async function inspectTouchNavigation(browser) {
   } finally { await context.close(); }
 }
 
+/** Verify the isolated Carousel page keeps copied code, theme state and the real preview in sync. */
+async function inspectCarouselCodeExample(browser) {
+  for (const width of [320, 390, 1440]) {
+    const context = await browser.newContext({ viewport: { width, height: 960 }, permissions: ['clipboard-read', 'clipboard-write'] });
+    const page = await context.newPage();
+    try {
+      await page.goto(baseURL + '/carousel');
+      await page.locator('#splash').waitFor({ state: 'hidden' });
+      const preview = page.getByRole('region', { name: 'Live preview', exact: true });
+      const swiper = preview.locator('.swiper-initialized');
+      await swiper.waitFor();
+      await swiper.evaluate(element => { window.codeExampleSwiper = element.swiper; });
+      await preview.locator('.bzc-carousel-box').focus();
+      await page.keyboard.press('ArrowRight');
+      await page.waitForFunction(() => window.codeExampleSwiper.realIndex === 1 && document.querySelector('.carousel-example__selection').textContent.trim() === 'Joker');
+      const code = page.locator('.carousel-example__component-code code');
+      assert.equal((await code.textContent()).match(/new\(\) \{ Title =/g).length, Number(await preview.locator('.bzc-carousel-box').getAttribute('data-item-count')));
+      for (const theme of ['Dark', 'Light', 'Minimal', 'Glass']) {
+        await page.getByRole('group', { name: 'Component theme' }).getByRole('button', { name: theme, exact: true }).click();
+        await page.waitForFunction(theme => document.querySelector('.carousel-example__component-code code').textContent.includes(`BzTheme.${theme}`), theme);
+        assert(await swiper.evaluate(element => element.swiper === window.codeExampleSwiper && element.swiper.realIndex === 1), 'Theme changes retain the live component instance and selected movie');
+      }
+      const displayed = await code.textContent();
+      await page.locator('.carousel-example__component-code').getByRole('button', { name: 'Copy', exact: true }).click();
+      await page.waitForFunction(expected => navigator.clipboard.readText().then(actual => actual === expected), displayed);
+      await page.getByText('Movie.cs — model attributes', { exact: true }).click();
+      const model = page.locator('details code');
+      await model.waitFor();
+      assert((await model.textContent()).includes('[BzImage]'));
+      assert((await model.textContent()).includes('namespace YourApp.Models;'));
+      const before = await preview.boundingBox();
+      const source = await page.getByRole('complementary', { name: 'Razor example', exact: true }).boundingBox();
+      assert(before && source && (width >= 1200 ? source.x > before.x + before.width : source.y > before.y + before.height - 1), 'Code is beside the preview on desktop and below it on mobile');
+      assert(await page.evaluate(() => document.documentElement.scrollWidth <= innerWidth + 1), 'Long code stays inside its scroll region');
+      const artifacts = path.join(__dirname, 'artifacts');
+      fs.mkdirSync(artifacts, { recursive: true });
+      fs.writeFileSync(path.join(artifacts, 'CarouselDemo.razor'), displayed);
+      fs.writeFileSync(path.join(artifacts, 'Movie.cs'), await model.textContent());
+      const audit = await new AxeBuilder({ page }).withTags(['wcag2a', 'wcag2aa', 'wcag21a', 'wcag21aa', 'wcag22aa']).analyze();
+      assert.deepEqual(audit.violations.map(violation => violation.id), [], `Expanded code accessibility at ${width}px`);
+      console.log(`PASS Carousel example ${width}px: exact clipboard, four synchronized themes, model disclosure and responsive code layout`);
+    } finally { await context.close(); }
+  }
+}
+
 (async () => {
   const browser = await chromium.launch({ executablePath: process.env.CHROMIUM_PATH || undefined, headless: true, args: ['--no-sandbox'] });
-  try { await inspectSite(browser, 1440); await inspectSite(browser, 390); await inspectDocumentationNavigation(browser, 390); await inspectDocumentationNavigation(browser, 980); await inspectDocumentationNavigation(browser, 1440); await inspectDemoControls(browser); await inspectVersionMetadata(browser); await inspectTouchNavigation(browser); await inspectDocumentTouchScrolling(browser); }
+  try { await inspectSite(browser, 1440); await inspectSite(browser, 390); await inspectDocumentationNavigation(browser, 390); await inspectDocumentationNavigation(browser, 980); await inspectDocumentationNavigation(browser, 1440); await inspectDemoControls(browser); await inspectVersionMetadata(browser); await inspectTouchNavigation(browser); await inspectDocumentTouchScrolling(browser); await inspectCarouselCodeExample(browser); }
   finally { await browser.close(); }
 })().catch(error => { console.error(error); process.exit(1); });
