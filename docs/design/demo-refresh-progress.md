@@ -13,7 +13,7 @@ Refresh the entire Demo presentation while preserving existing component librari
 - [x] Refine typography, spacing, documentation surfaces and demo controls.
 - [x] Preserve and verify startup animation and reduced motion behavior.
 - [x] Run Release build and desktop/mobile navigation and component regressions.
-- [ ] Publish branch and Azure PR preview for owner review.
+- [x] Publish branch and Azure PR preview for owner review.
 
 ## Follow-up direction
 
@@ -34,3 +34,13 @@ PR #9: https://github.com/Blazzy-Motion/BlazzyMotion/pull/9. Use the PR checks f
 ## Remaining scope
 
 This pass refreshes presentation across all existing pages, rather than replacing documentation content. Independent site light mode, richer per-component playground controls, a documentation table of contents and a complete focus-trapped mobile documentation drawer remain follow-up work. Existing component theme controls and Gallery playground are preserved. No claim of complete site accessibility conformance or measured device FPS is made.
+
+## Verified deployment checkpoint — 2026-10-18
+
+Implementation commit `b776779` passed Azure deployment, the complete Quality workflow and SonarCloud Quality Gate.
+
+- Azure run: https://github.com/Blazzy-Motion/BlazzyMotion/actions/runs/39079743534
+- Quality run: https://github.com/Blazzy-Motion/BlazzyMotion/actions/runs/39079743535
+- Preview URL reported by the successful Azure deployment: https://nice-sea-02b1e9803-9.westeurope.1.azurestaticapps.net
+
+Direct requests to the preview domain from this cloud instance are currently denied by its network policy (CONNECT 403). The current allowlist includes preview domains #6 and #7, but not #9. Production domain access succeeds. The preview address is verified from Azure's deployment annotation; live browser validation of this deployment remains pending network access. Local browser and route checks passed. Owner visual review remains required before merge. This checkpoint only changes this progress document.
