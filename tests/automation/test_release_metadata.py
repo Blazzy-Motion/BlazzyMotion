@@ -169,6 +169,21 @@ class PublicationWorkflowTests(unittest.TestCase):
         self.assertFalse(job["steps"][0]["with"]["persist-credentials"])
         self.assertIn("metadata.outputs.refresh", job["steps"][-1]["if"])
 
+    def test_sdk_version_is_scoped_to_publication(self):
+        """Keep the pinned SDK selector out of Oryx's runtime-version environment."""
+        workflow = yaml.safe_load((ROOT / ".github/workflows/publish.yml").read_text())
+        global_environment = workflow.get("env", {})
+        publish = workflow["jobs"]["publish"]
+        refresh = workflow["jobs"]["refresh_demo"]
+        self.assertNotIn("DOTNET_VERSION", global_environment)
+        self.assertEqual(publish["env"]["DOTNET_VERSION"], "8.0.426")
+        setup = next(step for step in publish["steps"] if step.get("uses", "").startswith("actions/setup-dotnet@"))
+        self.assertEqual(setup["with"]["dotnet-version"], "${{ env.DOTNET_VERSION }}")
+        for step in refresh["steps"]:
+            if step.get("uses", "").startswith("Azure/static-web-apps-deploy@"):
+                environment = {**global_environment, **refresh.get("env", {}), **step.get("env", {})}
+                self.assertNotIn("DOTNET_VERSION", environment)
+
     def test_stable_tag_selection_uses_resolved_versions(self):
         """Blank dispatch version fields cannot turn a preview into a stable tag."""
         workflow = yaml.safe_load((ROOT / ".github/workflows/publish.yml").read_text())
