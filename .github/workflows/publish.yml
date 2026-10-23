@@ -55,7 +55,6 @@ on:
         type: boolean
 
 env:
-  DOTNET_VERSION: "8.0.426"
   CORE_PROJECT: "src/BlazzyMotion.Core/BlazzyMotion.Core.csproj"
   CAROUSEL_PROJECT: "src/BlazzyMotion.Carousel/BlazzyMotion.Carousel.csproj"
   BENTO_PROJECT: "src/BlazzyMotion.Bento/BlazzyMotion.Bento.csproj"
@@ -71,6 +70,8 @@ jobs:
       contents: write
 
     env:
+      # Oryx interprets DOTNET_VERSION as a runtime selector; keep the SDK pin in this job.
+      DOTNET_VERSION: "8.0.426"
       CORE_VERSION: ${{ inputs.core_version }}
       CAROUSEL_VERSION: ${{ inputs.carousel_version }}
       BENTO_VERSION: ${{ inputs.bento_version }}

@@ -18,6 +18,8 @@ The existing stable-tag behavior uses the resolved central versions, so blank ve
 
 The `Refresh Production Demo` job runs only after successful manual publication from `main`. Feature-branch publications, failed jobs and cancelled runs do not deploy production.
 
+The publication SDK pin is scoped to the publish job. The Azure refresh does not inherit `DOTNET_VERSION`: Oryx interprets that name as a runtime selector, so an SDK number such as `8.0.426` would fail platform detection. Azure detects the Demo target framework as in the normal production deployment.
+
 The job checks out current `main`, verifies the publication commit is its ancestor and compares all five central versions with those used for the publication. If versions have changed meanwhile, it skips the outdated refresh and emits a warning. It never checks out an older release over newer production source. The next approved publication can refresh the new metadata.
 
 If metadata still matches, Azure rebuilds and deploys the entire Demo site using the existing deployment secret. Production deployments from pushes and publication share a concurrency group. No credentials, package artifacts or remotely supplied build scripts are downloaded from another workflow.
